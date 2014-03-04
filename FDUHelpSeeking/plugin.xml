@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+<extension
+         point="org.eclipse.debug.ui.consoleLineTrackers">
+      <consoleLineTracker
+            class="cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ConsoleLineTracker"
+            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ConsoleLineTracker"
+            processType="java">
+      </consoleLineTracker>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="Help Seeking Monitor"
+            id="cn.edu.fudan.se.helpseeking.EclipseMonitor">
+      </category>
+      <view
+            category="cn.edu.fudan.se.helpseeking.EclipseMonitor"
+            class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
+            icon="icons/types.gif"
+            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
+            name="Context Recommendation View">
+      </view>
+      <view
+            category="cn.edu.fudan.se.helpseeking.EclipseMonitor"
+            class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
+            icon="icons/seq.gif"
+            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
+            name="Behavior Sequence View">
+      </view>
+   </extension>
+
+</plugin>
