@@ -13,22 +13,54 @@
          point="org.eclipse.ui.views">
       <category
             name="Help Seeking Monitor"
-            id="cn.edu.fudan.se.helpseeking.EclipseMonitor">
+            id="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor">
       </category>
       <view
-            category="cn.edu.fudan.se.helpseeking.EclipseMonitor"
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
             icon="icons/types.gif"
-            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
+            id="ContextRecommendationView"
             name="Context Recommendation View">
       </view>
       <view
-            category="cn.edu.fudan.se.helpseeking.EclipseMonitor"
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
             icon="icons/seq.gif"
-            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
+            id="BehaviorSequenceView"
             name="Behavior Sequence View">
       </view>
+      <view
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
+            id="HelpSeekingSearchView"
+            name="Help Seeking Search View"
+            restorable="true">
+      </view>
+      <view
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
+            icon="icons/enum.gif"
+            id="HelpSeekingSolutionView"
+            name="Help Seeking Solution View"
+            restorable="true">
+      </view>
+      <view
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"
+            icon="icons/refresh.gif"
+            id="HelpSeekingCommentsView"
+            name="Help Seeking Comments View"
+            restorable="true">
+      </view>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectives">
+      <perspective
+            class="cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"
+            icon="icons/volatile_co.gif"
+            id="HelpSeekingPerspective"
+            name="Help Seeking Perspective">
+      </perspective>
    </extension>
 
 </plugin>

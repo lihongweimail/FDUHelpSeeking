@@ -51,15 +51,23 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 								ITypeRoot typeRoot = JavaUI
 										.getEditorInputTypeRoot(ce
 												.getEditorInput());
+								
+								
+								
 								ICompilationUnit icu = (ICompilationUnit) typeRoot
 										.getAdapter(ICompilationUnit.class);
 								CompilationUnit cu = ASTUtil.parse(icu);
+								
+								
 								try {
 									IJavaElement e = icu.getElementAt(ts
 											.getOffset());
 
 									if (e != null) {
 										ContextUtil.setContext(e);
+										
+//										System.out.println("hongwei problem change:  "+e.toString());
+										
 										if (e.getElementType() == IJavaElement.METHOD) {
 											IMethod method = (IMethod) e;
 										} else if (e.getElementType() == IJavaElement.FIELD) {

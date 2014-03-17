@@ -160,7 +160,7 @@ public class InteractionEvent {
 
 	private Date endDate = null;
 
-	private String originId = null;
+	private String originId = null;   //description
 
 	private String structureKind = null;
 

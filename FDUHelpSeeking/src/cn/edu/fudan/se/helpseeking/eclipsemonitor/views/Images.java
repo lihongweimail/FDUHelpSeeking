@@ -20,7 +20,8 @@ public class Images {
 			URL iconsUrl = null;
 			try {
 				iconsUrl = new URL(Images.class.getResource("Images.class"),
-						"../../../../../../icons/");
+						"../../../../../../../icons/");
+				//TODO:  package URL like  cn.edu.fudan.se.helpseeking.eclipsemonitor.views.Images.java ==> "icons" directory can locate from this file position  
 			} catch (MalformedURLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -5,6 +5,8 @@ import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IRegion;
 
+import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
+
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		IConsoleLineTracker {
 	private IConsole console;
@@ -24,6 +26,10 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 
 			text = console.getDocument().get(offset, length);
 
+			//TODO: 给信息收集单例实例赋值
+//			MessageCollector mcCollector=MessageCollector.getInstance();
+//			mcCollector.SetValues(message, methodQualifiedName, currentLineCode, methodCode, messageType);
+			
 			System.out.println(text);
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block

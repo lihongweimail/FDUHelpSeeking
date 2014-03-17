@@ -26,8 +26,8 @@ public class DatabaseUtil {
 	
 //	for mysql jdbc link
 	public static final String DRIVER = "com.mysql.jdbc.Driver";
-	public static final String URL = "jdbc:mysql://localhost:3306/stackoverflow";
-// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/stackoverflow"
+	public static final String URL = "jdbc:mysql://localhost:3306/helpseeking";
+// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
 	public static final String USER = "root";
 	public static final String PWD = "root";
 	
@@ -48,7 +48,7 @@ public class DatabaseUtil {
 		init();
 		try {
 			StringBuffer sqlBuffer = new StringBuffer();
-			sqlBuffer.append("select * from stackoverflow.event");
+			sqlBuffer.append("select * from helpseeking.event");
 			if (isbyuser.equals("1")) {
 				sqlBuffer.append(" where event.isbyuser='1'");
 			}
@@ -112,8 +112,8 @@ public class DatabaseUtil {
 		}
 
 		try {
-			String sql = "insert into stackoverflow.event(user,time,endtime,kind,lineno,method,type,file,package,project,originid,isbyuser,structurekind,structurehandle,delta)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
-//			String sql = "insert into \"stackoverflow\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
+			String sql = "insert into helpseeking.event(user,time,endtime,kind,lineno,method,type,file,package,project,originid,isbyuser,structurekind,structurehandle,delta)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
+//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 			String username = System.getProperties().getProperty("user.name");
 			ps = con.prepareStatement(sql);
 		
@@ -266,3 +266,4 @@ public class DatabaseUtil {
 	}
 
 }
+
