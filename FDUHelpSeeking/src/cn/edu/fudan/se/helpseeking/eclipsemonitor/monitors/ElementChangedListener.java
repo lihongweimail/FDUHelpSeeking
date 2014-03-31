@@ -13,9 +13,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.corext.util.JavaModelUtil;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -55,7 +54,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 		for (IJavaElementDelta d : additions) {
 			InteractionEvent event = new InteractionEvent();
 			event.setByuser(true);
-			event.setKind(InteractionEvent.Kind.EDIT);
+			event.setKind(Kind.EDIT);
 			IJavaElement e = d.getElement();
 			ContextUtil.setContext(e);
 			switch (e.getElementType()) {
@@ -84,7 +83,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 		for (IJavaElementDelta d : deletions) {
 			InteractionEvent event = new InteractionEvent();
 			event.setByuser(true);
-			event.setKind(InteractionEvent.Kind.EDIT);
+			event.setKind(Kind.EDIT);
 			IJavaElement e = d.getElement();
 			IJavaElement parent = e.getParent();
 			while (parent == null) {
@@ -117,7 +116,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 		for (IJavaElementDelta d : changes) {
 			InteractionEvent event = new InteractionEvent();
 			event.setByuser(true);
-			event.setKind(InteractionEvent.Kind.EDIT);
+			event.setKind(Kind.EDIT);
 			IJavaElement e = d.getElement();
 			ContextUtil.setContext(e);
 			switch (e.getElementType()) {

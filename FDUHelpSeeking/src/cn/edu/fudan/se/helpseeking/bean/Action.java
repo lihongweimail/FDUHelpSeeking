@@ -1,11 +1,10 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
-import java.util.Calendar;
 import java.util.Date;
 
-import org.eclipse.core.runtime.Assert;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 
-import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent.Kind;
+
 
 
 public class Action {

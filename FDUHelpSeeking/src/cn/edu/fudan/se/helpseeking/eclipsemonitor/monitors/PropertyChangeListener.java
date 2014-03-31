@@ -4,6 +4,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -14,7 +15,7 @@ public class PropertyChangeListener extends AbstractUserActivityMonitor
 	public void propertyChange(PropertyChangeEvent event) {
 		InteractionEvent e = new InteractionEvent();
 		e.setByuser(true);
-		e.setKind(InteractionEvent.Kind.PREFERENCE);
+		e.setKind(Kind.PREFERENCE);
 		e.setOriginId("Origin: " + event.getProperty().toString()
 				+ ", Old Value: " + event.getOldValue().toString()
 				+ ", New Value: " + event.getNewValue().toString());

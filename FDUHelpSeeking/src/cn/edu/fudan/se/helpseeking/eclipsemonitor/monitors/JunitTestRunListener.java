@@ -4,6 +4,7 @@ import org.eclipse.jdt.junit.TestRunListener;
 import org.eclipse.jdt.junit.model.ITestCaseElement;
 import org.eclipse.jdt.junit.model.ITestRunSession;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -13,7 +14,7 @@ public class JunitTestRunListener extends TestRunListener {
 	public void sessionFinished(ITestRunSession session) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.TEST);
+		event.setKind(Kind.TEST);
 		event.setOriginId("Session " + session.getTestRunName()
 				+ " Finished. Elapsed Time: "
 				+ session.getElapsedTimeInSeconds());
@@ -25,7 +26,7 @@ public class JunitTestRunListener extends TestRunListener {
 	public void sessionLaunched(ITestRunSession session) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.TEST);
+		event.setKind(Kind.TEST);
 		event.setOriginId("Session " + session.getTestRunName() + " Launched.");
 		DatabaseUtil.addInteractionToDatabase(event);
 		super.sessionLaunched(session);
@@ -35,7 +36,7 @@ public class JunitTestRunListener extends TestRunListener {
 	public void sessionStarted(ITestRunSession session) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.TEST);
+		event.setKind(Kind.TEST);
 		event.setOriginId("Session " + session.getTestRunName() + " Started.");
 		DatabaseUtil.addInteractionToDatabase(event);
 		super.sessionStarted(session);
@@ -45,7 +46,7 @@ public class JunitTestRunListener extends TestRunListener {
 	public void testCaseFinished(ITestCaseElement testCaseElement) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.TEST);
+		event.setKind(Kind.TEST);
 		event.setOriginId("Test Case Class "
 				+ testCaseElement.getTestClassName() + " Method "
 				+ testCaseElement.getTestMethodName()
@@ -59,7 +60,7 @@ public class JunitTestRunListener extends TestRunListener {
 	public void testCaseStarted(ITestCaseElement testCaseElement) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.TEST);
+		event.setKind(Kind.TEST);
 		event.setOriginId("Test Case Class "
 				+ testCaseElement.getTestClassName() + " Method "
 				+ testCaseElement.getTestMethodName() + " Started.");

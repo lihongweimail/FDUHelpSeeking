@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -31,7 +32,7 @@ public class JobChangeListener extends AbstractUserActivityMonitor implements
 	@Override
 	public void running(IJobChangeEvent event) {
 		InteractionEvent e = new InteractionEvent();
-		e.setKind(InteractionEvent.Kind.JOB);
+		e.setKind(Kind.JOB);
 		e.setOriginId(event.getJob().getName());
 		e.setByuser(false);
 		if (event.getJob().getPriority() > 30) {

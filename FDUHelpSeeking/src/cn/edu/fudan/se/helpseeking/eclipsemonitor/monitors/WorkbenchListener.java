@@ -4,6 +4,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchListener;
 import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -14,7 +15,7 @@ public class WorkbenchListener extends AbstractUserActivityMonitor implements
 	public boolean preShutdown(IWorkbench workbench, boolean forced) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Workbench Pre Shutdown: " + workbench);
 		DatabaseUtil.addInteractionToDatabase(event);
 		return true;
@@ -24,7 +25,7 @@ public class WorkbenchListener extends AbstractUserActivityMonitor implements
 	public void postShutdown(IWorkbench workbench) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Workbench Post Shutdown: " + workbench);
 		DatabaseUtil.addInteractionToDatabase(event);
 	}

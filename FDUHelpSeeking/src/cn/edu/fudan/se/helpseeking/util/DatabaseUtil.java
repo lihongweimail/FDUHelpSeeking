@@ -8,13 +8,12 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import javax.sql.DataSource;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
-import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
 
 public class DatabaseUtil {

@@ -5,6 +5,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -16,7 +17,7 @@ public class PerspectiveListener extends AbstractUserActivityMonitor implements
 			IPerspectiveDescriptor perspective) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Perspective Activated: " + perspective.getLabel());
 		DatabaseUtil.addInteractionToDatabase(event);
 	}
@@ -26,7 +27,7 @@ public class PerspectiveListener extends AbstractUserActivityMonitor implements
 			IPerspectiveDescriptor perspective, String changeId) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Perspective Changed To: " + perspective.getLabel());
 		DatabaseUtil.addInteractionToDatabase(event);
 	}

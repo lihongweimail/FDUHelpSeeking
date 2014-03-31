@@ -7,12 +7,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.ILineBreakpoint;
-import org.eclipse.debug.core.model.LineBreakpoint;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -29,7 +28,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					InteractionEvent e = new InteractionEvent();
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
-					e.setKind(InteractionEvent.Kind.DEBUG);
+					e.setKind(Kind.DEBUG);
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
@@ -59,7 +58,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					InteractionEvent e = new InteractionEvent();
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
-					e.setKind(InteractionEvent.Kind.DEBUG);
+					e.setKind(Kind.DEBUG);
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
@@ -89,7 +88,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					InteractionEvent e = new InteractionEvent();
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
-					e.setKind(InteractionEvent.Kind.DEBUG);
+					e.setKind(Kind.DEBUG);
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));

@@ -8,6 +8,7 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -40,7 +41,7 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 				+ event.getParameters().size());
 		InteractionEvent e = new InteractionEvent();
 		e.setByuser(true);
-		e.setKind(InteractionEvent.Kind.COMMAND);
+		e.setKind(Kind.COMMAND);
 		try {
 			e.setOriginId(event.getCommand().getName() == null ? event
 					.getCommand().getId() : event.getCommand().getName());

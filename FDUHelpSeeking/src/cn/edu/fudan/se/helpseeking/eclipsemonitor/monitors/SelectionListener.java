@@ -1,23 +1,17 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jface.text.IMarkSelection;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ImportResourcesAction;
 import org.eclipse.ui.views.markers.MarkerItem;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.processing.WebProcessing;
@@ -31,7 +25,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.SELECTION);
+		event.setKind(Kind.SELECTION);
 
 		// add this variable for extract info. hongwei 2014.3.4
 		String selectionContent = "";

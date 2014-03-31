@@ -4,6 +4,7 @@ import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IDebugEventSetListener;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -18,7 +19,7 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 //			System.out.println("Event detail:" + event.getDetail());
 //			System.out.println("Event data:" + event.getData());
 			InteractionEvent e = new InteractionEvent();
-			e.setKind(InteractionEvent.Kind.DEBUG);
+			e.setKind(Kind.DEBUG);
 			e.setByuser(true);
 			int kind = event.getKind();
 			int detail = event.getDetail();

@@ -7,6 +7,7 @@ import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -25,7 +26,7 @@ public class ResourceChangeListener extends AbstractUserActivityMonitor
 	public boolean visit(IResourceDelta delta) throws CoreException {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(false);
-		event.setKind(InteractionEvent.Kind.RESOURCE);
+		event.setKind(Kind.RESOURCE);
 		StringBuffer buf = new StringBuffer();
 		switch (delta.getKind()) {
 		case IResourceDelta.ADDED:

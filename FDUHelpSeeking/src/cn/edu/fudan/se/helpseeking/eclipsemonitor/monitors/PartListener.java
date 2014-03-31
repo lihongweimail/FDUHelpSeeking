@@ -106,8 +106,6 @@ import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.text.source.projection.IProjectionListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -118,15 +116,14 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -139,7 +136,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 	public void partActivated(IWorkbenchPart part) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Activated: " + part.getTitle());
 		DatabaseUtil.addInteractionToDatabase(event);
 
@@ -158,7 +155,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 									boolean smartToggle) {
 								InteractionEvent e = new InteractionEvent();
 								e.setByuser(true);
-								e.setKind(InteractionEvent.Kind.EDIT);
+								e.setKind(Kind.EDIT);
 								e.setOriginId("Content Assist Selected: "
 										+ proposal.getDisplayString());
 								DatabaseUtil.addInteractionToDatabase(e);
@@ -1369,7 +1366,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 					public void documentChanged(DocumentEvent event) {
 						// InteractionEvent e = new InteractionEvent();
 						// e.setByuser(true);
-						// e.setKind(InteractionEvent.Kind.EDIT);
+						// e.setKind(Kind.EDIT);
 						// e.setDelta(event.getText());
 						// System.out.println(event.getText());
 						// DatabaseUtil.addInteractionToDatabase(e);
@@ -1401,7 +1398,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 					@Override
 					public void helpRequested(HelpEvent e) {
 						InteractionEvent event = new InteractionEvent();
-						event.setKind(InteractionEvent.Kind.COMMAND);
+						event.setKind(Kind.COMMAND);
 						event.setOriginId("Help Command");
 						event.setByuser(true);
 						DatabaseUtil.addInteractionToDatabase(event);
@@ -1441,7 +1438,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 						// System.out.println("HBar Event: " + e.time);
 						InteractionEvent event = new InteractionEvent();
 						event.setByuser(true);
-						event.setKind(InteractionEvent.Kind.EDIT);
+						event.setKind(Kind.EDIT);
 						event.setOriginId("Scroll Horizontally: X: " + e.x
 								+ ", Y: " + e.y);
 						DatabaseUtil.addInteractionToDatabase(event);
@@ -1459,7 +1456,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 					public void widgetSelected(SelectionEvent e) {
 						InteractionEvent event = new InteractionEvent();
 						event.setByuser(true);
-						event.setKind(InteractionEvent.Kind.EDIT);
+						event.setKind(Kind.EDIT);
 						event.setOriginId("Scroll Vertically: X: " + e.x
 								+ ", Y: " + e.y);
 						DatabaseUtil.addInteractionToDatabase(event);
@@ -1480,7 +1477,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 	public void partBroughtToTop(IWorkbenchPart part) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(false);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Brought To Top: " + part.getTitle());
 		DatabaseUtil.addInteractionToDatabase(event);
 	}
@@ -1489,7 +1486,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 	public void partClosed(IWorkbenchPart part) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Closed: " + part.getTitle());
 		DatabaseUtil.addInteractionToDatabase(event);
 		if (part instanceof CompilationUnitEditor) {
@@ -1501,7 +1498,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 	public void partDeactivated(IWorkbenchPart part) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(false);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Deactivated: " + part.getTitle());
 		DatabaseUtil.addInteractionToDatabase(event);
 	}
@@ -1510,7 +1507,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 	public void partOpened(IWorkbenchPart part) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(false);
-		event.setKind(InteractionEvent.Kind.ATTENTION);
+		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Opened: " + part.getTitle());
 		DatabaseUtil.addInteractionToDatabase(event);
 	}
