@@ -59,7 +59,7 @@ public class ResourceChangeListener extends AbstractUserActivityMonitor
 		buf.append(" ");
 		buf.append(delta.getResource());
 		event.setOriginId(buf.toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		return true;
 	}
 

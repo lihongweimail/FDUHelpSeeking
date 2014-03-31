@@ -8,5 +8,19 @@ public class ExplorerInfo {
 	
 	int size;
 	List <String> selectObjectNameList;
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
+	}
+	public List<String> getSelectObjectNameList() {
+		return selectObjectNameList;
+	}
+	public void setSelectObjectNameList(List<String> selectObjectNameList) {
+		this.selectObjectNameList = selectObjectNameList;
+	}
 
+	
+	
 }

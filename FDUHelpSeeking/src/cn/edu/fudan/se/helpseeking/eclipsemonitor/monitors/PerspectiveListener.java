@@ -19,7 +19,7 @@ public class PerspectiveListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Perspective Activated: " + perspective.getLabel());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class PerspectiveListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Perspective Changed To: " + perspective.getLabel());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

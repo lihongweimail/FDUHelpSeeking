@@ -17,7 +17,7 @@ public class WorkbenchListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Workbench Pre Shutdown: " + workbench);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		return true;
 	}
 
@@ -27,7 +27,7 @@ public class WorkbenchListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Workbench Post Shutdown: " + workbench);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

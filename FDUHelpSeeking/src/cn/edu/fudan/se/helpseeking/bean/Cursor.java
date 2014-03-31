@@ -5,6 +5,17 @@ public class Cursor {
 	//if selecting some code block , there may have a scope.
 	int lineFrom;
 	int lineTo;
+	String  methodQualifiedName;
+	
+	
+	
+	
+	public String getMethodQualifiedName() {
+		return methodQualifiedName;
+	}
+	public void setMethodQualifiedName(String methodQualifiedName) {
+		this.methodQualifiedName = methodQualifiedName;
+	}
 	public int getLineNo() {
 		return lineNo;
 	}

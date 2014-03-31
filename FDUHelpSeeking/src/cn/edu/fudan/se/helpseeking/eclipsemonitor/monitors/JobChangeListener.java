@@ -36,7 +36,7 @@ public class JobChangeListener extends AbstractUserActivityMonitor implements
 		e.setOriginId(event.getJob().getName());
 		e.setByuser(false);
 		if (event.getJob().getPriority() > 30) {
-			DatabaseUtil.addInteractionToDatabase(e);
+			DatabaseUtil.addInteractionEventToDatabase(e);
 		}
 	}
 	

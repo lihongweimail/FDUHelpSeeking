@@ -163,7 +163,7 @@ public class TaskTrackView extends ViewPart {
 			}
 			tableViewer.setContentProvider(cp);
 			tableViewer.setLabelProvider(lp);
-			tableViewer.setInput(DatabaseUtil.getRecords(500, "1"));
+			tableViewer.setInput(DatabaseUtil.getInteractionEventRecords(500, "1"));
 		}
 		makeActions();
 		initializeToolBar();
@@ -304,7 +304,7 @@ public class TaskTrackView extends ViewPart {
 	private void makeActions() {
 		refreshAction = new Action() {
 			public void run() {
-				List<BehaviorItem> items = DatabaseUtil.getRecords(500, "1");
+				List<BehaviorItem> items = DatabaseUtil.getInteractionEventRecords(500, "1");
 				tableViewer.setInput(items);
 				lblCurrentTask
 						.setText("Current Task: Add Debug Events Monitoring Feature"

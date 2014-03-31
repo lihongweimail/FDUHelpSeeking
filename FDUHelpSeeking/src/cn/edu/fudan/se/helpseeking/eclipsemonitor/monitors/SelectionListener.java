@@ -102,7 +102,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		}
 //TODO: END 
 		
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

@@ -138,7 +138,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Activated: " + part.getTitle());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 
 		if (part instanceof CompilationUnitEditor) {
 			ContextUtil.addEditor((CompilationUnitEditor) part);
@@ -158,7 +158,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 								e.setKind(Kind.EDIT);
 								e.setOriginId("Content Assist Selected: "
 										+ proposal.getDisplayString());
-								DatabaseUtil.addInteractionToDatabase(e);
+								DatabaseUtil.addInteractionEventToDatabase(e);
 							}
 
 							@Override
@@ -1401,7 +1401,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 						event.setKind(Kind.COMMAND);
 						event.setOriginId("Help Command");
 						event.setByuser(true);
-						DatabaseUtil.addInteractionToDatabase(event);
+						DatabaseUtil.addInteractionEventToDatabase(event);
 					}
 				});
 				st.addMouseListener(new MouseListener() {
@@ -1441,7 +1441,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 						event.setKind(Kind.EDIT);
 						event.setOriginId("Scroll Horizontally: X: " + e.x
 								+ ", Y: " + e.y);
-						DatabaseUtil.addInteractionToDatabase(event);
+						DatabaseUtil.addInteractionEventToDatabase(event);
 					}
 
 					@Override
@@ -1459,7 +1459,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 						event.setKind(Kind.EDIT);
 						event.setOriginId("Scroll Vertically: X: " + e.x
 								+ ", Y: " + e.y);
-						DatabaseUtil.addInteractionToDatabase(event);
+						DatabaseUtil.addInteractionEventToDatabase(event);
 					}
 
 					@Override
@@ -1479,7 +1479,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Brought To Top: " + part.getTitle());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -1488,7 +1488,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Closed: " + part.getTitle());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		if (part instanceof CompilationUnitEditor) {
 			ContextUtil.deleteEditor((CompilationUnitEditor) part);
 		}
@@ -1500,7 +1500,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Deactivated: " + part.getTitle());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -1509,7 +1509,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Opened: " + part.getTitle());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

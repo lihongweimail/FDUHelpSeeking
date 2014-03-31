@@ -8,5 +8,19 @@ public class EditorInfo {
 	
 	int size;
 	List <String> classQualifiedNameList;
+	public int getSize() {
+		return size;
+	}
+	public void setSize(int size) {
+		this.size = size;
+	}
+	public List<String> getClassQualifiedNameList() {
+		return classQualifiedNameList;
+	}
+	public void setClassQualifiedNameList(List<String> classQualifiedNameList) {
+		this.classQualifiedNameList = classQualifiedNameList;
+	}
 
+	
+	
 }

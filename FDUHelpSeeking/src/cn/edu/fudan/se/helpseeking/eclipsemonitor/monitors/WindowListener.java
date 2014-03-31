@@ -17,7 +17,7 @@ public class WindowListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Window Activated: " + window.toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -26,7 +26,7 @@ public class WindowListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Window Deactivated: " + window.toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class WindowListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Window Closed: " + window.toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class WindowListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Window Opened: " + window.toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

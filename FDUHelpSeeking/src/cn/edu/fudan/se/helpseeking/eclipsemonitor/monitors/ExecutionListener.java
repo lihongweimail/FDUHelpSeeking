@@ -48,7 +48,7 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 		} catch (NotDefinedException e1) {
 			e1.printStackTrace();
 		}
-		DatabaseUtil.addInteractionToDatabase(e);
+		DatabaseUtil.addInteractionEventToDatabase(e);
 	}
 
 	@Override

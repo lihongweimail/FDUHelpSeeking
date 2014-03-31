@@ -18,7 +18,7 @@ public class JunitTestRunListener extends TestRunListener {
 		event.setOriginId("Session " + session.getTestRunName()
 				+ " Finished. Elapsed Time: "
 				+ session.getElapsedTimeInSeconds());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		super.sessionFinished(session);
 	}
 
@@ -28,7 +28,7 @@ public class JunitTestRunListener extends TestRunListener {
 		event.setByuser(true);
 		event.setKind(Kind.TEST);
 		event.setOriginId("Session " + session.getTestRunName() + " Launched.");
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		super.sessionLaunched(session);
 	}
 
@@ -38,7 +38,7 @@ public class JunitTestRunListener extends TestRunListener {
 		event.setByuser(true);
 		event.setKind(Kind.TEST);
 		event.setOriginId("Session " + session.getTestRunName() + " Started.");
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		super.sessionStarted(session);
 	}
 
@@ -52,7 +52,7 @@ public class JunitTestRunListener extends TestRunListener {
 				+ testCaseElement.getTestMethodName()
 				+ " Finished. Elapsed Time: "
 				+ testCaseElement.getElapsedTimeInSeconds());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		super.testCaseFinished(testCaseElement);
 	}
 
@@ -64,7 +64,7 @@ public class JunitTestRunListener extends TestRunListener {
 		event.setOriginId("Test Case Class "
 				+ testCaseElement.getTestClassName() + " Method "
 				+ testCaseElement.getTestMethodName() + " Started.");
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 		super.testCaseStarted(testCaseElement);
 	}
 

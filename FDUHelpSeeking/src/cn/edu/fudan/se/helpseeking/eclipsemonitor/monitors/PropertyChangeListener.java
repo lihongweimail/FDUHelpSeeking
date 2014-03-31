@@ -19,7 +19,7 @@ public class PropertyChangeListener extends AbstractUserActivityMonitor
 		e.setOriginId("Origin: " + event.getProperty().toString()
 				+ ", Old Value: " + event.getOldValue().toString()
 				+ ", New Value: " + event.getNewValue().toString());
-		DatabaseUtil.addInteractionToDatabase(e);
+		DatabaseUtil.addInteractionEventToDatabase(e);
 	}
 
 	@Override

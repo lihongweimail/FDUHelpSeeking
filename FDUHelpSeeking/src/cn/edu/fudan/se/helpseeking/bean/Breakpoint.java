@@ -7,7 +7,7 @@ public class Breakpoint {
 //
 
 	String type;     // breakpoint type :   line , method , value, exception etc.
-	String methodURI; 
+	String methodQualifiedName; 
 	int lineNo;  //? 不知道是否还需要
 	
 	
@@ -18,10 +18,10 @@ public class Breakpoint {
 		this.type = type;
 	}
 	public String getMethodURI() {
-		return methodURI;
+		return methodQualifiedName;
 	}
 	public void setMethodURI(String methodURI) {
-		this.methodURI = methodURI;
+		this.methodQualifiedName = methodURI;
 	}
 	public int getLineNo() {
 		return lineNo;

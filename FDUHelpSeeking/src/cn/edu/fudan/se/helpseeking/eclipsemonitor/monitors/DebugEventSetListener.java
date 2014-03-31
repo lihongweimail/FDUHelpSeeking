@@ -86,7 +86,7 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 				originId += "Detail: " + detailString;
 			}
 			e.setOriginId(originId);
-			DatabaseUtil.addInteractionToDatabase(e);
+			DatabaseUtil.addInteractionEventToDatabase(e);
 		}
 	}
 

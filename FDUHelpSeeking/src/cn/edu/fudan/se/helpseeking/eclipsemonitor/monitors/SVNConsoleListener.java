@@ -19,7 +19,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Command Line: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Completed: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Error: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Message: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Revision: " + arg1 + " on Revision " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -65,7 +65,7 @@ public class SVNConsoleListener extends AbstractUserActivityMonitor implements
 		event.setKind(Kind.REVISION);
 		event.setOriginId("SVN Notify : " + arg1.toString() + ", File: "
 				+ arg0.getPath() + arg0.getName());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

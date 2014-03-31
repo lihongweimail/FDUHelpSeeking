@@ -40,7 +40,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setOriginId("Add a method breakpoint at line "
 								+ bp.getLineNumber());
 					}
-					DatabaseUtil.addInteractionToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
@@ -70,7 +70,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setOriginId("Delete a method breakpoint at line "
 								+ bp.getLineNumber());
 					}
-					DatabaseUtil.addInteractionToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
@@ -100,7 +100,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setOriginId("Change a method breakpoint at line "
 								+ bp.getLineNumber());
 					}
-					DatabaseUtil.addInteractionToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {

@@ -20,6 +20,42 @@ public class Action {
 //	'Requesting Java AST from selection'
 	String description;  //  originId
 	boolean byuser = false;
+	public Date getTime() {
+		return time;
+	}
+	public void setTime(Date time) {
+		this.time = time;
+	}
+	public Date getEndtime() {
+		return endtime;
+	}
+	public void setEndtime(Date endtime) {
+		this.endtime = endtime;
+	}
+	public Kind getActionKind() {
+		return actionKind;
+	}
+	public void setActionKind(Kind actionKind) {
+		this.actionKind = actionKind;
+	}
+	public String getActionName() {
+		return actionName;
+	}
+	public void setActionName(String actionName) {
+		this.actionName = actionName;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public boolean isByuser() {
+		return byuser;
+	}
+	public void setByuser(boolean byuser) {
+		this.byuser = byuser;
+	}
 
 	
 	

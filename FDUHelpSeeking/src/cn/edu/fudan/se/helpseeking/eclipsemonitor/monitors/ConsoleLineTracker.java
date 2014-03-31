@@ -3,8 +3,8 @@ package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
 import org.eclipse.jface.text.BadLocationException;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
-
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
@@ -26,11 +26,11 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 
 			text = console.getDocument().get(offset, length);
 
-			//TODO: 给信息收集单例实例赋值
-//			MessageCollector mcCollector=MessageCollector.getInstance();
-//			mcCollector.SetValues(message, methodQualifiedName, currentLineCode, methodCode, messageType);
-			
-			System.out.println(text);
+//			//这里实现了从console view中获得新增行的内容
+//			System.out.println(text);
+//			System.out.println("split line ---------------------------------------------------");
+//			System.out.println(console.getDocument().get());
+//			System.out.println("split line ==================================");
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -53,6 +53,17 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 	public void stop() {
 		// TODO Auto-generated method stub
 
+	}
+	
+	public String getCurrentConsoleContent()
+	{
+	    
+		String text;
+	    IDocument id = console.getDocument();
+		text = id.get();
+//	    System.out.println(id.get());
+	   return text;
+		
 	}
 
 }

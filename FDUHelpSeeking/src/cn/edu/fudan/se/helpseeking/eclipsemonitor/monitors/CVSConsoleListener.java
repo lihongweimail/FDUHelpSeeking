@@ -19,7 +19,7 @@ public class CVSConsoleListener extends AbstractUserActivityMonitor implements
 		event.setKind(Kind.REVISION);
 		event.setOriginId("CVS Command Completed: "
 				+ arg0.getCurrentCommand().toString());
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -28,7 +28,7 @@ public class CVSConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("CVS Command Invoked: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
@@ -37,7 +37,7 @@ public class CVSConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("CVS Error: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 
 	}
 
@@ -47,7 +47,7 @@ public class CVSConsoleListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.REVISION);
 		event.setOriginId("CVS Message: " + arg0);
-		DatabaseUtil.addInteractionToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override

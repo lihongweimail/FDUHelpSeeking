@@ -12,6 +12,12 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.DebugCode;
+import cn.edu.fudan.se.helpseeking.bean.EditCode;
+import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
+import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
+import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
@@ -35,12 +41,13 @@ public class DatabaseUtil {
 	private static ResultSet rs = null;
 	public static DataSource source = null;
 	private static InteractionEvent lastEvent = null;
+	private static Information lastInformation=null;
 
 	public static void init() {
 		con = getCon();
 	}
 
-	public static List<BehaviorItem> getRecords(int num, String isbyuser) {
+	public static List<BehaviorItem> getInteractionEventRecords(int num, String isbyuser) {
 		PreparedStatement ps = null;
 		List<BehaviorItem> items = new ArrayList<BehaviorItem>();
 
@@ -103,7 +110,7 @@ public class DatabaseUtil {
 
 	
 
-	public static int addInteractionToDatabase(InteractionEvent event) {
+	public static int addInteractionEventToDatabase(InteractionEvent event) {
 		int resu = 0;
 		PreparedStatement ps = null;
 		if (event.equals(lastEvent)) {
@@ -179,6 +186,177 @@ public class DatabaseUtil {
 		return resu;
 	}
 
+	
+	public static int addInformationToDatabase(Information information)  {
+		int resu = 0;
+
+		if (information.equals(lastInformation)) {
+			return 0;
+		}
+		
+		int DebugCodeID=findDebugCodeID(lastInformation.getDebugCode());
+		int EditCodeID=findEditCodeID(lastInformation.getEditCode());
+		int IDEOutputID=findIDEOutputID(lastInformation.getIdeOutput());
+		int ExplorerRelatedID=findExplorerRelatedID(lastInformation.getExplorerRelated());
+		int ActionID=findActionID(lastInformation.getAction());
+
+		//insert debugCode and get debugcodeID with synchronized
+		
+		 addDebugCodeTODataBase();
+				
+		//insert editCode and get editCodeID with synchronized
+		
+		//insert IDEOutput and get IDEOutputID with synchronized
+		
+		//insert explorerRelated and get explorerRelatedID with synchronized
+		
+		//insert action and get actionID with synchronized
+		
+		
+		// then insert information
+		
+		PreparedStatement ps = null;
+		
+		try {
+			String sql = "insert into helpseeking.information(DebugCodeID,EditCodeID,IDEOutputID,ExplorerRelatedID,ActionID, type)  values(?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
+//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
+
+			ps = con.prepareStatement(sql);
+		
+			ps.setInt(1, DebugCodeID);
+			ps.setInt(2, EditCodeID);
+			ps.setInt(3, IDEOutputID);
+			ps.setInt(4, ExplorerRelatedID);
+			ps.setInt(5, ActionID);
+			ps.setString(6, information.getType());
+			
+			//id field is an auto increment field , it need null value to let dbms increase ....
+
+			
+			resu = ps.executeUpdate();
+			if (resu == 1) {
+				lastInformation = information;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		return resu;
+	}
+
+	
+	private static int findActionID(Action action) {
+		// TODO Auto-generated method stub
+		// time for unique ...
+		PreparedStatement ps = null;
+		List<Action> items = new ArrayList<Action>();
+	    int  actionID=0;
+		try {
+			StringBuffer sqlBuffer = new StringBuffer();
+			sqlBuffer.append("select * from helpseeking.action ");
+			if (action.getTime() != null ) {
+				sqlBuffer.append(" where action.time= '"+action.getTime()+"' ");
+			}
+			sqlBuffer.append(" order by event.id desc");
+			ps = con.prepareStatement(sqlBuffer.toString());
+			rs = ps.executeQuery();
+
+			try {
+				while (rs.next()) {
+					Action item = new Action();
+					actionID = rs.getInt(1);
+					item.setTime(rs.getTimestamp(2));
+					item.setEndtime(rs.getTimestamp(3));
+					item.setActionKind( Kind.fromString(rs.getString(4)));
+					item.setActionName(rs.getString(5));
+					item.setDescription(rs.getString(6)); 
+					item.setByuser(rs.getBoolean(7));
+					items.add(item);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			return actionID;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		
+		return -1;
+
+	}
+
+	private static int findExplorerRelatedID(ExplorerRelated explorerRelated) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static int findIDEOutputID(IDEOutput ideOutput) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static int findEditCodeID(EditCode editCode) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	private static int findDebugCodeID(DebugCode debugCode) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	
+	//insert debugCode and get debugcodeID with synchronized
+	public static int addDebugCodeTODataBase() {
+		int result=0;
+		
+		return result;
+	}
+
+	//insert editCode and get editCodeID with synchronized
+	
+	//insert IDEOutput and get IDEOutputID with synchronized
+	
+	//insert explorerRelated and get explorerRelatedID with synchronized
+	
+	//insert action and get actionID with synchronized	
+	
+	
+	
 	public static void destroy() {
 		closeAll();
 	}
@@ -259,7 +437,7 @@ public class DatabaseUtil {
 		event.setNavigation("main");
 		
 		
-		int resu = addInteractionToDatabase(event);
+		int resu = addInteractionEventToDatabase(event);
 		System.out.println(resu);
 		destroy();
 	}
