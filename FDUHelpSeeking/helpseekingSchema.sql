@@ -112,7 +112,7 @@ CREATE TABLE `explorerrelated` (
 CREATE TABLE `ideoutput` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `CompileInformationID` int(11) DEFAULT NULL,
-  `RuntimeInformation` int(11) DEFAULT NULL,
+  `RuntimeInformationID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

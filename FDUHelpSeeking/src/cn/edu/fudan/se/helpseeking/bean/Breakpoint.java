@@ -17,10 +17,10 @@ public class Breakpoint {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public String getMethodURI() {
+	public String getMethodQualifiedName() {
 		return methodQualifiedName;
 	}
-	public void setMethodURI(String methodURI) {
+	public void setMethodQualifiedName(String methodURI) {
 		this.methodQualifiedName = methodURI;
 	}
 	public int getLineNo() {
