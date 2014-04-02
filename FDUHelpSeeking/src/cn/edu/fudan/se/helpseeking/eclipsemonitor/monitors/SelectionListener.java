@@ -2,10 +2,16 @@ package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.internal.core.CompilationUnit;
+import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
 import org.eclipse.jface.text.IMarkSelection;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
@@ -18,6 +24,7 @@ import cn.edu.fudan.se.helpseeking.processing.WebProcessing;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
+@SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
 		ISelectionListener {
 
@@ -56,7 +63,23 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection s = (ITextSelection) selection;
 			if (s.getLength() == 0) {
-				return;// Don't record if length == 0
+				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage().getActiveEditor();
+				if(unitEditor instanceof CompilationUnitEditor){
+					ITypeRoot element = EditorUtility.getEditorInputJavaElement(
+							(CompilationUnitEditor)unitEditor, false);
+					if(element instanceof CompilationUnit){
+						CompilationUnit unit = (CompilationUnit) element;
+						try {
+							System.out.println("文件位置："	+ unit.getPackageDeclarations()[0].getElementName() + "."
+									+ unit.getElementName());
+						} catch (JavaModelException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				System.out.println("光标位置：" + s.getStartLine());
+				return;// do things about cursor and code when length == 0
 			}
 			event.setOriginId("Select: " + s.getText() + " from Part: "
 					+ part.getTitle());
