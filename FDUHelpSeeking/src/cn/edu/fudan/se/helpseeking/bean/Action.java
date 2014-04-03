@@ -1,6 +1,6 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 
@@ -11,8 +11,8 @@ public class Action {
 	//通过cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent 复制
   //	获得所有相关的信息：
 	
-	Date time;                         //time
-	Date endtime;                   //endtime
+	Timestamp time;                         //time
+	Timestamp endtime;                   //endtime
 	Kind actionKind;                //kind
 	String actionName = null;   //originId 的第一部分（有冒号时，前面部分）
 //	'Window Deactivated: org.eclipse.ui.internal.WorkbenchWindow@7e7f9d6b'
@@ -22,16 +22,16 @@ public class Action {
 	boolean byuser = false;
 	
 	
-	public Date getTime() {
+	public Timestamp getTime() {
 		return time;
 	}
-	public void setTime(Date time) {
+	public void setTime(Timestamp time) {
 		this.time = time;
 	}
-	public Date getEndtime() {
+	public Timestamp getEndtime() {
 		return endtime;
 	}
-	public void setEndtime(Date endtime) {
+	public void setEndtime(Timestamp endtime) {
 		this.endtime = endtime;
 	}
 	public Kind getActionKind() {

@@ -1,6 +1,6 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
-import java.util.Date;
+import java.sql.Timestamp;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.ICompilationUnit;
@@ -24,9 +24,9 @@ import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.processing.WebProcessing;
+import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
-import cn.edu.fudan.se.helpseeking.util.EditCodeUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
@@ -81,10 +81,11 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}*/
-					Information info = EditCodeUtil.createInformationBySelection(icu, s);
+					Information info = new Information();
 					info.setType("EditCode");
+					info.setEditCode(CodeUtil.createEditCodeBySelection(icu, s));
 					Action action = new Action();
-					action.setTime(new Date());
+					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
 					action.setActionName("Select");
 					action.setDescription("");

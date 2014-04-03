@@ -1,7 +1,7 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.Date;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -20,6 +20,7 @@ import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
+import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 @SuppressWarnings("restriction")
@@ -33,17 +34,6 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 				if (!(breakpoint instanceof IJavaLineBreakpoint)) {
 					return;
 				} else {
-					//System.out.println(breakpoint.getMarker().getResource().getClass());
-					/*IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-							.getActivePage().getActiveEditor();
-					if(unitEditor instanceof CompilationUnitEditor){
-						ITypeRoot typeRoot = JavaUI
-								.getEditorInputTypeRoot(unitEditor.getEditorInput());
-						ICompilationUnit icu = (ICompilationUnit) typeRoot
-								.getAdapter(ICompilationUnit.class);
-						System.out.println(icu.getPackageDeclarations()[0] + "." 
-								+ icu.getElementName());
-					}*/
 					InteractionEvent e = new InteractionEvent();
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
@@ -60,15 +50,13 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 								+ bp.getLineNumber());
 					}
 					IResource resource = breakpoint.getMarker().getResource();
-					if(resource instanceof IFile){
-						ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
-						System.out.println(icu.getPackageDeclarations()[0]);
-					}
+					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
 
 					Information info = new Information();
 					info.setType("DebugCode");
+					info.setDebugCode(CodeUtil.createDebugCodeByBreakpoint(icu, breakpoint));
 					Action action = new Action();
-					action.setTime(new Date());
+					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
 					action.setActionName("Add Breakpoint");
