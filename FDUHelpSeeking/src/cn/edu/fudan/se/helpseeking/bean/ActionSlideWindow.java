@@ -1,16 +1,32 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ActionSlideWindow {
-	int actionListSize;
-	List<Action> actionList;
-	public int getActionListSize() {
+	int actionListSize=0;
+	
+	List<Action> actionList=new ArrayList<Action>();
+	
+	int windowSize=0;
+	int windowLeft=0;
+	int windowRight=0;
+	
+	
+	
+	
+  public void addSize()
+  {
+	  actionListSize=actionListSize+1;
+  }
+  public void reduceSize()
+  {
+	  actionListSize=actionListSize-1;
+  }
+  public int getActionListSize() {
 		return actionListSize;
 	}
-	public void setActionListSize(int actionListSize) {
-		this.actionListSize = actionListSize;
-	}
+  
 	public List<Action> getActionList() {
 		return actionList;
 	}

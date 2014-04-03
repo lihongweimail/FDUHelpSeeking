@@ -196,7 +196,7 @@ public class DatabaseUtil {
 	}
 
 
-
+//尝试使用synchronized用于插入数据时的同步
 	public static synchronized int addInformationToDatabase(Information information)  {
 		int resu = 0;
 
@@ -294,11 +294,14 @@ public class DatabaseUtil {
 	private static int addActionAndgetID(Action action) {
 		int actionID=-1;
 		int addresult=0;
-		addresult=addActionTODataBase(action);
+		
+		
+			addresult=addActionTODataBase(action);
+		
 		if (addresult==1) {
 			actionID=findlastActionID();
 		}
-
+		
 		return actionID;
 	}
 
@@ -1002,7 +1005,7 @@ public class DatabaseUtil {
 	}
 
 	//insert debugCode and get debugcodeID with synchronized	
-	public static int addDebugCodeAndgetID(DebugCode debugCode){
+	private static int addDebugCodeAndgetID(DebugCode debugCode){
 		int debugCodeID=-1;
 		int addresult=0;
 		addresult=addDebugCodeTODataBase(debugCode);
@@ -1081,7 +1084,7 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	public static  int addDebugCodeTODataBase(DebugCode debugCode) {
+	private static  int addDebugCodeTODataBase(DebugCode debugCode) {
 		int result=0;
 
 		int SyntacticBlockID=-1;
@@ -1454,11 +1457,11 @@ public class DatabaseUtil {
 		Action action=new Action();
 		String type="the first  information node for  testing";
 
-		debugCode=initDebugCode();
-		editCode=initEditCode();
-		ideOutput=initIDEOutput();
-		explorerRelated=initExplorerRelated();
-		action=initAction();
+		debugCode=testinitDebugCode();
+		editCode=testinitEditCode();
+		ideOutput=testinitIDEOutput();
+		explorerRelated=testinitExplorerRelated();
+		action=testinitAction();
 
 		information.setDebugCode(debugCode);
 		information.setEditCode(editCode);
@@ -1470,7 +1473,7 @@ public class DatabaseUtil {
 
 	}
 
-	private static Action initAction() {
+	private static Action testinitAction() {
 		Action action=new Action();
 		action.setTime(new  Timestamp(System.currentTimeMillis()));
 		action.setEndtime(new  Timestamp(System.currentTimeMillis()+2000));
@@ -1482,7 +1485,7 @@ public class DatabaseUtil {
 		return action;
 	}
 
-	private static ExplorerRelated initExplorerRelated() {
+	private static ExplorerRelated testinitExplorerRelated() {
 		ExplorerRelated explorerRelated=new ExplorerRelated();
 
 		EditorInfo editorInfo=new EditorInfo();
@@ -1508,7 +1511,7 @@ public class DatabaseUtil {
 		return explorerRelated;
 	}
 
-	private static IDEOutput initIDEOutput() {
+	private static IDEOutput testinitIDEOutput() {
 		IDEOutput ideOutput=new IDEOutput();
 		CompileInformation compileInformation=new CompileInformation();
 		compileInformation.setType("Error");
@@ -1528,7 +1531,7 @@ public class DatabaseUtil {
 		return ideOutput;
 	}
 
-	private static EditCode initEditCode() {
+	private static EditCode testinitEditCode() {
 		EditCode editCode=new EditCode();
 		Cursor cursor=new Cursor();
 		cursor.setLineNo(90);
@@ -1576,7 +1579,7 @@ public class DatabaseUtil {
 		return editCode;
 	}
 
-	public static DebugCode initDebugCode() {
+	private static DebugCode testinitDebugCode() {
 		DebugCode debugCode=new DebugCode();
 
 		Breakpoint breakpoint=new Breakpoint();

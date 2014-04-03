@@ -27,10 +27,7 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 			text = console.getDocument().get(offset, length);
 
 //			//这里实现了从console view中获得新增行的内容
-//			System.out.println(text);
-//			System.out.println("split line ---------------------------------------------------");
-//			System.out.println(console.getDocument().get());
-//			System.out.println("split line ==================================");
+
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
