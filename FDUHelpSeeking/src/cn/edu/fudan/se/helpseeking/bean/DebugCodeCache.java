@@ -4,6 +4,7 @@ public class DebugCodeCache {
 	
 	int id;
 	DebugCode debugCode;
+	
 	public int getId() {
 		return id;
 	}
