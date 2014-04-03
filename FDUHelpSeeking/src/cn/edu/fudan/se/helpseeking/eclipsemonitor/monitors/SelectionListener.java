@@ -1,12 +1,13 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.util.Date;
+
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.internal.core.CompilationUnit;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.EditorUtility;
+import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IMarkSelection;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -17,12 +18,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.markers.MarkerItem;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.processing.WebProcessing;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.EditCodeUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
@@ -66,19 +70,29 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.getActivePage().getActiveEditor();
 				if(unitEditor instanceof CompilationUnitEditor){
-					ITypeRoot element = EditorUtility.getEditorInputJavaElement(
-							(CompilationUnitEditor)unitEditor, false);
-					if(element instanceof CompilationUnit){
-						CompilationUnit unit = (CompilationUnit) element;
-						try {
-							System.out.println("文件位置："	+ unit.getPackageDeclarations()[0].getElementName() + "."
-									+ unit.getElementName());
-						} catch (JavaModelException e) {
-							e.printStackTrace();
-						}
-					}
+					ITypeRoot typeRoot = JavaUI
+							.getEditorInputTypeRoot(unitEditor.getEditorInput());
+					ICompilationUnit icu = (ICompilationUnit) typeRoot
+							.getAdapter(ICompilationUnit.class);
+					/*try {
+						System.out.println("文件位置："	+ icu.getPackageDeclarations()[0].getElementName()
+								+ "." + icu.getElementName());
+					} catch (JavaModelException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}*/
+					Information info = EditCodeUtil.createInformationBySelection(icu, s);
+					info.setType("EditCode");
+					Action action = new Action();
+					action.setTime(new Date());
+					action.setActionKind(event.getKind());
+					action.setActionName("Select");
+					action.setDescription("");
+					action.setByuser(true);
+					info.setAction(action);
+					DatabaseUtil.addInformationToDatabase(info);
 				}
-				System.out.println("光标位置：" + s.getStartLine());
+				//System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0
 			}
 			event.setOriginId("Select: " + s.getText() + " from Part: "
