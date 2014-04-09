@@ -117,8 +117,8 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 // TODO: 给信息收集单例实例赋值
 		MessageCollector mcCollector = MessageCollector.getInstance();
-		// mcCollector.SetValues(message, methodQualifiedName, currentLineCode,
-		// methodCode, messageType);
+//		 mcCollector.SetValues(message, methodQualifiedName, currentLineCode,
+//		 methodCode, messageType);
 		mcCollector.setMessage(selectionContent);
 		
 		// 通知数据收集好，可以加工
@@ -131,12 +131,12 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				mcCollector.setMessageType("compile information from problems view");
 			}
 			
-			// 开启一个线程 处理
+			// 开启一个线程 处理 检索网络
 			
-			System.out
-					.println("start search web and running other process  ... ");
-			WebProcessing wp = new WebProcessing();
-			wp.start();
+//			System.out
+//					.println("start search web and running other process  ... ");
+//			WebProcessing wp = new WebProcessing();
+//			wp.start();
 		}
 //TODO: END 
 		

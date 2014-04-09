@@ -26,6 +26,8 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 			String kindString = "";
 			String detailString = "";
 			String originId = "Unspecified";
+			String actionName = "Unspecified";
+			
 			switch (kind) {
 			case DebugEvent.RESUME:
 				kindString = "Resume";
@@ -49,43 +51,56 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 			switch (detail) {
 			case DebugEvent.STEP_INTO:
 				detailString = "Setp Into";
+				actionName="StepInto";
 				break;
 			case DebugEvent.STEP_RETURN:
 				detailString = "Step Return";
+				actionName="StepReturn";
 				break;
 			case DebugEvent.STEP_END:
 				detailString = "Step End";
+				actionName="StepEnd";
 				break;
 			case DebugEvent.BREAKPOINT:
 				detailString = "Breakpoint";
+				actionName="Breakpoint";
 				break;
 			case DebugEvent.CLIENT_REQUEST:
 				detailString = "Client Request";
+				actionName="ClientRequest";
 				break;
 			case DebugEvent.EVALUATION:
 				detailString = "Evaluation";
+				actionName="Evaluation";
 				break;
 			case DebugEvent.EVALUATION_IMPLICIT:
 				detailString = "Evaluation Implicit";
+				actionName="EvaluationImplicit";
 				break;
 			case DebugEvent.STATE:
 				detailString = "State";
+				actionName="State";
 				break;
 			case DebugEvent.CONTENT:
 				detailString = "Content";
+				actionName="Content";
 				break;
 			}
 			if (kindString.equals("")) {
 				originId = "Kind: Unspecified, ";
+				actionName= "Kind: Unspecified";
 			} else {
 				originId = "Kind: " + kindString + ", ";
 			}
 			if (detailString.equals("")) {
 				originId += "Detail: Unspecified";
+				actionName="Detail: Unspecified";
 			} else {
 				originId += "Detail: " + detailString;
+				
 			}
 			e.setOriginId(originId);
+			e.setActionName(actionName);
 			DatabaseUtil.addInteractionEventToDatabase(e);
 		}
 	}

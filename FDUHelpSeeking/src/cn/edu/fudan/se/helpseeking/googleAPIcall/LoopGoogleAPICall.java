@@ -89,7 +89,7 @@ public class LoopGoogleAPICall {
 		}
 	}
 
-	public static List<WEBResult> searchWeb(String keywords) throws IOException {
+	public  List<WEBResult> searchWeb(String keywords) throws IOException {
 
 		List<WEBResult> results = new ArrayList<WEBResult>();
 

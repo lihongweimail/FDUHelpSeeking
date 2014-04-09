@@ -60,22 +60,27 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			switch (e.getElementType()) {
 			case IJavaElement.FIELD:
 				event.setOriginId("Add Field: " + e.getHandleIdentifier());
+				event.setActionName("AddField");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Add Method: " + m.getHandleIdentifier());
+				event.setActionName("AddMethod");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
+			
 				event.setOriginId("Add Import Declaration: "
 						+ id.getHandleIdentifier());
+					event.setActionName("AddImportDeclaration");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Add Class: " + t.getHandleIdentifier());
+				event.setActionName("AddClass");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
@@ -93,22 +98,26 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			switch (e.getElementType()) {
 			case IJavaElement.FIELD:
 				event.setOriginId("Delete Field: " + e.getHandleIdentifier());
+				event.setActionName("DeleteField");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Delete Method: " + m.getHandleIdentifier());
+				event.setActionName("DeleteMethod");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
 				event.setOriginId("Delete Import Declaration: "
 						+ id.getHandleIdentifier());
+				event.setActionName("DeleteImportDeclaration");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Delete Class: " + t.getHandleIdentifier());
+				event.setActionName("DeleteClass");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
@@ -122,22 +131,26 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			switch (e.getElementType()) {
 			case IJavaElement.FIELD:
 				event.setOriginId("Change Field: " + e.getHandleIdentifier());
+				event.setActionName("ChangeField");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Change Method: " + m.getHandleIdentifier());
+				event.setActionName("ChangeMethod");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
 				event.setOriginId("Change Import Declaration: "
 						+ id.getHandleIdentifier());
+				event.setActionName("ChangeImportDeclaration");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Change Class: " + t.getHandleIdentifier());
+				event.setActionName("ChangeClass");
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}

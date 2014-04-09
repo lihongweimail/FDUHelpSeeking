@@ -17,6 +17,9 @@ public class InteractionEvent {
 	private Date endDate = null;
 
 	private String originId = null;   //description
+	
+	private String actionName=null;
+
 
 	private String structureKind = null;
 
@@ -212,7 +215,7 @@ public class InteractionEvent {
 
 	@Override
 	public String toString() {
-		return "(date: " + date + ", kind: " + kind + ", sourceHandle: " + structureHandle + ", origin: " + originId //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		return "(date: " + date + ", kind: " + kind +",ActionName: "+actionName+ ", sourceHandle: " + structureHandle + ", origin: " + originId //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				+ ", delta: " + delta + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
@@ -263,6 +266,14 @@ public class InteractionEvent {
 		return originId;
 	}
 
+	public String getActionName() {
+		return actionName;
+	}
+
+	public void setActionName(String actionName) {
+		this.actionName = actionName;
+	}
+	
 	/**
 	 * @return If an aggregate event, amount of interest of all contained
 	 *         events.

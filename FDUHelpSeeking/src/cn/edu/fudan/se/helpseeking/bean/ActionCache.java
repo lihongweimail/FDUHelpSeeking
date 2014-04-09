@@ -1,7 +1,7 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
 public class ActionCache {
-	
+	int actionID;
 	Action action;
    public int getActionID() {
 		return actionID;
@@ -9,7 +9,7 @@ public class ActionCache {
 	public void setActionID(int actionID) {
 		this.actionID = actionID;
 	}
-int actionID;
+
 
 	public Action getAction() {
 		return action;

@@ -3,6 +3,8 @@ package cn.edu.fudan.se.helpseeking.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
+
 public class Cache {
 
 	ActionQueue actions=new ActionQueue();//包含滑动窗口
@@ -41,7 +43,7 @@ public class Cache {
 	public void setCurrentID(int currentID) {
 		this.currentID = currentID;
 	}
-	public void addInformation(Information information)
+	public void addInformationToCache(Information information)
 	{
 
 		InformationQueue infq=new InformationQueue();
@@ -72,6 +74,13 @@ public class Cache {
 		{
 			addExplorerRelated(information.getExplorerRelated(), currentID);
 		}
+		
+//		这里记得安排对每个新加入信息后的预处理处理
+//		使用线程
+		CacheProcessing cpThread=new CacheProcessing();
+		cpThread.run();
+		
+		
 	}
 
 	private void addExplorerRelated(ExplorerRelated explorerRelated,int informationID) {
@@ -94,9 +103,27 @@ public class Cache {
 		e.setEditCode(editCode);
 		e.setId(informationID);
 		editCodes.add(e);
-
-
 	}
+
+	public String findDebugCodeString(int actionID)
+	{   String str=" ";
+	    for (DebugCodeCache dcc : debugCodes) {
+			if (dcc.getId()==actionID) {
+				String breakpointstr=dcc.getDebugCode().getBreakpoint().getType()+" "+dcc.getDebugCode().getBreakpoint().getMethodQualifiedName();
+				String synctacticblockstr=dcc.getDebugCode().getSyntacticBlock().getType()+" "+dcc.getDebugCode().getSyntacticBlock().getCode();
+				String exceptionnamestr=dcc.getDebugCode().getSyntacticBlock().getExceptionName();
+				String classmodelstr=dcc.getDebugCode().getClassModel().getType()+" "+dcc.getDebugCode().getClassModel().getCode();
+				
+				str=str+
+			}
+		}
+	     
+	    
+	
+	     return str;
+		
+	}
+	
 	private void addDebugCode(DebugCode debugCode,int informationID) {
 		DebugCodeCache d=new DebugCodeCache();
 		d.setDebugCode(debugCode);

@@ -371,19 +371,38 @@ public class Basic {
 	
 	public enum EditAction {
 		
-		Add, 
-		Delete,Change,
+		AddField,AddMethod, AddImportDeclaration,AddClass,
+		DeleteField,DeleteMethod, DeleteImportDeclaration,DeleteClass,
+		ChangeField,ChangeMethod, ChangeImportDeclaration,ChangeClass,
 		ContentAssistSelected;
 	
 		@Override
 		public String toString() {
 			switch (this) {
-			case Add:
-				return "Add"; //$NON-NLS-1$
-			case Delete:
-				return "Delete"; //$NON-NLS-1$
-			case Change:
-				return "Change"; //$NON-NLS-1$
+			case AddField:
+				return "AddField"; //$NON-NLS-1$
+			case AddMethod:
+				return "AddMethod"; //$NON-NLS-1$
+			case AddImportDeclaration:
+				return "AddImportDeclaration"; //$NON-NLS-1$
+			case AddClass:
+				return "AddClass"; //$NON-NLS-1$
+			case DeleteField:
+				return "DeleteField"; //$NON-NLS-1$
+			case DeleteMethod:
+				return "DeleteMethod"; //$NON-NLS-1$
+			case DeleteImportDeclaration:
+				return "DeleteImportDeclaration"; //$NON-NLS-1$
+			case DeleteClass:
+				return "DeleteClass"; //$NON-NLS-1$
+			case ChangeField:
+				return "ChangeField"; //$NON-NLS-1$
+			case ChangeMethod:
+				return "ChangeMethod"; //$NON-NLS-1$
+			case ChangeImportDeclaration:
+				return "ChangeImportDeclaration"; //$NON-NLS-1$
+			case ChangeClass:
+				return "ChangeClass"; //$NON-NLS-1$
 			case ContentAssistSelected:
 				return "ContentAssistSelected"; //$NON-NLS-1$
 
@@ -393,8 +412,10 @@ public class Basic {
 		}
 
 		public  boolean isChooseAction() {
-			return this == Add || this == Delete 
-					|| this == Change || this == ContentAssistSelected;
+			return this == AddField || this == AddMethod || this == AddImportDeclaration || this == AddClass 
+					|| this == DeleteField || this == DeleteMethod || this == DeleteImportDeclaration || this == DeleteClass 
+					|| this == ChangeField || this == ChangeMethod || this == ChangeImportDeclaration || this == ChangeClass 
+					|| this == ContentAssistSelected;
 
 		}
 		/**
@@ -405,14 +426,41 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("Add")) { //$NON-NLS-1$
-				return Add;
+			if (string.equals("AddField")) { //$NON-NLS-1$
+				return AddField;
 			}
-			if (string.equals("Delete")) { //$NON-NLS-1$
-				return Delete;
+			if (string.equals("AddMethod")) { //$NON-NLS-1$
+				return AddMethod;
 			}
-			if (string.equals("Change")) { //$NON-NLS-1$
-				return Change;
+			if (string.equals("AddImportDeclaration")) { //$NON-NLS-1$
+				return AddImportDeclaration;
+			}
+			if (string.equals("AddClass")) { //$NON-NLS-1$
+				return AddClass;
+			}
+			if (string.equals("DeleteField")) { //$NON-NLS-1$
+				return DeleteField;
+			}
+			if (string.equals("DeleteMethod")) { //$NON-NLS-1$ 
+				return DeleteMethod;
+			}
+			if (string.equals("DeleteImportDeclaration")) { //$NON-NLS-1$
+				return DeleteImportDeclaration;
+			}
+			if (string.equals("DeleteClass")) { //$NON-NLS-1$
+				return DeleteClass;
+			}
+			if (string.equals("ChangeField")) { //$NON-NLS-1$
+				return ChangeField;
+			}
+			if (string.equals("ChangeMethod")) { //$NON-NLS-1$
+				return ChangeMethod;
+			}
+			if (string.equals("ChangeImportDeclaration")) { //$NON-NLS-1$
+				return ChangeImportDeclaration;
+			}
+			if (string.equals("ChangeClass")) { //$NON-NLS-1$
+				return ChangeClass;
 			}
 			if (string.equals("ContentAssistSelected")) { //$NON-NLS-1$
 				return ContentAssistSelected;

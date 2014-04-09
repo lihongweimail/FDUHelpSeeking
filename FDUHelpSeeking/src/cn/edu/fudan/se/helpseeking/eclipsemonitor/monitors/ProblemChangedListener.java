@@ -1,100 +1,109 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
-import org.eclipse.jdt.core.ISourceRange;
-import org.eclipse.jdt.core.ITypeRoot;
-import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.ASTNode;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.NodeFinder;
+import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
-import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
-import org.eclipse.jdt.internal.ui.javaeditor.JavaSourceViewer;
 import org.eclipse.jdt.internal.ui.viewsupport.IProblemChangedListener;
-import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jface.text.ITextSelection;
-import org.eclipse.jface.text.TextSelection;
-import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PlatformUI;
-
-import cn.edu.fudan.se.helpseeking.util.ASTUtil;
-import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 
 public class ProblemChangedListener extends AbstractUserActivityMonitor
 		implements IProblemChangedListener {
 
+	@SuppressWarnings("restriction")
 	@Override
 	public void problemsChanged(IResource[] changedResources,
 			boolean isMarkerChange) {
-		for (int i = 0; i < changedResources.length; i++) {
-			IEditorPart part = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage()
-					.getActiveEditor();
-			if (part instanceof CompilationUnitEditor) {
-				final CompilationUnitEditor ce = (CompilationUnitEditor) part;
-				ISourceViewer sv = ce.getViewer();
-				if (sv instanceof JavaSourceViewer) {
-					JavaSourceViewer jsv = (JavaSourceViewer) sv;
-					jsv.addPostSelectionChangedListener(new ISelectionChangedListener() {
-						@Override
-						public void selectionChanged(SelectionChangedEvent event) {
-							ISelection s = event.getSelection();
-							if (s instanceof TextSelection) {
-								ITextSelection ts = (ITextSelection) s;
-								ITypeRoot typeRoot = JavaUI
-										.getEditorInputTypeRoot(ce
-												.getEditorInput());
-								
-								
-								
-								ICompilationUnit icu = (ICompilationUnit) typeRoot
-										.getAdapter(ICompilationUnit.class);
-								CompilationUnit cu = ASTUtil.parse(icu);
-								
-								
-								try {
-									IJavaElement e = icu.getElementAt(ts
-											.getOffset());
+		try {
+			for (int i = 0; i < changedResources.length; i++) {
 
-									if (e != null) {
-										ContextUtil.setContext(e);
-										
-//										System.out.println("hongwei problem change:  "+e.toString());
-										
-										if (e.getElementType() == IJavaElement.METHOD) {
-											IMethod method = (IMethod) e;
-										} else if (e.getElementType() == IJavaElement.FIELD) {
-											IMethod method = (IMethod) e
-													.getAncestor(IJavaElement.METHOD);
-											if (method == null) {
-												return;
-											} else {
-											}
-										}
-									}
-								} catch (JavaModelException e) {
-									e.printStackTrace();
-								}
-
-							}
-						}
-					});
+				IResource resource = changedResources[i];
+				IJavaElement element = JavaCore.create(resource);
+				if (element.getElementType() < IJavaElement.COMPILATION_UNIT) {
+					break;
 				}
+				if (element.getElementType() > IJavaElement.COMPILATION_UNIT) {
+					element = element
+							.getAncestor(IJavaElement.COMPILATION_UNIT);
+				}
+				ICompilationUnit unit = (ICompilationUnit) element;
+				IMarker[] markers = resource.findMarkers(null, true,
+						IResource.DEPTH_ZERO);
+				System.out
+						.println("==================================\nResource #"
+								+ i);
+				for (int j = 0; j < markers.length; j++) {
+					IMarker m = markers[j];
+					System.out.println("\nFile: "
+							+ m.getResource().getLocation());
+					for (String s : m.getAttributes().keySet()) {
+						System.out.println("Attribute: " + s + ", Value: "
+								+ m.getAttributes().get(s));
+					}
+					IJavaElement e = unit.getElementAt(m.getAttribute(
+							"charStart", 0));
+					if (e.getElementType() >= IJavaElement.METHOD) {
+						e = e.getAncestor(IJavaElement.METHOD);
+						if (e == null) {
+							break;
+						}
+						IMethod method = (IMethod) e;
+						String severity = "";
+						switch (m.getAttribute("severity", 0)) {
+						case IMarker.SEVERITY_ERROR:
+							severity = "error";
+							break;
+						case IMarker.SEVERITY_WARNING:
+							severity = "warning";
+							break;
+						case IMarker.SEVERITY_INFO:
+							severity = "information";
+						}
+						System.out
+								.println("-----------------------------------------------------\nRelated Method: "
+										+ method.getElementName()
+										+ "\t\tSeverity Level: "
+										+ severity
+										+ "\t\tLine Number:"
+										+ m.getAttribute("lineNumber", 0)
+										+ "\nMethod Path: "
+										+ method.getPath()
+										+ "\nDescription of "
+										+ severity
+										+ ": "
+										+ m.getAttribute("message", "")
+										+ "\nChar Start:"
+										+ m.getAttribute("charStart", 0)
+										+ "\t\tChar End:"
+										+ m.getAttribute("charEnd", 0)
+										+ "\t\tArguments cause to "
+										+ severity
+										+ ":" + m.getAttribute("arguments", ""));
+						System.out.println("Source code of " + severity
+								+ " method "
+
+								+ method.getElementName() + ":");
+						System.out.println(method.getSource());
+						System.out.println();
+					}
+				}
+
 			}
 
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+
 	}
 
 	@Override
 	public void start() {
 		JavaPlugin.getDefault().getProblemMarkerManager().addListener(this);
+		System.out.println("Problems listener add!");
 		setEnabled(true);
 	}
 

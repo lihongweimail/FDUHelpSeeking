@@ -33,11 +33,14 @@ import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.DebugEventSetListener
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ElementChangedListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ExecutionListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.JobChangeListener;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.LaunchListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.PageListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.PartListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.PerspectiveListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ProblemChangedListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.PropertyChangeListener;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.RefactoringExecutionListener;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.RefactoringHistoryListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.ResourceChangeListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.SVNConsoleListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.SelectionListener;
@@ -153,6 +156,9 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin {
 			monitors.add(new TestRunListener());
 			monitors.add(new SVNConsoleListener());
 			monitors.add(new CVSConsoleListener());
+			monitors.add(new LaunchListener());
+			monitors.add(new RefactoringExecutionListener());
+			monitors.add(new RefactoringHistoryListener());
 			activityContextManager.init(monitors);
 			updateActivityTimeout();
 			activityContextManager.start();
