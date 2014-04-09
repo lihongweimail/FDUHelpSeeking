@@ -10,10 +10,16 @@ import org.eclipse.jdt.core.IField;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.dom.AST;
-import org.eclipse.jdt.core.dom.ASTParser;
+import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IBinding;
+import org.eclipse.jdt.core.dom.IMethodBinding;
+import org.eclipse.jdt.core.dom.MethodDeclaration;
+import org.eclipse.jdt.core.dom.MethodInvocation;
+import org.eclipse.jdt.core.dom.SimpleName;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jface.text.ITextSelection;
@@ -32,6 +38,7 @@ public class CodeUtil {
 		EditCode ec = new EditCode();
 		
 		//TODO exception name
+		String methodname = "";
 		SyntacticBlock sblock = new SyntacticBlock();
 		try {
 			IJavaElement element = unit.getElementAt(s.getOffset());
@@ -41,33 +48,97 @@ public class CodeUtil {
 			}else if(element instanceof IMethod){
 				sblock.setType("Method");
 				sblock.setCode(((IMethod) element).getSource());
-				((IMethod) element).getDeclaringType().getPackageFragment().getElementName();
+				methodname = ((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName() + "." + ((IMethod) element).getDeclaringType().getElementName()
+						+ "." + ((IMethod) element).getElementName();
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}		
 		ec.setSyntacticBlock(sblock);
 		
-		//TOODO 
+		//TODO internalCaller upClass
 		ClassModel cmodel = new ClassModel();
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
-		ASTParser parser = ASTParser.newParser(AST.JLS4);
-		parser.setKind(ASTParser.K_COMPILATION_UNIT);
-		parser.setSource(cmodel.getCode().toCharArray());
-		parser.setResolveBindings(true);
-		CompilationUnit cu = (CompilationUnit) parser.createAST(null);
-		List <String> internalCallee = new ArrayList<>();
-		List <String> belowClass = new ArrayList<>();
+		
+		final CompilationUnit cu = ASTUtil.parse(unit);
+		final ArrayList<ASTNode> nodes = new ArrayList<>();
+		final ArrayList<Integer> linenumbers = new ArrayList<>();
 		cu.accept(new ASTVisitor() {
-			
+			public boolean visit(FieldDeclaration node) {       
+	            int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
+	            nodes.add(node);
+	            linenumbers.add(lineNumber);
+	            return true;
+	        }
+			public boolean visit(MethodDeclaration node) {       
+	            int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
+	            nodes.add(node);
+	            linenumbers.add(lineNumber);
+	            return true;
+	        }
 		});
+		int index = 0;
+		for(Integer linenumber : linenumbers){
+			if(linenumber <= s.getStartLine()){
+				index = linenumbers.indexOf(linenumber);
+			}else if(linenumber > s.getStartLine())
+				break;
+		}
+		ASTNode node = nodes.get(index);
+		
+		final List <String> internalCallee = new ArrayList<>();
+		final List <String> belowClass = new ArrayList<>();
+		node.accept(new ASTVisitor() {
+			public boolean visit(SimpleName name) {
+				IBinding binding = name.resolveBinding();
+				IJavaElement element = binding.getJavaElement();
+				if(element instanceof IField){
+					internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IField) element).getDeclaringType()
+							.getElementName() + "." + ((IField) element).getElementName());
+					belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IField) element).getDeclaringType()
+							.getElementName());
+				}
+				return true;
+			}
+			public boolean visit(MethodInvocation method) {
+				IMethodBinding binding = method.resolveMethodBinding();
+				IJavaElement element = binding.getJavaElement();
+				if (element instanceof IMethod) {
+					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IMethod) element).getDeclaringType()
+							.getElementName() + "." + ((IMethod) element).getElementName());
+					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IMethod) element).getDeclaringType()
+							.getElementName());
+				}
+				return true;
+			}
+			public boolean visit(ClassInstanceCreation creation) {
+				IMethodBinding binding = creation.resolveConstructorBinding();
+				IJavaElement element = binding.getJavaElement();
+				if (element instanceof IMethod) {
+					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IMethod) element).getDeclaringType()
+							.getElementName() + "." + ((IMethod) element).getElementName());
+					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IMethod) element).getDeclaringType()
+							.getElementName());
+				}
+				return true;
+			}
+		});
+		
 		cmodel.setBelowClass(belowClass);
 		cmodel.setInternalCallee(internalCallee);
 		ec.setClassModel(cmodel);
 		
 		Cursor c = new Cursor();
 		c.setLineNo(s.getStartLine());
+		c.setMethodQualifiedName(methodname);
 		ec.setCursor(c);
 		
 		return ec;		
@@ -77,30 +148,116 @@ public class CodeUtil {
 		DebugCode dc = new DebugCode();
 		
 		Breakpoint bpoint = new Breakpoint();
-		if(bp instanceof JavaLineBreakpoint){
+		if(bp instanceof JavaMethodBreakpoint){
+			bpoint.setType("Method");
+			try {
+				bpoint.setLineNo(((JavaMethodBreakpoint) bp).getLineNumber());
+				bpoint.setMethodQualifiedName(((JavaMethodBreakpoint) bp).getTypeName() + "." 
+						+ ((JavaMethodBreakpoint) bp).getMethodName());
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}else if(bp instanceof JavaLineBreakpoint){
 			bpoint.setType("Line");
 			try {
 				bpoint.setLineNo(((JavaLineBreakpoint) bp).getLineNumber());
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
-		}else if(bp instanceof JavaMethodBreakpoint){
-			bpoint.setType("Method");
-			try {
-				bpoint.setLineNo(((JavaMethodBreakpoint) bp).getLineNumber());
-				System.out.println(((JavaMethodBreakpoint) bp).getTypeName());
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-			//TODO method name
-			bpoint.setMethodQualifiedName("");
 		}
 		dc.setBreakpoint(bpoint);
 		
-		SyntacticBlock sBlock = new SyntacticBlock();
-		dc.setSyntacticBlock(sBlock);
+		final CompilationUnit cu = ASTUtil.parse(unit);
+		final ArrayList<ASTNode> nodes = new ArrayList<>();
+		final ArrayList<Integer> linenumbers = new ArrayList<>();
+		cu.accept(new ASTVisitor() {
+			public boolean visit(FieldDeclaration node) {       
+	            int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
+	            nodes.add(node);
+	            linenumbers.add(lineNumber);
+	            return true;
+	        }
+			public boolean visit(MethodDeclaration node) {       
+	            int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
+	            nodes.add(node);
+	            linenumbers.add(lineNumber);
+	            return true;
+	        }
+		});
+		int index = 0;
+		for(Integer linenumber : linenumbers){
+			if(linenumber <= bpoint.getLineNo()){
+				index = linenumbers.indexOf(linenumber);
+			}else if(linenumber > bpoint.getLineNo())
+				break;
+		}
+		ASTNode node = nodes.get(index);
 		
+		//TODO exception name
+		SyntacticBlock sblock = new SyntacticBlock();
+		try {
+			IJavaElement element = unit.getElementAt(node.getStartPosition());
+			if(element instanceof IField){
+				sblock.setType("Field");
+				sblock.setCode(((IField) element).getSource());				
+			}else if(element instanceof IMethod){
+				sblock.setType("Method");
+				sblock.setCode(((IMethod) element).getSource());
+			}
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		dc.setSyntacticBlock(sblock);
+		
+		//TODO internalCaller upClass
 		ClassModel cmodel = new ClassModel();
+		cmodel.setType(sblock.getType());
+		cmodel.setCode(sblock.getCode());
+		final List <String> internalCallee = new ArrayList<>();
+		final List <String> belowClass = new ArrayList<>();
+		node.accept(new ASTVisitor() {
+			public boolean visit(SimpleName name) {
+				IBinding binding = name.resolveBinding();
+				IJavaElement element = binding.getJavaElement();
+				if(element instanceof IField){
+					internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IField) element).getDeclaringType()
+							.getElementName() + "." + ((IField) element).getElementName());
+					belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
+							.getElementName() + "." + ((IField) element).getDeclaringType()
+							.getElementName());
+				}
+				return true;
+			}
+			public boolean visit(MethodInvocation method) {
+				IMethodBinding binding = method.resolveMethodBinding();
+				IJavaElement element = binding.getJavaElement();
+				if(element instanceof IMethod){
+					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName() + "." + ((IMethod) element).getDeclaringType()
+						.getElementName() + "." + ((IMethod) element).getElementName());
+					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName() + "." + ((IMethod) element).getDeclaringType()
+						.getElementName());
+				}
+				return true;
+	        }
+			public boolean visit(ClassInstanceCreation creation){
+				IMethodBinding binding = creation.resolveConstructorBinding();
+				IJavaElement element = binding.getJavaElement();
+				if(element instanceof IMethod){
+					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName() + "." + ((IMethod) element).getDeclaringType()
+						.getElementName() + "." + ((IMethod) element).getElementName());
+					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName() + "." + ((IMethod) element).getDeclaringType()
+						.getElementName());
+				}
+				return true;
+			}
+		});
+		cmodel.setBelowClass(belowClass);
+		cmodel.setInternalCallee(internalCallee);
 		dc.setClassModel(cmodel);
 			
 		return dc;

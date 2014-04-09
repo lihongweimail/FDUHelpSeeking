@@ -38,15 +38,15 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
-					if (breakpoint instanceof JavaLineBreakpoint) {
-						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
-						e.setLineno(String.valueOf(bp.getLineNumber()));
-						e.setOriginId("Add a breakpoint at line "
-								+ bp.getLineNumber());
-					} else if (breakpoint instanceof JavaMethodBreakpoint) {
+					if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Add a method breakpoint at line "
+								+ bp.getLineNumber());
+					} else if (breakpoint instanceof JavaLineBreakpoint) {
+						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
+						e.setLineno(String.valueOf(bp.getLineNumber()));
+						e.setOriginId("Add a breakpoint at line "
 								+ bp.getLineNumber());
 					}
 					IResource resource = breakpoint.getMarker().getResource();
@@ -62,7 +62,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setActionName("Add Breakpoint");
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
-					//DatabaseUtil.addInformationToDatabase(info);
+					DatabaseUtil.addInformationToDatabase(info);
 					//DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -93,7 +93,21 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setOriginId("Delete a method breakpoint at line "
 								+ bp.getLineNumber());
 					}
-					DatabaseUtil.addInteractionEventToDatabase(e);
+					IResource resource = breakpoint.getMarker().getResource();
+					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
+
+					Information info = new Information();
+					info.setType("DebugCode");
+					info.setDebugCode(CodeUtil.createDebugCodeByBreakpoint(icu, breakpoint));
+					Action action = new Action();
+					action.setTime(new Timestamp(System.currentTimeMillis()));
+					action.setByuser(true);
+					action.setActionKind(e.getKind());
+					action.setActionName("Add Breakpoint");
+					action.setDescription(e.getOriginId());
+					info.setAction(action);
+					DatabaseUtil.addInformationToDatabase(info);
+					//DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
@@ -123,7 +137,21 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setOriginId("Change a method breakpoint at line "
 								+ bp.getLineNumber());
 					}
-					DatabaseUtil.addInteractionEventToDatabase(e);
+					IResource resource = breakpoint.getMarker().getResource();
+					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
+
+					Information info = new Information();
+					info.setType("DebugCode");
+					info.setDebugCode(CodeUtil.createDebugCodeByBreakpoint(icu, breakpoint));
+					Action action = new Action();
+					action.setTime(new Timestamp(System.currentTimeMillis()));
+					action.setByuser(true);
+					action.setActionKind(e.getKind());
+					action.setActionName("Add Breakpoint");
+					action.setDescription(e.getOriginId());
+					info.setAction(action);
+					DatabaseUtil.addInformationToDatabase(info);
+					//DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
