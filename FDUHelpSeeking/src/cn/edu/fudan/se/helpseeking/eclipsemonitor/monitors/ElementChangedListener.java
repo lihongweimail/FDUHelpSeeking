@@ -1,5 +1,6 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,8 +15,11 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
+import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -40,8 +44,8 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 	}
 
 	protected void processDelta(IJavaElementDelta delta) {
-		int kind = delta.getKind();
-		int flags = delta.getFlags();
+		//int kind = delta.getKind();
+		//int flags = delta.getFlags();
 		List<IJavaElementDelta> additions = new ArrayList<IJavaElementDelta>();
 		List<IJavaElementDelta> deletions = new ArrayList<IJavaElementDelta>();
 		List<IJavaElementDelta> changes = new ArrayList<IJavaElementDelta>();
@@ -61,27 +65,79 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			case IJavaElement.FIELD:
 				event.setOriginId("Add Field: " + e.getHandleIdentifier());
 				event.setActionName("AddField");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information fieldInfo = new Information();
+				fieldInfo.setType("EditCode");
+				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action fieldAction = new Action();
+				fieldAction.setTime(new Timestamp(System.currentTimeMillis()));
+				fieldAction.setActionKind(event.getKind());
+				fieldAction.setActionName(event.getActionName());
+				fieldAction.setDescription(event.getOriginId());
+				fieldAction.setByuser(true);
+				fieldInfo.setAction(fieldAction);
+				DatabaseUtil.addInformationToDatabase(fieldInfo);
+		
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Add Method: " + m.getHandleIdentifier());
 				event.setActionName("AddMethod");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information methodInfo = new Information();
+				methodInfo.setType("EditCode");
+				methodInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action methodAction = new Action();
+				methodAction.setTime(new Timestamp(System.currentTimeMillis()));
+				methodAction.setActionKind(event.getKind());
+				methodAction.setActionName(event.getActionName());
+				methodAction.setDescription(event.getOriginId());
+				methodAction.setByuser(true);
+				methodInfo.setAction(methodAction);
+				DatabaseUtil.addInformationToDatabase(methodInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
 			
 				event.setOriginId("Add Import Declaration: "
 						+ id.getHandleIdentifier());
-					event.setActionName("AddImportDeclaration");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				event.setActionName("AddImportDeclaration");
+					
+				Information importInfo = new Information();
+				importInfo.setType("EditCode");
+				importInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action importAction = new Action();
+				importAction.setTime(new Timestamp(System.currentTimeMillis()));
+				importAction.setActionKind(event.getKind());
+				importAction.setActionName(event.getActionName());
+				importAction.setDescription(event.getOriginId());
+				importAction.setByuser(true);
+				importInfo.setAction(importAction);
+				DatabaseUtil.addInformationToDatabase(importInfo);	
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Add Class: " + t.getHandleIdentifier());
 				event.setActionName("AddClass");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information typeInfo = new Information();
+				typeInfo.setType("EditCode");
+				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action typeAction = new Action();
+				typeAction.setTime(new Timestamp(System.currentTimeMillis()));
+				typeAction.setActionKind(event.getKind());
+				typeAction.setActionName(event.getActionName());
+				typeAction.setDescription(event.getOriginId());
+				typeAction.setByuser(true);
+				typeInfo.setAction(typeAction);
+				DatabaseUtil.addInformationToDatabase(typeInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}
@@ -99,26 +155,78 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			case IJavaElement.FIELD:
 				event.setOriginId("Delete Field: " + e.getHandleIdentifier());
 				event.setActionName("DeleteField");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information fieldInfo = new Information();
+				fieldInfo.setType("EditCode");
+				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action fieldAction = new Action();
+				fieldAction.setTime(new Timestamp(System.currentTimeMillis()));
+				fieldAction.setActionKind(event.getKind());
+				fieldAction.setActionName(event.getActionName());
+				fieldAction.setDescription(event.getOriginId());
+				fieldAction.setByuser(true);
+				fieldInfo.setAction(fieldAction);
+				DatabaseUtil.addInformationToDatabase(fieldInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Delete Method: " + m.getHandleIdentifier());
 				event.setActionName("DeleteMethod");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information methodInfo = new Information();
+				methodInfo.setType("EditCode");
+				methodInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action methodAction = new Action();
+				methodAction.setTime(new Timestamp(System.currentTimeMillis()));
+				methodAction.setActionKind(event.getKind());
+				methodAction.setActionName(event.getActionName());
+				methodAction.setDescription(event.getOriginId());
+				methodAction.setByuser(true);
+				methodInfo.setAction(methodAction);
+				DatabaseUtil.addInformationToDatabase(methodInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
 				event.setOriginId("Delete Import Declaration: "
 						+ id.getHandleIdentifier());
 				event.setActionName("DeleteImportDeclaration");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information importInfo = new Information();
+				importInfo.setType("EditCode");
+				importInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action importAction = new Action();
+				importAction.setTime(new Timestamp(System.currentTimeMillis()));
+				importAction.setActionKind(event.getKind());
+				importAction.setActionName(event.getActionName());
+				importAction.setDescription(event.getOriginId());
+				importAction.setByuser(true);
+				importInfo.setAction(importAction);
+				DatabaseUtil.addInformationToDatabase(importInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Delete Class: " + t.getHandleIdentifier());
 				event.setActionName("DeleteClass");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information typeInfo = new Information();
+				typeInfo.setType("EditCode");
+				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action typeAction = new Action();
+				typeAction.setTime(new Timestamp(System.currentTimeMillis()));
+				typeAction.setActionKind(event.getKind());
+				typeAction.setActionName(event.getActionName());
+				typeAction.setDescription(event.getOriginId());
+				typeAction.setByuser(true);
+				typeInfo.setAction(typeAction);
+				DatabaseUtil.addInformationToDatabase(typeInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}
@@ -132,26 +240,78 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			case IJavaElement.FIELD:
 				event.setOriginId("Change Field: " + e.getHandleIdentifier());
 				event.setActionName("ChangeField");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information fieldInfo = new Information();
+				fieldInfo.setType("EditCode");
+				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action fieldAction = new Action();
+				fieldAction.setTime(new Timestamp(System.currentTimeMillis()));
+				fieldAction.setActionKind(event.getKind());
+				fieldAction.setActionName(event.getActionName());
+				fieldAction.setDescription(event.getOriginId());
+				fieldAction.setByuser(true);
+				fieldInfo.setAction(fieldAction);
+				DatabaseUtil.addInformationToDatabase(fieldInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Change Method: " + m.getHandleIdentifier());
 				event.setActionName("ChangeMethod");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information methodInfo = new Information();
+				methodInfo.setType("EditCode");
+				methodInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action methodAction = new Action();
+				methodAction.setTime(new Timestamp(System.currentTimeMillis()));
+				methodAction.setActionKind(event.getKind());
+				methodAction.setActionName(event.getActionName());
+				methodAction.setDescription(event.getOriginId());
+				methodAction.setByuser(true);
+				methodInfo.setAction(methodAction);
+				DatabaseUtil.addInformationToDatabase(methodInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
 				event.setOriginId("Change Import Declaration: "
 						+ id.getHandleIdentifier());
 				event.setActionName("ChangeImportDeclaration");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information importInfo = new Information();
+				importInfo.setType("EditCode");
+				importInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action importAction = new Action();
+				importAction.setTime(new Timestamp(System.currentTimeMillis()));
+				importAction.setActionKind(event.getKind());
+				importAction.setActionName(event.getActionName());
+				importAction.setDescription(event.getOriginId());
+				importAction.setByuser(true);
+				importInfo.setAction(importAction);
+				DatabaseUtil.addInformationToDatabase(importInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Change Class: " + t.getHandleIdentifier());
 				event.setActionName("ChangeClass");
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				Information typeInfo = new Information();
+				typeInfo.setType("EditCode");
+				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
+				Action typeAction = new Action();
+				typeAction.setTime(new Timestamp(System.currentTimeMillis()));
+				typeAction.setActionKind(event.getKind());
+				typeAction.setActionName(event.getActionName());
+				typeAction.setDescription(event.getOriginId());
+				typeAction.setByuser(true);
+				typeInfo.setAction(typeAction);
+				DatabaseUtil.addInformationToDatabase(typeInfo);
+				
+				//DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}
