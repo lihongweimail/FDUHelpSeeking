@@ -103,7 +103,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
-					action.setActionName("Add Breakpoint");
+					action.setActionName("Remove Breakpoint");
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
@@ -147,7 +147,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
-					action.setActionName("Add Breakpoint");
+					action.setActionName("Change Breakpoint");
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
