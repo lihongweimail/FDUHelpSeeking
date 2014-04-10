@@ -38,7 +38,7 @@ public class TokenExtractorTest {
 //		    	    
 //		     posts.add(post2);
 	     
-		List<String> myposts= tokenExtractor.analysis(posts);
+		List<String> myposts= tokenExtractor.analysis(postContentString);
 		
 		for(String postDataType : myposts)
 		{

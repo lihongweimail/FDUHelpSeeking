@@ -2,6 +2,7 @@ package cn.edu.fudan.se.helpseeking.bean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observable;
 
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 
@@ -19,6 +20,7 @@ public class Cache {
 	List<IDEOutputCache> ideOutputs=new ArrayList<IDEOutputCache>();
 	List<ExplorerRelatedCache> explorerRelateds=new ArrayList<ExplorerRelatedCache>();
 	ClassModel currentClassModel=new ClassModel();
+	List<String> currentKeywordsList=new ArrayList<String>();
 
 //单例实现
 	private Cache()
@@ -75,7 +77,8 @@ public class Cache {
 			addExplorerRelated(information.getExplorerRelated(), currentID);
 		}
 		
-//		这里记得安排对每个新加入信息后的预处理处理
+//		这里记得安排对每个新加入信息后的预处理处理(如有必要)
+		
 //		使用线程
 		CacheProcessing cpThread=new CacheProcessing();
 		cpThread.run();
@@ -104,8 +107,61 @@ public class Cache {
 		e.setId(informationID);
 		editCodes.add(e);
 	}
+	
+public DebugCode findDebugCodeWithID(int ID)
+{
+	DebugCode dc=null;
+	
+	for (DebugCodeCache dcc : getDebugCodes()) {
+       if (dcc.id==ID) {
+		dc=dcc.getDebugCode();
+		break;
+	}
+	
+	}
+		return dc;
+}
 
-	public String findDebugCodeString(int actionID)
+public EditCode findEditCodeWithID(int ID)
+{
+	EditCode ec=null;
+	for (EditCodeCache ecc : getEditCodes()) {
+       if (ecc.id==ID) {
+		ec=ecc.getEditCode();
+		break;
+	}
+	
+	}
+		return ec;
+}
+	
+public IDEOutput findIdeOutputWithID(int ID)
+{
+	IDEOutput ideop=null;
+	for (IDEOutputCache ideopc : getIdeOutputs()) {
+		if (ideopc.id==ID) {
+			ideop=ideopc.getIdeOutput();
+			break;
+					
+		}
+	}
+	return ideop;
+}
+
+public ExplorerRelated findExplorerRelatedWithID(int ID)
+{
+	ExplorerRelated er=null;
+	for (ExplorerRelatedCache erc : getExplorerRelateds()) {
+		if (erc.id==ID) {
+			er=erc.getExplorerRelated();
+			break;
+		}
+	}
+	return er;
+}
+
+
+	public String findDebugCodeString(int actionID,int mode )
 	{   String str=" ";
 	    for (DebugCodeCache dcc : debugCodes) {
 			if (dcc.getId()==actionID) {
@@ -205,6 +261,24 @@ public class Cache {
 	}
 	public void setCurrentClassModel(ClassModel currentClassModel) {
 		this.currentClassModel = currentClassModel;
+	}
+	public ActionQueue getActions() {
+		return actions;
+	}
+	public List<DebugCodeCache> getDebugCodes() {
+		return debugCodes;
+	}
+	public List<EditCodeCache> getEditCodes() {
+		return editCodes;
+	}
+	public List<IDEOutputCache> getIdeOutputs() {
+		return ideOutputs;
+	}
+	public List<ExplorerRelatedCache> getExplorerRelateds() {
+		return explorerRelateds;
+	}
+	public List<String> getCurrentKeywordsList() {
+		return currentKeywordsList;
 	}
 
 

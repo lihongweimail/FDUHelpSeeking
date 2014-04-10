@@ -30,7 +30,7 @@ public class FudanIdentifierNameTokeniser
 
 	private IdentifierNameTokeniser identifierNametokeniser;
 	private boolean isIgnoreCase=true;
-	private String[] keyWords;
+	private List<String> keyWords=new ArrayList<String>();
 	private int minLength =2;
 	
 	
@@ -59,7 +59,18 @@ public class FudanIdentifierNameTokeniser
 	     String tempKeyWords1 = FileHelper.getContent(stopfileName);
 	     String tempKeyWords2 = FileHelper.getContent(userStopFileName);
 	     
-	     keyWords=(tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING);
+	     keyWords=CommUtil.arrayToList((tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING));
+	     for (int i = 0; i < keyWords.size()-1; i++) {
+			for (int j = i+1; j < keyWords.size(); j++) {
+				if ((keyWords.get(i).trim()).equals(keyWords.get(j).trim())) {
+					
+//					System.out.println("remove word: "+keyWords.get(j)+" j="+j);
+					keyWords.remove(j);
+					j=j-1;
+				}
+			}
+			
+		}
 	    	 
 	    		
        //  System.out.println("stop list debug!");
@@ -89,14 +100,6 @@ public class FudanIdentifierNameTokeniser
 	}
 
 	
-	public void setFilterString(ArrayList<String> fileStrings)
-	{
-		for(String keyword : keyWords)
-		{
-			fileStrings.add(keyword);
-		}
-		keyWords = (String[]) fileStrings.toArray();
-	}
 	
 	public void setMinTokenLength(int minLength)
 	{
@@ -151,15 +154,31 @@ public class FudanIdentifierNameTokeniser
 				{
 					token = token.toLowerCase();		
 				}	
-                
-				result.add(token);
+                boolean flage=false;
+				for (String keyword : keyWords) {
+					if (token.trim().equals(keyword.trim())) {
+//						System.out.println("not add keyword:"+ token);
+						flage=true;
+						break;
+					}
+				}
+				
+				if (!flage) {
+						result.add(token);
+				}
+			
 			}
 		}				
-		for(String keyword : keyWords)
-		{
-			result.remove(keyword);
-		}
-			
+//		for(String keyword : keyWords)
+//		{
+//			
+//			result.remove(keyword);
+//		}
+//			
 		return result;		
 	}	
+	
+	
+	
+	
 }

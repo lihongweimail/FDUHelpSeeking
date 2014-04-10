@@ -63,6 +63,17 @@ public class CommUtil
 		return result.trim();
 	}
 	
+
+	public static List<String> arrayToList(String[] strContent)
+	{
+		List<String> result = new ArrayList<String>();
+		for(String str : strContent)
+		{
+			if(str.trim().length()>0)
+				result.add(str);			
+		}
+		return result;
+	}
 	
 	public static List<String> stringToList(String strContent)
 	{

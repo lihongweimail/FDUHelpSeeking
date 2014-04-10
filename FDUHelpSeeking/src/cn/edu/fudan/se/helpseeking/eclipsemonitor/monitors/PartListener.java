@@ -105,6 +105,8 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.contentassist.ContentAssistEvent;
 import org.eclipse.jface.text.contentassist.ICompletionListener;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.text.source.IAnnotationModelListener;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1358,6 +1360,14 @@ public class PartListener extends AbstractUserActivityMonitor implements
 						}
 					}
 				});
+				jsv.getVisualAnnotationModel().addAnnotationModelListener(new IAnnotationModelListener() {
+					
+					@Override
+					public void modelChanged(IAnnotationModel model) {
+						System.out.println(model.getAnnotationIterator().toString());
+						
+					}
+				});
 				IDocument doc = jsv.getDocument();
 
 				doc.addDocumentListener(new IDocumentListener() {
@@ -1379,6 +1389,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 					}
 				});
 				StyledText st = jsv.getTextWidget();
+				
 				st.addKeyListener(new KeyListener() {
 
 					@Override

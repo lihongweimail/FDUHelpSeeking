@@ -4,19 +4,26 @@ public class RuntimeInformation {
 	
 //	运行时信息：
 //	需要考虑如何从console中的输出中区分type： 
-//	framework message 
-//  program output
-//  exceptional message（*这个信息更重要）
+//	1 framework message 
+//  2 program output
+//  3 exceptional message（*这个信息更重要）
+	public enum RuntimeInfoType {
+		FrameWorkMessage,
+		ProgramOutput,
+		ExceptionalMessage
+	}
+
 	
-	String type;
+	RuntimeInfoType type;
 	String content;
 	String relatedCode;  //	Related code： 暂时取代码行
 	
 	
-	public String getType() {
+
+	public RuntimeInfoType getType() {
 		return type;
 	}
-	public void setType(String type) {
+	public void setType(RuntimeInfoType type) {
 		this.type = type;
 	}
 	public String getContent() {

@@ -22,3 +22,6 @@
 			wp.start();
 		}
 //TODO: END 
+
+
+ com.google.gson;bundle-version="2.1.0",

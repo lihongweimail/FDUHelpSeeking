@@ -32,6 +32,7 @@
       <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
+            icon="icons/abstract.gif"
             id="HelpSeekingSearchView"
             name="Help Seeking Search View"
             restorable="true">

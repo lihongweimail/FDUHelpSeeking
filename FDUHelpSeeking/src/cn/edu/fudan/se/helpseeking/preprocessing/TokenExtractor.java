@@ -7,24 +7,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
-import cn.edu.fudan.se.bean.TokenInFile;
-import cn.edu.fudan.se.bean.ast.CLass;
-import cn.edu.fudan.se.bean.ast.Method;
-import cn.edu.fudan.se.dal.DBHelper;
-import cn.edu.fudan.se.dal.TokenDAL;
-import cn.edu.fudan.se.util.ASTUtil;
-import cn.edu.fudan.se.util.CommUtil;
-import cn.edu.fudan.se.util.FileHelper;
-import cn.edu.fudan.se.util.INIHelper;
-import cn.edu.fudan.se.util.MicroLog;
-import cn.edu.fudan.se.util.WordNetDict;
+import cn.edu.fudan.se.helpseeking.util.FileHelper;
+import cn.edu.fudan.se.helpseeking.util.WordNetDict;
+
 
 public class TokenExtractor
 {
 
-	List<TokenInFile> tokenList;
+	List<String> tokenList=new ArrayList<String>();
 	
 
 	private boolean isAcceptReduplication = false;
@@ -32,103 +23,37 @@ public class TokenExtractor
 	boolean isAcceptAlphabet = true;
 	boolean isAcceptDigit = false;
 
-	public void analysis(List<String> fileList, String projectName)
+	public List<String>  analysis(String tokenString)
 	{
-		tokenList = new ArrayList<TokenInFile>();
-		List<String> fileMapList = new ArrayList<String>();
-		INIHelper iniHelper = new INIHelper(CommUtil.getCurrentProjectPath()
-				+ "\\conf.ini");
-		String fileMapName = iniHelper.getValue("IDENTIFIEREXTRACTOR",
-				"fileMapName", "");
-		fileMapName = CommUtil.getCurrentProjectPath() + "\\" + fileMapName;
+		List<String> tokens=new ArrayList<String>();
 		TokenExtractor tokenExtractor = new TokenExtractor();
 		tokenExtractor.isAcceptAlphabet(true);
 		tokenExtractor.isAcceptDigit(false);
-		for (String fileName : fileList)
-		{
-			TokenInFile newTokens = new TokenInFile();
-			newTokens.setFileName(fileName);
-			newTokens.setProjectName(projectName);
-			newTokens.setTokens(tokenExtractor
-					.getIdentifierOccurenceOfDocument(fileName));
-			newTokens.setContent(FileHelper.getContent(fileName));
-			tokenList.add(newTokens);
-			fileMapList.add(fileName);
-
-		}
-		writeToFileMap(fileMapName, fileMapList);
+		tokens=tokenExtractor.getIdentifierOccurenceOfString(tokenString);		
+		setTokens(tokens);
+		return  tokens;
+		
 	}
 
 
-	// add function for only keep noun and verb words 2011-11-28
+	
 
-	public void processTokenOnlyNounsVerbs()
+	public  List <String> processTokenOnlyNounsVerbs()
 	{
+	    List <String> newTokens=new ArrayList<String>();
 
-		for (TokenInFile currentTokenInFile : tokenList)
+		for (String currentString : tokenList)
 		{
-			List<String> tokens = currentTokenInFile.getTokens();
-			List<String> newTokens = new ArrayList<>();
-			String word;
-			for (int i = 0; i < tokens.size(); i++)
-			{
-				word = tokens.get(i);
-				String tempString = WordNetDict.getInstance().getNounsOrVerbs(
-						word);
+			String tempString = WordNetDict.getInstance().getNounsOrVerbs(currentString);
 				if (tempString != null)
 				{
 					newTokens.add(tempString);
 				}
-			}
-			currentTokenInFile.setTokens(newTokens);
 		}
 
+		return newTokens;
 	}
 	    
-	public void addClassAndMethodIdentification(List<CLass> classList)
-	{
-		for (TokenInFile curTokenInFile : tokenList)
-		{
-			CLass oClass = ASTUtil.getClassByFileName(curTokenInFile.getFileName(), classList);
-			if(oClass == null)
-			{
-				MicroLog.log(Level.INFO, "can't find the class by className " + curTokenInFile.getFileName());
-				continue;
-			}
-			List <String> tokens= curTokenInFile.getTokens();
-			List<Method> methodsList= oClass.getMethods();
-			int countOfMethod=methodsList.size();
-			
-			for (int i=0; i< countOfMethod;i++)
-			{
-				tokens.add(methodsList.get(i).getName().toString());
-				tokens.add(oClass.getName().toString());		
-			}		
-			
-		}
-	}
-
-	
-	
-	public List<String> getTokensOfString(String tokenString)
-	{
-		List<String> content = new ArrayList<String>();
-		FudanIdentifierNameTokeniserFactory factory = new FudanIdentifierNameTokeniserFactory();
-		FudanIdentifierNameTokeniser tokeniser = new FudanIdentifierNameTokeniser(
-				factory.create());
-		tokeniser.setMinTokenLength(2);
-		List<String> tokens;
-
-		tokens = tokeniser.tokeniseOnly(tokenString);
-		for (String token : tokens)
-		{
-			if (isStringAccepted(content, token))
-				content.add(token);
-		}
-
-		return content;
-	}
-
 	
 	public List<String> getIdentifierOccurenceOfString(String tokenString)
 	{
@@ -137,6 +62,7 @@ public class TokenExtractor
 		FudanIdentifierNameTokeniser tokeniser = new FudanIdentifierNameTokeniser(
 				factory.create());
 		tokeniser.setMinTokenLength(2);
+		
 		List<String> tokens;
 
 		tokens = tokeniser.tokenise(tokenString);
@@ -184,7 +110,9 @@ public class TokenExtractor
 		return content;
 	}
 
-	public List<TokenInFile> getTokens()
+	
+	
+	public List<String> getTokens()
 	{
 		return tokenList;
 	}
@@ -218,12 +146,12 @@ public class TokenExtractor
 	}
 
 
-	public void setTokens(List<TokenInFile> tokenList)
+	public void setTokens(List<String> tokenList)
 	{
 		this.tokenList = tokenList;
 	}
 
-	public void writeToFile(List<TokenInFile> list, String fileName)
+	public void writeToFile(List<String> list, String fileName)
 	{
 		FileHelper.createFile(fileName);
 		PrintWriter outputStream = null;
@@ -231,9 +159,9 @@ public class TokenExtractor
 		{
 			outputStream = new PrintWriter(fileName);
 			outputStream.println(tokenList.size());
-			for (TokenInFile tokens : tokenList)
+			for (String tokens : tokenList)
 			{
-				outputStream.println(CommUtil.ListToString(tokens.getTokens()));
+				outputStream.println(tokens);
 			}
 		}
 		catch (FileNotFoundException e)
@@ -251,29 +179,5 @@ public class TokenExtractor
 		writeToFile(tokenList, fileName);
 	}
 
-	// TODO lihongwei add
-	private void writeToFileMap(String fileMapName, List<String> fileMapList)
-	{
-		FileHelper.createFile(fileMapName);
-		PrintWriter outputStream = null;
-		try
-		{
-			outputStream = new PrintWriter(fileMapName);
-			for (String tempString : fileMapList)
-			{
-				outputStream.println(tempString);
-
-			}
-		}
-		catch (FileNotFoundException e)
-		{
-			e.printStackTrace();
-		}
-		finally
-		{
-			outputStream.close();
-		}
-
-	}
 
 }

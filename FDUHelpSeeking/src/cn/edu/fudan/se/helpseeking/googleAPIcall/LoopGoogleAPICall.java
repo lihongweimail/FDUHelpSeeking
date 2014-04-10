@@ -21,7 +21,7 @@ public class LoopGoogleAPICall {
 	}
 
 	public static void commSearch() throws MalformedURLException,
-			UnsupportedEncodingException, IOException {
+	UnsupportedEncodingException, IOException {
 		int j = 0; // count for the results
 
 		// String address =
@@ -54,34 +54,34 @@ public class LoopGoogleAPICall {
 
 				System.out.println("content: "
 						+ results.getResponseData().getResults().get(m)
-								.getContent());
+						.getContent());
 				System.out.println("unescapedUrl: "
 						+ results.getResponseData().getResults().get(m)
-								.getUnescapedUrl());
+						.getUnescapedUrl());
 				System.out.println("URL: "
 						+ results.getResponseData().getResults().get(m)
-								.getUrl());
+						.getUrl());
 				System.out.println("Title: "
 						+ results.getResponseData().getResults().get(m)
-								.getTitle());
+						.getTitle());
 				System.out.println("titleNoFormatting: "
 						+ results.getResponseData().getResults().get(m)
-								.getTitleNoFormatting());
+						.getTitleNoFormatting());
 				System.out.println("location: "
 						+ results.getResponseData().getResults().get(m)
-								.getLocation());
+						.getLocation());
 				System.out.println("publisher: "
 						+ results.getResponseData().getResults().get(m)
-								.getPublisher());
+						.getPublisher());
 				System.out.println("publishedDate: "
 						+ results.getResponseData().getResults().get(m)
-								.getPublishedDate());
+						.getPublishedDate());
 				System.out.println("signedRedirectUrl: "
 						+ results.getResponseData().getResults().get(m)
-								.getSignedRedirectUrl());
+						.getSignedRedirectUrl());
 				System.out.println("language: "
 						+ results.getResponseData().getResults().get(m)
-								.getLanguage());
+						.getLanguage());
 
 				System.out.println();
 
@@ -112,10 +112,10 @@ public class LoopGoogleAPICall {
 				System.out.println("Result " + (++j) + " :");
 				System.out.println("Title: "
 						+ tempRresults.getResponseData().getResults().get(m)
-								.getTitle());
+						.getTitle());
 				System.out.println("URL: "
 						+ tempRresults.getResponseData().getResults().get(m)
-								.getUrl() + "\n");
+						.getUrl() + "\n");
 
 				results.add(tempRresults.getResponseData().getResults().get(m));
 			}
