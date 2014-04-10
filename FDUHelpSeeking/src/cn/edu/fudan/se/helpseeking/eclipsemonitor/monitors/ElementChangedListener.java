@@ -78,7 +78,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldInfo.setAction(fieldAction);
 				DatabaseUtil.addInformationToDatabase(fieldInfo);
 		
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
@@ -97,7 +97,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodInfo.setAction(methodAction);
 				DatabaseUtil.addInformationToDatabase(methodInfo);
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
@@ -118,7 +118,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importInfo.setAction(importAction);
 				DatabaseUtil.addInformationToDatabase(importInfo);	
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
@@ -137,7 +137,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeInfo.setAction(typeAction);
 				DatabaseUtil.addInformationToDatabase(typeInfo);
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}
@@ -156,7 +156,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				event.setOriginId("Delete Field: " + e.getHandleIdentifier());
 				event.setActionName("DeleteField");
 				
-				Information fieldInfo = new Information();
+				/*Information fieldInfo = new Information();
 				fieldInfo.setType("EditCode");
 				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action fieldAction = new Action();
@@ -166,16 +166,16 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setDescription(event.getOriginId());
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
-				DatabaseUtil.addInformationToDatabase(fieldInfo);
+				DatabaseUtil.addInformationToDatabase(fieldInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Delete Method: " + m.getHandleIdentifier());
 				event.setActionName("DeleteMethod");
 				
-				Information methodInfo = new Information();
+				/*Information methodInfo = new Information();
 				methodInfo.setType("EditCode");
 				methodInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action methodAction = new Action();
@@ -185,9 +185,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setDescription(event.getOriginId());
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
-				DatabaseUtil.addInformationToDatabase(methodInfo);
+				DatabaseUtil.addInformationToDatabase(methodInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
@@ -195,7 +195,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 						+ id.getHandleIdentifier());
 				event.setActionName("DeleteImportDeclaration");
 				
-				Information importInfo = new Information();
+				/*Information importInfo = new Information();
 				importInfo.setType("EditCode");
 				importInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action importAction = new Action();
@@ -205,16 +205,16 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setDescription(event.getOriginId());
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
-				DatabaseUtil.addInformationToDatabase(importInfo);
+				DatabaseUtil.addInformationToDatabase(importInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Delete Class: " + t.getHandleIdentifier());
 				event.setActionName("DeleteClass");
 				
-				Information typeInfo = new Information();
+				/*Information typeInfo = new Information();
 				typeInfo.setType("EditCode");
 				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action typeAction = new Action();
@@ -224,9 +224,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setDescription(event.getOriginId());
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
-				DatabaseUtil.addInformationToDatabase(typeInfo);
+				DatabaseUtil.addInformationToDatabase(typeInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}
@@ -241,7 +241,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				event.setOriginId("Change Field: " + e.getHandleIdentifier());
 				event.setActionName("ChangeField");
 				
-				Information fieldInfo = new Information();
+				/*Information fieldInfo = new Information();
 				fieldInfo.setType("EditCode");
 				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action fieldAction = new Action();
@@ -251,16 +251,16 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setDescription(event.getOriginId());
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
-				DatabaseUtil.addInformationToDatabase(fieldInfo);
+				DatabaseUtil.addInformationToDatabase(fieldInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
 				event.setOriginId("Change Method: " + m.getHandleIdentifier());
 				event.setActionName("ChangeMethod");
 				
-				Information methodInfo = new Information();
+				/*Information methodInfo = new Information();
 				methodInfo.setType("EditCode");
 				methodInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action methodAction = new Action();
@@ -270,9 +270,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setDescription(event.getOriginId());
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
-				DatabaseUtil.addInformationToDatabase(methodInfo);
+				DatabaseUtil.addInformationToDatabase(methodInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
@@ -280,7 +280,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 						+ id.getHandleIdentifier());
 				event.setActionName("ChangeImportDeclaration");
 				
-				Information importInfo = new Information();
+				/*Information importInfo = new Information();
 				importInfo.setType("EditCode");
 				importInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action importAction = new Action();
@@ -290,16 +290,16 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setDescription(event.getOriginId());
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
-				DatabaseUtil.addInformationToDatabase(importInfo);
+				DatabaseUtil.addInformationToDatabase(importInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.TYPE:
 				IType t = (IType) e;
 				event.setOriginId("Change Class: " + t.getHandleIdentifier());
 				event.setActionName("ChangeClass");
 				
-				Information typeInfo = new Information();
+				/*Information typeInfo = new Information();
 				typeInfo.setType("EditCode");
 				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action typeAction = new Action();
@@ -309,9 +309,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setDescription(event.getOriginId());
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
-				DatabaseUtil.addInformationToDatabase(typeInfo);
+				DatabaseUtil.addInformationToDatabase(typeInfo);*/
 				
-				//DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}
 		}

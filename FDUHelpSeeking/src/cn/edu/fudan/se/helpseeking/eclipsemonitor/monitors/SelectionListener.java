@@ -23,7 +23,6 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
-import cn.edu.fudan.se.helpseeking.processing.WebProcessing;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -87,7 +86,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					Action action = new Action();
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
-					action.setActionName("Select");
+					action.setActionName(event.getActionName());
 					action.setDescription("");
 					action.setByuser(true);
 					info.setAction(action);

@@ -153,7 +153,7 @@ public class CodeUtil {
 	}
 
 	public static EditCode createEditCodeByJavaElement(IJavaElement element) {
-		EditCode ec = new EditCode();
+ 		EditCode ec = new EditCode();
 
 		// TODO exception name
 		SyntacticBlock sblock = new SyntacticBlock();
@@ -199,59 +199,64 @@ public class CodeUtil {
 		if (icu != null) {
 			CompilationUnit cu = ASTUtil.parse(icu);
 			IJavaElement[] elements = { element };
-			IBinding[] bindings = ASTParser.newParser(AST.JLS4).createBindings(
-					elements, null);
-			ASTNode node = cu.findDeclaringNode(bindings[0]);
-
-			final List<String> internalCallee = new ArrayList<>();
-			final List<String> belowClass = new ArrayList<>();
-			node.accept(new ASTVisitor() {
-				public boolean visit(SimpleName name) {
-					IBinding binding = name.resolveBinding();
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IField) {
-						internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
+			ASTParser parser = ASTParser.newParser(AST.JLS4);
+			parser.setSource(icu);
+			parser.setKind(ASTParser.K_COMPILATION_UNIT);
+			parser.setResolveBindings(true);
+			IBinding[] bindings = parser.createBindings(elements, null);
+			ASTNode node = cu.findDeclaringNode(bindings[0].getKey());
+			
+			if(node != null){
+				final List<String> internalCallee = new ArrayList<>();
+				final List<String> belowClass = new ArrayList<>();
+				node.accept(new ASTVisitor() {
+					public boolean visit(SimpleName name) {
+						IBinding binding = name.resolveBinding();
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IField) {
+							internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IField) element).getDeclaringType()
 								.getElementName() + "." + ((IField) element).getElementName());
-						belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
+							belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IField) element).getDeclaringType()
 								.getElementName());
+						}
+						return true;
 					}
-					return true;
-				}
 
-				public boolean visit(MethodInvocation method) {
-					IMethodBinding binding = method.resolveMethodBinding();
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+					public boolean visit(MethodInvocation method) {
+						IMethodBinding binding = method.resolveMethodBinding();
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IMethod) element).getDeclaringType()
 								.getElementName() + "." + ((IMethod) element).getElementName());
-						belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IMethod) element).getDeclaringType()
 								.getElementName());
+						}
+						return true;
 					}
-					return true;
-				}
 
-				public boolean visit(ClassInstanceCreation creation) {
-					IMethodBinding binding = creation
+					public boolean visit(ClassInstanceCreation creation) {
+						IMethodBinding binding = creation
 							.resolveConstructorBinding();
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IMethod) element).getDeclaringType()
 								.getElementName() + "." + ((IMethod) element).getElementName());
-						belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
+							belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
 								.getElementName() + "." + ((IMethod) element).getDeclaringType()
 								.getElementName());
+						}
+						return true;
 					}
-					return true;
-				}
-			});
+				});
 
-			cmodel.setBelowClass(belowClass);
-			cmodel.setInternalCallee(internalCallee);
+				cmodel.setBelowClass(belowClass);
+				cmodel.setInternalCallee(internalCallee);
+			}
 		}
 		ec.setClassModel(cmodel);
 

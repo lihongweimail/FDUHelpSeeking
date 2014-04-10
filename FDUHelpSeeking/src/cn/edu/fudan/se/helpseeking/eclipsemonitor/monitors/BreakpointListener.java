@@ -59,11 +59,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
-					action.setActionName("Add Breakpoint");
+					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
-					//DatabaseUtil.addInteractionEventToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
@@ -103,11 +103,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
-					action.setActionName("Remove Breakpoint");
+					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
-					//DatabaseUtil.addInteractionEventToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
@@ -147,11 +147,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setByuser(true);
 					action.setActionKind(e.getKind());
-					action.setActionName("Change Breakpoint");
+					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
-					//DatabaseUtil.addInteractionEventToDatabase(e);
+					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
 		} catch (CoreException e1) {
