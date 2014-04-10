@@ -11,6 +11,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.omg.CORBA.PUBLIC_MEMBER;
+
 public class CommUtil 
 {
 	private static final String SPLITE_STRING = "[; ]";
@@ -19,6 +21,136 @@ public class CommUtil
 	{
 		return str==null ||  str.trim().length() == 0;
 	}
+	
+	
+	private static int minLength =2;
+	
+	public static List<String> removeStopWordsFromList( List<String> tokens) {
+		List<String> result=new ArrayList<String>();
+		 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
+		  
+		  for (String token : tokens) {
+		 
+		if(token.length() >= minLength && (int) token.charAt(0)< 255)
+		{	
+				token = token.toLowerCase();		
+		        boolean flage=false;
+			for (String keyword : keyWords) {
+				if (token.trim().equals(keyword.trim())) {
+//					System.out.println("not add keyword:"+ token);
+					flage=true;
+					break;
+				}
+			}
+			
+			if (!flage) {
+					result.add(token);
+			}
+			
+			}
+		}
+		
+		return result;
+		
+	}
+
+	
+public static List<String> removeStopWordsAsList( String tokens) {
+	List<String> result=new ArrayList<String>();
+	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
+	  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+	
+	  for (String token : tokens.split(SPLIT_STRING)) {
+	 
+	if(token.length() >= minLength && (int) token.charAt(0)< 255)
+	{	
+			token = token.toLowerCase();		
+	        boolean flage=false;
+		for (String keyword : keyWords) {
+			if (token.trim().equals(keyword.trim())) {
+//				System.out.println("not add keyword:"+ token);
+				flage=true;
+				break;
+			}
+		}
+		
+		if (!flage) {
+				result.add(token);
+		}
+		
+		}
+	}
+	
+	return result;
+	
+}
+
+public static String  removeStopWordsAsString(String tokens) 
+{
+	String result=" ";
+	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
+	  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+	
+	  for (String token : tokens.split(SPLIT_STRING)) {
+	 
+	if(token.length() >= minLength && (int) token.charAt(0)< 255)
+	{	
+			token = token.toLowerCase();		
+	        boolean flage=false;
+		for (String keyword : keyWords) {
+			if (token.trim().equals(keyword.trim())) {
+//				System.out.println("not add keyword:"+ token);
+				flage=true;
+				break;
+			}
+		}
+		
+		if (!flage) {
+				result=result.trim()+token+";";
+		}
+		
+		}
+	}
+	
+	return result;
+	
+}
+
+
+	/**
+	 * @param stop_list_path    "StopResource"
+	 * @param stopfileName      "javaStopList.txt"
+	 * @param userStopFileName  "userStopList.txt"
+	 * @return
+	 */
+	public static List<String> constructDefaultFilterString(String stop_list_path,
+			String stopfileName, String userStopFileName)
+	{	
+		 List<String> keyWords=new ArrayList<String>();
+		  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+		stopfileName = CommUtil.getCurrentProjectPath() + "\\" + stop_list_path +  "\\" + stopfileName;
+		userStopFileName=CommUtil.getCurrentProjectPath()+"\\"+ stop_list_path + "\\"+userStopFileName;
+		
+	     String tempKeyWords1 = FileHelper.getContent(stopfileName).toLowerCase();
+	     String tempKeyWords2 = FileHelper.getContent(userStopFileName).toLowerCase();
+	     
+	     keyWords=CommUtil.arrayToList((tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING));
+	     for (int i = 0; i < keyWords.size()-1; i++) {
+			for (int j = i+1; j < keyWords.size(); j++) {
+				if ((keyWords.get(i).trim()).equals(keyWords.get(j).trim())) {
+					
+//					System.out.println("remove word: "+keyWords.get(j)+" j="+j);
+					keyWords.remove(j);
+					j=j-1;
+				}
+			}
+			
+		}
+	    	 
+	 return keyWords;
+	  }
+
+	
 	
 	public static void main(String[] args)
 	{
@@ -39,10 +171,10 @@ public class CommUtil
 		return new File(projectPath).getName();
 	}
 	
-	public static String ListToString(List<Object> list)
+	public static String ListToString(List<String> list)
 	{
 		String result = "";
-		for(Object object : list)
+		for(String object : list)
 		{
 			if(object!=null)
 				result = result +  object.toString() + ";" ;

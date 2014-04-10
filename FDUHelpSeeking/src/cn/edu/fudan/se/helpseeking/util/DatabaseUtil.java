@@ -14,6 +14,8 @@ import javax.print.DocFlavor.STRING;
 import javax.sql.DataSource;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
+import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Breakpoint;
 import cn.edu.fudan.se.helpseeking.bean.ClassModel;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
@@ -713,7 +715,7 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, runtimeInformation.getType());
+			ps.setString(1, runtimeInformation.getType().toString());
 			ps.setString(2, runtimeInformation.getContent());
 			ps.setString(3, runtimeInformation.getRelatedCode());
 
@@ -791,7 +793,7 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, compileInformation.getType());
+			ps.setString(1, compileInformation.getType().toString());
 			ps.setString(2, compileInformation.getContent());
 			ps.setString(3, compileInformation.getRelatedCode());
 
@@ -1514,12 +1516,12 @@ public class DatabaseUtil {
 	private static IDEOutput testinitIDEOutput() {
 		IDEOutput ideOutput=new IDEOutput();
 		CompileInformation compileInformation=new CompileInformation();
-		compileInformation.setType("Error");
+		compileInformation.setType(CompileInfoType.ERROR);
 		compileInformation.setContent("this is compile error testing information");
 		compileInformation.setRelatedCode(" for(int i; i<a.size();i++)  { "); 
 
 		RuntimeInformation runtimeInformation=new RuntimeInformation();
-		runtimeInformation.setType("runtime error");
+		runtimeInformation.setType(RuntimeInfoType.ExceptionalMessage);
 		runtimeInformation.setContent("nullPorinterException at the line 10   test.java ");
 		runtimeInformation.setRelatedCode("ok=test.getstatus()");
 

@@ -20,7 +20,15 @@ public class EditorInfo {
 	public void setClassQualifiedNameList(List<String> classQualifiedNameList) {
 		this.classQualifiedNameList = classQualifiedNameList;
 	}
-
+public String ClassQulifiedNameListToString()
+{
+	String result=" ";
+	for (String str : this.classQualifiedNameList) {
+		result=result.trim()+str+";";
+	}
+	
+	return result;
+}
 	
 	
 }

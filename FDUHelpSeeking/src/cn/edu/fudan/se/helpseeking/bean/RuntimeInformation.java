@@ -1,5 +1,7 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
+
 public class RuntimeInformation {
 	
 //	运行时信息：
@@ -7,13 +9,7 @@ public class RuntimeInformation {
 //	1 framework message 
 //  2 program output
 //  3 exceptional message（*这个信息更重要）
-	public enum RuntimeInfoType {
-		FrameWorkMessage,
-		ProgramOutput,
-		ExceptionalMessage
-	}
 
-	
 	RuntimeInfoType type;
 	String content;
 	String relatedCode;  //	Related code： 暂时取代码行

@@ -1,7 +1,5 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
-
-
 public class Basic {
 
 	/**
@@ -509,5 +507,90 @@ public class Basic {
 	}
 
 	
+//	编译信息
+//	策略是监听problem view当有change事件时,更新内存单例，在每个动作时候都去获取信息：
+//	如果变更则取出所有信息，并按照先error后warning信息；
+//	如果有单击或双击选择事件，则取该项目信息。
+	public enum CompileInfoType {
+		ERROR,
+		WARNING;
+		
+		@Override
+		public String toString() {
+			switch (this) {
+			case ERROR:
+				return "ERROR"; //$NON-NLS-1$
+			case WARNING:
+				return "WARNING"; //$NON-NLS-1$	
+			default:
+				return "null"; //$NON-NLS-1$
+			}
+		}
+
+		/**
+		 * @return The corresponding event based on the string provided, or null
+		 *         if no such STring.
+		 */
+		public static CompileInfoType fromString(String string) {
+			if (string == null) {
+				return null;
+			}
+			if (string.equals("ERROR")) { //$NON-NLS-1$
+				return ERROR;
+			}
+			if (string.equals("WARNING")) { //$NON-NLS-1$
+				return WARNING;
+			}
+			return null;
+		}
+	}
+
+	
+//	运行时信息：
+//	需要考虑如何从console中的输出中区分type： 
+//	1 framework message 
+//  2 program output
+//  3 exceptional message（*这个信息更重要）
+	public enum RuntimeInfoType {
+		FrameWorkMessage,
+		ProgramOutput,
+		ExceptionalMessage;
+		
+		@Override
+		public String toString() {
+			switch (this) {
+			case FrameWorkMessage:
+				return "FrameWorkMessage"; //$NON-NLS-1$
+			case ProgramOutput:
+				return "ProgramOutput"; //$NON-NLS-1$
+			case ExceptionalMessage:
+				return "ExceptionalMessage"; //$NON-NLS-1$			
+			default:
+				return "null"; //$NON-NLS-1$
+			}
+		}
+
+		/**
+		 * @return The corresponding event based on the string provided, or null
+		 *         if no such STring.
+		 */
+		public static RuntimeInfoType fromString(String string) {
+			if (string == null) {
+				return null;
+			}
+			if (string.equals("FrameWorkMessage")) { //$NON-NLS-1$
+				return FrameWorkMessage;
+			}
+			if (string.equals("ProgramOutput")) { //$NON-NLS-1$
+				return ProgramOutput;
+			}
+			if (string.equals("ExceptionalMessage")) { //$NON-NLS-1$
+				return ExceptionalMessage;
+			}
+			return null;
+		}
+	}
+
+		
 	
 }

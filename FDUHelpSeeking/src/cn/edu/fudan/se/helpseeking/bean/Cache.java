@@ -1,12 +1,18 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Observable;
+
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 
-public class Cache {
+public class Cache implements IPropertyChangeListener {
 
 	ActionQueue actions=new ActionQueue();//包含滑动窗口
 
@@ -20,20 +26,28 @@ public class Cache {
 	List<IDEOutputCache> ideOutputs=new ArrayList<IDEOutputCache>();
 	List<ExplorerRelatedCache> explorerRelateds=new ArrayList<ExplorerRelatedCache>();
 	ClassModel currentClassModel=new ClassModel();
-	List<String> currentKeywordsList=new ArrayList<String>();
+	List<KeyWord> currentKeywordsList=new ArrayList<KeyWord>();
+	
+	
 
-//单例实现
+public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
+		this.currentKeywordsList = currentKeywordsList;
+	}
+	//单例实现
 	private Cache()
 	{
 		System.out.println("Cache.Cache()");
 	}
 	private static class CacheHolder{
 		public static Cache instance=new Cache();
+			
 	}
 	public static Cache getInstance()
 	{
+		initPropertyListener( myListeners);
 		return CacheHolder.instance;
 	}
+	
 	public static String getString() {
 		return Cache.class.getName();
 	}
@@ -45,6 +59,34 @@ public class Cache {
 	public void setCurrentID(int currentID) {
 		this.currentID = currentID;
 	}
+	
+	
+	
+
+	static ArrayList  myListeners=new ArrayList();
+	@SuppressWarnings("deprecation")
+	private static void initPropertyListener(ArrayList listeners) {
+		 for (Iterator iter = listeners.iterator(); iter.hasNext();) {  
+	            IPropertyChangeListener element = (IPropertyChangeListener) iter.next();  
+	            element.propertyChange(new PropertyChangeEvent(Cache.getInstance(), "newKeywords" , null , Cache.getInstance().getCurrentKeywordsList()));              
+	        }  
+		
+	}
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		// TODO Auto-generated method stub
+		
+	}
+    // A public method that allows listener registration  
+    public void addPropertyChangeListener(IPropertyChangeListener listener) {  
+        if(!myListeners.contains(listener))  
+            myListeners.add(listener);  
+    }  
+    // A public method that allows listener registration  
+    public void removePropertyChangeListener(IPropertyChangeListener listener) {  
+        myListeners.remove(listener);  
+    }
+	
 	public void addInformationToCache(Information information)
 	{
 
@@ -169,8 +211,8 @@ public ExplorerRelated findExplorerRelatedWithID(int ID)
 				String synctacticblockstr=dcc.getDebugCode().getSyntacticBlock().getType()+" "+dcc.getDebugCode().getSyntacticBlock().getCode();
 				String exceptionnamestr=dcc.getDebugCode().getSyntacticBlock().getExceptionName();
 				String classmodelstr=dcc.getDebugCode().getClassModel().getType()+" "+dcc.getDebugCode().getClassModel().getCode();
-				
-				str=str+
+				//TODO 
+//				str=str+
 			}
 		}
 	     
@@ -277,9 +319,10 @@ public ExplorerRelated findExplorerRelatedWithID(int ID)
 	public List<ExplorerRelatedCache> getExplorerRelateds() {
 		return explorerRelateds;
 	}
-	public List<String> getCurrentKeywordsList() {
+	public List<KeyWord> getCurrentKeywordsList() {
 		return currentKeywordsList;
 	}
+
 
 
 }

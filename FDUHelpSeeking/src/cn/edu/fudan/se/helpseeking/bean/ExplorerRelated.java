@@ -4,6 +4,7 @@ public class ExplorerRelated {
 	
 	EditorInfo editorInfo;
 	ExplorerInfo explorerInfo;
+	
 	public EditorInfo getEditorInfo() {
 		return editorInfo;
 	}

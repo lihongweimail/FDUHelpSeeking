@@ -3,6 +3,7 @@ package cn.edu.fudan.se.helpseeking.bean;
 public class ExplorerRelatedCache {
 	int id;
 	ExplorerRelated explorerRelated;
+	
 	public int getId() {
 		return id;
 	}

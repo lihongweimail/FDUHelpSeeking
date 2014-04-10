@@ -4,11 +4,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -53,9 +56,13 @@ import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class FDUHelpSeekingPlugin extends AbstractUIPlugin {
+public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 
 	private static FDUHelpSeekingPlugin INSTANCE;
+	public static FDUHelpSeekingPlugin getINSTANCE() {
+		return INSTANCE;
+	}
+
 	private ActivityContextManager activityContextManager;
 
 	// The plug-in ID
@@ -77,6 +84,7 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin {
 		INSTANCE = this;
 	}
 
+	
 	protected IWindowListener WINDOW_LISTENER = new IWindowListener() {
 
 		@Override
@@ -263,5 +271,7 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin {
 			}
 		}
 	}
+
+	
 
 }
