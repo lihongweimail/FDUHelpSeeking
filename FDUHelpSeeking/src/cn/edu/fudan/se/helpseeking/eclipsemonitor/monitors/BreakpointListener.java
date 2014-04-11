@@ -39,6 +39,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
+					e.setActionName("AddBreakpoint");
 					if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));

@@ -67,6 +67,9 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection s = (ITextSelection) selection;
 			if (s.getLength() == 0) {
+				event.setActionName("InsertCursor");
+				event.setOriginId("Insert cursor in line " + s.getStartLine() 
+						+ "of Part " + part.getTitle());
 				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.getActivePage().getActiveEditor();
 				if(unitEditor instanceof CompilationUnitEditor){
@@ -74,13 +77,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 							.getEditorInputTypeRoot(unitEditor.getEditorInput());
 					ICompilationUnit icu = (ICompilationUnit) typeRoot
 							.getAdapter(ICompilationUnit.class);
-					/*try {
-						System.out.println("文件位置："	+ icu.getPackageDeclarations()[0].getElementName()
-								+ "." + icu.getElementName());
-					} catch (JavaModelException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}*/
+					
 					Information info = new Information();
 					info.setType("EditCode");
 					info.setEditCode(CodeUtil.createEditCodeBySelection(icu, s));
@@ -96,12 +93,13 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				}
 				//System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0
-			}
-			event.setOriginId("Select: " + s.getText() + " from Part: "
+			}else{
+				event.setOriginId("Select: " + s.getText() + " from Part: "
 					+ part.getTitle());
-			// add
-			selectionContent = s.getText();
-			System.out.println("part1");
+				// add
+				selectionContent = s.getText();
+				System.out.println("part1");
+			}
 
 		} else if (selection instanceof IMarkSelection) {
 			IMarkSelection s = (IMarkSelection) selection;
