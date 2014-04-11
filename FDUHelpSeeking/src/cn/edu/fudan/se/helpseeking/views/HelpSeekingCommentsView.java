@@ -6,6 +6,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.part.ViewPart;
 
 public class HelpSeekingCommentsView extends ViewPart {
+	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"; //$NON-NLS-1$
+
+	
 Text text=null;
 	@Override
 	public void createPartControl(Composite arg0) {

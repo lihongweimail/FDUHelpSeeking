@@ -13,6 +13,7 @@ import org.eclipse.ui.part.ViewPart;
 
 
 public class HelpSeekingSolutionView extends ViewPart {
+	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
  
 	@Override
