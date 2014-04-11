@@ -45,6 +45,7 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 		try {
 			e.setOriginId(event.getCommand().getName() == null ? event
 					.getCommand().getId() : event.getCommand().getName());
+			System.out.println(event.getCommand().getName());
 		} catch (NotDefinedException e1) {
 			e1.printStackTrace();
 		}

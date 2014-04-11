@@ -78,6 +78,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
 				DatabaseUtil.addInformationToDatabase(fieldInfo);
+				Cache.getInstance().addInformationToCache(fieldInfo);
 		
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -97,6 +98,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
 				DatabaseUtil.addInformationToDatabase(methodInfo);
+				Cache.getInstance().addInformationToCache(methodInfo);
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -118,6 +120,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
 				DatabaseUtil.addInformationToDatabase(importInfo);	
+				Cache.getInstance().addInformationToCache(importInfo);
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -137,6 +140,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
 				DatabaseUtil.addInformationToDatabase(typeInfo);
+				Cache.getInstance().addInformationToCache(typeInfo);
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;

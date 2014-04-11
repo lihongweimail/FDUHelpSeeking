@@ -20,6 +20,7 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
@@ -91,6 +92,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					action.setByuser(true);
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
+					Cache.getInstance().addInformationToCache(info);
 				}
 				//System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0

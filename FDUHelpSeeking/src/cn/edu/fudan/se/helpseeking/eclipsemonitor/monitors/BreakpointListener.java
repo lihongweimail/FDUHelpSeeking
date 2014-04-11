@@ -17,6 +17,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
@@ -63,6 +64,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
+					Cache.getInstance().addInformationToCache(info);
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -107,6 +109,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
+					Cache.getInstance().addInformationToCache(info);
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -151,6 +154,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
+					Cache.getInstance().addInformationToCache(info);
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
