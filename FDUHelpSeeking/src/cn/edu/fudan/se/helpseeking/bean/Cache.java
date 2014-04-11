@@ -68,7 +68,7 @@ public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
 	private static void initPropertyListener(ArrayList listeners) {
 		 for (Iterator iter = listeners.iterator(); iter.hasNext();) {  
 	            IPropertyChangeListener element = (IPropertyChangeListener) iter.next();  
-	            element.propertyChange(new PropertyChangeEvent(Cache.getInstance(), "newKeywords" , null , Cache.getInstance().getCurrentKeywordsList()));              
+	            //element.propertyChange(new PropertyChangeEvent(Cache.getInstance(), "newKeywords" , null , Cache.getInstance().getCurrentKeywordsList()));              
 	        }  
 		
 	}

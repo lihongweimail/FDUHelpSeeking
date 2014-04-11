@@ -51,7 +51,7 @@ public class ProblemInformationList {
 		return Singleton.problemInformationList;
 	}
 	
-	private static  class Singleton {
+	private static class Singleton {
 		 static ProblemInformationList problemInformationList = new ProblemInformationList();
 	}
 

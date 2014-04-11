@@ -55,7 +55,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 					
 					IJavaElement e = unit.getElementAt(m.getAttribute(
 							"charStart", 0));
-					if (e.getElementType() >= IJavaElement.METHOD) {
+					if (e != null && e.getElementType() >= IJavaElement.METHOD) {
 						e = e.getAncestor(IJavaElement.METHOD);
 						if (e == null) {
 							break;

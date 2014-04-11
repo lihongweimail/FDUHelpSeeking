@@ -14,7 +14,7 @@ public class LaunchListener extends AbstractUserActivityMonitor implements
 
 	@Override
 	public void launchRemoved(ILaunch launch) {
-		InteractionEvent event = new InteractionEvent();
+		/*InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
 		event.setKind(Basic.Kind.DEBUG);
 		try {
@@ -24,12 +24,12 @@ public class LaunchListener extends AbstractUserActivityMonitor implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DatabaseUtil.addInteractionEventToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);*/
 	}
 
 	@Override
 	public void launchAdded(ILaunch launch) {
-		InteractionEvent event = new InteractionEvent();
+		/*InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
 		event.setKind(Basic.Kind.DEBUG);
 		try {
@@ -39,12 +39,12 @@ public class LaunchListener extends AbstractUserActivityMonitor implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DatabaseUtil.addInteractionEventToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);*/
 	}
 
 	@Override
 	public void launchChanged(ILaunch launch) {
-		InteractionEvent event = new InteractionEvent();
+		/*InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
 		event.setKind(Basic.Kind.DEBUG);
 		try {
@@ -54,7 +54,7 @@ public class LaunchListener extends AbstractUserActivityMonitor implements
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		DatabaseUtil.addInteractionEventToDatabase(event);
+		DatabaseUtil.addInteractionEventToDatabase(event);*/
 	}
 
 	@Override
