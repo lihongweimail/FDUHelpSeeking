@@ -2,8 +2,8 @@ package cn.edu.fudan.se.helpseeking.bean;
 
 public class IDEOutput {
 	
-	CompileInformation compileInformation;
-	RuntimeInformation runtimeInformation;
+	CompileInformation compileInformation=null;
+	RuntimeInformation runtimeInformation=null;
 	
 	public CompileInformation getCompileInformation() {
 		return compileInformation;

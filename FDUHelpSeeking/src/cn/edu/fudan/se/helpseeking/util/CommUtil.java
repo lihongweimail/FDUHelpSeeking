@@ -174,12 +174,22 @@ public static String  removeStopWordsAsString(String tokens)
 	public static String ListToString(List<String> list)
 	{
 		String result = "";
+		
+		if (list!=null) {
+			
+	
 		for(String object : list)
 		{
 			if(object!=null)
 				result = result +  object.toString() + ";" ;
 		}
-		return result.trim();
+		result=result.trim();
+			}
+		else {
+			result=null;
+		}
+		
+		return result;
 	}
 	
 	public static String tokenListToString(List<String> list)

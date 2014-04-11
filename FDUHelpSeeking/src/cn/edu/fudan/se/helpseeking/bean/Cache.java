@@ -61,6 +61,7 @@ public class Cache  {
 		InformationQueue infq = new InformationQueue();
 		currentID = currentID + 1;
 		infq.setId(currentID);
+		infq.setInformation(information);
 
 		informations.add(infq);
 
@@ -68,13 +69,19 @@ public class Cache  {
 
 		if (information.getDebugCode() != null) {
 			addDebugCode(information.getDebugCode(), currentID);
-			setCurrentClassModel(information.getDebugCode().getClassModel());
+			if (information.getDebugCode().getClassModel()!=null) {
+				setCurrentClassModel(information.getDebugCode().getClassModel());
+			}
+			
 		}
 
-		if (information.getDebugCode() != null) {
+		if (information.getEditCode() != null) {
 
 			addEditCode(information.getEditCode(), currentID);
-			setCurrentClassModel(information.getEditCode().getClassModel());
+			if (information.getEditCode().getClassModel()!=null) {
+				setCurrentClassModel(information.getEditCode().getClassModel());
+			}
+			
 		}
 
 		if (information.getIdeOutput() != null) {

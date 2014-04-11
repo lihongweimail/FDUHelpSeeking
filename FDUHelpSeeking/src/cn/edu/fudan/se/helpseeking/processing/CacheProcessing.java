@@ -3,14 +3,8 @@ package cn.edu.fudan.se.helpseeking.processing;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -25,6 +19,8 @@ import cn.edu.fudan.se.helpseeking.bean.DebugCode;
 import cn.edu.fudan.se.helpseeking.bean.EditCode;
 import cn.edu.fudan.se.helpseeking.bean.EditorInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
+import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
+import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -66,9 +62,9 @@ public class CacheProcessing extends Thread  {
 				HelpSeekingSearchView v = (HelpSeekingSearchView)part;
 				String searhText="";
 				for (int i = 0; i <Basic.TEMP_K_KEYWORDS; i++) {
-					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i);
+					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
 				}
-			v.setSearchValue(searhText);
+				v.setSearchValue(searhText);
 			}
 
 
@@ -79,10 +75,10 @@ public class CacheProcessing extends Thread  {
 	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 
 	//		另外，有必要建立一个异常列表文件，记录各种异常名称，如果以上信息中出现了该异常词汇，则该异常词汇权重为基本权重两倍(weightTwo)！
-	String javaExceptionalFileName = CommUtil.getCurrentProjectPath() + "\\StopResource\\" +"javaExceptionalName.txt";
-	String javaExceptionalName = FileHelper.getContent(javaExceptionalFileName);
+	static String javaExceptionalFileName = CommUtil.getCurrentProjectPath() + "\\StopResource\\" +"javaExceptionalName.txt";
+	static String javaExceptionalName = FileHelper.getContent(javaExceptionalFileName);
 
-	List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
+	static List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
 
 	public void simpleTacticProcessing()
 	{
@@ -117,17 +113,30 @@ public class CacheProcessing extends Thread  {
 		relatedExplorerKeyWords=genSimpleRelatedExplorerKeyWords(currentID);    
 
 
-
+        boolean flage=false;
 		List<KeyWord> totallKeyWords=new ArrayList<>();
-		totallKeyWords.addAll(consoleViewKeyWords);	  
-		totallKeyWords.addAll(problemViewKeyWords);
-		totallKeyWords.addAll(classmodelKeyWords);
-		totallKeyWords.addAll(codeKeyWords);
-		totallKeyWords.addAll(relatedExplorerKeyWords);
+		if (consoleViewKeyWords!=null) {
+			totallKeyWords.addAll(consoleViewKeyWords);	  
+			flage=true;
+		}
+		if (problemViewKeyWords!=null) {
+			totallKeyWords.addAll(problemViewKeyWords); 
+			flage=true;
+		}		
+		if (classmodelKeyWords!=null) {
+			totallKeyWords.addAll(classmodelKeyWords);
+			flage=true;
+		}		
+		if (codeKeyWords!=null) {
+			totallKeyWords.addAll(codeKeyWords);
+			flage=true;
+		}		
+		if (relatedExplorerKeyWords!=null) {
+			totallKeyWords.addAll(relatedExplorerKeyWords);
+			flage=true;
+		}	
 
-
-		//	  KeyWord[] candidateKeyWords= sortKeyWordsWithScore(totallKeyWords);
-
+	if (flage) {
 		//score降序排序keyword
 		Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
 			public int compare(KeyWord arg0, KeyWord arg1)
@@ -135,35 +144,26 @@ public class CacheProcessing extends Thread  {
 				return (int)arg1.getScore()-(int)arg0.getScore();
 			}
 		});
+
+
 		//取前k个单词作为查询词
 		currentCache.setCurrentKeywordsList(totallKeyWords);
-
+	}		
 
 
 	}
 
-	private KeyWord[] sortKeyWordsWithScore(List<KeyWord> totallKeyWords) {
-		KeyWord[] candidateKeyWords=new KeyWord[totallKeyWords.size()];
-		Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
-			public int compare(KeyWord arg0, KeyWord arg1)
-			{
-				return (int)arg1.getScore()-(int)arg0.getScore();
-			}
-		});
-		int i=0;
-		for (KeyWord keyWord : totallKeyWords) {
-			candidateKeyWords[i]=keyWord;
-			i=i+1;
-		}
 
-		return candidateKeyWords;
-	}
 
 	public  List<KeyWord> genSimpleRelatedExplorerKeyWords(int currentID) {
 		//生成当前编辑和选择的对象或类信息的名字词汇
 		List<KeyWord> relatedExplorerKeyWords=new ArrayList<KeyWord>();
-		EditorInfo  edInfo=currentCache.findExplorerRelatedWithID(currentID).getEditorInfo();
-		ExplorerInfo epInfo=currentCache.findExplorerRelatedWithID(currentID).getExplorerInfo();
+		ExplorerRelated eRelated=currentCache.findExplorerRelatedWithID(currentID);
+		if (eRelated==null) {
+			return null;
+		}
+		EditorInfo  edInfo=eRelated.getEditorInfo();
+		ExplorerInfo epInfo=eRelated.getExplorerInfo();
 
 		if (edInfo!=null)
 		{
@@ -176,7 +176,10 @@ public class CacheProcessing extends Thread  {
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 				relatedExplorerKeyWords.add(kw);
 			}
-		}     
+		}else {
+			relatedExplorerKeyWords=null;
+		}   
+
 		if (epInfo!=null)
 		{
 			// 取消息
@@ -196,6 +199,7 @@ public class CacheProcessing extends Thread  {
 	public List<KeyWord>  genSimpleCodeKeyWords(int currentID) {
 		//生成当前的代码(编辑的和调试的)相关的关键词信息
 		List<KeyWord> codeKeyWords=new ArrayList<KeyWord>();
+
 		EditCode  eCodeInfo=currentCache.findEditCodeWithID(currentID);
 		DebugCode dCodeInfo=currentCache.findDebugCodeWithID(currentID);
 
@@ -225,7 +229,10 @@ public class CacheProcessing extends Thread  {
 				codeKeyWords.add(kw);
 
 			}
-		}     
+		} else
+		{
+			codeKeyWords=null;
+		}
 
 
 		if (dCodeInfo!=null)
@@ -295,13 +302,22 @@ public class CacheProcessing extends Thread  {
 
 			}
 		}
+		else {
+			classmodelKeyWords=null;
+		}
 		return classmodelKeyWords;
 	}
 
 	public List<KeyWord> genSimpleProblemViewKeyWords(int currentID) {
 		//生成当前的编译时信息，problem的错误消息
 		List<KeyWord> problemViewKeyWords=new ArrayList<KeyWord>();
-		CompileInformation pInfo=currentCache.findIdeOutputWithID(currentID).getCompileInformation();
+
+		IDEOutput ideOutput=currentCache.findIdeOutputWithID(currentID);
+		CompileInformation pInfo=null;
+		if (ideOutput!=null) {
+			pInfo=ideOutput.getCompileInformation();
+		}
+
 		if (pInfo!=null)
 		{
 			// 取消息
@@ -331,6 +347,9 @@ public class CacheProcessing extends Thread  {
 
 			}
 		}
+		else {
+			problemViewKeyWords=null;
+		}
 		return problemViewKeyWords;
 	}
 
@@ -338,7 +357,14 @@ public class CacheProcessing extends Thread  {
 		List<KeyWord> consoleViewKeyWords=new ArrayList<KeyWord>();
 
 		//生成当前的运行时信息，console的异常消息
-		RuntimeInformation rInfo=currentCache.findIdeOutputWithID(currentID).getRuntimeInformation();
+		IDEOutput ideoutput=currentCache.findIdeOutputWithID(currentID);
+
+		RuntimeInformation rInfo=null;
+		if (ideoutput!=null) {
+			rInfo=ideoutput.getRuntimeInformation();
+		}
+
+
 		if (rInfo!=null)
 		{
 			//  3 exceptional message（*这个信息更重要）
@@ -359,6 +385,9 @@ public class CacheProcessing extends Thread  {
 					consoleViewKeyWords.add(kw);
 				}
 			}
+		}
+		else {
+			consoleViewKeyWords=null;
 		}
 		return consoleViewKeyWords;
 	}
