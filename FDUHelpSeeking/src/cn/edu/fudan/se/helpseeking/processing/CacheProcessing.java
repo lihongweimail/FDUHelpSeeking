@@ -11,6 +11,7 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.ActionCache;
@@ -27,9 +28,23 @@ import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
+import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 
 
 public class CacheProcessing extends Thread  {
+	
+	IViewPart part;
+	public CacheProcessing()
+	{
+		part = FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage()
+				.findView(
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+		
+	}
 	
 	//获取单例
 	Cache currentCache=Cache.getInstance();
@@ -43,22 +58,13 @@ public class CacheProcessing extends Thread  {
 			// 同步块中！防止 出错！
 			
 			simpleTacticProcessing();
-			
-			currentCache.addSelectionChangedListener(new ISelectionChangedListener() {
-				
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					ISelection selection2=event.getSelection();
-					currentCache.setSelection(selection2);
-					
-				}
-			});
-			
 		
 			
 			//放置在searchView
-			
-
+    	if(part instanceof HelpSeekingSearchView){
+				HelpSeekingSearchView v = (HelpSeekingSearchView)part;
+				v.setSearchValue("Search Text Default");
+			}
 			
 
 		}

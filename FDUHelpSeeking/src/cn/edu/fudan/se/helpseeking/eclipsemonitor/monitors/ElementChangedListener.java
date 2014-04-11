@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
@@ -155,8 +156,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			case IJavaElement.FIELD:
 				event.setOriginId("Delete Field: " + e.getHandleIdentifier());
 				event.setActionName("DeleteField");
+
 				
-				/*Information fieldInfo = new Information();
+				//TODO  20140411 hognwei移除注释为测试			
+/*				Information fieldInfo = new Information();
 				fieldInfo.setType("EditCode");
 				fieldInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action fieldAction = new Action();
@@ -167,6 +170,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
 				DatabaseUtil.addInformationToDatabase(fieldInfo);*/
+				
+//				Cache.getInstance().addInformationToCache(fieldInfo);
+				
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -214,7 +220,8 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				event.setOriginId("Delete Class: " + t.getHandleIdentifier());
 				event.setActionName("DeleteClass");
 				
-				/*Information typeInfo = new Information();
+
+/*				Information typeInfo = new Information();
 				typeInfo.setType("EditCode");
 				typeInfo.setEditCode(CodeUtil.createEditCodeByJavaElement(e));
 				Action typeAction = new Action();
@@ -225,8 +232,11 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
 				DatabaseUtil.addInformationToDatabase(typeInfo);*/
+
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
+				
+				
 				break;
 			}
 		}

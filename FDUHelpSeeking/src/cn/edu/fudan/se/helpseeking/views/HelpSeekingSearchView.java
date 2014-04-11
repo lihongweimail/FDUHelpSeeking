@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.plaf.basic.BasicArrowButton;
+
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -18,13 +20,17 @@ import org.eclipse.ui.part.ViewPart;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 
 
 
-public class HelpSeekingSearchView extends ViewPart  implements IPropertyChangeListener{
+public class HelpSeekingSearchView extends ViewPart {
+	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
+	
 	private Text txtSearch;
 	private org.eclipse.swt.widgets.List list;
 	public HelpSeekingSearchView() {
@@ -34,7 +40,7 @@ public class HelpSeekingSearchView extends ViewPart  implements IPropertyChangeL
 	   @Override
 	public void createPartControl(Composite arg0) {
 		   
-		 Cache.getInstance().addPropertyChangeListener(this);
+		
 		 
 	   	arg0.setLayout(new BorderLayout(0, 0));
 	   	
@@ -91,17 +97,10 @@ public class HelpSeekingSearchView extends ViewPart  implements IPropertyChangeL
 	
 	}
 
-
-	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-	     //The population data is being sourced by another plugin in the background.  
-        if( event.getProperty().equals("newKeywords")) {  
-            Object val = event.getNewValue();  
-            //TODO LISTENER CHANGE TEXT VALUE
-            
-        }  
-		
+	public void setSearchValue(String search){
+		txtSearch.setText(search);
 	}
+
 
 	
 }

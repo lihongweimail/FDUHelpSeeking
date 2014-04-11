@@ -19,21 +19,21 @@
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
             icon="icons/types.gif"
-            id="ContextRecommendationView"
+            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
             name="Context Recommendation View">
       </view>
       <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
             icon="icons/seq.gif"
-            id="BehaviorSequenceView"
+            id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
             name="Behavior Sequence View">
       </view>
       <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
             icon="icons/abstract.gif"
-            id="HelpSeekingSearchView"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
             name="Help Seeking Search View"
             restorable="true">
       </view>
@@ -41,7 +41,7 @@
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
             icon="icons/enum.gif"
-            id="HelpSeekingSolutionView"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
             name="Help Seeking Solution View"
             restorable="true">
       </view>
@@ -49,7 +49,7 @@
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"
             icon="icons/refresh.gif"
-            id="HelpSeekingCommentsView"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"
             name="Help Seeking Comments View"
             restorable="true">
       </view>
@@ -59,9 +59,35 @@
       <perspective
             class="cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"
             icon="icons/volatile_co.gif"
-            id="HelpSeekingPerspective"
+            id="cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"
             name="Help Seeking Perspective">
       </perspective>
    </extension>
-
+   
+   <extension
+        point="org.eclipse.ui.preferencePages">
+   <page
+       name="FDUHelpSeeking Configuration"
+       class="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+       id="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"> 
+       </page>
+   <page
+    name="DB数据库"
+     category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+     class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
+      id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage">
+    </page>
+   </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+      <toc
+            file="testToc.xml"
+            primary="true">
+      </toc>
+   </extension> 
+   
 </plugin>

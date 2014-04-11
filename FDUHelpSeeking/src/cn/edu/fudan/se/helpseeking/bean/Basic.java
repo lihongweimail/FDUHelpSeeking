@@ -591,6 +591,8 @@ public class Basic {
 		}
 	}
 
+	
+	public final static int TEMP_K_KEYWORDS =5;
 		
 	
 }
