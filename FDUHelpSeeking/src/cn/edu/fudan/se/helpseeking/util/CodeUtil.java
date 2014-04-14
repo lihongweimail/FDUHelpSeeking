@@ -268,6 +268,8 @@ public class CodeUtil {
 		DebugCode dc = new DebugCode();
 
 		Breakpoint bpoint = new Breakpoint();
+		bpoint.setFileName(unit.getPath().toString());
+		//System.out.println(bpoint.getFileName());
 		if (bp instanceof JavaMethodBreakpoint) {
 			bpoint.setType("Method");
 			try {

@@ -9,7 +9,7 @@ public class Breakpoint {
 	String type;     // breakpoint type :   line , method , value, exception etc.
 	String methodQualifiedName; 
 	int lineNo;  //? 不知道是否还需要
-	
+	String fileName;	
 	
 	public String getType() {
 		return type;
@@ -29,11 +29,11 @@ public class Breakpoint {
 	public void setLineNo(int lineNo) {
 		this.lineNo = lineNo;
 	}
-	
-	
-	
-	
-	
-	
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}	
 
 }

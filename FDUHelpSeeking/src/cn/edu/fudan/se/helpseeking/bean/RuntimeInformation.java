@@ -11,6 +11,7 @@ public class RuntimeInformation {
 //  3 exceptional message（*这个信息更重要）
 
 	RuntimeInfoType type;
+	String exceptionName;
 	String content;
 	String relatedCode;  //	Related code： 暂时取代码行
 	
@@ -21,6 +22,12 @@ public class RuntimeInformation {
 	}
 	public void setType(RuntimeInfoType type) {
 		this.type = type;
+	}
+	public String getExceptionName() {
+		return exceptionName;
+	}
+	public void setExceptionName(String exceptionName) {
+		this.exceptionName = exceptionName;
 	}
 	public String getContent() {
 		return content;

@@ -48,6 +48,9 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 					information.setDescription(m.getAttribute("message", ""));
 					information.setResource(m.getResource().getLocation().lastSegment());
 					information.setPath(m.getResource().getLocation().toString());
+					
+					//System.out.println(information.getPath());
+					
 					information.setLineNumber(m.getAttribute("lineNumber", 0));
 					information.setCharStart(m.getAttribute("charStart", 0));
 					information.setCharEnd(m.getAttribute("charEnd", 0));
