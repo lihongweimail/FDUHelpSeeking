@@ -13,6 +13,7 @@ Text text=null;
 	@Override
 	public void createPartControl(Composite arg0) {
 		// TODO Auto-generated method stub
+
 		text = new Text(arg0, SWT.FULL_SELECTION);
 		text.setText("hello comments");
 

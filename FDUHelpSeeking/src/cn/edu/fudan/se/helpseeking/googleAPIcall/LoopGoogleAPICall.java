@@ -106,18 +106,18 @@ public class LoopGoogleAPICall {
 			Reader reader = new InputStreamReader(url.openStream(), charset);
 			GoogleAPICallResults tempRresults = new Gson().fromJson(reader,
 					GoogleAPICallResults.class);
-
-			// Show title and URL of each results
-			for (int m = 0; m <= 3; m++) {
-				System.out.println("Result " + (++j) + " :");
-				System.out.println("Title: "
-						+ tempRresults.getResponseData().getResults().get(m)
-						.getTitle());
-				System.out.println("URL: "
-						+ tempRresults.getResponseData().getResults().get(m)
-						.getUrl() + "\n");
-
-				results.add(tempRresults.getResponseData().getResults().get(m));
+			if (tempRresults.getResponseData().getResults().size()>0) {
+				// Show title and URL of each results
+				for (int m = 0; m <= 3; m++) {
+					System.out.println("Result " + (++j) + " :");
+					System.out.println("Title: "
+							+ tempRresults.getResponseData().getResults().get(m)
+							.getTitle());
+					System.out.println("URL: "
+							+ tempRresults.getResponseData().getResults().get(m)
+							.getUrl() + "\n");
+					results.add(tempRresults.getResponseData().getResults().get(m));
+				}
 			}
 		}
 

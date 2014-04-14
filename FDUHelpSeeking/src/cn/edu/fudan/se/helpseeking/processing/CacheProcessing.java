@@ -53,6 +53,8 @@ public class CacheProcessing extends Thread  {
 
 		synchronized (obj) {
 			// 同步块中！防止 出错！
+			
+			
 
 			simpleTacticProcessing();
 
@@ -64,7 +66,7 @@ public class CacheProcessing extends Thread  {
 				for (int i = 0; i <Basic.TEMP_K_KEYWORDS; i++) {
 					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
 				}
-				v.setSearchValue(searhText);
+							v.setSearchValue(searhText);
 			}
 
 
@@ -273,7 +275,7 @@ public class CacheProcessing extends Thread  {
 
 		if (currentCache.getCurrentClassModel()!=null)
 		{
-			// 取消息
+			// 取消息  mode=1; // 意思是暂时取callee 和 belowclass
 
 			String  caller=CommUtil.ListToString(currentCache.getCurrentClassModel().getInternalCaller());
 			String  callee=CommUtil.ListToString(currentCache.getCurrentClassModel().getInternalCallee());
@@ -282,8 +284,26 @@ public class CacheProcessing extends Thread  {
 
 			if (mode==1) 
 			{
-				String result1=callee+";"+belowclass;
-				for (String str : result1.split(SPLIT_STRING)) 
+				
+				//方法的qualified name 中，intercallee中包含自己的类名信息需要去除
+				String finalcalleestr="";
+				for (String calleestr : callee.split("[;]")) {
+					    String[] methodnamestr=calleestr.split(SPLIT_STRING);
+					    int lastindex=methodnamestr.length;
+					    for (int i =lastindex-1; i >0; i--) {
+							String laststr=methodnamestr[i];
+							if (!laststr.trim().equals("")) {
+								finalcalleestr=finalcalleestr.trim()+laststr+";";
+								break;
+							}
+						}
+					
+				}
+				
+				
+				
+				String result1=finalcalleestr+belowclass;
+				for (String str : result1.split("[;]")) 
 				{
 					KeyWord kw=new KeyWord();
 					kw.setKeywordName(str);

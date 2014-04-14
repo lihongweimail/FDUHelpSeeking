@@ -15,7 +15,12 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.omg.CORBA.Current;
 
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
@@ -64,9 +69,20 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
+					
+					
 					DatabaseUtil.addInformationToDatabase(info);
-					Cache.getInstance().addInformationToCache(info);
+					
+					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+							Cache.getInstance().addInformationToCache(info);
+					}
+					
+				
+					
 					DatabaseUtil.addInteractionEventToDatabase(e);
+					
 				}
 			}
 		} catch (CoreException e1) {
@@ -110,7 +126,15 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
-					Cache.getInstance().addInformationToCache(info);
+					
+					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+							Cache.getInstance().addInformationToCache(info);
+					}
+					
+				
+					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -155,7 +179,14 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					DatabaseUtil.addInformationToDatabase(info);
-					Cache.getInstance().addInformationToCache(info);
+					
+					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+							Cache.getInstance().addInformationToCache(info);
+					}
+	               //add end
+					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}

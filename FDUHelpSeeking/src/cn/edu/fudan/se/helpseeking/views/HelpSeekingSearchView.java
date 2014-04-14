@@ -53,7 +53,11 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 	btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 	   	 		@Override
 	   	 		public void widgetSelected(SelectionEvent e) {
+	   	 			
+	   	 			list.removeAll();
 	   	 		String queryText=txtSearch.getText().trim();
+	   	 		list.add("检索词为："+queryText);
+	   	 		list.add("检索结果为：");
 	   	 		
 	   	 	List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		
@@ -80,7 +84,7 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	
 	   	txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP);
 	   	txtSearch.setText("hello world");
-	   	GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+	   	GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
 	   	gd_txtSearch.widthHint = 183;
 	   	txtSearch.setLayoutData(gd_txtSearch);
 	   	

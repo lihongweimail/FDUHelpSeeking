@@ -14,6 +14,8 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
@@ -50,6 +52,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 		List<IJavaElementDelta> additions = new ArrayList<IJavaElementDelta>();
 		List<IJavaElementDelta> deletions = new ArrayList<IJavaElementDelta>();
 		List<IJavaElementDelta> changes = new ArrayList<IJavaElementDelta>();
+		
 
 		traverse(delta, additions, deletions, changes);
 
@@ -62,6 +65,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			event.setKind(Kind.EDIT);
 			IJavaElement e = d.getElement();
 			ContextUtil.setContext(e);
+			
+			//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+			IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+	        //add end 
+
+			
 			switch (e.getElementType()) {
 			case IJavaElement.FIELD:
 				event.setOriginId("Add Field: " + e.getHandleIdentifier());
@@ -78,7 +87,17 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
 				DatabaseUtil.addInformationToDatabase(fieldInfo);
-				Cache.getInstance().addInformationToCache(fieldInfo);
+				
+				
+				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					Cache.getInstance().addInformationToCache(fieldInfo);
+				}
+				
+			
+				
+			
 		
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -98,7 +117,15 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
 				DatabaseUtil.addInformationToDatabase(methodInfo);
-				Cache.getInstance().addInformationToCache(methodInfo);
+
+				
+				
+				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					Cache.getInstance().addInformationToCache(methodInfo);
+				}
+
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -120,7 +147,14 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
 				DatabaseUtil.addInformationToDatabase(importInfo);	
-				Cache.getInstance().addInformationToCache(importInfo);
+
+				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					Cache.getInstance().addInformationToCache(importInfo);
+				}
+
+	
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -139,8 +173,16 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setDescription(event.getOriginId());
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
+				
+				
 				DatabaseUtil.addInformationToDatabase(typeInfo);
-				Cache.getInstance().addInformationToCache(typeInfo);
+
+				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					Cache.getInstance().addInformationToCache(typeInfo);
+				}
+
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;

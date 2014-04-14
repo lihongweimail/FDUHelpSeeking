@@ -88,8 +88,17 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					action.setDescription("");
 					action.setByuser(true);
 					info.setAction(action);
+					
 					DatabaseUtil.addInformationToDatabase(info);
-					Cache.getInstance().addInformationToCache(info);
+					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+						Cache.getInstance().addInformationToCache(info);
+					}
+                   //add end
+				
+					
+					
 				}
 				//System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0
