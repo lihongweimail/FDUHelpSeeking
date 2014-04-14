@@ -24,6 +24,7 @@ import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
+import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
@@ -78,6 +79,9 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						Cache.getInstance().addInformationToCache(info);
 						Cache.getInstance().addInformationToCache(
 								ProblemInformationUtil.SelectProblemInformationByBreakpont(
+										info.getDebugCode().getBreakpoint()));
+						Cache.getInstance().addInformationToCache(
+								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
 										info.getDebugCode().getBreakpoint()));
 					}
 					
@@ -136,6 +140,9 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						Cache.getInstance().addInformationToCache(
 								ProblemInformationUtil.SelectProblemInformationByBreakpont(
 										info.getDebugCode().getBreakpoint()));
+						Cache.getInstance().addInformationToCache(
+								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+										info.getDebugCode().getBreakpoint()));
 					}
 					
 				
@@ -191,6 +198,9 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						Cache.getInstance().addInformationToCache(info);
 						Cache.getInstance().addInformationToCache(
 								ProblemInformationUtil.SelectProblemInformationByBreakpont(
+										info.getDebugCode().getBreakpoint()));
+						Cache.getInstance().addInformationToCache(
+								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
 										info.getDebugCode().getBreakpoint()));
 					}
 	               //add end
