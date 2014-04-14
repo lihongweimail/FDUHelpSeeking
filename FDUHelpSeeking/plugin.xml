@@ -77,6 +77,12 @@
      class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
       id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage">
     </page>
+   <page
+         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+         class="cn.edu.fudan.se.helpseeking.preferences.TacticSelection"
+         id="cn.edu.fudan.se.helpseeking.preferences.TacticSelection"
+         name="策略选择">
+   </page>
    </extension>
    <extension
          point="org.eclipse.help.toc">

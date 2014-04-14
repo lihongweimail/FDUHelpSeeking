@@ -91,7 +91,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					Cache.getInstance().addInformationToCache(fieldInfo);
 				}
 				
@@ -122,7 +122,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					Cache.getInstance().addInformationToCache(methodInfo);
 				}
 
@@ -150,7 +150,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					Cache.getInstance().addInformationToCache(importInfo);
 				}
 
@@ -179,7 +179,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					Cache.getInstance().addInformationToCache(typeInfo);
 				}
 

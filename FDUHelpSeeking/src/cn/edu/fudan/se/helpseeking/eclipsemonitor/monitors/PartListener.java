@@ -122,9 +122,11 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
@@ -141,6 +143,12 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Activated: " + part.getTitle());
 		DatabaseUtil.addInteractionEventToDatabase(event);
+		
+		if (ExceptionalPartAndView.checkPartAndView(part)) {
+			return;
+			
+		}
+		
 
 		if (part instanceof CompilationUnitEditor) {
 			ContextUtil.addEditor((CompilationUnitEditor) part);
@@ -1490,6 +1498,11 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Brought To Top: " + part.getTitle());
+		
+		if (ExceptionalPartAndView.checkPartAndView(part)) {
+			return;
+		}	
+		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
@@ -1499,6 +1512,11 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Closed: " + part.getTitle());
+		
+		if (ExceptionalPartAndView.checkPartAndView(part)) {
+			return;
+		}	
+		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 		if (part instanceof CompilationUnitEditor) {
 			ContextUtil.deleteEditor((CompilationUnitEditor) part);
@@ -1511,6 +1529,11 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Deactivated: " + part.getTitle());
+		
+		if (ExceptionalPartAndView.checkPartAndView(part)) {
+			return;
+		}	
+		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
@@ -1520,6 +1543,11 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(false);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Opened: " + part.getTitle());
+		
+		if (ExceptionalPartAndView.checkPartAndView(part)) {
+			return;
+		}	
+		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 

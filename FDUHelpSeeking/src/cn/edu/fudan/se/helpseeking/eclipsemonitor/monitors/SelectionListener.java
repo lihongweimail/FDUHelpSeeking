@@ -92,7 +92,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					DatabaseUtil.addInformationToDatabase(info);
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 						Cache.getInstance().addInformationToCache(info);
 					}
                    //add end

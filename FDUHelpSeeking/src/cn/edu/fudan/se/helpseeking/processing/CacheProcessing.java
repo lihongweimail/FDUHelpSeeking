@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -31,6 +32,9 @@ import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 public class CacheProcessing extends Thread  {
 
 	IViewPart part;
+	
+	int currentTactic=1;
+	
 	public CacheProcessing()
 	{
 		part = FDUHelpSeekingPlugin
@@ -40,12 +44,14 @@ public class CacheProcessing extends Thread  {
 				.getActivePage()
 				.findView(
 						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+		
+		 ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
 
 	}
 
 	//获取单例
 	Cache currentCache=Cache.getInstance();
-
+	 private IPreferenceStore ps;
 
 	static Object obj = new Object();
 
@@ -53,10 +59,12 @@ public class CacheProcessing extends Thread  {
 
 		synchronized (obj) {
 			// 同步块中！防止 出错！
-			
-			
 
-			simpleTacticProcessing();
+              currentTactic=ps.getInt("TACTICMODE_KEY");
+              System.out.println("当前策略值是："+currentTactic);
+			
+	
+simpleTacticProcessing();
 
 
 			//放置在searchView

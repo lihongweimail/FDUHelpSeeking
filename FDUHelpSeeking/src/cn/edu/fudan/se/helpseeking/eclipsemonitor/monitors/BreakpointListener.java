@@ -75,7 +75,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 							Cache.getInstance().addInformationToCache(info);
 					}
 					
@@ -129,7 +129,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 							Cache.getInstance().addInformationToCache(info);
 					}
 					
@@ -182,7 +182,7 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 							Cache.getInstance().addInformationToCache(info);
 					}
 	               //add end
