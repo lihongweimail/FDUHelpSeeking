@@ -36,9 +36,9 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 
 	@Override
 	public void preExecute(String commandId, ExecutionEvent event) {
-		System.out.println("Command Id: " + commandId
-				+ ", Execution Event Parameters Size: "
-				+ event.getParameters().size());
+//		System.out.println("Command Id: " + commandId
+//				+ ", Execution Event Parameters Size: "
+//				+ event.getParameters().size());
 		InteractionEvent e = new InteractionEvent();
 		e.setByuser(true);
 		e.setKind(Kind.COMMAND);
@@ -46,9 +46,9 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 			e.setOriginId(event.getCommand().getName() == null ? event
 					.getCommand().getId() : event.getCommand().getName());
 			if (event.getCommand().getName().trim().equals("Inline edit")) {
-				System.out.println("inline edit position:"+event.getCommand().getName().trim());
+//				System.out.println("inline edit position:"+event.getCommand().getName().trim());
 			}
-			System.out.println(event.getCommand().getName());
+//			System.out.println(event.getCommand().getName());
 		} catch (NotDefinedException e1) {
 			e1.printStackTrace();
 		}

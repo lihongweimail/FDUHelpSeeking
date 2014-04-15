@@ -49,7 +49,7 @@ public class ExceptionalPartAndView {
 			checkResult=true;
 		}
 	
-		System.out.println("view check result: "+ checkResult);
+//		System.out.println("view check result: "+ checkResult);
 		return checkResult;
 	}
 

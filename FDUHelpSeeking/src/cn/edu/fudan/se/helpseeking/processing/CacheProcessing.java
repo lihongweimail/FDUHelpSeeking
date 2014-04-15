@@ -70,7 +70,7 @@ public class CacheProcessing extends Thread  {
 
               currentTactic=ps.getInt("TACTICMODE_KEY");
               
-              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
+//              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
 			
 	
                  simpleTacticProcessing();
@@ -231,6 +231,7 @@ public class CacheProcessing extends Thread  {
 			// 取代码等信息
 			//代码需要过滤停用词
 			String codeString=eCodeInfo.getSyntacticBlock().getCode();
+			if (codeString!=null) {
 			codeString=CommUtil.removeStopWordsAsString(codeString);
 
 			String exceptionalString=eCodeInfo.getSyntacticBlock().getExceptionName();
@@ -251,6 +252,7 @@ public class CacheProcessing extends Thread  {
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 				codeKeyWords.add(kw);
 
+			}
 			}
 		} else
 		{
@@ -553,7 +555,7 @@ public class CacheProcessing extends Thread  {
 		//		       检查是否越界
 		for (int i=j+1;i<farray.length;i++) 
 		{
-			System.out.println("j="+j+"\t i="+i+"\n");
+//			System.out.println("j="+j+"\t i="+i+"\n");
 			if (farray[i].getFrequency()>bigestvalue) {
 				bigestIndex=i;
 			}

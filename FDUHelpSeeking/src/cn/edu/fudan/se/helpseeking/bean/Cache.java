@@ -32,7 +32,7 @@ public class Cache  {
 	// 单例实现
 	private Cache() {
 
-		System.out.println("Cache.Cache()");
+//		System.out.println("Cache.Cache()");
 	}
 
 	private static class CacheHolder {
@@ -64,6 +64,7 @@ public class Cache  {
 		
 		if (checkInformation(information))
 		{
+			System.out.println("refuse one more time dupplicate action");
 			return;
 		}
 		
@@ -137,7 +138,9 @@ public class Cache  {
 			return false;
 		}
 
-		if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  && lastCacheAction.getActionName().equals(newEnterAction.getActionName())) {
+		if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  
+				&& lastCacheAction.getActionName().equals(newEnterAction.getActionName())
+				&& lastCacheAction.getDescription().equals(newEnterAction.getDescription())) {
 			result=true;
 			//	      System.out.println("the same action: "+ newEnterAction.getActionKind().toString()+" : "+newEnterAction.getActionName());
 		}else 

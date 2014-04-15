@@ -55,7 +55,7 @@ ISelectionListener {
 				// add
 
 				selectionContent = s.getFirstElement().toString();
-				System.out.println("part0");
+//				System.out.println("part0");
 
 				Object object = s.getFirstElement();
 				if (object instanceof IJavaElement) {
@@ -66,7 +66,7 @@ ISelectionListener {
 					MarkerItem entry = (MarkerItem) object;
 					//add for get problem view item message
 					selectionContent =entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
-					System.out.println("marker element: "+selectionContent);
+//					System.out.println("marker element: "+selectionContent);
 				}
 			}
 		} else if (selection instanceof ITextSelection) {
@@ -115,7 +115,7 @@ ISelectionListener {
 						+ part.getTitle());
 				// add
 				selectionContent = s.getText();
-				System.out.println("part1");
+//				System.out.println("part1");
 			}
 
 		} else if (selection instanceof IMarkSelection) {
@@ -124,7 +124,7 @@ ISelectionListener {
 					+ " from Part: " + part.getTitle());
 			// add
 			selectionContent = s.getDocument().get();
-			System.out.println("part2");
+//			System.out.println("part2");
 
 		}
 
@@ -179,8 +179,8 @@ ISelectionListener {
 		}
 
 
-		System.out.println("selection action in this Part: " + part.getTitle());
-		System.out.println("selectionContent: " + selectionContent);
+//		System.out.println("selection action in this Part: " + part.getTitle());
+//		System.out.println("selectionContent: " + selectionContent);
 
 
 		DatabaseUtil.addInteractionEventToDatabase(event);

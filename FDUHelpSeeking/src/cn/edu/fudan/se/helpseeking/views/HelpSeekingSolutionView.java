@@ -18,7 +18,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
  
-	SimpleBrower myBrower;  
+	public static  SimpleBrower myBrower;  
 	   
 	public SimpleBrower getMyBrower() {
 		return myBrower;

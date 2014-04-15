@@ -138,7 +138,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 	@Override
 	public void start() {
 		JavaPlugin.getDefault().getProblemMarkerManager().addListener(this);
-		System.out.println("Problems listener add!");
+//		System.out.println("Problems listener add!");
 		setEnabled(true);
 	}
 

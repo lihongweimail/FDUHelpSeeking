@@ -146,7 +146,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Activated: " + part.getTitle());
-	   System.out.println("I am a part of  class: "+part.getClass().toString());
+//	   System.out.println("I am a part of  class: "+part.getClass().toString());
 		
 		if (ExceptionalPartAndView.checkPartAndView(part)) {
 			return;
@@ -237,12 +237,12 @@ public class PartListener extends AbstractUserActivityMonitor implements
 									parser.setResolveBindings(true);
 									CompilationUnit cu = (CompilationUnit) parser
 											.createAST(null);
-									System.out.println(cu == null);
+//									System.out.println(cu == null);
 									cu.accept(new ASTVisitor() {
 
 										@Override
 										public boolean visit(IfStatement node) {
-											System.out.println(node.getLength());
+//											System.out.println(node.getLength());
 											return super.visit(node);
 										}
 
@@ -1402,7 +1402,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 					
 					@Override
 					public void modelChanged(IAnnotationModel model) {
-						System.out.println(model.getAnnotationIterator().toString());
+//						System.out.println(model.getAnnotationIterator().toString());
 						
 					}
 				});

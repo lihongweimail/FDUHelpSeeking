@@ -20,7 +20,7 @@ public class SimpleBrower  implements ControlListener
 	//定义浏览器的标题  
     public static final String APP_TITLE = "Simple SWT Browser";  
     //定义主页的url  
-    public static final String HOME_URL = "http://www.google.com";  
+    public static final String HOME_URL = "http://about:blank";  
     public Browser getBrowser() {
 		return browser;
 	}
@@ -247,12 +247,12 @@ public class SimpleBrower  implements ControlListener
 		@Override
 		public void controlResized(ControlEvent e) {
 			// TODO Auto-generated method stub
-			System.out.println("mycomposite brower reciver resized");
+//			System.out.println("mycomposite brower reciver resized");
 			int width=myComposite.getParent().getBounds().width;
 			int height=myComposite.getParent().getBounds().height;
 			int x=myComposite.getParent().getBounds().x;
 			int y=myComposite.getParent().getBounds().y;
-			System.out.println("width:"+width+"height"+height+"x"+x+"y"+y);
+//			System.out.println("width:"+width+"height"+height+"x"+x+"y"+y);
 //			myComposite.setBounds(x, y, width, height);
 			myComposite.setSize(width, height);
 			myComposite.redraw();
@@ -264,7 +264,7 @@ public class SimpleBrower  implements ControlListener
 		@Override
 		public void controlMoved(ControlEvent e) {
 			// TODO Auto-generated method stub
-			System.out.println("moved");
+//			System.out.println("moved");
 			myComposite.pack();
 		}
 	});
@@ -315,12 +315,12 @@ public class SimpleBrower  implements ControlListener
 	@Override
 	public void controlMoved(ControlEvent e) {
 		
-		System.out.println("moved");
+//		System.out.println("moved");
 		int width=myComposite.getParent().getBounds().width;
 		int height=myComposite.getParent().getBounds().height;
 		int x=myComposite.getParent().getBounds().x;
 		int y=myComposite.getParent().getBounds().y;
-		System.out.println("width:"+width+"height"+height+"x"+x+"y"+y);
+//		System.out.println("width:"+width+"height"+height+"x"+x+"y"+y);
 //		myComposite.setBounds(x, y, width, height);
 		myComposite.setSize(width, height);
 		myComposite.redraw();
