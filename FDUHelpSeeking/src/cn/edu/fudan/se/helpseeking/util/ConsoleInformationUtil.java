@@ -5,28 +5,18 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Breakpoint;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformation;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
-import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
-import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 
 public class ConsoleInformationUtil {
 	
-	public static Information SelectConsoleInformationByBreakpont(Breakpoint bp) {
-		Information information = new Information();
-		
-		information.setType("IDEOutput");
-		Action action = new Action();
-		action.setByuser(false);
-		information.setAction(action);
-		
+	public static RuntimeInformation SelectConsoleInformationByBreakpont(Breakpoint bp) {
+		RuntimeInformation runtimeInformation = new RuntimeInformation();
 		ArrayList<ConsoleInformation> list = ConsoleInformationList.getInstance()
 				.getExceptionList();
-		RuntimeInformation runtimeInformation = new RuntimeInformation();
 		boolean found = false;
 		
 		for(ConsoleInformation consoleInformation : list){
@@ -34,14 +24,20 @@ public class ConsoleInformationUtil {
 				HashMap<String, ArrayList<Integer>> locations = consoleInformation.getLocations();
 				Set<Entry<String, ArrayList<Integer>>> entryset = locations.entrySet();
 				for(Entry<String, ArrayList<Integer>> entry : entryset){
-					String fileName = entry.getKey().replace(".", "/"); 
-					if(bp.getFileName().contains(fileName)){
-						for(Integer linenumber : entry.getValue()){
-							int differ = linenumber - bp.getLineNo();
-							if(differ > -5 && differ < 5){
-								generateRuntimeInformationbyConsoleInformation(
+					if(!found){
+						String fileName = entry.getKey(); 
+						int index = fileName.lastIndexOf(".");
+						String suffix = fileName.substring(index);
+						fileName = fileName.substring(0, index).replace(".", "/") + suffix;
+						if(bp.getFileName().contains(fileName)){
+							for(Integer linenumber : entry.getValue()){
+								int differ = linenumber - bp.getLineNo();
+								if(differ > -5 && differ < 5){
+									generateRuntimeInformationbyConsoleInformation(
 										runtimeInformation, consoleInformation);
-								found = true;
+									found = true;
+									break;
+								}
 							}
 						}
 					}
@@ -51,13 +47,8 @@ public class ConsoleInformationUtil {
 		if(!found && list.size() > 0){
 			generateRuntimeInformationbyConsoleInformation(runtimeInformation, list.get(0));
 		}
-		
-		
-		IDEOutput ideOutput = new IDEOutput();
-		ideOutput.setRuntimeInformation(runtimeInformation);
-		information.setIdeOutput(ideOutput);
-		
-		return information;
+				
+		return runtimeInformation;
 	}
 	
 	private static void generateRuntimeInformationbyConsoleInformation(

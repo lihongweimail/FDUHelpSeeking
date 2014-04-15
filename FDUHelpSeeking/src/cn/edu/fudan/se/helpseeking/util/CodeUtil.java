@@ -40,6 +40,12 @@ public class CodeUtil {
 
 	public static EditCode createEditCodeBySelection(ICompilationUnit unit,
 			ITextSelection s) {
+		String path = unit.getPath().toString().replace("/", ".");
+		path = path.substring(path.indexOf(".") + 1);
+		path = path.substring(path.indexOf(".") + 1);
+		path = path.substring(path.indexOf(".") + 1);
+		final String prefix = path.substring(0, path.length() / 2);
+		
 		EditCode ec = new EditCode();
 
 		// TODO exception name
@@ -100,13 +106,15 @@ public class CodeUtil {
 			public boolean visit(SimpleName name) {
 				IBinding binding = name.resolveBinding();
 				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IField) {
-					internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IField) element).getDeclaringType() 
-							.getElementName() + "." + ((IField) element).getElementName());
-					belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IField) element).getDeclaringType()
-							.getElementName());
+				if (element instanceof IField) {					
+					String classString = ((IField) element).getDeclaringType()
+							.getPackageFragment() .getElementName() + "." 
+							+ ((IField) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IField) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}
@@ -115,12 +123,14 @@ public class CodeUtil {
 				IMethodBinding binding = method.resolveMethodBinding();
 				IJavaElement element = binding.getJavaElement();
 				if (element instanceof IMethod) {
-					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName() + "." + ((IMethod) element).getElementName());
-					belowClass.add(((IMethod) element).getDeclaringType() .getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName());
+					String classString = ((IMethod) element).getDeclaringType()
+							.getPackageFragment().getElementName() + "." 
+							+ ((IMethod) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IMethod) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}
@@ -129,12 +139,14 @@ public class CodeUtil {
 				IMethodBinding binding = creation.resolveConstructorBinding();
 				IJavaElement element = binding.getJavaElement();
 				if (element instanceof IMethod) {
-					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName() + "." + ((IMethod) element).getElementName());
-					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName());
+					String classString = ((IMethod) element).getDeclaringType()
+							.getPackageFragment().getElementName() + "." 
+							+ ((IMethod) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IMethod) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}
@@ -147,6 +159,7 @@ public class CodeUtil {
 		Cursor c = new Cursor();
 		c.setLineNo(s.getStartLine());
 		c.setMethodQualifiedName(methodname);
+		c.setFileName(unit.getPath().toString());
 		ec.setCursor(c);
 
 		return ec;
@@ -214,12 +227,12 @@ public class CodeUtil {
 						IBinding binding = name.resolveBinding();
 						IJavaElement element = binding.getJavaElement();
 						if (element instanceof IField) {
-							internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IField) element).getDeclaringType()
-								.getElementName() + "." + ((IField) element).getElementName());
-							belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IField) element).getDeclaringType()
-								.getElementName());
+							String classString = ((IField) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IField) element).getDeclaringType().getElementName();
+							internalCallee.add(classString + "." 
+									+ ((IField) element).getElementName());
+							belowClass.add(classString);
 						}
 						return true;
 					}
@@ -228,12 +241,12 @@ public class CodeUtil {
 						IMethodBinding binding = method.resolveMethodBinding();
 						IJavaElement element = binding.getJavaElement();
 						if (element instanceof IMethod) {
-							internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IMethod) element).getDeclaringType()
-								.getElementName() + "." + ((IMethod) element).getElementName());
-							belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IMethod) element).getDeclaringType()
-								.getElementName());
+							String classString = ((IMethod) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IMethod) element).getDeclaringType().getElementName();
+							internalCallee.add(classString + "." 
+									+ ((IMethod) element).getElementName());
+							belowClass.add(classString);
 						}
 						return true;
 					}
@@ -243,12 +256,12 @@ public class CodeUtil {
 							.resolveConstructorBinding();
 						IJavaElement element = binding.getJavaElement();
 						if (element instanceof IMethod) {
-							internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IMethod) element).getDeclaringType()
-								.getElementName() + "." + ((IMethod) element).getElementName());
-							belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
-								.getElementName() + "." + ((IMethod) element).getDeclaringType()
-								.getElementName());
+							String classString = ((IMethod) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IMethod) element).getDeclaringType().getElementName();
+							internalCallee.add(classString + "." 
+									+ ((IMethod) element).getElementName());
+							belowClass.add(classString);
 						}
 						return true;
 					}
@@ -265,6 +278,12 @@ public class CodeUtil {
 
 	public static DebugCode createDebugCodeByBreakpoint(ICompilationUnit unit,
 			IBreakpoint bp) {
+		String path = unit.getPath().toString().replace("/", ".");
+		path = path.substring(path.indexOf(".") + 1);
+		path = path.substring(path.indexOf(".") + 1);
+		path = path.substring(path.indexOf(".") + 1);
+		final String prefix = path.substring(0, path.length() / 2);
+		
 		DebugCode dc = new DebugCode();
 
 		Breakpoint bpoint = new Breakpoint();
@@ -343,12 +362,14 @@ public class CodeUtil {
 				IBinding binding = name.resolveBinding();
 				IJavaElement element = binding.getJavaElement();
 				if (element instanceof IField) {
-					internalCallee.add(((IField) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IField) element).getDeclaringType()
-							.getElementName() + "." + ((IField) element).getElementName());
-					belowClass.add(((IField) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IField) element).getDeclaringType()
-							.getElementName());
+					String classString = ((IField) element).getDeclaringType()
+							.getPackageFragment().getElementName() + "." 
+							+ ((IField) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IField) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}
@@ -357,12 +378,14 @@ public class CodeUtil {
 				IMethodBinding binding = method.resolveMethodBinding();
 				IJavaElement element = binding.getJavaElement();
 				if (element instanceof IMethod) {
-					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName() + "." + ((IMethod) element).getElementName());
-					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName());
+					String classString = ((IMethod) element).getDeclaringType()
+							.getPackageFragment().getElementName() + "." 
+							+ ((IMethod) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IMethod) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}
@@ -371,12 +394,14 @@ public class CodeUtil {
 				IMethodBinding binding = creation.resolveConstructorBinding();
 				IJavaElement element = binding.getJavaElement();
 				if (element instanceof IMethod) {
-					internalCallee.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName() + "." + ((IMethod) element).getElementName());
-					belowClass.add(((IMethod) element).getDeclaringType().getPackageFragment()
-							.getElementName() + "." + ((IMethod) element).getDeclaringType()
-							.getElementName());
+					String classString = ((IMethod) element).getDeclaringType()
+							.getPackageFragment().getElementName() + "." 
+							+ ((IMethod) element).getDeclaringType().getElementName();
+					if(!classString.startsWith(prefix)){
+						internalCallee.add(classString + "." + ((IMethod) element)
+								.getElementName());
+						belowClass.add(classString);
+					}
 				}
 				return true;
 			}

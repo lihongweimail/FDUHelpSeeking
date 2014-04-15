@@ -2,27 +2,17 @@ package cn.edu.fudan.se.helpseeking.util;
 
 import org.eclipse.core.resources.IMarker;
 
-import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Breakpoint;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
-import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
-import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
 
 public class ProblemInformationUtil {
 	
-	public static Information SelectProblemInformationByBreakpont(Breakpoint bp){
-		Information information = new Information();
-		
-		information.setType("IDEOutput");
-		Action action = new Action();
-		action.setByuser(false);
-		information.setAction(action);
-		
-		ProblemInformationList list = ProblemInformationList.getInstance();
+	public static CompileInformation SelectProblemInformationByBreakpont(Breakpoint bp){
 		CompileInformation compileInformation = new CompileInformation();		
+		ProblemInformationList list = ProblemInformationList.getInstance();		
 		boolean found = false;
 		
 		for(ProblemInformation problemInformation : list.getErrorList()){
@@ -66,11 +56,7 @@ public class ProblemInformationUtil {
 			}
 		}
 		
-		IDEOutput ideOutput = new IDEOutput();
-		ideOutput.setCompileInformation(compileInformation);
-		information.setIdeOutput(ideOutput);
-		
-		return information;
+		return compileInformation;
 	}
 	
 	private static void generateCompileInformationbyProblemInformation(

@@ -94,10 +94,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					
-					fieldInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+					/*fieldInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
 					fieldInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 	
 					
 					Cache.getInstance().addInformationToCache(fieldInfo);
@@ -128,10 +128,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-					methodInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+					/*methodInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
 					methodInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 				
 					Cache.getInstance().addInformationToCache(methodInfo);
 				}
@@ -161,10 +161,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					
-					importInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+					/*importInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
 					importInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 			
 					
 					Cache.getInstance().addInformationToCache(importInfo);
@@ -197,10 +197,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 					
-					typeInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+					/*typeInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
 					typeInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 
 					Cache.getInstance().addInformationToCache(typeInfo);
 				}

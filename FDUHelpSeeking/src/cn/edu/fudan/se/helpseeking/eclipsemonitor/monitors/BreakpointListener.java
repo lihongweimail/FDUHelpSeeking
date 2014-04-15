@@ -21,6 +21,7 @@ import org.eclipse.ui.PlatformUI;
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
@@ -69,20 +70,22 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					
+					IDEOutput ideOutput = new IDEOutput();
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.SelectProblemInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					ideOutput.setRuntimeInformation(ConsoleInformationUtil
+							.SelectConsoleInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					info.setIdeOutput(ideOutput);					
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-						
-					info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-							info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-					info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
-	
-						
+					
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {						
 						Cache.getInstance().addInformationToCache(info);
-						}
+					}
 					
 					DatabaseUtil.addInformationToDatabase(info);
 					DatabaseUtil.addInteractionEventToDatabase(e);
@@ -130,21 +133,24 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					
+					IDEOutput ideOutput = new IDEOutput();
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.SelectProblemInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					ideOutput.setRuntimeInformation(ConsoleInformationUtil
+							.SelectConsoleInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					info.setIdeOutput(ideOutput);
+					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-	
-						info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-								info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-						info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-								info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
-			
+						
 						Cache.getInstance().addInformationToCache(info);
-				}
-					
+					}				
 				
-					DatabaseUtil.addInformationToDatabase(info);
-					
+					DatabaseUtil.addInformationToDatabase(info);					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -189,19 +195,26 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
 					
+					IDEOutput ideOutput = new IDEOutput();
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.SelectProblemInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					ideOutput.setRuntimeInformation(ConsoleInformationUtil
+							.SelectConsoleInformationByBreakpont(info.getDebugCode()
+									.getBreakpoint()));
+					info.setIdeOutput(ideOutput);
+					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-						info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-								info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-						info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-								info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
-			
-						Cache.getInstance().addInformationToCache(info);
-					}
-	               //add end
-					DatabaseUtil.addInformationToDatabase(info);
 					
+					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+						
+						Cache.getInstance().addInformationToCache(info);
+						
+					}
+					
+	               //add end
+					DatabaseUtil.addInformationToDatabase(info);					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}

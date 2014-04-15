@@ -6,9 +6,7 @@ public class Cursor {
 	int lineFrom;
 	int lineTo;
 	String  methodQualifiedName;
-	
-	
-	
+	String fileName;
 	
 	public String getMethodQualifiedName() {
 		return methodQualifiedName;
@@ -33,6 +31,12 @@ public class Cursor {
 	}
 	public void setLineTo(int lineTo) {
 		this.lineTo = lineTo;
+	}
+	public String getFileName() {
+		return fileName;
+	}
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 	
 	
