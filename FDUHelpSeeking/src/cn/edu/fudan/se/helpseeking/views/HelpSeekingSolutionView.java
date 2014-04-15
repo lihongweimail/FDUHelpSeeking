@@ -10,16 +10,43 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
 
+import cn.edu.fudan.se.helpseeking.web.SimpleBrower;
+
 
 
 public class HelpSeekingSolutionView extends ViewPart {
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
  
+	SimpleBrower myBrower;  
+	   
+	public SimpleBrower getMyBrower() {
+		return myBrower;
+	}
+
+
+
+	public void setMyBrower(SimpleBrower myBrower) {
+		this.myBrower = myBrower;
+	}
+
+	
+	public void useOleBrowser() {
+		// TODO Auto-generated method stub
+	}	
+	
+	
 	@Override
 	public void createPartControl(Composite arg0) {
 		// TODO Auto-generated method stub
 		
+		  String newUrl="about:blank";
+		  
+		   myBrower = new SimpleBrower();  	
+          myBrower.setMyComposite(arg0);
+	        myBrower.createShow();  
+	        myBrower.setNewUrl( newUrl);
+	        myBrower.refreshBrowser();
 	       
 	    }
 

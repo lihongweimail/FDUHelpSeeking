@@ -52,7 +52,8 @@ public class DBPreferencePage extends PreferencePage     implements IWorkbenchPr
 		 *    */          
 		new Label(topComp, SWT.NONE).setText("URL:");         
 		urlText = new Text(topComp, SWT.BORDER);          
-		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));           
+		urlText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		
 		new Label(topComp, SWT.NONE).setText("用户名:");          
 		usernameText = new Text(topComp, SWT.BORDER);          
 		usernameText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));           

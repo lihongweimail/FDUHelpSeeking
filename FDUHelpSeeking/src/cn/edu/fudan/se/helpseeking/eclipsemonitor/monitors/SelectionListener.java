@@ -22,11 +22,13 @@ import org.eclipse.ui.views.markers.MarkerItem;
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
+import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
@@ -36,7 +38,7 @@ import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
-		ISelectionListener {
+ISelectionListener {
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -55,9 +57,10 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				event.setOriginId("Select: " + s.getFirstElement().toString()
 						+ " from Part: " + part.getTitle());
 				// add
+
 				selectionContent = s.getFirstElement().toString();
 				System.out.println("part0");
-				
+
 				Object object = s.getFirstElement();
 				if (object instanceof IJavaElement) {
 					IJavaElement element = (IJavaElement) object;
@@ -67,7 +70,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					MarkerItem entry = (MarkerItem) object;
 					//add for get problem view item message
 					selectionContent =entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
-                         System.out.println("marker element: "+selectionContent);
+					System.out.println("marker element: "+selectionContent);
 				}
 			}
 		} else if (selection instanceof ITextSelection) {
@@ -76,6 +79,8 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				event.setActionName("InsertCursor");
 				event.setOriginId("Insert cursor in line " + s.getStartLine() 
 						+ "of Part " + part.getTitle());
+
+
 				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.getActivePage().getActiveEditor();
 				if(unitEditor instanceof CompilationUnitEditor){
@@ -83,7 +88,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 							.getEditorInputTypeRoot(unitEditor.getEditorInput());
 					ICompilationUnit icu = (ICompilationUnit) typeRoot
 							.getAdapter(ICompilationUnit.class);
-					
+
 					Information info = new Information();
 					info.setType("EditCode");
 					info.setEditCode(CodeUtil.createEditCodeBySelection(icu, s));
@@ -94,24 +99,24 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					action.setDescription("");
 					action.setByuser(true);
 					info.setAction(action);
-					
+
 					DatabaseUtil.addInformationToDatabase(info);
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-						
+
 						Cache.getInstance().addInformationToCache(info);
 					}
-                   //add end
-				
-					
-					
+					//add end
+
+
+
 				}
 				//System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0
 			}else{
 				event.setOriginId("Select: " + s.getText() + " from Part: "
-					+ part.getTitle());
+						+ part.getTitle());
 				// add
 				selectionContent = s.getText();
 				System.out.println("part1");
@@ -127,84 +132,68 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 		}
 
-		
-			Information info = new Information();
+
+		Information info = new Information();
+
+		//			System.out.println("测试problem或console视图选择："+part.getClass().toString());
 		// 可以加工
-		if (part.getTitle().startsWith("Console") || part.getTitle().startsWith("Problems")) {
-			if (part.getTitle().startsWith("Console")) {
-				info.setType("RuntimeInfo");
+		if (part.getTitle().toString().equals("org.eclipse.ui.internal.console.ConsoleView") || part.getTitle().toString().equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
+
+			IDEOutput ideo=new IDEOutput();
+			CompileInformation cpi=new CompileInformation();
+			RuntimeInformation ri=new RuntimeInformation();
+
+
+			if (part.getTitle().toString().equals("org.eclipse.ui.internal.console.ConsoleView")) {
+				info.setType("RuntimeInfo");		
+
+				ri.setContent(selectionContent);
+				ri.setType(RuntimeInfoType.ExceptionalMessage);
+
+				ideo.setRuntimeInformation(ri);;
+				info.setIdeOutput(ideo);
 			}
-			
-			if (part.getTitle().startsWith("Problems")) {
-				info.setType("CompileInfo");
+
+			if (part.getTitle().toString().equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
+				info.setType("CompileInfo");				
+				cpi.setContent(selectionContent);
+				cpi.setType(CompileInfoType.ERROR);
+				ideo.setCompileInformation(cpi);
+				info.setIdeOutput(ideo); 	
 			}
-			
-	
-		Action action = new Action();
-		action.setTime(new Timestamp(System.currentTimeMillis()));
-		action.setActionKind(event.getKind());
-		action.setActionName(event.getActionName());
-		action.setDescription("");
-		action.setByuser(true);
-		info.setAction(action);
-	    IDEOutput ideo=new IDEOutput();
-	  
-		CompileInformation cpi=new CompileInformation();
-		cpi.setContent(selectionContent);
-		cpi.setType(CompileInfoType.ERROR);
-		  ideo.setCompileInformation(cpi);
-		 info.setIdeOutput(ideo); 
-		 
-		//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//		IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-		if (!ExceptionalPartAndView.checkPartAndView(part)) {
-			
-			Cache.getInstance().addInformationToCache(info);
-		}
+
+
+			Action action = new Action();
+			action.setTime(new Timestamp(System.currentTimeMillis()));
+			action.setActionKind(event.getKind());
+			action.setActionName(event.getActionName());
+			action.setDescription(event.getOriginId());
+			action.setByuser(event.isByuser());
+			info.setAction(action);
+
+
+
+			//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+			//		IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+			if (!ExceptionalPartAndView.checkPartAndView(part)) {
+
+				Cache.getInstance().addInformationToCache(info);
+			}
 
 		}
-	
-		
+
+
 		System.out.println("selection action in this Part: " + part.getTitle());
 		System.out.println("selectionContent: " + selectionContent);
 
-// TODO: 给信息收集单例实例赋值
-		MessageCollector mcCollector = MessageCollector.getInstance();
-//		 mcCollector.SetValues(message, methodQualifiedName, currentLineCode,
-//		 methodCode, messageType);
-		mcCollector.setMessage(selectionContent);
-		
-		// 通知数据收集好，可以加工
-		if (part.getTitle().startsWith("Console") || part.getTitle().startsWith("Problem")) {
-			if (part.getTitle().startsWith("Console")) {
-				mcCollector.setMessageType("exception error from console view");
-			}
-			
-			if (part.getTitle().startsWith("Problem")) {
-				mcCollector.setMessageType("compile information from problems view");
-			}
-			
-			// 开启一个线程 处理 检索网络
-			
-//			System.out
-//					.println("start search web and running other process  ... ");
-//			WebProcessing wp = new WebProcessing();
-//			wp.start();
-		}
-//TODO: END 
-		
 
-		
-
-
-		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
 
 	@Override
 	public void start() {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.addPostSelectionListener(this);
+		.addPostSelectionListener(this);
 		setEnabled(true);
 	}
 
@@ -214,7 +203,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 			return;
 		}
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-				.removePostSelectionListener(this);
+		.removePostSelectionListener(this);
 		setEnabled(false);
 	}
 

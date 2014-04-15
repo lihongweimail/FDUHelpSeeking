@@ -128,6 +128,8 @@ public class DatabaseUtil {
 			return 0;
 		}
 
+	System.out.println("DatabaseUtil: addinteractionEventToDatabase\n"+" action kind :"+event.getKind()+"\n action name "+event.getActionName()+"\n action original:"+event.getOriginId());
+		
 		try {
 			String sql = "insert into helpseeking.event(user,time,endtime,kind,lineno,method,type,file,package,project,originid,isbyuser,structurekind,structurehandle,delta)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 

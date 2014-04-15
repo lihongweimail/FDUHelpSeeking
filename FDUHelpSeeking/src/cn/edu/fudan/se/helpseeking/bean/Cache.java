@@ -3,6 +3,10 @@ package cn.edu.fudan.se.helpseeking.bean;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.naming.spi.DirStateFactory.Result;
+
+import org.eclipse.debug.internal.core.commands.ForEachCommand;
+
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 
 public class Cache  {
@@ -57,6 +61,13 @@ public class Cache  {
 
 
 	public void addInformationToCache(Information information) {
+		
+		if (checkInformation(information))
+		{
+			return;
+		}
+		
+		
 
 		InformationQueue infq = new InformationQueue();
 		currentID = currentID + 1;
@@ -65,6 +76,8 @@ public class Cache  {
 
 		informations.add(infq);
 
+		System.out.println("显示连续的编辑动作的动作名："+information.getAction().getActionKind().toString()+":"+information.getAction().getActionName()+"\n动作细节："+information.getAction().getDescription());
+		
 		addActions(information.getAction(), currentID);
 
 		if (information.getDebugCode() != null) {
@@ -101,6 +114,91 @@ public class Cache  {
 		
 
 	}
+
+
+
+	//	简单的连续相同不记录模式
+	private boolean checkInformation(Information information) {
+		boolean result=false;
+		if (actions.getActionList()==null) {
+			//    	System.out.println("actons is null");
+			return false;
+		}
+		Action newEnterAction=information.getAction();
+		Action lastCacheAction=null;	
+		for (ActionCache ac : actions.getActionList()) {
+			if (ac.getActionID()==currentID) {
+				lastCacheAction=ac.getAction();
+			}
+		}
+
+		if (lastCacheAction==null) {
+			//    	System.out.println("not find action");
+			return false;
+		}
+
+		if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  && lastCacheAction.getActionName().equals(newEnterAction.getActionName())) {
+			result=true;
+			//	      System.out.println("the same action: "+ newEnterAction.getActionKind().toString()+" : "+newEnterAction.getActionName());
+		}else 
+		{
+			result=false; 
+			//		System.out.println("the action is not same");
+		}		
+		return result;
+
+	}
+
+
+//	最多连续3次模式：
+//		boolean lasting=true;
+//	int checkActionCount=3;//连续多个动作都相同
+// private boolean checkInformation(Information information) {
+//	    boolean result=false;
+//	    
+//	    if (actions.getActionList()==null) {
+//	    	System.out.println("actons is null");
+//			return false;
+//			
+//		}
+//	    
+//	    
+//	    Action newEnterAction=information.getAction();
+//	    
+//	
+//	         Action lastCacheAction=null;	
+//	    for (ActionCache ac : actions.getActionList()) {
+//			if (ac.getActionID()==currentID) {
+//				lastCacheAction=ac.getAction();
+//			}
+//		}
+//	    
+//	    if (lastCacheAction==null) {
+//	    	System.out.println("not find action");
+//			return false;
+//		}
+//	    		
+//	   if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  && lastCacheAction.getActionName().equals(newEnterAction.getActionName())) {
+//		
+//		   if (lasting) {
+//			  checkActionCount=checkActionCount-1;
+//		     result=true;
+//		     System.out.println("the same actiono");
+//		if (checkActionCount==0) {
+//			lasting=false;
+//			checkActionCount=3;
+//			System.out.println("last time cout for three same action");
+//		}
+//		}else {
+//			lasting=true;
+//			checkActionCount=3;
+//			System.out.println("reset count");
+//		}	   
+//	}
+//	
+//	   System.out.println("the action same result: "+ result);
+//		return result;
+//	}
 
 	private void addExplorerRelated(ExplorerRelated explorerRelated,
 			int informationID) {

@@ -122,12 +122,16 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
-import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.EditorInfo;
+import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
+import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
+import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -142,14 +146,40 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setByuser(true);
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Activated: " + part.getTitle());
-		DatabaseUtil.addInteractionEventToDatabase(event);
+	   System.out.println("I am a part of  class: "+part.getClass().toString());
 		
 		if (ExceptionalPartAndView.checkPartAndView(part)) {
 			return;
 			
 		}
-		
 
+		//add hongwei for exploerrelated 14-04-15
+		Information info=new Information();
+		Action ac=new Action();
+		ac.setByuser(event.isByuser());
+		ac.setActionKind(event.getKind());
+		ac.setActionName("Part Activated");
+		ac.setDescription(part.getTitle());
+		info.setAction(ac);
+		ExplorerRelated er=new ExplorerRelated();
+		EditorInfo edi=new EditorInfo();
+	
+		
+		if (part instanceof CompilationUnitEditor) {
+			edi.addSize();
+			edi.getClassQualifiedNameList().add(part.getTitle());
+			er.setEditorInfo(edi);
+			}
+
+		
+		info.setExplorerRelated(er);
+			
+		DatabaseUtil.addInformationToDatabase(info);
+		Cache.getInstance().addInformationToCache(info);
+//    add end 		
+		DatabaseUtil.addInteractionEventToDatabase(event);
+
+		
 		if (part instanceof CompilationUnitEditor) {
 			ContextUtil.addEditor((CompilationUnitEditor) part);
 			final CompilationUnitEditor ce = (CompilationUnitEditor) part;
@@ -1544,9 +1574,40 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		event.setKind(Kind.ATTENTION);
 		event.setOriginId("Part Opened: " + part.getTitle());
 		
+		//TODO 
+		
 		if (ExceptionalPartAndView.checkPartAndView(part)) {
 			return;
 		}	
+		//add hongwei for exploerrelated 14-04-15
+		Information info=new Information();
+		Action ac=new Action();
+		ac.setByuser(event.isByuser());
+		ac.setActionKind(event.getKind());
+		ac.setActionName("Part Activated");
+		ac.setDescription(part.getTitle());
+		info.setAction(ac);
+		ExplorerRelated er=new ExplorerRelated();
+		EditorInfo edi=new EditorInfo();
+//		ExplorerInfo exi=new ExplorerInfo();
+		
+		if (part.getClass().toString().equals("org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor")) {
+			edi.addSize();
+			edi.getClassQualifiedNameList().add(part.getTitle());
+			er.setEditorInfo(edi);
+			}
+//		if (part.getClass().toString().equals("org.eclipse.ui.navigator.resources.ProjectExplorer")) {
+//			exi.addSize();
+//			exi.getSelectObjectNameList().add(part.getTitle());
+//			er.setExplorerInfo(exi);
+//			}
+		
+		info.setExplorerRelated(er);
+			
+		DatabaseUtil.addInformationToDatabase(info);
+		Cache.getInstance().addInformationToCache(info);
+//    add end 	
+		
 		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}

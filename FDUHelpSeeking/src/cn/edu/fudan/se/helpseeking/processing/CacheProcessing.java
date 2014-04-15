@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -64,10 +62,11 @@ public class CacheProcessing extends Thread  {
 			// 同步块中！防止 出错！
 
               currentTactic=ps.getInt("TACTICMODE_KEY");
-              System.out.println("当前策略值是："+currentTactic);
+              
+              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
 			
 	
-simpleTacticProcessing();
+                 simpleTacticProcessing();
 
 
 			//放置在searchView
