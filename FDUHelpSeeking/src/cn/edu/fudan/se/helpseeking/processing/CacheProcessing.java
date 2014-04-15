@@ -73,9 +73,13 @@ public class CacheProcessing extends Thread  {
 			if(part instanceof HelpSeekingSearchView){
 				HelpSeekingSearchView v = (HelpSeekingSearchView)part;
 				String searhText="";
-				for (int i = 0; i <Basic.TEMP_K_KEYWORDS; i++) {
+				int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
+				for (int i = 0; i <candidateKeywordNum; i++) {
+							if (i==Basic.TEMP_K_KEYWORDS) {
+						break;
+					}
 					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
-				}
+			}
 							v.setSearchValue(searhText);
 			}
 

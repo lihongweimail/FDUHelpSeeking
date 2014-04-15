@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
 
 import swing2swt.layout.BorderLayout;
@@ -25,6 +26,7 @@ import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
+import cn.edu.fudan.se.helpseeking.web.SimpleBrower;
 
 
 
@@ -34,14 +36,20 @@ public class HelpSeekingSearchView extends ViewPart {
 	private Text txtSearch;
 	private org.eclipse.swt.widgets.List list;
 	public HelpSeekingSearchView() {
-	}
+	   	 			part=FDUHelpSeekingPlugin
+	   	 				.getDefault()
+	   					.getWorkbench()
+	   					.getActiveWorkbenchWindow()
+	   					.getActivePage()
+	   					.findView(
+	   							"cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+	   	 			}
 	
-	
+	IViewPart part;
 	   @Override
 	public void createPartControl(Composite arg0) {
-		   
-		
-		 
+		 	   	 		
+	
 	   	arg0.setLayout(new BorderLayout(0, 0));
 	   	
 	   	Composite SearchComposite = new Composite(arg0, SWT.NONE);
@@ -58,6 +66,13 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 		String queryText=txtSearch.getText().trim();
 	   	 		list.add("检索词为："+queryText);
 	   	 		list.add("检索结果为：");
+	  
+	   	 		if(part instanceof HelpSeekingSolutionView){
+		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
+						v.getMyBrower().setNewUrl( "http://www.google.com/search?newwindow=1&safe=strict&q="+queryText);
+		   	 		}
+//		   	 	https://www.google.com.hk/search?newwindow=1&safe=strict&site=&source=hp&q=hello+world&oq=hello+world&gs_l=hp.3...2437.5350.0.6715.12.10.0.0.0.0.319.319.3-1.1.0....0...1c.1.41.hp..12.0.0.0.SzpSkykwWd4&bav=on.2,or.r_cp.&bvm=bv.64764171%2Cd.aGc%2Cpv.xjs.s.en_US.PQkb9ew9HrM.O&fp=f644e369b7289f73&biw=908&bih=354&dpr=1&tch=3&ech=1&psi=my1NU4i_KY-tiQefxYCYAg.1397566870615.3&wrapid=tlif139756687745911
+		 		
 	   	 		
 	   	 	List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		
