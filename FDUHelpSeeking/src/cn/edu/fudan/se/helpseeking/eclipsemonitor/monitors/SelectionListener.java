@@ -8,7 +8,6 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.JavaUI;
-import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
 import org.eclipse.jface.text.IMarkSelection;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -27,14 +26,11 @@ import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
-import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
-import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
-import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
@@ -96,7 +92,7 @@ ISelectionListener {
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
 					action.setActionName(event.getActionName());
-					action.setDescription("");
+					action.setDescription(event.getOriginId());
 					action.setByuser(true);
 					info.setAction(action);
 

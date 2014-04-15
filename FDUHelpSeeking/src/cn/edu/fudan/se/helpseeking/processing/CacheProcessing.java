@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -37,15 +38,21 @@ public class CacheProcessing extends Thread  {
 	
 	public CacheProcessing()
 	{
-		part = FDUHelpSeekingPlugin
-				.getDefault()
-				.getWorkbench()
-				.getActiveWorkbenchWindow()
-				.getActivePage()
-				.findView(
-						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 		
-		 ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+		Display.getDefault().asyncExec(new Runnable() {
+			public void run() {
+				part = FDUHelpSeekingPlugin
+						.getDefault()
+						.getWorkbench()
+						.getActiveWorkbenchWindow()
+						.getActivePage()
+						.findView(
+								"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+				
+				ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+				
+			}
+		});
 		 
 
 	}

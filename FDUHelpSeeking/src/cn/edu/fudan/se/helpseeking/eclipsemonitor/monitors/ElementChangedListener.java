@@ -14,19 +14,16 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
-import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
-import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
-import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 public class ElementChangedListener extends AbstractUserActivityMonitor
 		implements IElementChangedListener {
@@ -67,10 +64,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 			event.setKind(Kind.EDIT);
 			IJavaElement e = d.getElement();
 			ContextUtil.setContext(e);
-			
-			//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-			IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-	        //add end 
+			//add end 
 
 			
 			switch (e.getElementType()) {
@@ -90,9 +84,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldInfo.setAction(fieldAction);
 				
 				
-				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据				
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 					
 					/*fieldInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
@@ -126,8 +123,11 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				
 				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+				|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+				|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+				|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 					/*methodInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
 					methodInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
@@ -137,7 +137,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				}
 
 				DatabaseUtil.addInformationToDatabase(methodInfo);
-  			DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
@@ -158,8 +158,11 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importInfo.setAction(importAction);
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 					
 					/*importInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
@@ -194,8 +197,11 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 					
 					/*typeInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
 							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));

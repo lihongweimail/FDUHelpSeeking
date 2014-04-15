@@ -105,15 +105,17 @@ public class CodeUtil {
 		node.accept(new ASTVisitor() {
 			public boolean visit(SimpleName name) {
 				IBinding binding = name.resolveBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IField) {					
-					String classString = ((IField) element).getDeclaringType()
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IField) {					
+						String classString = ((IField) element).getDeclaringType()
 							.getPackageFragment() .getElementName() + "." 
 							+ ((IField) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IField) element)
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IField) element)
 								.getElementName());
-						belowClass.add(classString);
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;
@@ -121,15 +123,17 @@ public class CodeUtil {
 
 			public boolean visit(MethodInvocation method) {
 				IMethodBinding binding = method.resolveMethodBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IMethod) {
-					String classString = ((IMethod) element).getDeclaringType()
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IMethod) {
+						String classString = ((IMethod) element).getDeclaringType()
 							.getPackageFragment().getElementName() + "." 
 							+ ((IMethod) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IMethod) element)
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IMethod) element)
 								.getElementName());
-						belowClass.add(classString);
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;
@@ -137,15 +141,17 @@ public class CodeUtil {
 
 			public boolean visit(ClassInstanceCreation creation) {
 				IMethodBinding binding = creation.resolveConstructorBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IMethod) {
-					String classString = ((IMethod) element).getDeclaringType()
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IMethod) {
+						String classString = ((IMethod) element).getDeclaringType()
 							.getPackageFragment().getElementName() + "." 
 							+ ((IMethod) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IMethod) element)
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IMethod) element)
 								.getElementName());
-						belowClass.add(classString);
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;
@@ -217,7 +223,10 @@ public class CodeUtil {
 			parser.setKind(ASTParser.K_COMPILATION_UNIT);
 			parser.setResolveBindings(true);
 			IBinding[] bindings = parser.createBindings(elements, null);
-			ASTNode node = cu.findDeclaringNode(bindings[0].getKey());
+			ASTNode node = null;
+			if(bindings[0] != null){
+				node = cu.findDeclaringNode(bindings[0].getKey());
+			}
 			
 			if(node != null){
 				final List<String> internalCallee = new ArrayList<>();
@@ -225,28 +234,32 @@ public class CodeUtil {
 				node.accept(new ASTVisitor() {
 					public boolean visit(SimpleName name) {
 						IBinding binding = name.resolveBinding();
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IField) {
-							String classString = ((IField) element).getDeclaringType()
-									.getPackageFragment().getElementName() + "." 
-									+ ((IField) element).getDeclaringType().getElementName();
-							internalCallee.add(classString + "." 
-									+ ((IField) element).getElementName());
-							belowClass.add(classString);
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IField) {
+								String classString = ((IField) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IField) element).getDeclaringType().getElementName();
+								internalCallee.add(classString + "." 
+										+ ((IField) element).getElementName());
+								belowClass.add(classString);
+							}
 						}
 						return true;
 					}
 
 					public boolean visit(MethodInvocation method) {
 						IMethodBinding binding = method.resolveMethodBinding();
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
-									.getPackageFragment().getElementName() + "." 
-									+ ((IMethod) element).getDeclaringType().getElementName();
-							internalCallee.add(classString + "." 
-									+ ((IMethod) element).getElementName());
-							belowClass.add(classString);
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IMethod) {
+								String classString = ((IMethod) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IMethod) element).getDeclaringType().getElementName();
+								internalCallee.add(classString + "." 
+										+ ((IMethod) element).getElementName());
+								belowClass.add(classString);
+							}
 						}
 						return true;
 					}
@@ -254,14 +267,16 @@ public class CodeUtil {
 					public boolean visit(ClassInstanceCreation creation) {
 						IMethodBinding binding = creation
 							.resolveConstructorBinding();
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
-									.getPackageFragment().getElementName() + "." 
-									+ ((IMethod) element).getDeclaringType().getElementName();
-							internalCallee.add(classString + "." 
-									+ ((IMethod) element).getElementName());
-							belowClass.add(classString);
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IMethod) {
+								String classString = ((IMethod) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IMethod) element).getDeclaringType().getElementName();
+								internalCallee.add(classString + "." 
+										+ ((IMethod) element).getElementName());
+								belowClass.add(classString);
+							}
 						}
 						return true;
 					}
@@ -360,15 +375,17 @@ public class CodeUtil {
 		node.accept(new ASTVisitor() {
 			public boolean visit(SimpleName name) {
 				IBinding binding = name.resolveBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IField) {
-					String classString = ((IField) element).getDeclaringType()
-							.getPackageFragment().getElementName() + "." 
-							+ ((IField) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IField) element)
-								.getElementName());
-						belowClass.add(classString);
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IField) {
+						String classString = ((IField) element).getDeclaringType()
+								.getPackageFragment().getElementName() + "." 
+								+ ((IField) element).getDeclaringType().getElementName();
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IField) element)
+									.getElementName());
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;
@@ -376,15 +393,17 @@ public class CodeUtil {
 
 			public boolean visit(MethodInvocation method) {
 				IMethodBinding binding = method.resolveMethodBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IMethod) {
-					String classString = ((IMethod) element).getDeclaringType()
-							.getPackageFragment().getElementName() + "." 
-							+ ((IMethod) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IMethod) element)
-								.getElementName());
-						belowClass.add(classString);
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IMethod) {
+						String classString = ((IMethod) element).getDeclaringType()
+								.getPackageFragment().getElementName() + "." 
+								+ ((IMethod) element).getDeclaringType().getElementName();
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IMethod) element)
+									.getElementName());
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;
@@ -392,15 +411,17 @@ public class CodeUtil {
 
 			public boolean visit(ClassInstanceCreation creation) {
 				IMethodBinding binding = creation.resolveConstructorBinding();
-				IJavaElement element = binding.getJavaElement();
-				if (element instanceof IMethod) {
-					String classString = ((IMethod) element).getDeclaringType()
-							.getPackageFragment().getElementName() + "." 
-							+ ((IMethod) element).getDeclaringType().getElementName();
-					if(!classString.startsWith(prefix)){
-						internalCallee.add(classString + "." + ((IMethod) element)
-								.getElementName());
-						belowClass.add(classString);
+				if(binding != null){
+					IJavaElement element = binding.getJavaElement();
+					if (element instanceof IMethod) {
+						String classString = ((IMethod) element).getDeclaringType()
+								.getPackageFragment().getElementName() + "." 
+								+ ((IMethod) element).getDeclaringType().getElementName();
+						if(!classString.startsWith(prefix)){
+							internalCallee.add(classString + "." + ((IMethod) element)
+									.getElementName());
+							belowClass.add(classString);
+						}
 					}
 				}
 				return true;

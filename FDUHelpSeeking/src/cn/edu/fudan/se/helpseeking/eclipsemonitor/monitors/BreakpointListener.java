@@ -15,7 +15,6 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.debug.core.IJavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
@@ -79,11 +78,12 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 									.getBreakpoint()));
 					info.setIdeOutput(ideOutput);					
 					
-					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getActivePage().getActivePart();
-					
-					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {						
+					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据					
+					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {						
 						Cache.getInstance().addInformationToCache(info);
 					}
 					
@@ -143,9 +143,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					info.setIdeOutput(ideOutput);
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					
-					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 						
 						Cache.getInstance().addInformationToCache(info);
 					}				
@@ -205,9 +207,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					info.setIdeOutput(ideOutput);
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-					
-					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 						
 						Cache.getInstance().addInformationToCache(info);
 						
