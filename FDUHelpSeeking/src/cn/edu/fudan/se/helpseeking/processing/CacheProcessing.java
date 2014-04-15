@@ -41,16 +41,11 @@ public class CacheProcessing extends Thread  {
 		
 		Display.getDefault().asyncExec(new Runnable() {
 			public void run() {
-				part = FDUHelpSeekingPlugin
-						.getDefault()
-						.getWorkbench()
-						.getActiveWorkbenchWindow()
-						.getActivePage()
-						.findView(
-								"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+			
 				
-				ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-				
+				if(part == null){
+					System.currentTimeMillis();
+				}
 			}
 		});
 		 
@@ -59,11 +54,20 @@ public class CacheProcessing extends Thread  {
 
 	//获取单例
 	Cache currentCache=Cache.getInstance();
-	 private IPreferenceStore ps;
+	 private IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
 
 	static Object obj = new Object();
 
 	public void run() {
+		
+		
+		part = FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage()
+				.findView(
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 
 		synchronized (obj) {
 			// 同步块中！防止 出错！
