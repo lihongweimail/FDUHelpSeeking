@@ -8,6 +8,7 @@ import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.JavaUI;
+import org.eclipse.jdt.ui.wizards.NewElementWizardPage;
 import org.eclipse.jface.text.IMarkSelection;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.viewers.ISelection;
@@ -19,14 +20,19 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.markers.MarkerItem;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
+import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.MessageCollector;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
+import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
@@ -93,6 +99,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+						
 						Cache.getInstance().addInformationToCache(info);
 					}
                    //add end
@@ -120,6 +127,44 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 		}
 
+		
+			Information info = new Information();
+		// 可以加工
+		if (part.getTitle().startsWith("Console") || part.getTitle().startsWith("Problems")) {
+			if (part.getTitle().startsWith("Console")) {
+				info.setType("RuntimeInfo");
+			}
+			
+			if (part.getTitle().startsWith("Problems")) {
+				info.setType("CompileInfo");
+			}
+			
+	
+		Action action = new Action();
+		action.setTime(new Timestamp(System.currentTimeMillis()));
+		action.setActionKind(event.getKind());
+		action.setActionName(event.getActionName());
+		action.setDescription("");
+		action.setByuser(true);
+		info.setAction(action);
+	    IDEOutput ideo=new IDEOutput();
+	  
+		CompileInformation cpi=new CompileInformation();
+		cpi.setContent(selectionContent);
+		cpi.setType(CompileInfoType.ERROR);
+		  ideo.setCompileInformation(cpi);
+		 info.setIdeOutput(ideo); 
+		 
+		//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
+//		IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+		if (!ExceptionalPartAndView.checkPartAndView(part)) {
+			
+			Cache.getInstance().addInformationToCache(info);
+		}
+
+		}
+	
+		
 		System.out.println("selection action in this Part: " + part.getTitle());
 		System.out.println("selectionContent: " + selectionContent);
 
@@ -147,6 +192,11 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 //			wp.start();
 		}
 //TODO: END 
+		
+
+		
+
+
 		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}

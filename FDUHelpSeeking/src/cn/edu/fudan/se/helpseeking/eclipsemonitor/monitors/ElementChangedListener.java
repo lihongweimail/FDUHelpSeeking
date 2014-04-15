@@ -23,8 +23,10 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
+import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 public class ElementChangedListener extends AbstractUserActivityMonitor
 		implements IElementChangedListener {
@@ -86,20 +88,23 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setDescription(event.getOriginId());
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
-				DatabaseUtil.addInformationToDatabase(fieldInfo);
 				
 				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					
+					fieldInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+					fieldInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+	
+					
 					Cache.getInstance().addInformationToCache(fieldInfo);
 				}
 				
-			
-				
-			
-		
-				DatabaseUtil.addInteractionEventToDatabase(event);
+					DatabaseUtil.addInformationToDatabase(fieldInfo);
+        			DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
 				IMethod m = (IMethod) e;
@@ -116,18 +121,23 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setDescription(event.getOriginId());
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
-				DatabaseUtil.addInformationToDatabase(methodInfo);
-
+				
+				
 				
 				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					methodInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+					methodInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+				
 					Cache.getInstance().addInformationToCache(methodInfo);
 				}
 
-				
-				DatabaseUtil.addInteractionEventToDatabase(event);
+				DatabaseUtil.addInformationToDatabase(methodInfo);
+  			DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
 				IImportDeclaration id = (IImportDeclaration) e;
@@ -146,15 +156,22 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setDescription(event.getOriginId());
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
-				DatabaseUtil.addInformationToDatabase(importInfo);	
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					
+					importInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+					importInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+			
+					
 					Cache.getInstance().addInformationToCache(importInfo);
 				}
 
 	
+				DatabaseUtil.addInformationToDatabase(importInfo);	
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -175,14 +192,20 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeInfo.setAction(typeAction);
 				
 				
-				DatabaseUtil.addInformationToDatabase(typeInfo);
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 //				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+					
+					typeInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+					typeInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+
 					Cache.getInstance().addInformationToCache(typeInfo);
 				}
 
+				DatabaseUtil.addInformationToDatabase(typeInfo);
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;

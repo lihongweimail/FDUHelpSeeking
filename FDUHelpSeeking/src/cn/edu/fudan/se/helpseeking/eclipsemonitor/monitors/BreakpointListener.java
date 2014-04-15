@@ -70,23 +70,21 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					info.setAction(action);
 					
 					
-					DatabaseUtil.addInformationToDatabase(info);
-					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench()
 							.getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+						
+					info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+							info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+					info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+							info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+	
+						
 						Cache.getInstance().addInformationToCache(info);
-						Cache.getInstance().addInformationToCache(
-								ProblemInformationUtil.SelectProblemInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
-						Cache.getInstance().addInformationToCache(
-								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
-					}
+						}
 					
-				
-					
+					DatabaseUtil.addInformationToDatabase(info);
 					DatabaseUtil.addInteractionEventToDatabase(e);
 					
 				}
@@ -131,21 +129,21 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
-					DatabaseUtil.addInformationToDatabase(info);
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+	
+						info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+								info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+						info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+								info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+			
 						Cache.getInstance().addInformationToCache(info);
-						Cache.getInstance().addInformationToCache(
-								ProblemInformationUtil.SelectProblemInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
-						Cache.getInstance().addInformationToCache(
-								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
-					}
+				}
 					
 				
+					DatabaseUtil.addInformationToDatabase(info);
 					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
@@ -190,20 +188,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					action.setActionName(e.getActionName());
 					action.setDescription(e.getOriginId());
 					info.setAction(action);
-					DatabaseUtil.addInformationToDatabase(info);
 					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+						info.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
+								info.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
+						info.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
+								info.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());
+			
 						Cache.getInstance().addInformationToCache(info);
-						Cache.getInstance().addInformationToCache(
-								ProblemInformationUtil.SelectProblemInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
-						Cache.getInstance().addInformationToCache(
-								ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-										info.getDebugCode().getBreakpoint()));
 					}
 	               //add end
+					DatabaseUtil.addInformationToDatabase(info);
 					
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}

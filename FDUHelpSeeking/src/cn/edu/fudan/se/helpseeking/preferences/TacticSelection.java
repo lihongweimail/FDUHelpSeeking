@@ -68,6 +68,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 
 	@Override
 	protected Control createContents(Composite parent) {
+		         
 		// TODO Auto-generated method stub
 		Composite topComp=new Composite(parent, SWT.NONE);
 		topComp.setLayout(new GridLayout(2, false));
@@ -162,6 +163,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 
 	protected void performDefaults() {
 		selectedTacticText.setText(SELECTTACTIC_DEFAULT);
+		
 		
 	}
 	

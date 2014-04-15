@@ -5,7 +5,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.jdt.ui.PreferenceConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.PreferenceStore;
 import org.eclipse.ui.IViewPart;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -46,6 +48,7 @@ public class CacheProcessing extends Thread  {
 						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 		
 		 ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+		 
 
 	}
 
@@ -353,6 +356,11 @@ simpleTacticProcessing();
 			String rString=pInfo.getContent();
 			for (String str : (rString.split(SPLIT_STRING))) 
 			{
+					if (str.trim().length()==0) {
+						break;
+					}
+					
+				
 				KeyWord kw=new KeyWord();
 				kw.setKeywordName(str);
 				//1 error
@@ -398,8 +406,17 @@ simpleTacticProcessing();
 			//  3 exceptional message（*这个信息更重要）
 			if (rInfo.getType()==RuntimeInfoType.ExceptionalMessage) {
 				String rString=rInfo.getContent();
+				//加上已有的exceptional name
+				
+				rString=rString+";"+rInfo.getExceptionName();
+				
+				
 				for (String str : (rString.split(SPLIT_STRING))) 
 				{
+					if (str.trim().length()==0) {
+						break;
+					}
+					
 					KeyWord kw=new KeyWord();
 					kw.setKeywordName(str);
 					kw.setWeightOne(5);

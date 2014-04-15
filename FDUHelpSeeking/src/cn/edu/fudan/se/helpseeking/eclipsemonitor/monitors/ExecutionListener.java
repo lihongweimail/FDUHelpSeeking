@@ -45,10 +45,16 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 		try {
 			e.setOriginId(event.getCommand().getName() == null ? event
 					.getCommand().getId() : event.getCommand().getName());
+			if (event.getCommand().getName().trim().equals("Inline edit")) {
+				System.out.println("inline edit position:"+event.getCommand().getName().trim());
+			}
 			System.out.println(event.getCommand().getName());
 		} catch (NotDefinedException e1) {
 			e1.printStackTrace();
 		}
+		
+		
+		
 		DatabaseUtil.addInteractionEventToDatabase(e);
 	}
 
