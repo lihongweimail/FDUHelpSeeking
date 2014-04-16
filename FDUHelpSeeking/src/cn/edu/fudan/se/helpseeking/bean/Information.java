@@ -2,12 +2,21 @@ package cn.edu.fudan.se.helpseeking.bean;
 
 public class Information {
 	
+	String  user=System.getProperties().getProperty("user.name");
 	String type;  //?? 信息类型， 是否使用？
 	DebugCode debugCode;
 	EditCode editCode;
 	IDEOutput ideOutput;
 	ExplorerRelated explorerRelated;
 	Action action;
+	
+	
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
 	public String getType() {
 		return type;
 	}

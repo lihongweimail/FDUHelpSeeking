@@ -314,7 +314,11 @@ public class CacheProcessing extends Thread  {
 				
 				//方法的qualified name 中，intercallee中包含自己的类名信息需要去除
 				String finalcalleestr="";
-				for (String calleestr : callee.split("[;]")) {
+				String[] calleearray=callee.split("[;]");
+				if (calleearray.length>0) {
+					
+		
+				for (String calleestr :calleearray ) {
 					    String[] methodnamestr=calleestr.split(SPLIT_STRING);
 					    int lastindex=methodnamestr.length;
 					    for (int i =lastindex-1; i >0; i--) {
@@ -326,7 +330,7 @@ public class CacheProcessing extends Thread  {
 						}
 					
 				}
-				
+						}
 				
 				
 				String result1=finalcalleestr+belowclass;

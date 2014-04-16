@@ -60,7 +60,7 @@ public class Cache  {
 	}
 
 
-	public void addInformationToCache(Information information) {
+	public void addInformationToCache(Information information,int actionID) {
 		
 		if (checkInformation(information))
 		{
@@ -71,7 +71,7 @@ public class Cache  {
 		
 
 		InformationQueue infq = new InformationQueue();
-		currentID = currentID + 1;
+		currentID =actionID;
 		infq.setId(currentID);
 		infq.setInformation(information);
 

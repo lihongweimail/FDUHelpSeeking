@@ -78,16 +78,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 									.getBreakpoint()));
 					info.setIdeOutput(ideOutput);					
 					
+					//需要先写入数据库，才能得到ID
+					int actionid=DatabaseUtil.addInformationToDatabase(info);
+					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据					
 					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
 							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
 							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {						
-						Cache.getInstance().addInformationToCache(info);
+						Cache.getInstance().addInformationToCache(info,actionid);
 					}
 					
-					DatabaseUtil.addInformationToDatabase(info);
+				
 					DatabaseUtil.addInteractionEventToDatabase(e);
 					
 				}
@@ -142,6 +145,11 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 									.getBreakpoint()));
 					info.setIdeOutput(ideOutput);
 					
+					
+					//需要先写入数据库，才能得到ID
+					int actionid=DatabaseUtil.addInformationToDatabase(info);
+	
+					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
@@ -149,10 +157,10 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 						
-						Cache.getInstance().addInformationToCache(info);
+						Cache.getInstance().addInformationToCache(info,actionid);
 					}				
 				
-					DatabaseUtil.addInformationToDatabase(info);					
+							
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}
@@ -206,6 +214,12 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 									.getBreakpoint()));
 					info.setIdeOutput(ideOutput);
 					
+					
+					
+					//需要先写入数据库，才能得到ID
+					int actionid=DatabaseUtil.addInformationToDatabase(info);
+	
+					
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 							|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
@@ -213,12 +227,12 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 							|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 									.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 						
-						Cache.getInstance().addInformationToCache(info);
+						Cache.getInstance().addInformationToCache(info,actionid);
 						
 					}
 					
 	               //add end
-					DatabaseUtil.addInformationToDatabase(info);					
+							
 					DatabaseUtil.addInteractionEventToDatabase(e);
 				}
 			}

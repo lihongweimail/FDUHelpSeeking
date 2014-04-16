@@ -17,6 +17,7 @@ import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Breakpoint;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.ClassModel;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
 import cn.edu.fudan.se.helpseeking.bean.Cursor;
@@ -207,39 +208,51 @@ public class DatabaseUtil {
 		if (information.equals(lastInformation)) {
 			return 0;
 		}
-
+int informationID=-1;
 		int DebugCodeID=-1;
 		int EditCodeID=-1;
 		int IDEOutputID=-1;
 		int ExplorerRelatedID=-1;
 		int ActionID=-1;
+		
+		//insert action and get actionID with synchronized
+		//TODO :   2014-04-16 NEW DATABASE MODE START
+		if (information.getAction()!=null) {
+			ActionID=addActionAndgetID(information.getAction());
+		}
+
+
+		 informationID=ActionID;
+
 
 		//insert debugCode and get debugcodeID with synchronized
 		if (information.getDebugCode()!=null) {
-			DebugCodeID=addDebugCodeAndgetID(information.getDebugCode());
+				 DebugCodeID=ActionID;
+			addDebugCodeTODataBase(information.getDebugCode(),DebugCodeID);
 		}
 
 
 
 		//insert editCode and get editCodeID with synchronized
 		if (information.getEditCode()!=null) {
-			EditCodeID=addEditCodeAndgetID(information.getEditCode());
+			
+			 EditCodeID=ActionID;
+			
+			addEditCodeTODataBase(information.getEditCode(),EditCodeID);
 		}
 
 
 		//insert IDEOutput and get IDEOutputID with synchronized
 		if (information.getIdeOutput()!=null) {
-			IDEOutputID=addIDEOutputAndgetID(information.getIdeOutput());
+			 IDEOutputID=ActionID;
+	
+			addIDEOutputTODataBase(information.getIdeOutput(),IDEOutputID);
 		}
 
 		//insert explorerRelated and get explorerRelatedID with synchronized
 		if (information.getExplorerRelated()!=null) {
-			ExplorerRelatedID=addExplorerRelatedAndgetID(information.getExplorerRelated());
-		}
-
-		//insert action and get actionID with synchronized
-		if (information.getAction()!=null) {
-			ActionID=addActionAndgetID(information.getAction());
+			 ExplorerRelatedID=ActionID;
+			addExplorerRelatedTODataBase(information.getExplorerRelated(),ExplorerRelatedID);
 		}
 
 
@@ -248,18 +261,19 @@ public class DatabaseUtil {
 		PreparedStatement ps = null;
 
 		try {
-			String sql = "insert into helpseeking.information(DebugCodeID,EditCodeID,IDEOutputID,ExplorerRelatedID,ActionID, type)  values(?,?,?,?,?,?)"; 
+			String sql = "insert into helpseeking.information(id,DebugCodeID,EditCodeID,IDEOutputID,ExplorerRelatedID,ActionID, type)  values(?,?,?,?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, DebugCodeID);
-			ps.setInt(2, EditCodeID);
-			ps.setInt(3, IDEOutputID);
-			ps.setInt(4, ExplorerRelatedID);
-			ps.setInt(5, ActionID);
-			ps.setString(6, information.getType());
+			ps.setInt(1, informationID);
+			ps.setInt(2, DebugCodeID);
+			ps.setInt(3, EditCodeID);
+			ps.setInt(4, IDEOutputID);
+			ps.setInt(5, ExplorerRelatedID);
+			ps.setInt(6, ActionID);
+			ps.setString(7, information.getType());
 
 			//id field is an auto increment field , it need null value to let dbms increase ....
 
@@ -287,7 +301,7 @@ public class DatabaseUtil {
 					e.printStackTrace();
 				}
 		}
-		return resu;
+		return ActionID;
 	}
 
 
@@ -322,7 +336,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.action(time,endtime,actionKind,actionName,description,byuser)  values(?,?,?,?,?,?)";
+			String sql = "insert into helpseeking.action(time,endtime,actionKind,actionName,description,byuser,user)  values(?,?,?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -338,6 +352,7 @@ public class DatabaseUtil {
 			ps.setString(4, action.getActionName());
 			ps.setString(5, action.getDescription());
 			ps.setBoolean(6, action.isByuser());
+			ps.setString(7, action.getUser());
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -376,22 +391,10 @@ public class DatabaseUtil {
 
 	}
 
-	//insert explorerRelated and get explorerRelatedID with synchronized
 
-	private static int addExplorerRelatedAndgetID(
-			ExplorerRelated explorerRelated) {
-		int explorerRelatedID=-1;
-		int addresult=0;
-		addresult=addExplorerRelatedTODataBase(explorerRelated);
-		if (addresult==1) {
-			explorerRelatedID=findlastExplorerRelatedID();
-		}
-
-		return explorerRelatedID;
-	}
 
 	private static int addExplorerRelatedTODataBase(
-			ExplorerRelated explorerRelated) {
+			ExplorerRelated explorerRelated, int explorerRelatedID) {
 		int result=0;
 
 		int editorInfoID=-1;
@@ -400,12 +403,14 @@ public class DatabaseUtil {
 
 		//insert editorInfo and get editorInfoID with synchronized
 		if (explorerRelated.getEditorInfo()!=null) {
-			editorInfoID=addEditorInfoAndgetID(explorerRelated.getEditorInfo());
+			editorInfoID=explorerRelatedID;
+			addEditorInfoTODataBase(explorerRelated.getEditorInfo(),editorInfoID);
 		}
 
 		//insert explorerInfo and get explorerInfoID with synchronized
 		if (explorerRelated.getExplorerInfo()!=null) {
-			explorerInfoID=addExplorerInfoAndgetID(explorerRelated.getExplorerInfo());
+			explorerInfoID=explorerRelatedID;
+					addExplorerInfoTODataBase(explorerRelated.getExplorerInfo(),explorerInfoID);
 		}
 
 
@@ -415,14 +420,15 @@ public class DatabaseUtil {
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.explorerrelated(editorInfoID,explorerInfoID)  values(?,?)"; 
+			String sql = "insert into helpseeking.explorerrelated(id,editorInfoID,explorerInfoID)  values(?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, editorInfoID);
-			ps.setInt(2, explorerInfoID);
+			ps.setInt(1, explorerRelatedID);
+			ps.setInt(2, editorInfoID);
+			ps.setInt(3, explorerInfoID);
 
 			//id field is an auto increment field , it need null value to let dbms increase ....
 			result = ps.executeUpdate();
@@ -452,17 +458,7 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addExplorerInfoAndgetID(ExplorerInfo explorerInfo) {
-		int explorerInfoID=-1;
-		int addresult=0;
-		addresult=addExplorerInfoTODataBase(explorerInfo);
-		if (addresult==1) {
-			explorerInfoID=findlastExplorerInfoID();
-		}
 
-
-		return explorerInfoID;
-	}
 
 	private static int findlastExplorerInfoID() {
 
@@ -472,7 +468,7 @@ public class DatabaseUtil {
 		return explorerInfoID;
 	}
 
-	private static int addExplorerInfoTODataBase(ExplorerInfo explorerInfo) {
+	private static int addExplorerInfoTODataBase(ExplorerInfo explorerInfo, int explorerInfoID) {
 		int result = 0;
 
 		if (explorerInfo == null) {
@@ -484,13 +480,14 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.explorerinfo(size,selectObjectNameList)  values(?,?)";
+			String sql = "insert into helpseeking.explorerinfo(id,size,selectObjectNameList)  values(?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, explorerInfo.getSize());
+			ps.setInt(1, explorerInfoID);
+			ps.setInt(2, explorerInfo.getSize());
 			String selectObjectName=connectListwithSemicolonToString(explorerInfo.getSelectObjectNameList());
-			ps.setString(2, selectObjectName);
+			ps.setString(3, selectObjectName);
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -522,17 +519,7 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addEditorInfoAndgetID(EditorInfo editorInfo) {
-		int editorInfoID=-1;
-		int addresult=0;
-		addresult=addEditorInfoTODataBase(editorInfo);
-		if (addresult==1) {
-			editorInfoID=findlastEditorInfoID();
-		}
 
-
-		return editorInfoID;
-	}
 
 	private static int findlastEditorInfoID() {
 		int editorInfoID=-1;
@@ -540,7 +527,7 @@ public class DatabaseUtil {
 		return editorInfoID;
 	}
 
-	private static int addEditorInfoTODataBase(EditorInfo editorInfo) {
+	private static int addEditorInfoTODataBase(EditorInfo editorInfo, int editorInfoID) {
 		int result = 0;
 
 		if (editorInfo == null) {
@@ -552,13 +539,14 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.editorinfo(size,classQualifiedNameList)  values(?,?)";
+			String sql = "insert into helpseeking.editorinfo(id,size,classQualifiedNameList)  values(?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, editorInfo.getSize());
+			ps.setInt(1, editorInfoID);
+			ps.setInt(2, editorInfo.getSize());
 			String classQualifiedName=connectListwithSemicolonToString(editorInfo.getClassQualifiedNameList());
-			ps.setString(2, classQualifiedName);
+			ps.setString(3, classQualifiedName);
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -599,21 +587,8 @@ public class DatabaseUtil {
 	}
 
 
-	//insert IDEOutput and get IDEOutputID with synchronized
 
-
-	private static int addIDEOutputAndgetID(IDEOutput ideOutput) {
-		int ideOutputID=-1;
-		int addresult=0;
-		addresult=addIDEOutputTODataBase(ideOutput);
-		if (addresult==1) {
-			ideOutputID=findlastIDEOutputID();
-		}
-
-		return ideOutputID;
-	}
-
-	private static int addIDEOutputTODataBase(IDEOutput ideOutput) {
+	private static int addIDEOutputTODataBase(IDEOutput ideOutput, int iDEOutputID) {
 		int result=0;
 
 		int compileInformationID=-1;
@@ -622,12 +597,14 @@ public class DatabaseUtil {
 
 		//insert compileInformation and get compileInformationID with synchronized
 		if (ideOutput.getCompileInformation()!=null) {
-			compileInformationID=addCompileInformationAndgetID(ideOutput.getCompileInformation());
+			compileInformationID=iDEOutputID;
+			addCompileInformationTODataBase(ideOutput.getCompileInformation(),compileInformationID);
 		}
 
 		//insert runtimeInformation and get runtimeInformationID with synchronized
 		if (ideOutput.getRuntimeInformation()!=null) {
-			runtimeInformationID=addRuntimeInformationAndgetID(ideOutput.getRuntimeInformation());
+			runtimeInformationID=iDEOutputID;
+			addRuntimeInformationTODataBase(ideOutput.getRuntimeInformation(),runtimeInformationID);
 		}
 
 
@@ -637,14 +614,15 @@ public class DatabaseUtil {
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.ideoutput(CompileInformationID,RuntimeInformationID)  values(?,?)"; 
+			String sql = "insert into helpseeking.ideoutput(id,CompileInformationID,RuntimeInformationID)  values(?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, compileInformationID);
-			ps.setInt(2, runtimeInformationID);
+			ps.setInt(1, iDEOutputID);
+			ps.setInt(2, compileInformationID);
+			ps.setInt(3, runtimeInformationID);
 
 			//id field is an auto increment field , it need null value to let dbms increase ....
 			result = ps.executeUpdate();
@@ -674,17 +652,7 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addRuntimeInformationAndgetID(
-			RuntimeInformation runtimeInformation) {
-		int runtimeInformationID=-1;
-		int addresult=0;
-		addresult=addRuntimeInformationTODataBase(runtimeInformation);
-		if (addresult==1) {
-			runtimeInformationID=findlastRuntimeInformationID();
-		}
 
-		return runtimeInformationID;
-	}
 
 	private static int findlastRuntimeInformationID() {
 
@@ -695,7 +663,7 @@ public class DatabaseUtil {
 	}
 
 	private static int addRuntimeInformationTODataBase(
-			RuntimeInformation runtimeInformation) {
+			RuntimeInformation runtimeInformation, int runtimeInformationID) {
 		int result = 0;
 
 		if (runtimeInformation == null) {
@@ -707,7 +675,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.runtimeinformation(type,content,relatedCode)  values(?,?,?)";
+			String sql = "insert into helpseeking.runtimeinformation(id,type,content,relatedCode)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -717,9 +685,10 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, runtimeInformation.getType().toString());
-			ps.setString(2, runtimeInformation.getContent());
-			ps.setString(3, runtimeInformation.getRelatedCode());
+			ps.setInt(1, runtimeInformationID);
+			ps.setString(2, runtimeInformation.getType().toString());
+			ps.setString(3, runtimeInformation.getContent());
+			ps.setString(4, runtimeInformation.getRelatedCode());
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -751,18 +720,6 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addCompileInformationAndgetID(CompileInformation compileInformation) {
-		int compileInformationID=-1;
-		int addresult=0;
-		addresult=addCompileInformationTODataBase(compileInformation);
-		if (addresult==1) {
-			compileInformationID=findlastCompileInformationID();
-		}
-
-		return compileInformationID;
-	}
-
-
 
 	private static int findlastCompileInformationID() {
 		int compileInformationID=-1;
@@ -773,7 +730,7 @@ public class DatabaseUtil {
 	}
 
 	private static int addCompileInformationTODataBase(
-			CompileInformation compileInformation) {
+			CompileInformation compileInformation, int compileInformationID) {
 		int result = 0;
 
 		if (compileInformation == null) {
@@ -785,7 +742,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.compileinformation(type,content,relatedCode)  values(?,?,?)";
+			String sql = "insert into helpseeking.compileinformation(id,type,content,relatedCode)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -795,9 +752,10 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, compileInformation.getType().toString());
-			ps.setString(2, compileInformation.getContent());
-			ps.setString(3, compileInformation.getRelatedCode());
+			ps.setInt(1, compileInformationID);
+			ps.setString(2, compileInformation.getType().toString());
+			ps.setString(3, compileInformation.getContent());
+			ps.setString(4, compileInformation.getRelatedCode());
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -842,24 +800,13 @@ public class DatabaseUtil {
 	//insert editCode and get editCodeID with synchronized
 
 
-	private static int addEditCodeAndgetID(EditCode editCode) {
-		int editCodeID=-1;
-		int addresult=0;
-		addresult=addEditCodeTODataBase(editCode);
-		if (addresult==1) {
-			editCodeID=findlastEditCodeID();
-		}
-
-		return editCodeID;
-	}
-
 	private static int findlastEditCodeID() {
 		int EditCodeID=-1;
 		EditCodeID=findlastID("select max(id) from helpseeking.editcode ");
 		return EditCodeID;
 	}	
 
-	private static int addEditCodeTODataBase(EditCode editCode) {
+	private static int addEditCodeTODataBase(EditCode editCode, int editCodeID) {
 		int result=0;
 
 		int SyntacticBlockID=-1;
@@ -868,17 +815,20 @@ public class DatabaseUtil {
 
 		//insert syntacticblock and get syntacticblockID with synchronized
 		if (editCode.getSyntacticBlock()!=null) {
-			SyntacticBlockID=addSyntacticBlockAndgetID(editCode.getSyntacticBlock());
+			SyntacticBlockID=editCodeID;
+			addSyntacticBlockTODataBase(editCode.getSyntacticBlock(),SyntacticBlockID);
 		}
 
 		//insert ClassModel and get ClassModelID with synchronized
 		if (editCode.getClassModel()!=null) {
-			ClassModelID=addClassModelAndgetID(editCode.getClassModel());
+			ClassModelID=editCodeID;
+			addClassModelTODataBase(editCode.getClassModel(),ClassModelID);
 		}
 
 		//insert Cursor and get CursorID with synchronized
 		if (editCode.getCursor()!=null) {
-			CursorID=addCursorAndgetID(editCode.getCursor());
+			CursorID=editCodeID;
+					addCursorTODataBase(editCode.getCursor(),CursorID);
 		}
 
 
@@ -889,15 +839,16 @@ public class DatabaseUtil {
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.editcode(SyntacticBlockID,ClassModelID,CursorID)  values(?,?,?)"; 
+			String sql = "insert into helpseeking.editcode(id,SyntacticBlockID,ClassModelID,CursorID)  values(?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, SyntacticBlockID);
-			ps.setInt(2, ClassModelID);
-			ps.setInt(3, CursorID);
+			ps.setInt(1, editCodeID);
+			ps.setInt(2, SyntacticBlockID);
+			ps.setInt(3, ClassModelID);
+			ps.setInt(4, CursorID);
 			//id field is an auto increment field , it need null value to let dbms increase ....
 
 
@@ -928,17 +879,6 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addCursorAndgetID(Cursor cursor) {
-		int cursorID=-1;
-		int addresult=0;
-		addresult=addCursorTODataBase(cursor);
-		if (addresult==1) {
-			cursorID=findlastCursorID();
-		}
-
-
-		return cursorID;
-	}
 
 
 
@@ -950,7 +890,7 @@ public class DatabaseUtil {
 
 	}
 
-	private static int addCursorTODataBase(Cursor cursor) {
+	private static int addCursorTODataBase(Cursor cursor, int cursorID) {
 		int result = 0;
 
 		if (cursor == null) {
@@ -962,7 +902,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.cursor(lineNo,lineFrom,lineTo,MethodQualifiedName)  values(?,?,?,?)";
+			String sql = "insert into helpseeking.cursor(id,lineNo,lineFrom,lineTo,MethodQualifiedName)  values(?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -972,10 +912,11 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, cursor.getLineNo());
-			ps.setInt(2, cursor.getLineFrom());
-			ps.setInt(3, cursor.getLineTo());
-			ps.setString(4, cursor.getMethodQualifiedName());
+			ps.setInt(1, cursorID);
+			ps.setInt(2, cursor.getLineNo());
+			ps.setInt(3, cursor.getLineFrom());
+			ps.setInt(4, cursor.getLineTo());
+			ps.setString(5, cursor.getMethodQualifiedName());
 
 
 			// id field is an auto increment field , it need null value to let
@@ -1009,31 +950,9 @@ public class DatabaseUtil {
 	}
 
 	//insert debugCode and get debugcodeID with synchronized	
-	private static int addDebugCodeAndgetID(DebugCode debugCode){
-		int debugCodeID=-1;
-		int addresult=0;
-		addresult=addDebugCodeTODataBase(debugCode);
-		if (addresult==1) {
-			debugCodeID=findlastDebugCodeID();
-		}
-
-		return debugCodeID;
-	}
-	private static int addSyntacticBlockAndgetID(SyntacticBlock syntacticBlock) {
-		int syntacticBlockID=-1;
-		int addresult=0;
-		addresult=addSyntacticBlockTODataBase(syntacticBlock);
-		if (addresult==1) {
-			syntacticBlockID=findlastSyntacticBlockID();
-		}
-
-
-		return syntacticBlockID;
-	}
-
 
 	// return 0 insert failed , return 1 insert succed , -1 no value to insert
-	private static int addSyntacticBlockTODataBase(SyntacticBlock syntacticBlock) {
+	private static int addSyntacticBlockTODataBase(SyntacticBlock syntacticBlock, int syntacticBlockID) {
 		int result = 0;
 
 		if (syntacticBlock == null) {
@@ -1045,7 +964,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.syntacticblock(type,code,exceptionName)  values(?,?,?)";
+			String sql = "insert into helpseeking.syntacticblock(id,type,code,exceptionName)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -1055,11 +974,11 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, syntacticBlock.getType());
-			ps.setString(2, syntacticBlock.getCode());
-			ps.setString(3, syntacticBlock.getExceptionName());
-			// id field is an auto increment field , it need null value to let
-			// dbms increase ....
+			ps.setInt(1, syntacticBlockID);
+			ps.setString(2, syntacticBlock.getType());
+			ps.setString(3, syntacticBlock.getCode());
+			ps.setString(4, syntacticBlock.getExceptionName());
+		
 
 			result = ps.executeUpdate();
 			// if (result == 1) {
@@ -1088,7 +1007,7 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static  int addDebugCodeTODataBase(DebugCode debugCode) {
+	private static  int addDebugCodeTODataBase(DebugCode debugCode, int debugCodeID) {
 		int result=0;
 
 		int SyntacticBlockID=-1;
@@ -1097,17 +1016,21 @@ public class DatabaseUtil {
 
 		//insert syntacticblock and get syntacticblockID with synchronized
 		if (debugCode.getSyntacticBlock()!=null) {
-			SyntacticBlockID=addSyntacticBlockAndgetID(debugCode.getSyntacticBlock());
+			
+			SyntacticBlockID=debugCodeID;
+					addSyntacticBlockTODataBase(debugCode.getSyntacticBlock(),SyntacticBlockID);
 		}
 
 		//insert ClassModel and get ClassModelID with synchronized
 		if (debugCode.getClassModel()!=null) {
-			ClassModelID=addClassModelAndgetID(debugCode.getClassModel());
+			ClassModelID=debugCodeID;
+					addClassModelTODataBase(debugCode.getClassModel(),ClassModelID);
 		}
 
 		//insert Breakpoint and get BreakpointID with synchronized
 		if (debugCode.getBreakpoint()!=null) {
-			BreakpointID=addBreakpointAndgetID(debugCode.getBreakpoint());
+			BreakpointID=debugCodeID;
+			addBreakpointTODataBase(debugCode.getBreakpoint(),BreakpointID);
 		}
 
 
@@ -1118,16 +1041,17 @@ public class DatabaseUtil {
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.debugcode(SyntacticBlockID,ClassModelID,BreakpointID)  values(?,?,?)"; 
+			String sql = "insert into helpseeking.debugcode(id,SyntacticBlockID,ClassModelID,BreakpointID)  values(?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, SyntacticBlockID);
-			ps.setInt(2, ClassModelID);
-			ps.setInt(3, BreakpointID);
-			//id field is an auto increment field , it need null value to let dbms increase ....
+			ps.setInt(1, debugCodeID);
+			ps.setInt(2, SyntacticBlockID);
+			ps.setInt(3, ClassModelID);
+			ps.setInt(4, BreakpointID);
+			
 
 
 			result = ps.executeUpdate();
@@ -1158,18 +1082,6 @@ public class DatabaseUtil {
 	}
 
 
-	private static int addBreakpointAndgetID(Breakpoint breakpoint) {
-		int breakpointID=-1;
-		int addresult=0;
-		addresult=addBreakpointTODataBase(breakpoint);
-		if (addresult==1) {
-			breakpointID=findlastBreakpointID();
-		}
-
-
-		return breakpointID;
-	}
-
 	private static int findlastBreakpointID() {
 
 		int BreakpointID=-1;
@@ -1177,7 +1089,7 @@ public class DatabaseUtil {
 		return BreakpointID;
 	}
 
-	private static int addBreakpointTODataBase(Breakpoint breakpoint) {
+	private static int addBreakpointTODataBase(Breakpoint breakpoint, int breakpointID) {
 		int result = 0;
 
 		if (breakpoint == null) {
@@ -1189,7 +1101,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.breakpoint(type,MethodQualifiedName,lineNo)  values(?,?,?)";
+			String sql = "insert into helpseeking.breakpoint(id,type,MethodQualifiedName,lineNo)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -1199,9 +1111,10 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, breakpoint.getType());
-			ps.setString(2, breakpoint.getMethodQualifiedName()); 
-			ps.setInt(3, breakpoint.getLineNo());
+			ps.setInt(1, breakpointID);
+			ps.setString(2, breakpoint.getType());
+			ps.setString(3, breakpoint.getMethodQualifiedName()); 
+			ps.setInt(4, breakpoint.getLineNo());
 
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -1233,19 +1146,8 @@ public class DatabaseUtil {
 		return result;
 	}
 
-	private static int addClassModelAndgetID(ClassModel classModel) {
-		int classModelID=-1;
-		int addresult=0;
-		addresult=addClassModelTODataBase(classModel);
-		if (addresult==1) {
-			classModelID=findlastClassModelID();
-		}
 
-
-		return classModelID;
-	}
-
-	private static int addClassModelTODataBase(ClassModel classModel) {
+	private static int addClassModelTODataBase(ClassModel classModel, int classModelID) {
 		int result = 0;
 
 		if (classModel == null) {
@@ -1257,7 +1159,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.classmodel(type,code,internalCaller,internalCallee,upClass,belowClass)  values(?,?,?,?,?,?)";
+			String sql = "insert into helpseeking.classmodel(id,type,code,internalCaller,internalCallee,upClass,belowClass)  values(?,?,?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -1267,18 +1169,19 @@ public class DatabaseUtil {
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, classModel.getType());
-			ps.setString(2, classModel.getCode());
+			ps.setInt(1, classModelID);
+			ps.setString(2, classModel.getType());
+			ps.setString(3, classModel.getCode());
 
 			String internalCaller=connectListwithSemicolonToString(classModel.getInternalCaller());
 			String internalCallee=connectListwithSemicolonToString(classModel.getInternalCallee());
 			String upClass=connectListwithSemicolonToString(classModel.getUpClass());
 			String belowClass=connectListwithSemicolonToString(classModel.getBelowClass());
 
-			ps.setString(3, internalCaller);
-			ps.setString(4, internalCallee);
-			ps.setString(5, upClass);
-			ps.setString(6, belowClass);
+			ps.setString(4, internalCaller);
+			ps.setString(5, internalCallee);
+			ps.setString(6, upClass);
+			ps.setString(7, belowClass);
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
 
@@ -1647,6 +1550,11 @@ public class DatabaseUtil {
 
 		int resu = addInteractionEventToDatabase(event);
 		System.out.println(resu);
+	}
+
+	public static void addCurrentCacheToDataBase(Cache instance) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

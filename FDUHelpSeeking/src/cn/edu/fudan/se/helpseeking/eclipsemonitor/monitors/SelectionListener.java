@@ -55,7 +55,7 @@ ISelectionListener {
 				// add
 
 				selectionContent = s.getFirstElement().toString();
-//				System.out.println("part0");
+				//				System.out.println("part0");
 
 				Object object = s.getFirstElement();
 				if (object instanceof IJavaElement) {
@@ -66,7 +66,7 @@ ISelectionListener {
 					MarkerItem entry = (MarkerItem) object;
 					//add for get problem view item message
 					selectionContent =entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
-//					System.out.println("marker element: "+selectionContent);
+					//					System.out.println("marker element: "+selectionContent);
 				}
 			}
 		} else if (selection instanceof ITextSelection) {
@@ -96,12 +96,15 @@ ISelectionListener {
 					action.setByuser(true);
 					info.setAction(action);
 
-					DatabaseUtil.addInformationToDatabase(info);
+					//需要先写入数据库，才能得到ID
+					int actionid1=DatabaseUtil.addInformationToDatabase(info);
+
+
 					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 
-						Cache.getInstance().addInformationToCache(info);
+						Cache.getInstance().addInformationToCache(info,actionid1);
 					}
 					//add end
 
@@ -115,7 +118,7 @@ ISelectionListener {
 						+ part.getTitle());
 				// add
 				selectionContent = s.getText();
-//				System.out.println("part1");
+				//				System.out.println("part1");
 			}
 
 		} else if (selection instanceof IMarkSelection) {
@@ -124,7 +127,7 @@ ISelectionListener {
 					+ " from Part: " + part.getTitle());
 			// add
 			selectionContent = s.getDocument().get();
-//			System.out.println("part2");
+			//			System.out.println("part2");
 
 		}
 
@@ -168,19 +171,21 @@ ISelectionListener {
 			info.setAction(action);
 
 
+			//需要先写入数据库，才能得到ID
+			int actionid1=DatabaseUtil.addInformationToDatabase(info);
 
 			//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 			//		IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
 			if (!ExceptionalPartAndView.checkPartAndView(part)) {
+				Cache.getInstance().addInformationToCache(info,actionid1);
 
-				Cache.getInstance().addInformationToCache(info);
 			}
 
 		}
 
 
-//		System.out.println("selection action in this Part: " + part.getTitle());
-//		System.out.println("selectionContent: " + selectionContent);
+		//		System.out.println("selection action in this Part: " + part.getTitle());
+		//		System.out.println("selectionContent: " + selectionContent);
 
 
 		DatabaseUtil.addInteractionEventToDatabase(event);

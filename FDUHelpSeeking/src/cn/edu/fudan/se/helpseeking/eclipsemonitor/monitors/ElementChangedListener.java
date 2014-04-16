@@ -84,6 +84,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldInfo.setAction(fieldAction);
 				
 				
+				//需要先写入数据库，才能得到ID
+				int actionid=DatabaseUtil.addInformationToDatabase(fieldInfo);
+
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据				
 				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
@@ -97,10 +100,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 	
 					
-					Cache.getInstance().addInformationToCache(fieldInfo);
+					Cache.getInstance().addInformationToCache(fieldInfo,actionid);
 				}
 				
-					DatabaseUtil.addInformationToDatabase(fieldInfo);
+				
         			DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.METHOD:
@@ -120,8 +123,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodInfo.setAction(methodAction);
 				
 				
-				
-				
+				//需要先写入数据库，才能得到ID
+				int actionid2=DatabaseUtil.addInformationToDatabase(methodInfo);
+			
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 				|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
@@ -133,10 +137,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 					methodInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
 							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 				
-					Cache.getInstance().addInformationToCache(methodInfo);
+					Cache.getInstance().addInformationToCache(methodInfo,actionid2);
 				}
 
-				DatabaseUtil.addInformationToDatabase(methodInfo);
+		
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			case IJavaElement.IMPORT_DECLARATION:
@@ -156,6 +160,11 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setDescription(event.getOriginId());
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
+				
+				
+				//需要先写入数据库，才能得到ID
+				int actionid3=DatabaseUtil.addInformationToDatabase(importInfo);
+
 
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
@@ -170,11 +179,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 			
 					
-					Cache.getInstance().addInformationToCache(importInfo);
+					Cache.getInstance().addInformationToCache(importInfo,actionid3);
 				}
 
 	
-				DatabaseUtil.addInformationToDatabase(importInfo);	
 				
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
@@ -195,7 +203,9 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeInfo.setAction(typeAction);
 				
 				
-
+				//需要先写入数据库，才能得到ID
+				int actionid1=DatabaseUtil.addInformationToDatabase(typeInfo);
+				
 				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
 				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
 						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
@@ -208,11 +218,10 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 					typeInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
 							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
 
-					Cache.getInstance().addInformationToCache(typeInfo);
+					Cache.getInstance().addInformationToCache(typeInfo,actionid1);
 				}
 
-				DatabaseUtil.addInformationToDatabase(typeInfo);
-				
+							
 				DatabaseUtil.addInteractionEventToDatabase(event);
 				break;
 			}

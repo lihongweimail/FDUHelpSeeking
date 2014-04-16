@@ -174,8 +174,9 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		
 		info.setExplorerRelated(er);
 			
-		DatabaseUtil.addInformationToDatabase(info);
-		Cache.getInstance().addInformationToCache(info);
+		//需要先写入数据库，才能得到ID
+		int actionid1=DatabaseUtil.addInformationToDatabase(info);
+		Cache.getInstance().addInformationToCache(info,actionid1);
 //    add end 		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 
@@ -1604,8 +1605,9 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		
 		info.setExplorerRelated(er);
 			
-		DatabaseUtil.addInformationToDatabase(info);
-		Cache.getInstance().addInformationToCache(info);
+		//需要先写入数据库，才能得到ID
+		int actionid1=DatabaseUtil.addInformationToDatabase(info);
+		Cache.getInstance().addInformationToCache(info,actionid1);
 //    add end 	
 		
 		

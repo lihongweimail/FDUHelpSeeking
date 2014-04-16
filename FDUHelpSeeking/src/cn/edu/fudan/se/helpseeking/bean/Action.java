@@ -11,7 +11,9 @@ public class Action {
 	//通过cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent 复制
   //	获得所有相关的信息：
 	
-	Timestamp time;                         //time
+	String  user=System.getProperties().getProperty("user.name");
+
+	Timestamp time=new Timestamp(System.currentTimeMillis());                         //time
 	Timestamp endtime;                   //endtime
 	Kind actionKind;                //kind
 	String actionName = null;   //originId 的第一部分（有冒号时，前面部分）
@@ -21,7 +23,12 @@ public class Action {
 	String description;  //  originId
 	boolean byuser = false;
 	
-	
+	public String getUser() {
+		return user;
+	}
+	public void setUser(String user) {
+		this.user = user;
+	}
 	public Timestamp getTime() {
 		return time;
 	}
