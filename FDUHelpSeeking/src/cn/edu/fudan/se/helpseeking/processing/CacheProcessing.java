@@ -183,7 +183,13 @@ public class CacheProcessing extends Thread  {
 for (int i = 0; i < totallKeyWords.size(); i++) {
 	boolean flage1=false;
 	KeyWord oldWord=totallKeyWords.get(i);
-	for (int j = 0; j < deDupilcateTotallKeyWords.size(); j++) {
+	
+	if (deDupilcateTotallKeyWords.size()==0) {
+		deDupilcateTotallKeyWords.add(oldWord);
+		continue;
+	}
+	
+	for (int j = 0; j <deDupilcateTotallKeyWords.size(); j++) {
 		KeyWord newWord=deDupilcateTotallKeyWords.get(j);
 		
 		if (newWord.getKeywordName().equals(oldWord.getKeywordName())) {
@@ -353,26 +359,35 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 				
 				//方法的qualified name 中，intercallee中包含自己的类名信息需要去除
 				String finalcalleestr="";
-				String[] calleearray=callee.split("[;]");
-				if (calleearray.length>0) {
+				
+				if (callee!=null) {
 					
-		
-				for (String calleestr :calleearray ) {
-					    String[] methodnamestr=calleestr.split(SPLIT_STRING);
-					    int lastindex=methodnamestr.length;
-					    for (int i =lastindex-1; i >0; i--) {
-							String laststr=methodnamestr[i];
-							if (!laststr.trim().equals("")) {
-								finalcalleestr=finalcalleestr.trim()+laststr+";";
-								break;
+
+					String[] calleearray=callee.split("[;]");
+					if (calleearray.length>0) {
+						for (String calleestr :calleearray ) {
+							String[] methodnamestr=calleestr.split(SPLIT_STRING);
+							int lastindex=methodnamestr.length;
+							for (int i =lastindex-1; i >0; i--) {
+								String laststr=methodnamestr[i];
+								if (!laststr.trim().equals("")) {
+									finalcalleestr=finalcalleestr.trim()+laststr+";";
+									break;
+								}
 							}
+
 						}
-					
+					}
 				}
-						}
+
+				String result1=finalcalleestr;
+				
+				if (belowclass!=null) {
+					result1=result1+belowclass;
+				}
 				
 				
-				String result1=finalcalleestr+belowclass;
+				
 				for (String str : result1.split("[;]")) 
 				{
 					KeyWord kw=new KeyWord();
@@ -390,6 +405,8 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 					classmodelKeyWords.add(kw);
 				}
 
+				
+				
 			}
 		}
 		else {
@@ -416,7 +433,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 			for (String str : (rString.split(SPLIT_STRING))) 
 			{
 					if (str.trim().length()==0) {
-						break;
+						continue;
 					}
 					
 				
@@ -473,7 +490,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 				for (String str : (rString.split(SPLIT_STRING))) 
 				{
 					if (str.trim().length()==0) {
-						break;
+						continue;
 					}
 					
 					KeyWord kw=new KeyWord();
@@ -555,7 +572,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 
 
 					flage=true;
-					break;					
+									
 				}								
 			}
 			//没有找到相同的动作则添加

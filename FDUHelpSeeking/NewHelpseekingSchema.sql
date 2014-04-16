@@ -1,5 +1,7 @@
 CREATE DATABASE `helpseeking` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
+use helpseeking;
+
 CREATE TABLE `action` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `time` timestamp NULL DEFAULT NULL,
@@ -86,25 +88,25 @@ CREATE TABLE `editorinfo` (
 
 CREATE TABLE `event` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user` varchar(20) DEFAULT NULL,
+  `user` varchar(100) DEFAULT NULL,
   `time` timestamp(6) NULL DEFAULT NULL,
   `endtime` timestamp(6) NULL DEFAULT NULL,
-  `kind` varchar(30) DEFAULT NULL,
-  `lineno` varchar(10) DEFAULT NULL,
-  `method` varchar(20) DEFAULT NULL,
-  `type` varchar(100) DEFAULT NULL,
-  `file` varchar(100) DEFAULT NULL,
-  `package` varchar(100) DEFAULT NULL,
-  `project` varchar(100) DEFAULT NULL,
-  `originid` varchar(200) DEFAULT NULL,
+  `kind` varchar(100) DEFAULT NULL,
+  `lineno` varchar(11) DEFAULT NULL,
+  `method` varchar(300) DEFAULT NULL,
+  `type` varchar(300) DEFAULT NULL,
+  `file` varchar(300) DEFAULT NULL,
+  `package` varchar(1000) DEFAULT NULL,
+  `project` varchar(300) DEFAULT NULL,
+  `originid` text,
   `isbyuser` varchar(10) DEFAULT NULL,
-  `structurekind` varchar(20) DEFAULT NULL,
-  `structurehandle` varchar(300) DEFAULT NULL,
-  `delta` varchar(500) DEFAULT NULL,
+  `structurekind` varchar(1000) DEFAULT NULL,
+  `structurehandle` varchar(1000) DEFAULT NULL,
+  `delta` text,
   PRIMARY KEY (`id`),
-  KEY `kind` (`kind`),
-  KEY `type` (`type`)
-) ENGINE=InnoDB AUTO_INCREMENT=10821 DEFAULT CHARSET=utf8;
+  KEY `kind` (`kind`)
+) ENGINE=InnoDB AUTO_INCREMENT=11676 DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE `explorerinfo` (
   `id` int(11) NOT NULL,

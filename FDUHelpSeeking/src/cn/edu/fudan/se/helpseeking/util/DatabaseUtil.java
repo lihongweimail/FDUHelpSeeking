@@ -895,6 +895,7 @@ int informationID=-1;
 					: event.getLineno());
 			ps.setString(6, event.getMethod() == null ? ContextUtil.getMethod()
 					: event.getMethod());
+			String tempString =ContextUtil.getMethod();
 			ps.setString(7, event.getType() == null ? ContextUtil.getType()
 					: event.getType());
 			ps.setString(8, event.getFile() == null ? ContextUtil.getFile()
@@ -905,10 +906,10 @@ int informationID=-1;
 			ps.setString(10,
 					event.getProject() == null ? ContextUtil.getProject()
 							: event.getProject());
-			if (event.getOriginId() != null
-					&& event.getOriginId().length() > 200) {
-				event.setOriginId(event.getOriginId().substring(0, 199));
-			}
+//			if (event.getOriginId() != null
+//					&& event.getOriginId().length() > 200) {
+//				event.setOriginId(event.getOriginId().substring(0, 199));
+//			}
 			ps.setString(11, event.getOriginId());
 			ps.setBoolean(12, event.isByuser());
 			ps.setString(
