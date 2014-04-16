@@ -3,7 +3,10 @@ package cn.edu.fudan.se.helpseeking.processing;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
@@ -162,10 +165,46 @@ public class CacheProcessing extends Thread  {
 			totallKeyWords.addAll(relatedExplorerKeyWords);
 			flage=true;
 		}	
+		List<KeyWord> deDupilcateTotallKeyWords=new ArrayList<>();
 
 	if (flage) {
+		//按照keyword排序
+		Collections.sort(totallKeyWords,new Comparator<KeyWord>() {
+
+			@Override
+			public int compare(KeyWord o1, KeyWord o2) {
+				// TODO Auto-generated method stub
+				return o2.getKeywordName().compareTo(o1.getKeywordName());
+			}
+		});
+		
+	//去除重复，保留score大的
+				
+for (int i = 0; i < totallKeyWords.size(); i++) {
+	boolean flage1=false;
+	KeyWord oldWord=totallKeyWords.get(i);
+	for (int j = 0; j < deDupilcateTotallKeyWords.size(); j++) {
+		KeyWord newWord=deDupilcateTotallKeyWords.get(j);
+		
+		if (newWord.getKeywordName().equals(oldWord.getKeywordName())) {
+			if (newWord.getScore()<oldWord.getScore()) {
+				newWord.setScore(oldWord.getScore());
+				newWord.setWeightOne(oldWord.getWeightOne());
+				newWord.setWeightTwo(oldWord.getWeightTwo());
+				flage1=true;
+				
+			}
+		}
+	}
+	if (flage1) {
+		deDupilcateTotallKeyWords.add(oldWord);
+	}
+	
+}
+		
+		
 		//score降序排序keyword
-		Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
+		Collections.sort(deDupilcateTotallKeyWords, new Comparator<KeyWord>() {
 			public int compare(KeyWord arg0, KeyWord arg1)
 			{
 				return (int)arg1.getScore()-(int)arg0.getScore();
@@ -174,7 +213,7 @@ public class CacheProcessing extends Thread  {
 
 
 		//取前k个单词作为查询词
-		currentCache.setCurrentKeywordsList(totallKeyWords);
+		currentCache.setCurrentKeywordsList(deDupilcateTotallKeyWords);
 	}		
 
 
@@ -198,7 +237,7 @@ public class CacheProcessing extends Thread  {
 			for (String str : edInfo.getClassQualifiedNameList()) 
 			{
 				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str);
+				kw.setKeywordName(str.trim());
 				kw.setWeightOne(1);
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 				relatedExplorerKeyWords.add(kw);
@@ -213,7 +252,7 @@ public class CacheProcessing extends Thread  {
 			for (String str : epInfo.getSelectObjectNameList()) 
 			{
 				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str);
+				kw.setKeywordName(str.trim());
 				kw.setWeightOne(1);
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 				relatedExplorerKeyWords.add(kw);
@@ -244,7 +283,7 @@ public class CacheProcessing extends Thread  {
 			for (String str : (rString.split(SPLIT_STRING))) 
 			{
 				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str);
+				kw.setKeywordName(str.trim());
 				kw.setWeightOne(2);
 
 				for (String jestr : javaExceptionalNameList) {
@@ -277,7 +316,7 @@ public class CacheProcessing extends Thread  {
 			for (String str : (rString.split(SPLIT_STRING))) 
 			{
 				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str);
+				kw.setKeywordName(str.trim());
 				kw.setWeightOne(2);
 
 				for (String jestr : javaExceptionalNameList) {
@@ -337,7 +376,7 @@ public class CacheProcessing extends Thread  {
 				for (String str : result1.split("[;]")) 
 				{
 					KeyWord kw=new KeyWord();
-					kw.setKeywordName(str);
+					kw.setKeywordName(str.trim());
 					kw.setWeightOne(3);
 					for (String jestr : javaExceptionalNameList)
 					{
@@ -382,7 +421,7 @@ public class CacheProcessing extends Thread  {
 					
 				
 				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str);
+				kw.setKeywordName(str.trim());
 				//1 error
 				//2 warning
 				if (pInfo.getType()==CompileInfoType.ERROR) {
@@ -438,7 +477,7 @@ public class CacheProcessing extends Thread  {
 					}
 					
 					KeyWord kw=new KeyWord();
-					kw.setKeywordName(str);
+					kw.setKeywordName(str.trim());
 					kw.setWeightOne(5);
 					for (String jestr : javaExceptionalNameList) {
 						if (str.equals(jestr)) {

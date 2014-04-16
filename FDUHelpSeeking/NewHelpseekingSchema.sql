@@ -139,6 +139,14 @@ CREATE TABLE `information` (
   KEY `INFOMATIONACTIONID` (`ActionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE `keywords` (
+  `id` int(11) NOT NULL,
+  `candidateKeyWords` text,
+  `userKeyWords` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
+
+
 CREATE TABLE `runtimeinformation` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL COMMENT 'framework message , program output  or exceptional message',
