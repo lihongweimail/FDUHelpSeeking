@@ -70,14 +70,19 @@ public class HelpSeekingSearchView extends ViewPart {
 	  
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
-						v.getMyBrower().setNewUrl( "http://www.google.com/search?newwindow=1&safe=strict&q="+queryText);
+		   	 		
+						v.getMyBrower().setNewUrl( "https://www.google.com/search?newwindow=1&safe=strict&q="+queryText);
+//						v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
+
 		   	 		}
-//		   	 	https://www.google.com.hk/search?newwindow=1&safe=strict&site=&source=hp&q=hello+world&oq=hello+world&gs_l=hp.3...2437.5350.0.6715.12.10.0.0.0.0.319.319.3-1.1.0....0...1c.1.41.hp..12.0.0.0.SzpSkykwWd4&bav=on.2,or.r_cp.&bvm=bv.64764171%2Cd.aGc%2Cpv.xjs.s.en_US.PQkb9ew9HrM.O&fp=f644e369b7289f73&biw=908&bih=354&dpr=1&tch=3&ech=1&psi=my1NU4i_KY-tiQefxYCYAg.1397566870615.3&wrapid=tlif139756687745911
-		 		
+//	   	 	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 	 		
 //	   	 		需要保存关键词和当前cache到数据库中：
 	   	 		DatabaseUtil.addKeyWordsToDataBase(Cache.getInstance(),queryText);
 	   	 		
-	   	 		
+	   	 		//仅使用浏览器，不使用ajax  检索
+	if (true) {
+		return;
+	}
 	   	 	List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		
 	   	 			LoopGoogleAPICall apiCall=new LoopGoogleAPICall();

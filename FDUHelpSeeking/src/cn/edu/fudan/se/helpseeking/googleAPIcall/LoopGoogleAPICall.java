@@ -89,6 +89,9 @@ public class LoopGoogleAPICall {
 		}
 	}
 
+
+//	自定义的搜索引擎
+//	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 
 	
 	
 	public  List<WEBResult> searchWeb(String keywords) throws IOException {
