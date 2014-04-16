@@ -895,7 +895,7 @@ int informationID=-1;
 					: event.getLineno());
 			ps.setString(6, event.getMethod() == null ? ContextUtil.getMethod()
 					: event.getMethod());
-			String tempString =ContextUtil.getMethod();
+//			String tempString =ContextUtil.getMethod();
 			ps.setString(7, event.getType() == null ? ContextUtil.getType()
 					: event.getType());
 			ps.setString(8, event.getFile() == null ? ContextUtil.getFile()

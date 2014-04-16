@@ -201,8 +201,10 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 				
 			}
 		}
+		
 	}
-	if (flage1) {
+	
+	if (!flage1) {
 		deDupilcateTotallKeyWords.add(oldWord);
 	}
 	
