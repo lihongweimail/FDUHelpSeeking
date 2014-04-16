@@ -19,11 +19,14 @@ import org.eclipse.ui.PlatformUI;
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
+import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 public class ElementChangedListener extends AbstractUserActivityMonitor
 		implements IElementChangedListener {
@@ -83,6 +86,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				fieldAction.setByuser(true);
 				fieldInfo.setAction(fieldAction);
 				
+				IDEOutput fieldIdeOutput = new IDEOutput();
+				fieldIdeOutput.setCompileInformation(ProblemInformationUtil
+						.SelectProblemInformationByCursor(fieldInfo.getEditCode().getCursor()));
+				fieldIdeOutput.setRuntimeInformation(ConsoleInformationUtil
+						.SelectConsoleInformationByCursor(fieldInfo.getEditCode().getCursor()));
+				fieldInfo.setIdeOutput(fieldIdeOutput);				
 				
 				//需要先写入数据库，才能得到ID
 				int actionid=DatabaseUtil.addInformationToDatabase(fieldInfo);
@@ -93,13 +102,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
 						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
-					
-					/*fieldInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-					fieldInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							fieldInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
-	
-					
+									
 					Cache.getInstance().addInformationToCache(fieldInfo,actionid);
 				}
 				
@@ -122,6 +125,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				methodAction.setByuser(true);
 				methodInfo.setAction(methodAction);
 				
+				IDEOutput methodIdeOutput = new IDEOutput();
+				methodIdeOutput.setCompileInformation(ProblemInformationUtil
+						.SelectProblemInformationByCursor(methodInfo.getEditCode().getCursor()));
+				methodIdeOutput.setRuntimeInformation(ConsoleInformationUtil
+						.SelectConsoleInformationByCursor(methodInfo.getEditCode().getCursor()));
+				methodInfo.setIdeOutput(methodIdeOutput);				
 				
 				//需要先写入数据库，才能得到ID
 				int actionid2=DatabaseUtil.addInformationToDatabase(methodInfo);
@@ -132,11 +141,7 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
 				|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 						.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
-					/*methodInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-					methodInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							methodInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
-				
+					
 					Cache.getInstance().addInformationToCache(methodInfo,actionid2);
 				}
 
@@ -161,6 +166,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				importAction.setByuser(true);
 				importInfo.setAction(importAction);
 				
+				IDEOutput importIdeOutput = new IDEOutput();
+				importIdeOutput.setCompileInformation(ProblemInformationUtil
+						.SelectProblemInformationByCursor(importInfo.getEditCode().getCursor()));
+				importIdeOutput.setRuntimeInformation(ConsoleInformationUtil
+						.SelectConsoleInformationByCursor(importInfo.getEditCode().getCursor()));
+				importInfo.setIdeOutput(importIdeOutput);
 				
 				//需要先写入数据库，才能得到ID
 				int actionid3=DatabaseUtil.addInformationToDatabase(importInfo);
@@ -172,12 +183,6 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 						|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
 						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
-					
-					/*importInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-					importInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							importInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
-			
 					
 					Cache.getInstance().addInformationToCache(importInfo,actionid3);
 				}
@@ -202,6 +207,12 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 				typeAction.setByuser(true);
 				typeInfo.setAction(typeAction);
 				
+				IDEOutput typeIdeOutput = new IDEOutput();
+				typeIdeOutput.setCompileInformation(ProblemInformationUtil
+						.SelectProblemInformationByCursor(typeInfo.getEditCode().getCursor()));
+				typeIdeOutput.setRuntimeInformation(ConsoleInformationUtil
+						.SelectConsoleInformationByCursor(typeInfo.getEditCode().getCursor()));
+				typeInfo.setIdeOutput(typeIdeOutput);
 				
 				//需要先写入数据库，才能得到ID
 				int actionid1=DatabaseUtil.addInformationToDatabase(typeInfo);
@@ -213,11 +224,6 @@ public class ElementChangedListener extends AbstractUserActivityMonitor
 						|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
 								.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
 					
-					/*typeInfo.getIdeOutput().setCompileInformation((ProblemInformationUtil.SelectProblemInformationByBreakpont(
-							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getCompileInformation()));
-					typeInfo.getIdeOutput().setRuntimeInformation(ConsoleInformationUtil.SelectConsoleInformationByBreakpont(
-							typeInfo.getDebugCode().getBreakpoint()).getIdeOutput().getRuntimeInformation());*/
-
 					Cache.getInstance().addInformationToCache(typeInfo,actionid1);
 				}
 

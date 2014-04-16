@@ -173,6 +173,7 @@ public class CodeUtil {
 
 	public static EditCode createEditCodeByJavaElement(IJavaElement element) {
  		EditCode ec = new EditCode();
+		Cursor c = new Cursor();
 
 		// TODO exception name
 		SyntacticBlock sblock = new SyntacticBlock();
@@ -216,6 +217,13 @@ public class CodeUtil {
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
 		if (icu != null) {
+			String path = icu.getPath().toString().replace("/", ".");
+			path = path.substring(path.indexOf(".") + 1);
+			path = path.substring(path.indexOf(".") + 1);
+			path = path.substring(path.indexOf(".") + 1);
+			final String prefix = path.substring(0, path.length() / 2);
+			c.setFileName(icu.getPath().toString());
+			
 			CompilationUnit cu = ASTUtil.parse(icu);
 			IJavaElement[] elements = { element };
 			ASTParser parser = ASTParser.newParser(AST.JLS4);
@@ -229,6 +237,8 @@ public class CodeUtil {
 			}
 			
 			if(node != null){
+				c.setLineNo(cu.getLineNumber(node.getStartPosition()) - 1);
+				
 				final List<String> internalCallee = new ArrayList<>();
 				final List<String> belowClass = new ArrayList<>();
 				node.accept(new ASTVisitor() {
@@ -287,6 +297,8 @@ public class CodeUtil {
 			}
 		}
 		ec.setClassModel(cmodel);
+		
+		ec.setCursor(c);
 
 		return ec;
 	}

@@ -29,8 +29,10 @@ import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
+import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
@@ -74,7 +76,7 @@ ISelectionListener {
 			if (s.getLength() == 0) {
 				event.setActionName("InsertCursor");
 				event.setOriginId("Insert cursor in line " + s.getStartLine() 
-						+ "of Part " + part.getTitle());
+						+ " of Part " + part.getTitle());
 
 
 				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -95,6 +97,13 @@ ISelectionListener {
 					action.setDescription(event.getOriginId());
 					action.setByuser(true);
 					info.setAction(action);
+					
+					IDEOutput ideOutput = new IDEOutput();
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.SelectProblemInformationByCursor(info.getEditCode().getCursor()));
+					ideOutput.setRuntimeInformation(ConsoleInformationUtil
+							.SelectConsoleInformationByCursor(info.getEditCode().getCursor()));
+					info.setIdeOutput(ideOutput);
 
 					//需要先写入数据库，才能得到ID
 					int actionid1=DatabaseUtil.addInformationToDatabase(info);
