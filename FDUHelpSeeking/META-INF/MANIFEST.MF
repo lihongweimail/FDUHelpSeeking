@@ -34,4 +34,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/mysql-connector-java-5.1.27-bin.jar,
- lib/swing2swt.jar
+ lib/swing2swt.jar,
+ lib/gson-2.2.4.jar

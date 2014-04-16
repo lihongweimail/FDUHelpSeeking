@@ -89,6 +89,8 @@ public class LoopGoogleAPICall {
 		}
 	}
 
+	
+	
 	public  List<WEBResult> searchWeb(String keywords) throws IOException {
 
 		List<WEBResult> results = new ArrayList<WEBResult>();
@@ -104,6 +106,8 @@ public class LoopGoogleAPICall {
 
 			URL url = new URL(address + URLEncoder.encode(query, charset));
 			Reader reader = new InputStreamReader(url.openStream(), charset);
+			
+			
 			GoogleAPICallResults tempRresults = new Gson().fromJson(reader,
 					GoogleAPICallResults.class);
 			if (tempRresults.getResponseData().getResults().size()>0) {

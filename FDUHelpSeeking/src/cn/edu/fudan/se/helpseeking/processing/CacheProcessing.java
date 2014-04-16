@@ -119,7 +119,7 @@ public class CacheProcessing extends Thread  {
 		List<KeyWord> relatedExplorerKeyWords=new ArrayList<>();
 		//	最简单的策略是，检索时用于更关注console中的异常信息，weightOne基本权重5
 		//其次是problem中的error信息，weightOne基本权重为4；如果为warning信息基本权重降为2；
-		//	再次是调用了哪些API的方法名以及包名，weightOne基本权重3
+		//	再次是调用了哪些API的方法名以及包名，weightOne基本权重6放大API权重
 		//代码本身具有的一些词汇权重weightOne为2
 		// 再就是用户在一段时间内explorer的信息，权重weightOne为1
 		int currentID=currentCache.getCurrentID();
@@ -193,13 +193,13 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 		KeyWord newWord=deDupilcateTotallKeyWords.get(j);
 		
 		if (newWord.getKeywordName().equals(oldWord.getKeywordName())) {
+			flage1=true;
+			
 			if (newWord.getScore()<oldWord.getScore()) {
 				newWord.setScore(oldWord.getScore());
 				newWord.setWeightOne(oldWord.getWeightOne());
 				newWord.setWeightTwo(oldWord.getWeightTwo());
-				flage1=true;
-				
-			}
+				}
 		}
 		
 	}
@@ -394,7 +394,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 				{
 					KeyWord kw=new KeyWord();
 					kw.setKeywordName(str.trim());
-					kw.setWeightOne(3);
+					kw.setWeightOne(6);
 					for (String jestr : javaExceptionalNameList)
 					{
 						if (str.equals(jestr))

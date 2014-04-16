@@ -988,7 +988,7 @@ int informationID=-1;
 		PreparedStatement ps = null;
 	
 		try {
-			String sql = "insert into helpseeking.keywords(id,candidateKeyWords,userKeyWords)  values(?,?,?)";
+			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords)  values(?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
