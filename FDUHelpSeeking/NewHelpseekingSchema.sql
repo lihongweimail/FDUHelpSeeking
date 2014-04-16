@@ -142,12 +142,12 @@ CREATE TABLE `information` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `keywords` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `inforID` int(11) DEFAULT NULL,
   `candidateKeyWords` text,
   `userKeyWords` text,
-  `id` int(11) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1282 DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
 
 
 CREATE TABLE `runtimeinformation` (
