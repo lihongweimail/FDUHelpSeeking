@@ -1,5 +1,7 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
@@ -199,6 +201,31 @@ public class PartListener extends AbstractUserActivityMonitor implements
 								e.setKind(Kind.EDIT);
 								e.setOriginId("Content Assist Selected: "
 										+ proposal.getDisplayString());
+								e.setActionName("UseAssist");
+								
+								Information info = new Information();
+								info.setType("Assist");
+								Action action = new Action();
+								action.setActionKind(e.getKind());
+								action.setActionName(e.getActionName());
+								action.setByuser(true);
+								action.setDescription(e.getOriginId());
+								action.setTime(new Timestamp(System.currentTimeMillis()));
+								info.setAction(action);
+								
+								//需要先写入数据库，才能得到ID
+								int actionid=DatabaseUtil.addInformationToDatabase(info);
+
+								//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据				
+								if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null 
+										|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage() == null
+										|| PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart() == null
+										|| !ExceptionalPartAndView.checkPartAndView(PlatformUI.getWorkbench()
+												.getActiveWorkbenchWindow().getActivePage().getActivePart())) {
+													
+									Cache.getInstance().addInformationToCache(info,actionid);
+								}
+								
 								DatabaseUtil.addInteractionEventToDatabase(e);
 							}
 
