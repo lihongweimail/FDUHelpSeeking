@@ -415,9 +415,10 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		}	
 		
 		DatabaseUtil.addInteractionEventToDatabase(event);
-		if (part instanceof CompilationUnitEditor) {
-			ContextUtil.deleteEditor((CompilationUnitEditor) part);
-		}
+		//注销关闭编辑器后，比较内容。
+//		if (part instanceof CompilationUnitEditor) {
+//			ContextUtil.deleteEditor((CompilationUnitEditor) part);
+//		}
 	}
 
 	@Override
