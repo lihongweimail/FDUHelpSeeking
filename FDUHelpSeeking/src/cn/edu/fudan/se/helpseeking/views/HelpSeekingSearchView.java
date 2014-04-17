@@ -72,8 +72,10 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
 		   	 		
-						v.getMyBrower().setNewUrl( "https://www.google.com/search?newwindow=1&safe=strict&q="+queryText);
-//						v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
+						v.getMyBrower().setNewUrl( "https://www.google.com/search?newwindow=1&q="+queryText);
+
+//						https://www.google.com.hk/#newwindow=1&q=
+						//						v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
 
 		   	 		}
 //	   	 	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 	 		
@@ -84,9 +86,7 @@ public class HelpSeekingSearchView extends ViewPart {
 	if (true) {
 		return;
 	}
-	   	 		if(true)
-	   	 			return;
-	   	 		
+
 	   	 		List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		
 	   	 			LoopGoogleAPICall apiCall=new LoopGoogleAPICall();

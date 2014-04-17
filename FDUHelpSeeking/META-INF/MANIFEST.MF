@@ -34,4 +34,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
  lib/mysql-connector-java-5.1.27-bin.jar,
  lib/swing2swt.jar,
- lib/gson-2.2.4.jar
+ lib/gson-2.2.4.jar,
+ lib/args4j-2.0.6.jar,
+ lib/edu.mit.jwi_2.1.5.jar,
+ lib/intt.jar
