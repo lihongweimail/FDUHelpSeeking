@@ -260,6 +260,16 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 		if (errorList!=null && errorList.size()>0) {
               			ProblemInformation pif=errorList.get(0);
               			
+              			int weight1=0;
+              			
+
+              			if (errorList.size()==currentCache.getProblemsSize()) {
+              				weight1=1;
+              				
+              			}else {
+              				currentCache.setProblemsSize(errorList.size());
+              			}
+              			
 			String des=pif.getDescription();
 			if (des!=null && !des.trim().equals(""))
 			{
@@ -271,8 +281,8 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 					}
 					KeyWord kw=new KeyWord();
 					kw.setKeywordName(str.trim());
-					kw.setWeightOne(7);
-					kw.setWeightTwo(2);
+					kw.setWeightOne(7-weight1);
+					kw.setWeightTwo(2-weight1);
 					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 					problemCacheKeyWords.add(kw);
 				}
@@ -317,7 +327,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 		//console消息的exceptional权重最高7 (8)
 		List<KeyWord> consoleCacheKeyWords=new ArrayList<>();
 		
-		ConsoleInformationList cil=currentCache.getExceptions();
+		ConsoleInformationList cil=currentCache.getConsoles();
 		if (cil==null) {
 			return null;
 		}
@@ -325,16 +335,26 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 if (lastIndex<=0) {
 	return null;
 }
+
+int weight1=0;
+int weight2=0;
+
+if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
+	weight1=2;
+	weight2=1;
+}else {
+	currentCache.setConsolesSize(cil.getExceptionList().size());
+}
 		ConsoleInformation cif=cil.getExceptionList().get(lastIndex-1);
 		
 		String exceptionName=cif.getExceptionName();
 		if (!exceptionName.trim().equals("")) {
 		KeyWord kw=new KeyWord();
 		kw.setKeywordName(exceptionName.trim());
-		kw.setWeightOne(8);
+		kw.setWeightOne(8-weight1);
 		for (String jestr : javaExceptionalNameList) {
 			if (exceptionName.trim().equals(jestr)) {
-				kw.setWeightTwo(3);
+				kw.setWeightTwo(3-weight1);
 				break;
 			}
 		
@@ -355,8 +375,8 @@ if (lastIndex<=0) {
 				}
 				KeyWord kw=new KeyWord();
 				kw.setKeywordName(str.trim());
-				kw.setWeightOne(7);
-				kw.setWeightTwo(2);
+				kw.setWeightOne(7-weight2);
+				kw.setWeightTwo(2-weight2);
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
 				consoleCacheKeyWords.add(kw);
 			}

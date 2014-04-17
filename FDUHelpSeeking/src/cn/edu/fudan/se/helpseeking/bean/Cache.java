@@ -11,6 +11,7 @@ import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 
 public class Cache  {
 
+
 	ActionQueue actions = new ActionQueue();// 包含滑动窗口
 
 	List<InformationQueue> informations = new ArrayList<InformationQueue>();
@@ -23,12 +24,15 @@ public class Cache  {
 	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
 	
 	ProblemInformationList problems = ProblemInformationList.getInstance();
-	ConsoleInformationList exceptions = ConsoleInformationList.getInstance();
+	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
 	
 	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
 	ClassModel currentClassModel = new ClassModel();
 	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();
 
+	
+	private int problemsSize=0;
+	private int consolesSize=0;
 	
 
 	// 单例实现
@@ -56,6 +60,22 @@ public class Cache  {
 	
 	
 	
+	public int getProblemsSize() {
+		return problemsSize;
+	}
+
+	public void setProblemsSize(int problemsSize) {
+		this.problemsSize = problemsSize;
+	}
+
+	public int getConsolesSize() {
+		return consolesSize;
+	}
+
+	public void setConsolesSize(int consolesSize) {
+		this.consolesSize = consolesSize;
+	}
+
 	public ProblemInformationList getProblems() {
 		return problems;
 	}
@@ -64,12 +84,12 @@ public class Cache  {
 		this.problems = problems;
 	}
 
-	public ConsoleInformationList getExceptions() {
-		return exceptions;
+	public ConsoleInformationList getConsoles() {
+		return consoles;
 	}
 
-	public void setExceptions(ConsoleInformationList exceptions) {
-		this.exceptions = exceptions;
+	public void setConsoles(ConsoleInformationList consoles) {
+		this.consoles = consoles;
 	}
 
 	public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
@@ -94,8 +114,7 @@ public class Cache  {
 			return;
 		}
 		
-		
-
+	
 		InformationQueue infq = new InformationQueue();
 		currentID =actionID;
 		infq.setId(currentID);

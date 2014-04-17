@@ -66,8 +66,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 			
 	   	 			list.removeAll();
 	   	 		String queryText=txtSearch.getText().trim();
-	   	 		list.add("检索词为:"+queryText);
-	   	 		list.add("检索结果为:");
+	   	 		list.add("key words:"+queryText);
+	   	 		list.add("search results:");
 	  
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
