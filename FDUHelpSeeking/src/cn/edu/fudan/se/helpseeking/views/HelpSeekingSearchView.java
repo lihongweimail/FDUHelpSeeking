@@ -66,8 +66,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 			
 	   	 			list.removeAll();
 	   	 		String queryText=txtSearch.getText().trim();
-	   	 		list.add("检索词为："+queryText);
-	   	 		list.add("检索结果为：");
+	   	 		list.add("检索词为:"+queryText);
+	   	 		list.add("检索结果为:");
 	  
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
@@ -110,9 +110,10 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 	});
 	   	 	btnSearchGoogle.setText("Search Google");
 	   	
-	   	txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP);
+	   	txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
 	   	txtSearch.setText("hello world");
 	   	GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1);
+	   	gd_txtSearch.heightHint = 86;
 	   	gd_txtSearch.widthHint = 183;
 	   	txtSearch.setLayoutData(gd_txtSearch);
 	   	

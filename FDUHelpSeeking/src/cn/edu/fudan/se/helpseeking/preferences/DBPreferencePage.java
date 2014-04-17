@@ -101,11 +101,11 @@ public class DBPreferencePage extends PreferencePage     implements IWorkbenchPr
 		String errorStr = null;   //将原错误信息清空        
 		if (urlText.getText().trim().length() == 0) 
 		{             
-			errorStr = "URL不能为空！"; 
+			errorStr = "URL NOT EMPTY!"; 
 		}else if (usernameText.getText().trim().length() == 0)   {            
-			errorStr = "用户名不能为空！"; 
+			errorStr = "USERNAME NOT EMPTY!"; 
 		} else if (passwordText.getText().trim().length() == 0) 	 {             
-			errorStr = "密码不能为空！"; 
+			errorStr = "PASSWORD NOT EMPTY!"; 
 
 		} 
 
@@ -129,7 +129,7 @@ public class DBPreferencePage extends PreferencePage     implements IWorkbenchPr
 	protected void performApply()
 	{          
 		doSave(); //自定义方法，保存设置         
-		MessageDialog.openInformation(getShell(), "信息", "成功保存修改!");      
+		MessageDialog.openInformation(getShell(), "MESSAGE", "SAVED SUCCESS");      
 	}      
 	/**      
 	 *  * 父类方法，单击“确定”按钮时执行此方法，将文本框值保存并弹出成功的提示信息     
@@ -138,7 +138,7 @@ public class DBPreferencePage extends PreferencePage     implements IWorkbenchPr
 	public boolean performOk() 
 	{        
 		doSave();       
-		MessageDialog.openInformation(getShell(),"信息","修改在下次启动生效");        
+		MessageDialog.openInformation(getShell(),"MESSAGE","RESET AVAILABLE");        
 		return true;    
 	}       
 

@@ -21,15 +21,15 @@ public class Cache  {
 	List<DebugCodeCache> debugCodes = new ArrayList<DebugCodeCache>();
 	List<EditCodeCache> editCodes = new ArrayList<EditCodeCache>();
 	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
+	
 	ProblemInformationList problems = ProblemInformationList.getInstance();
 	ConsoleInformationList exceptions = ConsoleInformationList.getInstance();
+	
 	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
 	ClassModel currentClassModel = new ClassModel();
 	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();
 
-	public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
-		this.currentKeywordsList = currentKeywordsList;
-	}
+	
 
 	// 单例实现
 	private Cache() {
@@ -51,8 +51,32 @@ public class Cache  {
 		return Cache.class.getName();
 	}
 
-	// 实现单例
+	
 
+	
+	
+	
+	public ProblemInformationList getProblems() {
+		return problems;
+	}
+
+	public void setProblems(ProblemInformationList problems) {
+		this.problems = problems;
+	}
+
+	public ConsoleInformationList getExceptions() {
+		return exceptions;
+	}
+
+	public void setExceptions(ConsoleInformationList exceptions) {
+		this.exceptions = exceptions;
+	}
+
+	public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
+		this.currentKeywordsList = currentKeywordsList;
+	}
+	
+	
 	public int getCurrentID() {
 		return currentID;
 	}
@@ -79,7 +103,7 @@ public class Cache  {
 
 		informations.add(infq);
 
-		System.out.println("显示连续的编辑动作的动作名："+information.getAction().getActionKind().toString()+":"+information.getAction().getActionName()+"\n动作细节："+information.getAction().getDescription());
+//		System.out.println("显示连续的编辑动作的动作名："+information.getAction().getActionKind().toString()+":"+information.getAction().getActionName()+"\n动作细节："+information.getAction().getDescription());
 		
 		addActions(information.getAction(), currentID);
 

@@ -1348,7 +1348,7 @@ int informationID=-1;
 		try {
 			con = DriverManager.getConnection(URL, USER, PWD);
 			if (con!=null) {
-				System.out.println("数据库连接成功");
+				System.out.println("DATABASE LINK SUCCESS");
 			}
 			//			con.setAutoCommit(false);//设置为false时可能批处理提交容易,并不是自动提交，这样不 需要频繁验证。处理回滚事务。
 

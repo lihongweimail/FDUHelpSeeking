@@ -52,7 +52,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 		String errorStr=null;
 		if (selectedTacticText.getText().trim().length()==0)
 		{
-			errorStr="没有选择策略";
+			errorStr="NOT CHOOSE TACTIC";
 		}
 		setErrorMessage(errorStr);
 		setValid(errorStr==null);
@@ -131,7 +131,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 
 		int tacticmodeValue=ps.getInt(TACTICMODE_KEY);
 		
-		System.out.println("策略模式："+tacticmodeValue);
+		System.out.println("TACTIC MODE: "+tacticmodeValue);
 		btnRBsimple.setSelection(true);
 		btnRBslidewindow.setSelection(false);
 		tacticMode=tacticmodeValue;
@@ -173,7 +173,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 	protected void performApply()
 	{          
 		doSave(); //自定义方法，保存设置         
-		MessageDialog.openInformation(getShell(), "信息", "成功保存修改!");      
+		MessageDialog.openInformation(getShell(), "MESSAGE", "SAVED SUCCESS");      
 	}      
 	/**      
 	 *  * 父类方法，单击“确定”按钮时执行此方法，将文本框值保存并弹出成功的提示信息     
@@ -182,7 +182,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 	public boolean performOk() 
 	{        
 		doSave();       
-		MessageDialog.openInformation(getShell(),"信息","修改在下次启动生效");        
+		MessageDialog.openInformation(getShell(),"MESSAGE","RESTART AS AVILIABLE");        
 		return true;    
 	}       
 

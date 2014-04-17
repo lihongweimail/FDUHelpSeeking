@@ -3,10 +3,7 @@ package cn.edu.fudan.se.helpseeking.processing;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
@@ -20,6 +17,8 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
+import cn.edu.fudan.se.helpseeking.bean.ConsoleInformation;
+import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
 import cn.edu.fudan.se.helpseeking.bean.DebugCode;
 import cn.edu.fudan.se.helpseeking.bean.EditCode;
 import cn.edu.fudan.se.helpseeking.bean.EditorInfo;
@@ -27,6 +26,7 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
@@ -112,11 +112,23 @@ public class CacheProcessing extends Thread  {
 
 	public void simpleTacticProcessing()
 	{
+		List<KeyWord> consoleCacheKeyWords=new ArrayList<>();
+		List<KeyWord> problemCacheKeyWords=new ArrayList<>();
+		
+		consoleCacheKeyWords=genSimpleConsoleCacheKeyWords();
+		problemCacheKeyWords=genSimpleProblemCacheKeyWords();
+		
+
+		//console消息的exceptional权重最高7
+		//problem消息的权重其次，第一个error权重最高7，其次是warning 6
+//		直接在cache中保存的这两个消息的权重分别设置为：
 		List<KeyWord> consoleViewKeyWords=new ArrayList<>();
 		List<KeyWord> problemViewKeyWords=new ArrayList<>();
 		List<KeyWord> classmodelKeyWords=new ArrayList<>();
 		List<KeyWord> codeKeyWords=new ArrayList<>();
-		List<KeyWord> relatedExplorerKeyWords=new ArrayList<>();
+		List<KeyWord> relatedExplorerKeyWords=new ArrayList<>();		
+		
+		
 		//	最简单的策略是，检索时用于更关注console中的异常信息，weightOne基本权重5
 		//其次是problem中的error信息，weightOne基本权重为4；如果为warning信息基本权重降为2；
 		//	再次是调用了哪些API的方法名以及包名，weightOne基本权重6放大API权重
@@ -145,6 +157,17 @@ public class CacheProcessing extends Thread  {
 
         boolean flage=false;
 		List<KeyWord> totallKeyWords=new ArrayList<>();
+		
+		if (consoleCacheKeyWords!=null) {
+			totallKeyWords.addAll(consoleCacheKeyWords);
+			flage=true;
+		}
+		
+		if (problemCacheKeyWords!=null) {
+			totallKeyWords.addAll(problemCacheKeyWords);
+			flage=true;
+		}
+		
 		if (consoleViewKeyWords!=null) {
 			totallKeyWords.addAll(consoleViewKeyWords);	  
 			flage=true;
@@ -225,6 +248,122 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 	}		
 
 
+	}
+
+
+
+	private List<KeyWord> genSimpleProblemCacheKeyWords() {
+		//problem消息的权重其次，第一个error权重最高7，其次是warning 6
+		List<KeyWord> problemCacheKeyWords=new ArrayList<>();
+		ArrayList<ProblemInformation> errorList=currentCache.getProblems().getErrorList();
+		ArrayList<ProblemInformation> warningList=currentCache.getProblems().getWarningList();
+		if (errorList!=null && errorList.size()>0) {
+              			ProblemInformation pif=errorList.get(0);
+              			
+			String des=pif.getDescription();
+			if (des!=null && !des.trim().equals(""))
+			{
+				// 取消息
+				for (String str : des.split(SPLIT_STRING)) 
+				{
+					if (str.trim().equals("")) {
+						continue;
+					}
+					KeyWord kw=new KeyWord();
+					kw.setKeywordName(str.trim());
+					kw.setWeightOne(7);
+					kw.setWeightTwo(2);
+					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					problemCacheKeyWords.add(kw);
+				}
+			}
+					
+			
+		}else {
+			if (warningList!=null && warningList.size()>0) {
+				ProblemInformation pif=warningList.get(0);
+				String des=pif.getDescription();
+				if (des!=null && !des.trim().equals(""))
+				{
+					// 取消息
+					for (String str : des.split(SPLIT_STRING)) 
+					{
+						if (str.trim().equals("")) {
+							continue;
+						}
+						KeyWord kw=new KeyWord();
+						kw.setKeywordName(str.trim());
+						kw.setWeightOne(6);
+						kw.setWeightTwo(1);
+						kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+						problemCacheKeyWords.add(kw);
+					}
+				}
+						
+			}
+			else
+			{
+				return null;
+			}
+		}
+		
+		
+		return problemCacheKeyWords;
+	}
+
+
+
+	private List<KeyWord> genSimpleConsoleCacheKeyWords() {
+		//console消息的exceptional权重最高7 (8)
+		List<KeyWord> consoleCacheKeyWords=new ArrayList<>();
+		
+		ConsoleInformationList cil=currentCache.getExceptions();
+		if (cil==null) {
+			return null;
+		}
+		int lastIndex=cil.getExceptionList().size();
+if (lastIndex<=0) {
+	return null;
+}
+		ConsoleInformation cif=cil.getExceptionList().get(lastIndex-1);
+		
+		String exceptionName=cif.getExceptionName();
+		if (!exceptionName.trim().equals("")) {
+		KeyWord kw=new KeyWord();
+		kw.setKeywordName(exceptionName.trim());
+		kw.setWeightOne(8);
+		for (String jestr : javaExceptionalNameList) {
+			if (exceptionName.trim().equals(jestr)) {
+				kw.setWeightTwo(3);
+				break;
+			}
+		
+		kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+	     consoleCacheKeyWords.add(kw);
+			}
+		}
+		
+		String description=cif.getDescription();
+		
+		if (description!=null && !description.trim().equals(""))
+		{
+			// 取消息
+			for (String str : description.split(SPLIT_STRING)) 
+			{
+				if (str.trim().equals("")) {
+					continue;
+				}
+				KeyWord kw=new KeyWord();
+				kw.setKeywordName(str.trim());
+				kw.setWeightOne(7);
+				kw.setWeightTwo(2);
+				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+				consoleCacheKeyWords.add(kw);
+			}
+		}
+		
+		// TODO Auto-generated method stub
+		return consoleCacheKeyWords;
 	}
 
 

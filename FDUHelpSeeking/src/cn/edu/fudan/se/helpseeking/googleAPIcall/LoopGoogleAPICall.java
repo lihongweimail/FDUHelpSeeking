@@ -43,9 +43,9 @@ public class LoopGoogleAPICall {
 			GoogleAPICallResults results = new Gson().fromJson(reader,
 					GoogleAPICallResults.class);
 
-			System.out.println("【estimatedResutlCount:】 "
+			System.out.println("[estimatedResutlCount:] "
 					+ results.getResponseData().getEstimatedResultCount());
-			System.out.println("【the list size :】"
+			System.out.println("[the list size:]"
 					+ results.getResponseData().getResults().size());
 			// Show title and URL of each results
 			for (int m = 0; m < results.getResponseData().getResults().size(); m++) {
