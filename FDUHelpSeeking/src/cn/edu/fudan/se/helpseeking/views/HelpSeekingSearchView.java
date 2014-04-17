@@ -8,6 +8,7 @@ import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
 import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.jdt.core.IField;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -83,7 +84,10 @@ public class HelpSeekingSearchView extends ViewPart {
 	if (true) {
 		return;
 	}
-	   	 	List<WEBResult> results=new ArrayList<WEBResult>();
+	   	 		if(true)
+	   	 			return;
+	   	 		
+	   	 		List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		
 	   	 			LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
 					try {

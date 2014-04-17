@@ -21,6 +21,8 @@ public class Cache  {
 	List<DebugCodeCache> debugCodes = new ArrayList<DebugCodeCache>();
 	List<EditCodeCache> editCodes = new ArrayList<EditCodeCache>();
 	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
+	ProblemInformationList problems = ProblemInformationList.getInstance();
+	ConsoleInformationList exceptions = ConsoleInformationList.getInstance();
 	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
 	ClassModel currentClassModel = new ClassModel();
 	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();

@@ -13,10 +13,10 @@ import org.eclipse.jdt.internal.ui.viewsupport.IProblemChangedListener;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
 
+@SuppressWarnings("restriction")
 public class ProblemChangedListener extends AbstractUserActivityMonitor
 		implements IProblemChangedListener {
 
-	@SuppressWarnings("restriction")
 	@Override
 	public void problemsChanged(IResource[] changedResources,
 			boolean isMarkerChange) {
@@ -27,7 +27,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 
 				IResource resource = changedResources[i];
 				IJavaElement element = JavaCore.create(resource);
-				if (element.getElementType() < IJavaElement.COMPILATION_UNIT) {
+				if (element == null || element.getElementType() < IJavaElement.COMPILATION_UNIT) {
 					break;
 				}
 				if (element.getElementType() > IJavaElement.COMPILATION_UNIT) {

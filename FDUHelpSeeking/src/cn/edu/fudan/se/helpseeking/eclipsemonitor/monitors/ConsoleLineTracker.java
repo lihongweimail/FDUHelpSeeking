@@ -44,12 +44,18 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 				String location = text.substring(4);
 				String[] split = location.split("\\(");
 				int index1 = split[1].indexOf(":");
-				String filename = split[1].substring(0, index1);
-				String file = filename.substring(0, filename.indexOf("."));
-				String fileName = split[0].substring(0, split[0].indexOf(file)) + filename;
-				int index2 = split[1].indexOf(")");
-				int lineNumber = Integer.parseInt(split[1].substring(index1 + 1, index2));
-				lastInformation.addLocation(fileName, lineNumber);
+				if(index1 != -1){
+					String filename = split[1].substring(0, index1);
+					String file = filename.substring(0, filename.indexOf("."));
+					String fileName = split[0].substring(0, 
+							split[0].indexOf(file)) + filename;
+					int index2 = split[1].indexOf(")");
+					int lineNumber = Integer.parseInt(split[1]
+							.substring(index1 + 1, index2));
+					lastInformation.addLocation(fileName, lineNumber);
+				}else{
+					lastInformation.addLocation("Unknown Source", 0);
+				}
 				//lastInformation.addLocation(text.substring(4));
 			}else{
 				Pattern pattern = Pattern.compile("[a-zA-Z].[A-Za-z]*Exception");

@@ -91,72 +91,76 @@ public class CodeUtil {
 				return true;
 			}
 		});
-		int index = 0;
+		int index = -1;
 		for (Integer linenumber : linenumbers) {
 			if (linenumber <= s.getStartLine()) {
 				index = linenumbers.indexOf(linenumber);
 			} else if (linenumber > s.getStartLine())
 				break;
 		}
-		ASTNode node = nodes.get(index);
+		ASTNode node  = null;
+		if(nodes.size() != 0 && index != -1)
+			node = nodes.get(index);
 
 		final List<String> internalCallee = new ArrayList<>();
 		final List<String> belowClass = new ArrayList<>();
-		node.accept(new ASTVisitor() {
-			public boolean visit(SimpleName name) {
-				IBinding binding = name.resolveBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IField) {					
-						String classString = ((IField) element).getDeclaringType()
-							.getPackageFragment() .getElementName() + "." 
-							+ ((IField) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IField) element)
-								.getElementName());
-							belowClass.add(classString);
+		if(node != null){
+			node.accept(new ASTVisitor() {
+				public boolean visit(SimpleName name) {
+					IBinding binding = name.resolveBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IField) {					
+							String classString = ((IField) element).getDeclaringType()
+								.getPackageFragment() .getElementName() + "." 
+								+ ((IField) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IField) element)
+									.getElementName());
+								belowClass.add(classString);
+							}
 						}
 					}
+					return true;
 				}
-				return true;
-			}
-
-			public boolean visit(MethodInvocation method) {
-				IMethodBinding binding = method.resolveMethodBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						String classString = ((IMethod) element).getDeclaringType()
-							.getPackageFragment().getElementName() + "." 
-							+ ((IMethod) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IMethod) element)
-								.getElementName());
-							belowClass.add(classString);
+	
+				public boolean visit(MethodInvocation method) {
+					IMethodBinding binding = method.resolveMethodBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							String classString = ((IMethod) element).getDeclaringType()
+								.getPackageFragment().getElementName() + "." 
+								+ ((IMethod) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IMethod) element)
+									.getElementName());
+								belowClass.add(classString);
+							}
 						}
 					}
+					return true;
 				}
-				return true;
-			}
-
-			public boolean visit(ClassInstanceCreation creation) {
-				IMethodBinding binding = creation.resolveConstructorBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						String classString = ((IMethod) element).getDeclaringType()
-							.getPackageFragment().getElementName() + "." 
-							+ ((IMethod) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IMethod) element)
-								.getElementName());
-							belowClass.add(classString);
+	
+				public boolean visit(ClassInstanceCreation creation) {
+					IMethodBinding binding = creation.resolveConstructorBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							String classString = ((IMethod) element).getDeclaringType()
+								.getPackageFragment().getElementName() + "." 
+								+ ((IMethod) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IMethod) element)
+									.getElementName());
+								belowClass.add(classString);
+							}
 						}
 					}
+					return true;
 				}
-				return true;
-			}
-		});
+			});
+		}
 
 		cmodel.setBelowClass(belowClass);
 		cmodel.setInternalCallee(internalCallee);
@@ -217,11 +221,11 @@ public class CodeUtil {
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
 		if (icu != null) {
-			String path = icu.getPath().toString().replace("/", ".");
+			/*String path = icu.getPath().toString().replace("/", ".");
 			path = path.substring(path.indexOf(".") + 1);
 			path = path.substring(path.indexOf(".") + 1);
 			path = path.substring(path.indexOf(".") + 1);
-			final String prefix = path.substring(0, path.length() / 2);
+			final String prefix = path.substring(0, path.length() / 2);*/
 			c.setFileName(icu.getPath().toString());
 			
 			CompilationUnit cu = ASTUtil.parse(icu);

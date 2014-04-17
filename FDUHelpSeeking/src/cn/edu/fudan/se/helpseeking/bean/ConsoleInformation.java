@@ -34,7 +34,8 @@ public class ConsoleInformation {
 	
 	public void addLocation(String fileName, int lineNumber) {
 		if(locations.containsKey(fileName)){
-			locations.get(fileName).add(lineNumber);
+			if(!locations.get(fileName).contains(lineNumber))
+				locations.get(fileName).add(lineNumber);
 		}else{
 			ArrayList<Integer> list = new ArrayList<>();
 			list.add(lineNumber);
