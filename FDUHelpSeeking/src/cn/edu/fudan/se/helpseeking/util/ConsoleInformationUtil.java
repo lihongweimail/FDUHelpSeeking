@@ -27,6 +27,9 @@ public class ConsoleInformationUtil {
 				for(Entry<String, ArrayList<Integer>> entry : entryset){
 					if(!found){
 						String fileName = entry.getKey(); 
+						if(fileName.equals("Unknown Source")){
+							break;
+						}
 						int index = fileName.lastIndexOf(".");
 						String suffix = fileName.substring(index);
 						fileName = fileName.substring(0, index).replace(".", "/") + suffix;
@@ -65,6 +68,9 @@ public class ConsoleInformationUtil {
 				for(Entry<String, ArrayList<Integer>> entry : entryset){
 					if(!found){
 						String fileName = entry.getKey(); 
+						if(fileName.equals("Unknown Source")){
+							break;
+						}
 						int index = fileName.lastIndexOf(".");
 						String suffix = fileName.substring(index);
 						fileName = fileName.substring(0, index).replace(".", "/") + suffix;

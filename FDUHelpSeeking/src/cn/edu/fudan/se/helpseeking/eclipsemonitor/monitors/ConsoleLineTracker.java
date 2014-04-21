@@ -1,8 +1,6 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -16,6 +14,8 @@ import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		IConsoleLineTracker {
 	private IConsole console;
+	
+	private static String lastLine = "";
 
 	@Override
 	public void init(IConsole console) {
@@ -28,61 +28,51 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 			int length = line.getLength();
 			int offset = line.getOffset();
 
-			String text = console.getDocument().get(offset, length);
+			String text = console.getDocument().get(offset, length);			
 			
-			ConsoleInformationList consoleInformationList = ConsoleInformationList
-					.getInstance();
-			ArrayList<ConsoleInformation> exceptionList = consoleInformationList
-					.getExceptionList();
-			int size = exceptionList.size();
-			ConsoleInformation lastInformation = null;
-			if(size > 0){
-				lastInformation = exceptionList.get(size - 1); 
-			}
-			
-			if (size > 0 && text.startsWith("\tat ")) {
-				String location = text.substring(4);
-				String[] split = location.split("\\(");
-				int index1 = split[1].indexOf(":");
-				if(index1 != -1){
-					String filename = split[1].substring(0, index1);
-					String file = filename.substring(0, filename.indexOf("."));
-					String fileName = split[0].substring(0, 
-							split[0].indexOf(file)) + filename;
-					int index2 = split[1].indexOf(")");
-					int lineNumber = Integer.parseInt(split[1]
-							.substring(index1 + 1, index2));
-					lastInformation.addLocation(fileName, lineNumber);
-				}else{
-					lastInformation.addLocation("Unknown Source", 0);
-				}
-				//lastInformation.addLocation(text.substring(4));
-			}else{
-				Pattern pattern = Pattern.compile("[a-zA-Z].[A-Za-z]*Exception");
-				Matcher matcher = pattern.matcher(text);
-				if(matcher.find()){
-					if(size > 0 && (lastInformation.getLocations() == null 
-							|| lastInformation.getLocations().size() == 0)){
-						exceptionList.remove(size - 1);
-					}
+			if(text.startsWith("\tat ")){
+				ConsoleInformationList consoleInformationList = ConsoleInformationList
+						.getInstance();
+				ArrayList<ConsoleInformation> exceptionList = consoleInformationList
+						.getExceptionList();
+				
+				if(!lastLine.startsWith("\tat ")){
 					ConsoleInformation information = new ConsoleInformation();
-					int index1 = text.lastIndexOf(" ");
-					int index2 = text.indexOf(":");
+					int index1 = lastLine.lastIndexOf(" ");
+					int index2 = lastLine.indexOf(":");
 					if(index2 == -1){
-						information.setExceptionName(text.substring(index1 + 1));
+						information.setExceptionName(lastLine.substring(index1 + 1));
 					}else{
-						index1 = text.substring(0, index2).lastIndexOf(" ");
-						information.setExceptionName(text.substring(index1 + 1, index2));
-						information.setDescription(text.substring(index2 + 2));
+						index1 = lastLine.substring(0, index2).lastIndexOf(" ");
+						information.setExceptionName(lastLine.substring(index1 + 1, index2));
+						information.setDescription(lastLine.substring(index2 + 2));
 					}
 					exceptionList.add(information);
-				}else if(size > 0 && (lastInformation.getLocations() == null 
-						|| lastInformation.getLocations().size() == 0)){
-					exceptionList.remove(size - 1);
+				}
+				
+				int size = exceptionList.size();
+				if(size > 0){
+					ConsoleInformation lastInformation = exceptionList.get(size - 1); 
+					String location = text.substring(4);
+					String[] split = location.split("\\(");
+					int index1 = split[1].indexOf(":");
+					if(index1 != -1){
+						String filename = split[1].substring(0, index1);
+						String file = filename.substring(0, filename.indexOf("."));
+						String fileName = split[0].substring(0, 
+								split[0].indexOf(file)) + filename;
+						int index2 = split[1].indexOf(")");
+						int lineNumber = Integer.parseInt(split[1]
+								.substring(index1 + 1, index2));
+						lastInformation.addLocation(fileName, lineNumber);
+					}else{
+						lastInformation.addLocation("Unknown Source", 0);
+					}
 				}
 			}
 			
-			//consoleInformationList.prettyPrint();
+			lastLine = text;
+			//ConsoleInformationList.getInstance().prettyPrint();
 
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block

@@ -26,6 +26,9 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 			for (int i = 0; i < changedResources.length; i++) {
 
 				IResource resource = changedResources[i];
+				
+				//System.out.println(resource.getLocation().toString());
+				
 				IJavaElement element = JavaCore.create(resource);
 				if (element == null || element.getElementType() < IJavaElement.COMPILATION_UNIT) {
 					break;
@@ -127,6 +130,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 				}
 
 			}
+			ProblemInformationList.getInstance().prettyPrint();
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

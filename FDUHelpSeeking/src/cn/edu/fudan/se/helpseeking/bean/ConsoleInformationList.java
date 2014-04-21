@@ -35,6 +35,10 @@ public class ConsoleInformationList {
 		}
 	}
 	
+	public void clearConsoleInformation() {
+		exceptionList.clear();
+	}
+	
 	public static ConsoleInformationList getInstance() {
 		return Singleton.consoleInformationList;
 	}

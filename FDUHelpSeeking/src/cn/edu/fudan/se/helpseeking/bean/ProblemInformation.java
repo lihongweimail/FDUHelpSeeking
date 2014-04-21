@@ -92,4 +92,16 @@ public class ProblemInformation {
 		this.source = source;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof ProblemInformation){
+			ProblemInformation problemInformation = (ProblemInformation)obj;
+			if(problemInformation.getPath().equals(path) 
+					&& problemInformation.getDescription().equals(description)){
+				return true;
+			}
+		}
+		return false;
+	}
+
 }
