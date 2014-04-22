@@ -68,7 +68,6 @@ public class CodeUtil {
 		}
 		ec.setSyntacticBlock(sblock);
 
-		// TODO internalCaller upClass
 		ClassModel cmodel = new ClassModel();
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
@@ -76,13 +75,13 @@ public class CodeUtil {
 		final CompilationUnit cu = ASTUtil.parse(unit);
 		final ArrayList<ASTNode> nodes = new ArrayList<>();
 		final ArrayList<Integer> linenumbers = new ArrayList<>();
-		cu.accept(new ASTVisitor() {
+		cu.accept(new ASTVisitor() {			
 			public boolean visit(FieldDeclaration node) {
 				int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
 				nodes.add(node);
 				linenumbers.add(lineNumber);
 				return true;
-			}
+			}			
 
 			public boolean visit(MethodDeclaration node) {
 				int lineNumber = cu.getLineNumber(node.getStartPosition()) - 1;
@@ -105,61 +104,10 @@ public class CodeUtil {
 		final List<String> internalCallee = new ArrayList<>();
 		final List<String> belowClass = new ArrayList<>();
 		if(node != null){
-			node.accept(new ASTVisitor() {
-				public boolean visit(SimpleName name) {
-					IBinding binding = name.resolveBinding();
-					if(binding != null){
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IField) {					
-							String classString = ((IField) element).getDeclaringType()
-								.getPackageFragment() .getElementName() + "." 
-								+ ((IField) element).getDeclaringType().getElementName();
-							if(!classString.startsWith(prefix)){
-								internalCallee.add(classString + "." + ((IField) element)
-									.getElementName());
-								belowClass.add(classString);
-							}
-						}
-					}
-					return true;
-				}
-	
-				public boolean visit(MethodInvocation method) {
-					IMethodBinding binding = method.resolveMethodBinding();
-					if(binding != null){
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
-								.getPackageFragment().getElementName() + "." 
-								+ ((IMethod) element).getDeclaringType().getElementName();
-							if(!classString.startsWith(prefix)){
-								internalCallee.add(classString + "." + ((IMethod) element)
-									.getElementName());
-								belowClass.add(classString);
-							}
-						}
-					}
-					return true;
-				}
-	
-				public boolean visit(ClassInstanceCreation creation) {
-					IMethodBinding binding = creation.resolveConstructorBinding();
-					if(binding != null){
-						IJavaElement element = binding.getJavaElement();
-						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
-								.getPackageFragment().getElementName() + "." 
-								+ ((IMethod) element).getDeclaringType().getElementName();
-							if(!classString.startsWith(prefix)){
-								internalCallee.add(classString + "." + ((IMethod) element)
-									.getElementName());
-								belowClass.add(classString);
-							}
-						}
-					}
-					return true;
-				}
-			});
+			
+			constructClassModelByNode(node, cu, prefix, s.getStartLine(), internalCallee, 
+					belowClass);
+			
 		}
 
 		cmodel.setBelowClass(belowClass);
@@ -216,16 +164,15 @@ public class CodeUtil {
 		}
 		ec.setSyntacticBlock(sblock);
 
-		// TODO internalCaller upClass
 		ClassModel cmodel = new ClassModel();
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
 		if (icu != null) {
-			/*String path = icu.getPath().toString().replace("/", ".");
+			String path = icu.getPath().toString().replace("/", ".");
 			path = path.substring(path.indexOf(".") + 1);
 			path = path.substring(path.indexOf(".") + 1);
 			path = path.substring(path.indexOf(".") + 1);
-			final String prefix = path.substring(0, path.length() / 2);*/
+			final String prefix = path.substring(0, path.length() / 2);
 			c.setFileName(icu.getPath().toString());
 			
 			CompilationUnit cu = ASTUtil.parse(icu);
@@ -245,6 +192,7 @@ public class CodeUtil {
 				
 				final List<String> internalCallee = new ArrayList<>();
 				final List<String> belowClass = new ArrayList<>();
+				
 				node.accept(new ASTVisitor() {
 					public boolean visit(SimpleName name) {
 						IBinding binding = name.resolveBinding();
@@ -254,14 +202,16 @@ public class CodeUtil {
 								String classString = ((IField) element).getDeclaringType()
 										.getPackageFragment().getElementName() + "." 
 										+ ((IField) element).getDeclaringType().getElementName();
-								internalCallee.add(classString + "." 
-										+ ((IField) element).getElementName());
-								belowClass.add(classString);
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IField) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
 							}
 						}
 						return true;
 					}
-
+		
 					public boolean visit(MethodInvocation method) {
 						IMethodBinding binding = method.resolveMethodBinding();
 						if(binding != null){
@@ -270,32 +220,35 @@ public class CodeUtil {
 								String classString = ((IMethod) element).getDeclaringType()
 										.getPackageFragment().getElementName() + "." 
 										+ ((IMethod) element).getDeclaringType().getElementName();
-								internalCallee.add(classString + "." 
-										+ ((IMethod) element).getElementName());
-								belowClass.add(classString);
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IMethod) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
 							}
 						}
 						return true;
 					}
-
+		
 					public boolean visit(ClassInstanceCreation creation) {
-						IMethodBinding binding = creation
-							.resolveConstructorBinding();
+						IMethodBinding binding = creation.resolveConstructorBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
 							if (element instanceof IMethod) {
 								String classString = ((IMethod) element).getDeclaringType()
 										.getPackageFragment().getElementName() + "." 
 										+ ((IMethod) element).getDeclaringType().getElementName();
-								internalCallee.add(classString + "." 
-										+ ((IMethod) element).getElementName());
-								belowClass.add(classString);
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IMethod) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
 							}
 						}
 						return true;
 					}
 				});
-
+				
 				cmodel.setBelowClass(belowClass);
 				cmodel.setInternalCallee(internalCallee);
 			}
@@ -323,7 +276,7 @@ public class CodeUtil {
 		if (bp instanceof JavaMethodBreakpoint) {
 			bpoint.setType("Method");
 			try {
-				bpoint.setLineNo(((JavaMethodBreakpoint) bp).getLineNumber());
+				bpoint.setLineNo(((JavaMethodBreakpoint) bp).getLineNumber() - 1);
 				bpoint.setMethodQualifiedName(((JavaMethodBreakpoint) bp).getTypeName()	+ "."
 						+ ((JavaMethodBreakpoint) bp).getMethodName());
 			} catch (CoreException e) {
@@ -332,7 +285,7 @@ public class CodeUtil {
 		} else if (bp instanceof JavaLineBreakpoint) {
 			bpoint.setType("Line");
 			try {
-				bpoint.setLineNo(((JavaLineBreakpoint) bp).getLineNumber());
+				bpoint.setLineNo(((JavaLineBreakpoint) bp).getLineNumber() - 1);
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -382,72 +335,148 @@ public class CodeUtil {
 		}
 		dc.setSyntacticBlock(sblock);
 
-		// TODO internalCaller upClass
 		ClassModel cmodel = new ClassModel();
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
 		final List<String> internalCallee = new ArrayList<>();
 		final List<String> belowClass = new ArrayList<>();
-		node.accept(new ASTVisitor() {
-			public boolean visit(SimpleName name) {
-				IBinding binding = name.resolveBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IField) {
-						String classString = ((IField) element).getDeclaringType()
-								.getPackageFragment().getElementName() + "." 
-								+ ((IField) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IField) element)
-									.getElementName());
-							belowClass.add(classString);
-						}
-					}
-				}
-				return true;
-			}
-
-			public boolean visit(MethodInvocation method) {
-				IMethodBinding binding = method.resolveMethodBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						String classString = ((IMethod) element).getDeclaringType()
-								.getPackageFragment().getElementName() + "." 
-								+ ((IMethod) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IMethod) element)
-									.getElementName());
-							belowClass.add(classString);
-						}
-					}
-				}
-				return true;
-			}
-
-			public boolean visit(ClassInstanceCreation creation) {
-				IMethodBinding binding = creation.resolveConstructorBinding();
-				if(binding != null){
-					IJavaElement element = binding.getJavaElement();
-					if (element instanceof IMethod) {
-						String classString = ((IMethod) element).getDeclaringType()
-								.getPackageFragment().getElementName() + "." 
-								+ ((IMethod) element).getDeclaringType().getElementName();
-						if(!classString.startsWith(prefix)){
-							internalCallee.add(classString + "." + ((IMethod) element)
-									.getElementName());
-							belowClass.add(classString);
-						}
-					}
-				}
-				return true;
-			}
-		});
+		constructClassModelByNode(node, cu, prefix, bpoint.getLineNo(), internalCallee, 
+				belowClass);
 		cmodel.setBelowClass(belowClass);
 		cmodel.setInternalCallee(internalCallee);
 		dc.setClassModel(cmodel);
 
 		return dc;
+	}
+	
+	private static void constructClassModelByNode(ASTNode node, final CompilationUnit cu, 
+			final String prefix, final int lineNumber, final List<String> internalCallee, 
+			final List<String> belowClass){
+		if(node instanceof MethodDeclaration){
+			node.accept(new ASTVisitor() {
+				public boolean visit(SimpleName name) {
+					int differ = cu.getLineNumber(name.getStartPosition()) 
+							- lineNumber - 1;
+					if(differ > -3 && differ < 3){
+						IBinding binding = name.resolveBinding();
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IField) {
+								String classString = ((IField) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IField) element).getDeclaringType().getElementName();
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IField) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
+							}
+						}
+					}
+					return true;
+				}
+	
+				public boolean visit(MethodInvocation method) {
+					int differ = cu.getLineNumber(method.getStartPosition()) 
+							- lineNumber - 1;
+					if(differ > -3 && differ < 3){
+						IMethodBinding binding = method.resolveMethodBinding();
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IMethod) {
+								String classString = ((IMethod) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IMethod) element).getDeclaringType().getElementName();
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IMethod) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
+							}
+						}
+					}
+					return true;
+				}
+	
+				public boolean visit(ClassInstanceCreation creation) {
+					int differ = cu.getLineNumber(creation.getStartPosition()) 
+							- lineNumber - 1;
+					if(differ > -3 && differ < 3){
+						IMethodBinding binding = creation.resolveConstructorBinding();
+						if(binding != null){
+							IJavaElement element = binding.getJavaElement();
+							if (element instanceof IMethod) {
+								String classString = ((IMethod) element).getDeclaringType()
+										.getPackageFragment().getElementName() + "." 
+										+ ((IMethod) element).getDeclaringType().getElementName();
+								if(!classString.startsWith(prefix)){
+									internalCallee.add(classString + "." + ((IMethod) element)
+											.getElementName());
+									belowClass.add(classString);
+								}
+							}
+						}
+					}
+					return true;
+				}
+			});
+		}else{
+			node.accept(new ASTVisitor() {
+				public boolean visit(SimpleName name) {
+					IBinding binding = name.resolveBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IField) {
+							String classString = ((IField) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IField) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IField) element)
+										.getElementName());
+								belowClass.add(classString);
+							}
+						}
+					}
+					return true;
+				}
+	
+				public boolean visit(MethodInvocation method) {
+					IMethodBinding binding = method.resolveMethodBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							String classString = ((IMethod) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IMethod) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IMethod) element)
+										.getElementName());
+								belowClass.add(classString);
+							}
+						}
+					}
+					return true;
+				}
+	
+				public boolean visit(ClassInstanceCreation creation) {
+					IMethodBinding binding = creation.resolveConstructorBinding();
+					if(binding != null){
+						IJavaElement element = binding.getJavaElement();
+						if (element instanceof IMethod) {
+							String classString = ((IMethod) element).getDeclaringType()
+									.getPackageFragment().getElementName() + "." 
+									+ ((IMethod) element).getDeclaringType().getElementName();
+							if(!classString.startsWith(prefix)){
+								internalCallee.add(classString + "." + ((IMethod) element)
+										.getElementName());
+								belowClass.add(classString);
+							}
+						}
+					}
+					return true;
+				}
+			});
+		}
 	}
 
 }
