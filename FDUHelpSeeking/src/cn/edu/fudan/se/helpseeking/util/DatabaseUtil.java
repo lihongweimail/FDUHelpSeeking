@@ -12,6 +12,8 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.eclipse.jdt.core.dom.ThisExpression;
+
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
@@ -47,12 +49,60 @@ public class DatabaseUtil {
 	private static Information lastInformation=null;
 
 
-	public static final String PWD = "root";
+	public static  String PWD = "root";
 	private static ResultSet rs = null;
 	public static DataSource source = null;
-	public static final String URL = "jdbc:mysql://localhost:3306/helpseeking";
+    public static  String URL = "jdbc:mysql://localhost:3306/helpseeking";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
-	public static final String USER = "root";
+	public static  String USER = "root";
+
+	
+	
+	//数据库和表的创建
+public static final String databaseSQL = "CREATE DATABASE IF NOT EXISTS `helpseeking`";
+public static final String usedatabaseSQL="use helpseeking";
+public static final String tableActionSQL = "CREATE TABLE IF NOT EXISTS `helpseeking`.`action` ( "
+		+ "   `id` int(11) NOT NULL AUTO_INCREMENT,"
+		+ "  `time` timestamp NULL DEFAULT NULL,"
+		+ "  `endtime` timestamp NULL DEFAULT NULL,"
+		+ "  `actionKind` varchar(45) DEFAULT NULL ,"
+		+ "  `actionName` varchar(45) DEFAULT NULL,"
+		+ "  `description` text,"
+		+ "  `byuser` varchar(10) DEFAULT NULL,"
+		+ "  `user` varchar(45) DEFAULT NULL,"
+		+ "  PRIMARY KEY (`id`),"
+		+ "  KEY `ACTIONKIND` (`actionKind`), "
+		+ "  KEY `ACTIONNAME` (`actionName`),"
+		+ "  KEY `USER` (`user`)"
+		+ ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8";	
+	
+	
+	public static String getPWD() {
+		return PWD;
+	}
+
+	public static void setPWD(String pWD) {
+		PWD = pWD;
+	}
+
+	public static String getURL() {
+		return URL;
+	}
+
+	public static void setURL(String uRL) {
+		URL = uRL;
+	}
+
+	public static String getUSER() {
+		return USER;
+	}
+
+	public static void setUSER(String uSER) {
+		USER = uSER;
+	}
+
+		
+	
 
 	private static int addActionAndgetID(Action action) {
 		int actionID=-1;
@@ -1336,7 +1386,7 @@ int informationID=-1;
 		return SyntacticBlockID;
 	}
 
-
+static int dbError=0;
 
 	public static Connection getCon() {
 		try {
@@ -1349,6 +1399,10 @@ int informationID=-1;
 			con = DriverManager.getConnection(URL, USER, PWD);
 			if (con!=null) {
 				System.out.println("DATABASE LINK SUCCESS");
+				
+				
+			}else {
+				dbError=-1;
 			}
 			//			con.setAutoCommit(false);//设置为false时可能批处理提交容易,并不是自动提交，这样不 需要频繁验证。处理回滚事务。
 
@@ -1356,6 +1410,7 @@ int informationID=-1;
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			dbError=-1;
 		}
 
 		return con;
@@ -1422,9 +1477,25 @@ int informationID=-1;
 		return null;
 	}
 
-	public static void init() {
-		con = getCon();
+	public static int  initDB(String uRLString, String userNameString, String pwdString) {
+		
+		
+	dbError=0;
+		setURL(uRLString);
+		setUSER(userNameString);
+		setPWD(pwdString);
+	  
+			return init();
+			
 	}
+
+	public static int init() {
+	
+   con=getCon();
+   
+
+return dbError;
+}
 
 	public static void main(String args[]) {
 		init();

@@ -1,8 +1,8 @@
-CREATE DATABASE `helpseeking` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE IF NOT EXISTS `helpseeking` /*!40100 DEFAULT CHARACTER SET utf8 */;
 
 use helpseeking;
 
-CREATE TABLE `action` (
+CREATE TABLE IF NOT EXISTS `helpseeking`.`action` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `time` timestamp NULL DEFAULT NULL,
   `endtime` timestamp NULL DEFAULT NULL,
@@ -15,10 +15,10 @@ CREATE TABLE `action` (
   KEY `ACTIONKIND` (`actionKind`),
   KEY `ACTIONNAME` (`actionName`),
   KEY `USER` (`user`)
-) ENGINE=InnoDB AUTO_INCREMENT=985 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `breakpoint` (
+CREATE TABLE IF NOT EXISTS  `breakpoint` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL,
   `MethodQualifiedName` text,
@@ -27,7 +27,7 @@ CREATE TABLE `breakpoint` (
   KEY `BREAKPOINTTYPE` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `classmodel` (
+CREATE TABLE IF NOT EXISTS  `classmodel` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL,
   `code` longtext,
@@ -39,7 +39,7 @@ CREATE TABLE `classmodel` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `compileinformation` (
+CREATE TABLE IF NOT EXISTS  `compileinformation` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL COMMENT 'error  or warning',
   `content` text,
@@ -49,7 +49,7 @@ CREATE TABLE `compileinformation` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `cursor` (
+CREATE TABLE  IF NOT EXISTS `cursor` (
   `id` int(11) NOT NULL,
   `lineNo` int(11) DEFAULT NULL,
   `lineFrom` int(11) DEFAULT NULL,
@@ -60,7 +60,7 @@ CREATE TABLE `cursor` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `debugcode` (
+CREATE TABLE IF NOT EXISTS  `debugcode` (
   `id` int(11) NOT NULL,
   `SyntacticBlockID` int(11) DEFAULT NULL,
   `ClassModelID` int(11) DEFAULT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE `debugcode` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `editcode` (
+CREATE TABLE IF NOT EXISTS  `editcode` (
   `id` int(11) NOT NULL,
   `SyntacticBlockID` int(11) DEFAULT NULL,
   `ClassModelID` int(11) DEFAULT NULL,
@@ -78,7 +78,7 @@ CREATE TABLE `editcode` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `editorinfo` (
+CREATE TABLE IF NOT EXISTS  `editorinfo` (
   `id` int(11) NOT NULL,
   `size` int(11) DEFAULT NULL,
   `classQualifiedNameList` text COMMENT 'split character ";"',
@@ -86,7 +86,7 @@ CREATE TABLE `editorinfo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `event` (
+CREATE TABLE IF NOT EXISTS `event` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` varchar(100) DEFAULT NULL,
   `time` timestamp(6) NULL DEFAULT NULL,
@@ -105,31 +105,31 @@ CREATE TABLE `event` (
   `delta` text,
   PRIMARY KEY (`id`),
   KEY `kind` (`kind`)
-) ENGINE=InnoDB AUTO_INCREMENT=11676 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 
-CREATE TABLE `explorerinfo` (
+CREATE TABLE IF NOT EXISTS `explorerinfo` (
   `id` int(11) NOT NULL,
   `size` int(11) DEFAULT NULL,
   `selectObjectNameList` text COMMENT 'split character ";"',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `explorerrelated` (
+CREATE TABLE IF NOT EXISTS `explorerrelated` (
   `id` int(11) NOT NULL,
   `editorInfoID` int(11) DEFAULT NULL,
   `explorerInfoID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `ideoutput` (
+CREATE TABLE IF NOT EXISTS `ideoutput` (
   `id` int(11) NOT NULL,
   `CompileInformationID` int(11) DEFAULT NULL,
   `RuntimeInformationID` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `information` (
+CREATE TABLE IF NOT EXISTS `information` (
   `id` int(11) NOT NULL,
   `DebugCodeID` int(11) DEFAULT NULL,
   `EditCodeID` int(11) DEFAULT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE `information` (
   KEY `INFOMATIONACTIONID` (`ActionID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `keywords` (
+CREATE TABLE IF NOT EXISTS `keywords` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `inforID` int(11) DEFAULT NULL,
   `candidateKeyWords` text,
@@ -150,7 +150,7 @@ CREATE TABLE `keywords` (
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
 
 
-CREATE TABLE `runtimeinformation` (
+CREATE TABLE IF NOT EXISTS `runtimeinformation` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL COMMENT 'framework message , program output  or exceptional message',
   `content` text,
@@ -158,7 +158,7 @@ CREATE TABLE `runtimeinformation` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE `syntacticblock` (
+CREATE TABLE IF NOT EXISTS `syntacticblock` (
   `id` int(11) NOT NULL,
   `type` varchar(45) DEFAULT NULL,
   `code` longtext,

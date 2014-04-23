@@ -72,16 +72,10 @@
        id="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"> 
        </page>
    <page
-    name="DB数据库"
-     category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
-     class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
-      id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage">
-    </page>
-   <page
          category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
-         class="cn.edu.fudan.se.helpseeking.preferences.TacticSelection"
-         id="cn.edu.fudan.se.helpseeking.preferences.TacticSelection"
-         name="策略选择">
+         class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
+         id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
+         name="DBPreferencePage">
    </page>
    </extension>
    <extension
@@ -94,6 +88,10 @@
             file="testToc.xml"
             primary="true">
       </toc>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+         <initializer class="cn.edu.fudan.se.helpseeking.preferences.PreferenceInitializer"/>
    </extension> 
    
 </plugin>

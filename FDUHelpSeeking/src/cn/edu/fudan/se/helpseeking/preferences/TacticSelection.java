@@ -26,14 +26,14 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 	public TacticSelection() {
 	}
 
+////	TACTIC  PREFERENCEPAGE VALUE
+//    //	为策略定义键值
+//	public static final String  TACTICMODE_KEY="$TACTICMODE_KEY";
+//    //	默认值
+//	public static final  int TACTICMODE_DEFAULT= 1;
+//	public static final String SELECTTACTIC_DEFAULT="Simple Tactic";
+//	move to PreferenceConstants
 	
-//	为策略定义键值
-	public static final String  TACTICMODE_KEY="$TACTICMODE_KEY";
-	
-	
-//	默认值
-	public static final  int TACTICMODE_DEFAULT= 1;
-	public static final String SELECTTACTIC_DEFAULT="Simple Tactic";
 	
 //	定义选项
 		
@@ -129,7 +129,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 		
 //	取出 原来的值; 如果没有值则设置默认值: 简单策略
 
-		int tacticmodeValue=ps.getInt(TACTICMODE_KEY);
+		int tacticmodeValue=ps.getInt(PreferenceConstants.TACTICMODE_KEY);
 		
 		System.out.println("TACTIC MODE: "+tacticmodeValue);
 		btnRBsimple.setSelection(true);
@@ -151,7 +151,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 		btnRBsimple.setSelection(true);
 		btnRBslidewindow.setSelection(false);
 		selectedTacticText.setText(btnRBsimple.getText());
-	tacticMode=TACTICMODE_DEFAULT;
+	tacticMode=PreferenceConstants.TACTICMODE_DEFAULT;
 	}
 	
 	}
@@ -162,7 +162,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 	}
 
 	protected void performDefaults() {
-		selectedTacticText.setText(SELECTTACTIC_DEFAULT);
+		selectedTacticText.setText(PreferenceConstants.SELECTTACTIC_DEFAULT);
 		
 		
 	}
@@ -191,7 +191,7 @@ public class TacticSelection extends PreferencePage implements IWorkbenchPrefere
 	 *   */     
 	private void doSave() 
 	{          
-		ps.setValue(TACTICMODE_KEY, tacticMode);      
+		ps.setValue(PreferenceConstants.TACTICMODE_KEY, tacticMode);      
 		
 		
 	}

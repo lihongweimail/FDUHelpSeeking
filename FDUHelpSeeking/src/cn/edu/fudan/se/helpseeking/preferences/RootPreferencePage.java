@@ -15,6 +15,13 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 
 public class RootPreferencePage extends PreferencePage implements IWorkbenchPreferencePage{
+	public RootPreferencePage() {
+		super();
+		setPreferenceStore(FDUHelpSeekingPlugin.getDefault().getPreferenceStore());
+		setDescription("Welcome to use FDUHelpseeking plugin!");
+		
+	}
+	
 	public void init(IWorkbench workbench){
 		
 		
@@ -23,7 +30,7 @@ public class RootPreferencePage extends PreferencePage implements IWorkbenchPref
 	protected Control createContents(Composite parent) {
 		Composite topComp=new Composite(parent,SWT.NONE) ;
 		topComp.setLayout(new RowLayout());
-		new Label(topComp,SWT.NONE).setText("欢迎使用FDUhelpseeking插件");
+
 		return topComp;
 	}
 

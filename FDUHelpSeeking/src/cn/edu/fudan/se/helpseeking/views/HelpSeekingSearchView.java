@@ -72,20 +72,15 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
 		   	 		
-						v.getMyBrower().setNewUrl( "https://www.google.com/search?newwindow=1&q="+queryText);
+//						v.getMyBrower().setNewUrl( "https://www.google.com/search?newwindow=1&q="+queryText);
 
 //						https://www.google.com.hk/#newwindow=1&q=
-						//						v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
+					v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
 
 		   	 		}
 //	   	 	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 	 		
 //	   	 		需要保存关键词和当前cache到数据库中：
 	   	 		DatabaseUtil.addKeyWordsToDataBase(Cache.getInstance(),queryText);
-	   	 		
-	   	 		//仅使用浏览器，不使用ajax  检索
-	if (true) {
-		return;
-	}
 
 	   	 		List<WEBResult> results=new ArrayList<WEBResult>();
 	   	 		

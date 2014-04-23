@@ -4,17 +4,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveListener;
@@ -51,6 +51,7 @@ import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.TestRunListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WindowListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WorkbenchListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WorkbenchUserActivityMonitor;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 /**
@@ -58,11 +59,16 @@ import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
  */
 public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 
+
+	
+
+	
+	
+	
 	private static FDUHelpSeekingPlugin INSTANCE;
 	public static FDUHelpSeekingPlugin getINSTANCE() {
 		return INSTANCE;
 	}
-
 	private ActivityContextManager activityContextManager;
 
 	// The plug-in ID
@@ -144,7 +150,22 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 			for (IWorkbenchWindow window : windows) {
 				addListenersToWindow(window);
 			}
-			DatabaseUtil.init();
+			
+			//find db preferencepage value
+			
+			
+		
+			IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+			String dbURL=ps.getString(PreferenceConstants.URL_KEY);
+			String dbname=ps.getString(PreferenceConstants.USERNAME_KEY);
+			String dbpwd=ps.getString(PreferenceConstants.PASSWORD_KEY);
+			int connection=	DatabaseUtil.initDB(dbURL,dbname,dbpwd);
+			
+			if (connection<0) {
+				MessageDialog.openInformation(Display.getDefault().getActiveShell(), "HELPSEEKING DB PARAMETER ERROR! ", "Please configurate it in Window -> Preference -> FDUHelpSeeking Configuration!" );
+				return;
+			}
+				
 			MonitorUiExtensionPointReader.initExtensions(monitors);
 			monitors.add(new ElementChangedListener());
 			monitors.add(new WorkbenchUserActivityMonitor());

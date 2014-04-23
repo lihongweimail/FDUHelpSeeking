@@ -77,7 +77,7 @@ public class CacheProcessing extends Thread  {
 
               currentTactic=ps.getInt("TACTICMODE_KEY");
               
-//              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
+              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
 			
 	
                  simpleTacticProcessing();
@@ -120,7 +120,7 @@ public class CacheProcessing extends Thread  {
 		
 
 		//console消息的exceptional权重最高7
-		//problem消息的权重其次，第一个error权重最高7，其次是warning 6
+		//problem消息的权重其次，第一个error权重最高7，其次的error和warning是 6
 //		直接在cache中保存的这两个消息的权重分别设置为：
 		List<KeyWord> consoleViewKeyWords=new ArrayList<>();
 		List<KeyWord> problemViewKeyWords=new ArrayList<>();

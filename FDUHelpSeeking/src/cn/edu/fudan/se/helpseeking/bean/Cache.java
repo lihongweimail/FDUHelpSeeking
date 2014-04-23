@@ -412,6 +412,17 @@ public class Cache  {
 
 	}
 
+	
+//	用于处理当编辑状态下，一些程序元素删除；或类修改后保存该类的文件后，该类编译通过
+//	后在problem view中没有该类的编译错误和警告信息（再考虑是否只是没有错误信息）
+//	在光标中有记录该类的类名文件
+public void removeEditCodeAsDeleteOrProblemViewChange(String classFileName) {
+	//TODO   还有待实现
+	
+	
+}
+	
+	
 	public ActionQueue getActionSlideWindow() {
 		return actions;
 	}
