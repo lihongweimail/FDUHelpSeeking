@@ -4,14 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.plaf.basic.BasicArrowButton;
-
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.jdt.core.IField;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -22,13 +18,10 @@ import org.eclipse.ui.part.ViewPart;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
-import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
-import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
-import cn.edu.fudan.se.helpseeking.web.SimpleBrower;
 
 
 
@@ -37,6 +30,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	private Text txtSearch;
 	private org.eclipse.swt.widgets.List list;
+	private List<WEBResult> googlesearchList=new ArrayList<WEBResult>();
+	
 	public HelpSeekingSearchView() {
 	   	 			part=FDUHelpSeekingPlugin
 	   	 				.getDefault()
@@ -45,13 +40,17 @@ public class HelpSeekingSearchView extends ViewPart {
 	   					.getActivePage()
 	   					.findView(
 	   							"cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-	   	 			}
+	   	 		
+   	 			}
 	
 	IViewPart part;
+	
+		
 	   @Override
 	public void createPartControl(Composite arg0) {
 		 	   	 		
-	
+	  
+		   
 	   	arg0.setLayout(new BorderLayout(0, 0));
 	   	
 	   	Composite SearchComposite = new Composite(arg0, SWT.NONE);
@@ -66,9 +65,9 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	 			
 	   	 			list.removeAll();
 	   	 		String queryText=txtSearch.getText().trim();
-	   	 		list.add("key words:"+queryText);
-	   	 		list.add("search results:");
-	  
+//	   	 		list.add("key words:"+queryText);
+//	   	 		list.add("search results:");
+//	  
 	   	 		if(part instanceof HelpSeekingSolutionView){
 		   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
 		   	 		
@@ -76,21 +75,31 @@ public class HelpSeekingSearchView extends ViewPart {
 
 //						https://www.google.com.hk/#newwindow=1&q=
 					v.getMyBrower().setNewUrl("http://www.baidu.com/s?wd="+queryText);
+					
+	
 
 		   	 		}
 //	   	 	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 	 		
 //	   	 		需要保存关键词和当前cache到数据库中：
 	   	 		DatabaseUtil.addKeyWordsToDataBase(Cache.getInstance(),queryText);
 
-	   	 		List<WEBResult> results=new ArrayList<WEBResult>();
+	   
 	   	 		
 	   	 			LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
 					try {
-						results=apiCall.searchWeb(queryText);
+						googlesearchList=apiCall.searchWeb(queryText);
 					
-					for (WEBResult webResult : results) {
+					for (WEBResult webResult : googlesearchList) {
+						String xml =webResult.getTitleNoFormatting(); 
 						
-						list.add(webResult.toString());
+						xml=xml.replaceAll("&quot;", "\"");
+						
+						//去除无关的项目 （采用标题中文字匹配）
+	
+								list.add(xml);
+			
+						
+					
 					}
 				
 					
@@ -114,6 +123,28 @@ public class HelpSeekingSearchView extends ViewPart {
 	   	
 	   	list = new org.eclipse.swt.widgets.List(arg0, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 	   	list.setLayoutData(BorderLayout.CENTER);
+	   	list.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				 list.getSelectionIndex();
+		   	 		if(part instanceof HelpSeekingSolutionView){
+			   	 		HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
+
+						v.getMyBrower().setNewUrl(googlesearchList.get(list.getSelectionIndex()).getUrl());
+						System.out.println("select item: "+ list.getSelectionIndex());
+						System.out.println(googlesearchList.get(list.getSelectionIndex()).getUrl());
+
+			   	 		}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+		
+				
+			}
+		});
 		
 	
 		

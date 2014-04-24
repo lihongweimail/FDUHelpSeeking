@@ -14,6 +14,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,6 +122,36 @@ public class FileHelper
 		while(f.exists())
 			f.delete();
 	}
+	
+	public  static String  getResource(Object obj, String resourcePath) {    
+		
+		String content="";
+        //返回读取指定资源的输入流    
+		try{
+        InputStream is=obj.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
+        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
+        
+    	StringBuilder buffer = new StringBuilder();
+		String line = null;
+
+		while (null != (line = in.readLine()))
+		{
+			buffer.append("\t" + line);
+			buffer.append("\n");
+
+		}
+
+		content = buffer.toString();
+		in.close();
+
+	}
+	catch (IOException e)
+	{
+		e.printStackTrace();
+	}
+	return content;
+    }    
+	
 	
 	public static String getContent(String path)
 	{

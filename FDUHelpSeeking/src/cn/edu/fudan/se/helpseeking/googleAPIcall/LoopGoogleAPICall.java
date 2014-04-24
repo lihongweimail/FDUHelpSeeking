@@ -17,7 +17,8 @@ public class LoopGoogleAPICall {
 	public static void main(String[] args) throws IOException {
 
 		LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
-		apiCall.searchWeb("ImageIO.read   getResource  java  lang IllegalArgumentException javax imageio ImageIO read Unknown Source");
+//		apiCall.searchWeb("ImageIO.read   getResource  java  lang IllegalArgumentException javax imageio ImageIO read Unknown Source");
+		apiCall.commSearch();
 	}
 
 	public static void commSearch() throws MalformedURLException,
@@ -121,6 +122,7 @@ public class LoopGoogleAPICall {
 					System.out.println("Title: "
 							+ tempRresults.getResponseData().getResults().get(m)
 							.getTitle());
+					System.out.println("Title no formatting: " +tempRresults.getResponseData().getResults().get(m).getTitleNoFormatting());
 					System.out.println("URL: "
 							+ tempRresults.getResponseData().getResults().get(m)
 							.getUrl() + "\n");

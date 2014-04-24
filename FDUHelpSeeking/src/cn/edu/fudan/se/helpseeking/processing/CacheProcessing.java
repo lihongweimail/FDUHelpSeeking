@@ -27,6 +27,7 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
+import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
@@ -37,7 +38,7 @@ public class CacheProcessing extends Thread  {
 
 	IViewPart part;
 	
-	int currentTactic=1;
+
 	
 	public CacheProcessing()
 	{
@@ -57,7 +58,7 @@ public class CacheProcessing extends Thread  {
 
 	//获取单例
 	Cache currentCache=Cache.getInstance();
-	 private IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+	
 
 	static Object obj = new Object();
 
@@ -75,14 +76,13 @@ public class CacheProcessing extends Thread  {
 		synchronized (obj) {
 			// 同步块中！防止 出错！
 
-              currentTactic=ps.getInt("TACTICMODE_KEY");
-              
-              System.out.println("当前策略值是："+currentTactic+" : "+ps.getString("USERNAME_KEY"));
-			
+  
 	
                  simpleTacticProcessing();
 
 
+                 
+                 
 			//放置在searchView
 			if(part instanceof HelpSeekingSearchView){
 				HelpSeekingSearchView v = (HelpSeekingSearchView)part;
@@ -95,6 +95,11 @@ public class CacheProcessing extends Thread  {
 					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
 			}
 							v.setSearchValue(searhText);
+							
+							//测试querylist的观察事件
+							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
+							qp.dotest(searhText);
+							
 			}
 
 
@@ -367,19 +372,29 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 		
 		if (description!=null && !description.trim().equals(""))
 		{
-			// 取消息
-			for (String str : description.split(SPLIT_STRING)) 
-			{
-				if (str.trim().equals("")) {
-					continue;
-				}
-				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str.trim());
-				kw.setWeightOne(7-weight2);
-				kw.setWeightTwo(2-weight2);
-				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-				consoleCacheKeyWords.add(kw);
-			}
+//			// 取消息；消息内容不需要去切词处理 直接使用这些消息； 注释掉！！
+//			for (String str : description.split(SPLIT_STRING)) 
+//			{
+//				if (str.trim().equals("")) {
+//					continue;
+//				}
+//				KeyWord kw=new KeyWord();
+//				kw.setKeywordName(str.trim());
+//				kw.setWeightOne(7-weight2);
+//				kw.setWeightTwo(2-weight2);
+//				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+//				consoleCacheKeyWords.add(kw);
+//			}
+			
+			//替换为直接的异常消息文本串
+			KeyWord kw=new KeyWord();
+			kw.setKeywordName(description.trim());
+			kw.setWeightOne(7-weight2);
+			kw.setWeightTwo(2-weight2);
+			kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+			consoleCacheKeyWords.add(kw);
+			
+			
 		}
 		
 		// TODO Auto-generated method stub

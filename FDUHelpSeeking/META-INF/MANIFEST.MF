@@ -8,27 +8,18 @@ Bundle-Vendor: SE Lab of Fudan University
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.8.2",
- org.eclipse.debug.core;bundle-version="3.7.100",
  org.eclipse.jface.text;bundle-version="3.8.1",
  org.eclipse.team.cvs.core;bundle-version="3.3.500",
- org.tigris.subversion.clientadapter;bundle-version="1.8.6",
- org.tigris.subversion.clientadapter.javahl;bundle-version="1.7.10",
  org.tigris.subversion.subclipse.core;bundle-version="1.8.22",
- org.eclipse.compare.core;bundle-version="3.5.200",
  org.eclipse.compare;bundle-version="3.5.300",
  org.eclipse.ui.editors;bundle-version="3.8.0",
  org.eclipse.jdt.ui;bundle-version="3.8.1",
  org.eclipse.jdt.junit;bundle-version="3.7.100",
  org.eclipse.debug.ui;bundle-version="3.8.1",
  org.eclipse.jdt.debug;bundle-version="3.7.101",
- org.eclipse.ui.views;bundle-version="3.6.100",
  org.eclipse.ui.ide;bundle-version="3.8.1",
  org.eclipse.ltk.core.refactoring;bundle-version="3.6.100",
- org.eclipse.ltk.ui.refactoring;bundle-version="3.7.100",
- org.eclipse.jdt.junit.runtime;bundle-version="3.4.400",
- org.eclipse.jdt.junit4.runtime;bundle-version="1.1.300",
- org.junit;bundle-version="4.11.0",
- org.eclipse.pde.junit.runtime;bundle-version="3.4.300"
+ org.junit;bundle-version="4.11.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
@@ -37,4 +28,6 @@ Bundle-ClassPath: .,
  lib/gson-2.2.4.jar,
  lib/args4j-2.0.6.jar,
  lib/edu.mit.jwi_2.1.5.jar,
- lib/intt.jar
+ lib/intt.jar,
+ lib/xwork-core-2.1.4-jdk14.jar,
+ lib/dom4j-1.6.jar

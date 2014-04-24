@@ -595,6 +595,45 @@ public class Basic {
 	public final static int TEMP_K_KEYWORDS =5;
 	
 	
+	public enum QueryLevel {
+		High,
+		Middle,
+		Other;
 		
+		@Override
+		public String toString() {
+			switch (this) {
+			case High:
+				return "High"; //$NON-NLS-1$
+			case Middle:
+				return "Middle"; //$NON-NLS-1$
+			case Other:
+				return "Other"; //$NON-NLS-1$			
+			default:
+				return "null"; //$NON-NLS-1$
+			}
+		}
+
+		/**
+		 * @return The corresponding event based on the string provided, or null
+		 *         if no such STring.
+		 */
+		public static QueryLevel fromString(String string) {
+			if (string == null) {
+				return null;
+			}
+			if (string.equals("High")) { //$NON-NLS-1$
+				return High;
+			}
+			if (string.equals("Middle")) { //$NON-NLS-1$
+				return Middle;
+			}
+			if (string.equals("Other")) { //$NON-NLS-1$
+				return Other;
+			}
+			return null;
+		}
+	}
+
 	
 }
