@@ -115,7 +115,8 @@ public class LoopGoogleAPICall {
 			GoogleAPICallResults tempRresults = new Gson().fromJson(reader,
 					GoogleAPICallResults.class);
 			
-			if (tempRresults.getResponseData().getResults().size()>0) {
+			if (tempRresults.getResponseData() != null 
+					&& tempRresults.getResponseData().getResults().size()>0) {
 				// Show title and URL of each results
 				for (int m = 0; m <= 3; m++) {
 					System.out.println("Result " + (++j) + " :");
