@@ -118,6 +118,8 @@ public class LoopGoogleAPICall {
 			if (tempRresults.getResponseData() != null 
 					&& tempRresults.getResponseData().getResults().size()>0) {
 				// Show title and URL of each results
+				int size = tempRresults.getResponseData().getResults().size();
+				int limit = size > 3 ? 3 : size;
 				for (int m = 0; m <= 3; m++) {
 					System.out.println("Result " + (++j) + " :");
 					System.out.println("Title: "

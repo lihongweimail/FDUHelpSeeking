@@ -8,7 +8,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -19,8 +18,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.part.ViewPart;
-
-import com.opensymphony.xwork2.util.ResolverUtil.NameEndsWith;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -179,7 +176,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		TreeItem error = new TreeItem(tree, SWT.NONE);
 		error.setText("Error");
 		TreeItem other = new TreeItem(tree, SWT.NONE);
-		other.setText("Other");
+		other.setText("Other");		
 		
 		List<Query> querys = QueryList.getInstance().getQuerys();
 		for(Query query : querys){
@@ -215,11 +212,12 @@ public class HelpSeekingSearchView extends ViewPart {
 							parent = other;
 						}
 						TreeItem item = new TreeItem(parent, SWT.NONE);
+						if(query.getQueryLevel() == QueryLevel.High){
+							item.setForeground(Display.getDefault()
+									.getSystemColor(SWT.COLOR_RED));
+						}						
 						item.setText(xml);
 						item.setData(webResult.getUrl());
-						if(query.getQueryLevel() == QueryLevel.High){
-							item.setForeground(new Color(null, 255, 0, 0));
-						}
 					}
 
 				} catch (IOException e1) {
@@ -227,6 +225,11 @@ public class HelpSeekingSearchView extends ViewPart {
 				}
 			}
 		}
+		
+		exception.setExpanded(true);
+		api.setExpanded(true);
+		error.setExpanded(true);
+		other.setExpanded(true);	
 	}
 
 }
