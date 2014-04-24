@@ -6,40 +6,12 @@ import java.util.List;
 import javax.naming.spi.DirStateFactory.Result;
 
 import org.eclipse.debug.internal.core.commands.ForEachCommand;
+import org.eclipse.jdt.internal.ui.workingsets.EditorTracker;
 
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 
 public class Cache  {
 
-
-	ActionQueue actions = new ActionQueue();// 包含滑动窗口
-
-	List<InformationQueue> informations = new ArrayList<InformationQueue>();
-	int currentID = 0;
-	// 这个值为每次加入到cache中的信息进行编号，只加不减；
-	// 当对动作进行处理时，可以根据这个编号检索信息编号
-
-	List<DebugCodeCache> debugCodes = new ArrayList<DebugCodeCache>();
-	List<EditCodeCache> editCodes = new ArrayList<EditCodeCache>();
-	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
-	
-	ProblemInformationList problems = ProblemInformationList.getInstance();
-	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
-	
-	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
-	ClassModel currentClassModel = new ClassModel();
-	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();
-
-	
-	private int problemsSize=0;
-	private int consolesSize=0;
-	
-
-	// 单例实现
-	private Cache() {
-
-//		System.out.println("Cache.Cache()");
-	}
 
 	private static class CacheHolder {
 		public static Cache instance = new Cache();
@@ -50,61 +22,92 @@ public class Cache  {
 		
 		return CacheHolder.instance;
 	}
-
 	public static String getString() {
 		return Cache.class.getName();
 	}
 
+	ActionQueue actions = new ActionQueue();// 包含滑动窗口
+	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
+	private int consolesSize=0;
+	
+	ClassModel currentClassModel = new ClassModel();
+	int currentID = 0;
+	// 这个值为每次加入到cache中的信息进行编号，只加不减；
+	// 当对动作进行处理时，可以根据这个编号检索信息编号
+	
+	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();
+	List<DebugCodeCache> debugCodes = new ArrayList<DebugCodeCache>();
+	List<EditCodeCache> editCodes = new ArrayList<EditCodeCache>();
+
+	
+	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
+	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
+	
+
+	List<InformationQueue> informations = new ArrayList<InformationQueue>();
+
+	ProblemInformationList problems = ProblemInformationList.getInstance();
+
+	private int problemsSize=0;
+
+	// 单例实现
+	private Cache() {
+
+//		System.out.println("Cache.Cache()");
+	}
+
 	
 
 	
 	
 	
-	public int getProblemsSize() {
-		return problemsSize;
+	private void addActions(Action action, int id) {
+
+		ActionCache a = new ActionCache();
+		a.setAction(action);
+		a.setActionID(id);
+		actions.actionList.add(a);
+		int removeActionID = actions.addSizeReturnRemoveActionID();
+		if (removeActionID != -1) // 则说明动作已经放满了滑动窗口 ， 这时考虑不在窗口内的信息从信息集合中移除
+		{
+			// 最简单的策略直接删除， 后续需要可配置功能
+			removeInformationNaive(removeActionID);
+
+		}
+
 	}
 
-	public void setProblemsSize(int problemsSize) {
-		this.problemsSize = problemsSize;
+	private void addDebugCode(DebugCode debugCode, int informationID) {
+		DebugCodeCache d = new DebugCodeCache();
+		d.setDebugCode(debugCode);
+		d.setId(informationID);
+		debugCodes.add(d);
+
 	}
 
-	public int getConsolesSize() {
-		return consolesSize;
+	private void addEditCode(EditCode editCode, int informationID) {
+		EditCodeCache e = new EditCodeCache();
+		e.setEditCode(editCode);
+		e.setId(informationID);
+		editCodes.add(e);
 	}
 
-	public void setConsolesSize(int consolesSize) {
-		this.consolesSize = consolesSize;
+	private void addExplorerRelated(ExplorerRelated explorerRelated,
+			int informationID) {
+		ExplorerRelatedCache e = new ExplorerRelatedCache();
+		e.setExplorerRelated(explorerRelated);
+		e.setId(informationID);
+		explorerRelateds.add(e);
+
 	}
 
-	public ProblemInformationList getProblems() {
-		return problems;
-	}
+	private void addIDEOutput(IDEOutput ideOutput, int informationID) {
+		IDEOutputCache i = new IDEOutputCache();
+		i.setId(informationID);
+		i.setIdeOutput(ideOutput);
+		ideOutputs.add(i);
 
-	public void setProblems(ProblemInformationList problems) {
-		this.problems = problems;
 	}
-
-	public ConsoleInformationList getConsoles() {
-		return consoles;
-	}
-
-	public void setConsoles(ConsoleInformationList consoles) {
-		this.consoles = consoles;
-	}
-
-	public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
-		this.currentKeywordsList = currentKeywordsList;
-	}
-	
-	
-	public int getCurrentID() {
-		return currentID;
-	}
-
-	public void setCurrentID(int currentID) {
-		this.currentID = currentID;
-	}
-
 
 	public void addInformationToCache(Information information,int actionID) {
 		
@@ -161,8 +164,6 @@ public class Cache  {
 
 	}
 
-
-
 	//	简单的连续相同不记录模式
 	private boolean checkInformation(Information information) {
 		boolean result=false;
@@ -172,9 +173,11 @@ public class Cache  {
 		}
 		Action newEnterAction=information.getAction();
 		Action lastCacheAction=null;	
-		for (ActionCache ac : actions.getActionList()) {
-			if (ac.getActionID()==currentID) {
-				lastCacheAction=ac.getAction();
+		List<ActionCache> acs=actions.getActionList();
+		for (int i=acs.size()-1;i>=0;i--) {
+			if (acs.get(i).getActionID()==currentID) {
+				lastCacheAction=acs.get(i).getAction();
+				break;
 			}
 		}
 
@@ -198,79 +201,6 @@ public class Cache  {
 	}
 
 
-//	最多连续3次模式：
-//		boolean lasting=true;
-//	int checkActionCount=3;//连续多个动作都相同
-// private boolean checkInformation(Information information) {
-//	    boolean result=false;
-//	    
-//	    if (actions.getActionList()==null) {
-//	    	System.out.println("actons is null");
-//			return false;
-//			
-//		}
-//	    
-//	    
-//	    Action newEnterAction=information.getAction();
-//	    
-//	
-//	         Action lastCacheAction=null;	
-//	    for (ActionCache ac : actions.getActionList()) {
-//			if (ac.getActionID()==currentID) {
-//				lastCacheAction=ac.getAction();
-//			}
-//		}
-//	    
-//	    if (lastCacheAction==null) {
-//	    	System.out.println("not find action");
-//			return false;
-//		}
-//	    		
-//	   if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  && lastCacheAction.getActionName().equals(newEnterAction.getActionName())) {
-//		
-//		   if (lasting) {
-//			  checkActionCount=checkActionCount-1;
-//		     result=true;
-//		     System.out.println("the same actiono");
-//		if (checkActionCount==0) {
-//			lasting=false;
-//			checkActionCount=3;
-//			System.out.println("last time cout for three same action");
-//		}
-//		}else {
-//			lasting=true;
-//			checkActionCount=3;
-//			System.out.println("reset count");
-//		}	   
-//	}
-//	
-//	   System.out.println("the action same result: "+ result);
-//		return result;
-//	}
-
-	private void addExplorerRelated(ExplorerRelated explorerRelated,
-			int informationID) {
-		ExplorerRelatedCache e = new ExplorerRelatedCache();
-		e.setExplorerRelated(explorerRelated);
-		e.setId(informationID);
-		explorerRelateds.add(e);
-
-	}
-
-	private void addIDEOutput(IDEOutput ideOutput, int informationID) {
-		IDEOutputCache i = new IDEOutputCache();
-		i.setId(informationID);
-		i.setIdeOutput(ideOutput);
-		ideOutputs.add(i);
-
-	}
-
-	private void addEditCode(EditCode editCode, int informationID) {
-		EditCodeCache e = new EditCodeCache();
-		e.setEditCode(editCode);
-		e.setId(informationID);
-		editCodes.add(e);
-	}
 
 	public DebugCode findDebugCodeWithID(int ID) {
 		DebugCode dc = null;
@@ -284,7 +214,8 @@ public class Cache  {
 		}
 		return dc;
 	}
-
+	
+	
 	public EditCode findEditCodeWithID(int ID) {
 		EditCode ec = null;
 		for (EditCodeCache ecc : getEditCodes()) {
@@ -295,18 +226,6 @@ public class Cache  {
 
 		}
 		return ec;
-	}
-
-	public IDEOutput findIdeOutputWithID(int ID) {
-		IDEOutput ideop = null;
-		for (IDEOutputCache ideopc : getIdeOutputs()) {
-			if (ideopc.id == ID) {
-				ideop = ideopc.getIdeOutput();
-				break;
-
-			}
-		}
-		return ideop;
 	}
 
 	public ExplorerRelated findExplorerRelatedWithID(int ID) {
@@ -320,127 +239,49 @@ public class Cache  {
 		return er;
 	}
 
-	public String findDebugCodeString(int actionID, int mode) {
-		String str = " ";
-		for (DebugCodeCache dcc : debugCodes) {
-			if (dcc.getId() == actionID) {
-				String breakpointstr = dcc.getDebugCode().getBreakpoint()
-						.getType()
-						+ " "
-						+ dcc.getDebugCode().getBreakpoint()
-								.getMethodQualifiedName();
-				String synctacticblockstr = dcc.getDebugCode()
-						.getSyntacticBlock().getType()
-						+ " "
-						+ dcc.getDebugCode().getSyntacticBlock().getCode();
-				String exceptionnamestr = dcc.getDebugCode()
-						.getSyntacticBlock().getExceptionName();
-				String classmodelstr = dcc.getDebugCode().getClassModel()
-						.getType()
-						+ " " + dcc.getDebugCode().getClassModel().getCode();
-				// TODO
-				// str=str+
-			}
-		}
 
-		return str;
-
-	}
-
-	private void addDebugCode(DebugCode debugCode, int informationID) {
-		DebugCodeCache d = new DebugCodeCache();
-		d.setDebugCode(debugCode);
-		d.setId(informationID);
-		debugCodes.add(d);
-
-	}
-
-	private void addActions(Action action, int id) {
-
-		ActionCache a = new ActionCache();
-		a.setAction(action);
-		a.setActionID(id);
-		actions.actionList.add(a);
-		int removeActionID = actions.addSizeReturnRemoveActionID();
-		if (removeActionID != -1) // 则说明动作已经放满了滑动窗口 ， 这时考虑不在窗口内的信息从信息集合中移除
-		{
-			// 最简单的策略直接删除， 后续需要可配置功能
-			removeInformationNaive(removeActionID);
-
-		}
-
-	}
-
-	private void removeInformationNaive(int removeActionID) {
-
-		for (int i = 0; i < informations.size(); i++) {
-			if (informations.get(i).getId() == removeActionID) {
-				informations.remove(i);
-
-				for (int j1 = 0; j1 < debugCodes.size(); j1++) {
-					if (debugCodes.get(i).getId() == removeActionID) {
-						debugCodes.remove(i);
-						break;
-					}
-				}
-
-				for (int j1 = 0; j1 < editCodes.size(); j1++) {
-					if (editCodes.get(i).getId() == removeActionID) {
-						editCodes.remove(i);
-						break;
-					}
-				}
-
-				for (int j1 = 0; j1 < explorerRelateds.size(); j1++) {
-					if (explorerRelateds.get(i).getId() == removeActionID) {
-						explorerRelateds.remove(i);
-						break;
-					}
-				}
-
-				for (int j1 = 0; j1 < ideOutputs.size(); j1++) {
-					if (ideOutputs.get(i).getId() == removeActionID) {
-						ideOutputs.remove(i);
-						break;
-					}
-				}
-
+	public IDEOutput findIdeOutputWithID(int ID) {
+		IDEOutput ideop = null;
+		for (IDEOutputCache ideopc : getIdeOutputs()) {
+			if (ideopc.id == ID) {
+				ideop = ideopc.getIdeOutput();
 				break;
 
 			}
 		}
-
+		return ideop;
 	}
 
-	
-//	用于处理当编辑状态下，一些程序元素删除；或类修改后保存该类的文件后，该类编译通过
-//	后在problem view中没有该类的编译错误和警告信息（再考虑是否只是没有错误信息）
-//	在光标中有记录该类的类名文件
-public void removeEditCodeAsDeleteOrProblemViewChange(String classFileName) {
-	//TODO   还有待实现
-	
-	
-}
-	
-	
+
+
+	public ActionQueue getActions() {
+		return actions;
+	}
+
+
+
 	public ActionQueue getActionSlideWindow() {
 		return actions;
 	}
 
-	public List<InformationQueue> getInformations() {
-		return informations;
+	public ConsoleInformationList getConsoles() {
+		return consoles;
+	}
+
+	public int getConsolesSize() {
+		return consolesSize;
 	}
 
 	public ClassModel getCurrentClassModel() {
 		return currentClassModel;
 	}
 
-	public void setCurrentClassModel(ClassModel currentClassModel) {
-		this.currentClassModel = currentClassModel;
+	public int getCurrentID() {
+		return currentID;
 	}
 
-	public ActionQueue getActions() {
-		return actions;
+	public List<KeyWord> getCurrentKeywordsList() {
+		return currentKeywordsList;
 	}
 
 	public List<DebugCodeCache> getDebugCodes() {
@@ -451,16 +292,152 @@ public void removeEditCodeAsDeleteOrProblemViewChange(String classFileName) {
 		return editCodes;
 	}
 
-	public List<IDEOutputCache> getIdeOutputs() {
-		return ideOutputs;
-	}
-
 	public List<ExplorerRelatedCache> getExplorerRelateds() {
 		return explorerRelateds;
 	}
 
-	public List<KeyWord> getCurrentKeywordsList() {
-		return currentKeywordsList;
+	public List<IDEOutputCache> getIdeOutputs() {
+		return ideOutputs;
+	}
+
+	public List<InformationQueue> getInformations() {
+		return informations;
+	}
+
+	
+public ProblemInformationList getProblems() {
+	return problems;
+}
+	
+	
+	public int getProblemsSize() {
+		return problemsSize;
+	}
+
+	//	用于处理当编辑状态下，一些程序元素删除；或类修改后保存该类的文件后，该类编译通过
+	//	后在problem view中没有该类的编译错误和警告信息（再考虑是否只是没有错误信息）
+	//	在光标中有记录该类的类名文件
+	public void removeEditCodeAsDeleteOrProblemViewChange(String classFileName) {
+		//TODO   还有待实现
+		
+		classFileName=classFileName.trim();
+		for (int i = 0; i < informations.size(); i++) {
+			DebugCode dc=informations.get(i).getInformation().getDebugCode();
+			EditCode ec=informations.get(i).getInformation().getEditCode();
+			if (dc!=null) {
+				if (dc.getBreakpoint()!=null) {
+					
+					if (dc.getBreakpoint().getFileName().trim().equals(classFileName)) {
+						informations.get(i).getInformation().setDebugCode(null);
+						
+					}
+				}
+			}
+			
+			if (ec!=null) {
+				if (ec.getCursor()!=null) {
+					
+					if (ec.getCursor().getFileName().trim().equals(classFileName)) {
+						informations.get(i).getInformation().setEditCode(null);;
+						
+					}
+				}
+			}	
+	
+			
+			
+			}
+		
+				for (int j1 = 0; j1 < debugCodes.size(); j1++) {
+					if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName().trim().equals(classFileName)) {
+						debugCodes.remove(j1);
+					}
+				}
+
+				for (int j1 = 0; j1 < editCodes.size(); j1++) {
+					if (editCodes.get(j1).getEditCode().getCursor().getFileName().trim().equals(classFileName)) {
+						editCodes.remove(j1);
+						break;
+					}
+				}
+
+
+
+	}
+	
+
+		
+
+
+	private void removeInformationNaive(int removeActionID) {
+
+
+		
+		for (int i = 0; i < informations.size(); i++) {
+			if (informations.get(i).getId() == removeActionID) {
+				informations.remove(i);
+			    break;
+			}
+			}
+				for (int j1 = 0; j1 < debugCodes.size(); j1++) {
+					if (debugCodes.get(j1).getId() == removeActionID) {
+						debugCodes.remove(j1);
+						break;
+					}
+				}
+
+				for (int j1 = 0; j1 < editCodes.size(); j1++) {
+					if (editCodes.get(j1).getId() == removeActionID) {
+						editCodes.remove(j1);
+						break;
+					}
+				}
+
+				for (int j1 = 0; j1 < explorerRelateds.size(); j1++) {
+					if (explorerRelateds.get(j1).getId() == removeActionID) {
+						explorerRelateds.remove(j1);
+						break;
+					}
+				}
+
+				for (int j1 = 0; j1 < ideOutputs.size(); j1++) {
+					if (ideOutputs.get(j1).getId() == removeActionID) {
+						ideOutputs.remove(j1);
+						break;
+					}
+				}
+
+		
+		
+
+	}
+
+	public void setConsoles(ConsoleInformationList consoles) {
+		this.consoles = consoles;
+	}
+
+	public void setConsolesSize(int consolesSize) {
+		this.consolesSize = consolesSize;
+	}
+
+	public void setCurrentClassModel(ClassModel currentClassModel) {
+		this.currentClassModel = currentClassModel;
+	}
+
+	public void setCurrentID(int currentID) {
+		this.currentID = currentID;
+	}
+
+	public void setCurrentKeywordsList(List<KeyWord> currentKeywordsList) {
+		this.currentKeywordsList = currentKeywordsList;
+	}
+
+	public void setProblems(ProblemInformationList problems) {
+		this.problems = problems;
+	}
+
+	public void setProblemsSize(int problemsSize) {
+		this.problemsSize = problemsSize;
 	}
 
 }

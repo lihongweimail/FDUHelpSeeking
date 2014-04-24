@@ -7,7 +7,7 @@ public class ActionQueue {
 	int actionListSize=0; //整个队列大小
 	
 	List<ActionCache> actionList=new ArrayList<ActionCache>();
-	int currentWindowSize=0;//当前窗口的大小，windowRight-windowLeft<=actionSlideWindowLimitSize
+	int currentWindowSize=10;//当前窗口的大小，windowRight-windowLeft<=actionSlideWindowLimitSize
 	private static int actionSlideWindowLimitSize=10;   //这个值今后要在配置中获取。
 
 	int windowLeft=0;
@@ -26,8 +26,18 @@ public class ActionQueue {
 		windowRight=windowRight+1;
 	
 		if (windowRight-windowLeft>=currentWindowSize) {
-			removeActionID=actionList.get(windowLeft).getActionID();
+			removeActionID=actionList.get(0).getActionID();
 			windowLeft=windowLeft+1;
+		   
+			for (int i = 0; i < actionList.size(); i++) {
+				if (actionList.get(i).getActionID()== removeActionID) {
+					actionList.remove(i);
+				    break;
+				}
+				}
+			
+			actionListSize=actionListSize-1;
+			
 		}
 		return removeActionID;
 	}

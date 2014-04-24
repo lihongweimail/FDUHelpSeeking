@@ -55,8 +55,18 @@ public class HelpSeekingSearchView extends ViewPart {
 		Composite SearchComposite = new Composite(arg0, SWT.NONE);
 		SearchComposite.setLayoutData(BorderLayout.NORTH);
 		SearchComposite.setLayout(new GridLayout(2, false));
+		
+		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
+				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
+		txtSearch.setText("hello world");
+		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, false,
+				1, 1);
+		gd_txtSearch.heightHint = 86;
+		gd_txtSearch.widthHint = -1;
+		txtSearch.setLayoutData(gd_txtSearch);
 
 		Button btnSearchGoogle = new Button(SearchComposite, SWT.NONE);
+		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -99,16 +109,9 @@ public class HelpSeekingSearchView extends ViewPart {
 
 			}
 		});
-		btnSearchGoogle.setText("Search Google");
+		btnSearchGoogle.setText("Search");
 
-		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
-				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.CANCEL | SWT.MULTI);
-		txtSearch.setText("hello world");
-		GridData gd_txtSearch = new GridData(SWT.LEFT, SWT.FILL, false, false,
-				1, 1);
-		gd_txtSearch.heightHint = 86;
-		gd_txtSearch.widthHint = 183;
-		txtSearch.setLayoutData(gd_txtSearch);
+	
 
 		/*list = new org.eclipse.swt.widgets.List(arg0, SWT.BORDER | SWT.H_SCROLL
 				| SWT.V_SCROLL);

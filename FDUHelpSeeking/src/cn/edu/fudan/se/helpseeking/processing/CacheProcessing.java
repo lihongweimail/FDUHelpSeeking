@@ -92,14 +92,22 @@ public class CacheProcessing extends Thread  {
 							if (i==Basic.TEMP_K_KEYWORDS) {
 						break;
 					}
+							if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
+								break;
+							}
+							
+							if (i==0) {
+								searhText=currentCache.getCurrentKeywordsList().get(i).getKeywordName();
+							}
+							else
 					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
 			}
 							v.setSearchValue(searhText);
 							
-							//测试querylist的观察事件
-							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
-							qp.dotest(searhText);
-							
+//							//测试querylist的观察事件
+//							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
+//							qp.dotest(searhText);
+//							
 			}
 
 
@@ -415,24 +423,13 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 
 		if (edInfo!=null)
 		{
+			if (edInfo.getClassQualifiedNameList()!=null) {
 			// 取消息
 			for (String str : edInfo.getClassQualifiedNameList()) 
 			{
-				KeyWord kw=new KeyWord();
-				kw.setKeywordName(str.trim());
-				kw.setWeightOne(1);
-				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-				relatedExplorerKeyWords.add(kw);
-			}
-		}else {
-			relatedExplorerKeyWords=null;
-		}   
-
-		if (epInfo!=null)
-		{
-			// 取消息
-			for (String str : epInfo.getSelectObjectNameList()) 
-			{
+				if ((str==null) ||str.equals("")) {
+					break;
+				}
 				KeyWord kw=new KeyWord();
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(1);
@@ -440,7 +437,30 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				relatedExplorerKeyWords.add(kw);
 			}
 		}
+			
+		}else {
+			relatedExplorerKeyWords=null;
+		}   
 
+		if (epInfo!=null)
+		{
+			if (epInfo.getSelectObjectNameList()!=null) {
+				
+		
+			// 取消息
+			for (String str : epInfo.getSelectObjectNameList()) 
+			{
+			if ((str==null) ||str.equals("")) {
+				break;
+			}
+				KeyWord kw=new KeyWord();
+				kw.setKeywordName(str.trim());
+				kw.setWeightOne(1);
+				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+				relatedExplorerKeyWords.add(kw);
+			}
+		}
+		}
 		return relatedExplorerKeyWords;
 	}
 

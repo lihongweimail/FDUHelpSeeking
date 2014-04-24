@@ -459,12 +459,12 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		EditorInfo edi=new EditorInfo();
 //		ExplorerInfo exi=new ExplorerInfo();
 		
-		if (part.getClass().toString().equals("org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor")) {
+		if (part.getClass().getName().toString().equals("org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor")) {
 			edi.addSize();
 			edi.getClassQualifiedNameList().add(part.getTitle());
 			er.setEditorInfo(edi);
 			}
-//		if (part.getClass().toString().equals("org.eclipse.ui.navigator.resources.ProjectExplorer")) {
+//		if (part.getClass().getName().toString().equals("org.eclipse.ui.navigator.resources.ProjectExplorer")) {
 //			exi.addSize();
 //			exi.getSelectObjectNameList().add(part.getTitle());
 //			er.setExplorerInfo(exi);
