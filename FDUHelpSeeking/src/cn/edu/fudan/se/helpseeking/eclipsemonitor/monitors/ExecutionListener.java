@@ -13,6 +13,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -59,6 +60,8 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 					ICompilationUnit icu = (ICompilationUnit) typeRoot
 							.getAdapter(ICompilationUnit.class);
 					String fileName = icu.getPath().toString();
+					Cache.getInstance()
+						.removeEditCodeAsDeleteOrProblemViewChange(fileName);
 					//System.out.println(fileName);
 				}
 			}
