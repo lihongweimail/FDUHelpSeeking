@@ -30,7 +30,10 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
+import cn.edu.fudan.se.helpseeking.bean.SearchNode;
+import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
@@ -1001,50 +1004,40 @@ int informationID=-1;
 		return resu;
 	}
 
-	public static int addKeyWordsToDataBase(Cache cache, String queryText) {
+	public static int addKeyWordsToDataBase(Query query ) {
 		int result = 0;
 
-		if (cache == null) {
+		if (query == null) {
 			return -1;
 		}
 		
-		if (queryText.equals("") || queryText==null) {
+		if (query.getQueryKeyWords()==null) {
 			return -1;
 		}
 
-		int storeKeyWordsID=cache.getCurrentID();
-		//记录前100个候选关键词
-		String candidateKeyWords=null;
-		if (cache.getCurrentKeywordsList()!=null) {
-			for (int i = 0; i < cache.getCurrentKeywordsList().size(); i++) {
-				if (i==0) {
-					candidateKeyWords=cache.getCurrentKeywordsList().get(i).getKeywordName();
-				}else
-				{
-					candidateKeyWords=candidateKeyWords+";"+cache.getCurrentKeywordsList().get(i).getKeywordName();
-				}
-				if (i==99) {
-					break;
-				}
-			}
-
-		}
-		
-		
-		
-//		记录所有用户使用的关键词
-		String userKeyWords=queryText;
 		
 		PreparedStatement ps = null;
+//		 `id` int(11) 
+//		  `inforID` int(11) 
+//		  `candidateKeyWords`
+//		  `userKeyWords` text
+//		  `time` datetime 
+//		  `costtime` int(11)
+//		  `serachID` varchar(45) 
+//		  `isbuyuser` VARCHAR(20) 
 	
 		try {
-			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords)  values(?,?,?)";
+			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords,time,costtime,searchID,isbyuser)  values(?,?,?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, storeKeyWordsID);
-			ps.setString(2, candidateKeyWords);
-			ps.setString(3, userKeyWords); 
+			ps.setInt(1, query.getInforID());
+			ps.setString(2, query.getCandidateKeywords());
+			ps.setString(3, query.getUseKeywords());
+			ps.setTimestamp(4, (Timestamp)query.getTime());
+			ps.setLong(5, query.getCosttime());
+			ps.setString(6, query.getSearchID());
+			ps.setBoolean(7, query.isIsbyuser());
 		
 
 			result = ps.executeUpdate();
@@ -1073,6 +1066,7 @@ int informationID=-1;
 		return result;
 	}
 
+	
 
 	
 	private static int addRuntimeInformationTODataBase(
@@ -1133,7 +1127,59 @@ int informationID=-1;
 		return result;
 	}
 
+	public static int addSearchResultsTODataBase(String searchID, SearchNode sNode)
+	{
+		int result = 0;
 
+		if (sNode == null) {
+			return -1;
+		}
+		
+		
+		
+		PreparedStatement ps = null;
+//		  `id` int(11) NOT NULL AUTO_INCREMENT,
+//		  `searhID` varchar(45) DEFAULT NULL,
+//		  `title` text,
+//		  `link` text,
+	
+		try {
+			String sql = "insert into helpseeking.searchresults(searhID,title,link)  values(?,?,?)";
+
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, searchID);
+			ps.setString(2, sNode.getTitle());
+			ps.setString(3, sNode.getLink());
+			
+
+			result = ps.executeUpdate();
+	
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+
+		return result;
+		
+	}
+	
 	// return 0 insert failed , return 1 insert succed , -1 no value to insert
 	private static int addSyntacticBlockTODataBase(SyntacticBlock syntacticBlock, int syntacticBlockID) {
 		int result = 0;

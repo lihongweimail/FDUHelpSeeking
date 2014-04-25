@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.helpseeking.views;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +22,18 @@ import org.eclipse.ui.part.ViewPart;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
+import cn.edu.fudan.se.helpseeking.bean.SearchNode;
+import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+
 import org.eclipse.wb.swt.SWTResourceManager;
 
 public class HelpSeekingSearchView extends ViewPart {
@@ -48,6 +53,8 @@ public class HelpSeekingSearchView extends ViewPart {
 				.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 	}
 	static IViewPart part;
+	
+	private int currentActionID;
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -88,9 +95,22 @@ public class HelpSeekingSearchView extends ViewPart {
 							"http://www.baidu.com/s?wd=" + queryText);
 				}
 				// "https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q="
-				// 需要保存关键词和当前cache到数据库中：
-				DatabaseUtil.addKeyWordsToDataBase(Cache.getInstance(),
-						queryText);
+				
+				Query query=new Query();
+				query.setInforID(getCurrentActionID());
+				Timestamp starttime=new Timestamp(System.currentTimeMillis());
+				query.setTime(starttime);
+				query.setIsbyuser(true);
+				query.setQueryLevel(QueryLevel.Middle);
+				query.setUseKeywords(queryText);
+				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+				String searchID="P"+query.getInforID();
+				query.setSearchID(searchID);
+							
+				
+				
+				SearchResults sResults=new SearchResults();
+				sResults.setSearchID(searchID);
 
 				LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
 				try {
@@ -103,12 +123,29 @@ public class HelpSeekingSearchView extends ViewPart {
 						TreeItem item = new TreeItem(tree, SWT.NONE);
 						item.setText(xml);
 						item.setData(webResult.getUrl());
+						SearchNode sNode=new SearchNode();
+						sNode.setTitle(xml);
+						sNode.setLink(webResult.getUrl());
+						sResults.getSearchNode().add(sNode);
+						
 					}
 
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+				
+				Timestamp endtime=new Timestamp(System.currentTimeMillis());
+				
+				query.setCosttime(endtime.getTime()-starttime.getTime());
+			// 需要保存关键词和当前cache到数据库中：
+				DatabaseUtil.addKeyWordsToDataBase(query);
+				for (SearchNode snNode : sResults.getSearchNode()) {
+					DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
+					
+				}
+	
 
 			}
 		});
@@ -185,8 +222,16 @@ public class HelpSeekingSearchView extends ViewPart {
 		TreeItem other = new TreeItem(tree, SWT.NONE);
 		other.setText("Other");		
 		
+		Timestamp starttime;
+		
 		List<Query> querys = QueryList.getInstance().getQuerys();
+		int qindex=0;
 		for(Query query : querys){
+			
+			SearchResults sResults=new SearchResults();
+			starttime=new Timestamp(System.currentTimeMillis());
+			qindex=qindex+1;
+			
 			List<KeyWord> keyWords = query.getQueryKeyWords();
 			String search = "";
 			for(KeyWord keyWord : keyWords){
@@ -199,7 +244,22 @@ public class HelpSeekingSearchView extends ViewPart {
 					v.getMyBrower().setNewUrl(
 							"http://www.baidu.com/s?wd=" + search);
 				}
-				DatabaseUtil.addKeyWordsToDataBase(Cache.getInstance(), search);
+				
+//				query.setInforID(getCurrentActionID());
+
+				query.setTime(starttime);
+				query.setIsbyuser(false);
+//				query.setQueryLevel(QueryLevel.Middle);
+				query.setUseKeywords(search);
+				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+				String searchID="A"+String.valueOf(qindex)+query.getQueryLevel()+query.getInforID();
+				query.setSearchID(searchID);
+							
+				
+				
+				
+				sResults.setSearchID(searchID);
+	
 
 				LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
 				try {
@@ -218,6 +278,7 @@ public class HelpSeekingSearchView extends ViewPart {
 						}else{
 							parent = other;
 						}
+						
 						TreeItem item = new TreeItem(parent, SWT.NONE);
 						if(query.getQueryLevel() == QueryLevel.High){
 							item.setForeground(Display.getDefault()
@@ -225,12 +286,36 @@ public class HelpSeekingSearchView extends ViewPart {
 						}						
 						item.setText(xml);
 						item.setData(webResult.getUrl());
+						
+						SearchNode sNode=new SearchNode();
+						sNode.setTitle(xml);
+						sNode.setLink(webResult.getUrl());
+						sResults.getSearchNode().add(sNode);
+						
 					}
 
+						
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
+				
+				
+				
 			}
+			
+			
+			
+			Timestamp endtime=new Timestamp(System.currentTimeMillis());
+			
+			query.setCosttime(endtime.getTime()-starttime.getTime());
+		// 需要保存关键词和当前cache到数据库中：
+			DatabaseUtil.addKeyWordsToDataBase(query);
+			for (SearchNode snNode : sResults.getSearchNode()) {
+				DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
+				
+			}
+
+			
 		}
 		
 		exception.setExpanded(true);
@@ -238,5 +323,16 @@ public class HelpSeekingSearchView extends ViewPart {
 		error.setExpanded(true);
 		other.setExpanded(true);	
 	}
+
+	public int getCurrentActionID() {
+		return currentActionID;
+	}
+
+	public void setCurrentActionID(int currentActionID) {
+		this.currentActionID = currentActionID;
+	}
+	
+	
+	
 
 }

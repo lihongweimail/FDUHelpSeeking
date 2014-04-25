@@ -592,7 +592,11 @@ public class Basic {
 	}
 
 	
+	//从候选检索词中取词数量
 	public final static int TEMP_K_KEYWORDS =5;
+	//爆出到数据库中最大的候选检索词保留数量
+	public final static int MAX_CANDIDATE_KEYWORDS=100;
+	
 	
 	
 	public enum QueryLevel {

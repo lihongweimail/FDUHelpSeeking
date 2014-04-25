@@ -143,9 +143,13 @@ CREATE TABLE IF NOT EXISTS `information` (
 
 CREATE TABLE IF NOT EXISTS `keywords` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inforID` int(11) DEFAULT NULL,
-  `candidateKeyWords` text,
-  `userKeyWords` text,
+  `inforID` int(11) DEFAULT NULL COMMENT '当前信息编号ID',
+  `candidateKeyWords` text COMMENT '候选的关键词',
+  `userKeyWords` text COMMENT '用户使用的关键词或自动化检索的关键词',
+  `time` datetime DEFAULT NULL,
+  `costtime` BIGINT  DEFAULT NULL COMMENT '消耗的时间秒单位',
+  `serachID` varchar(45) DEFAULT NULL COMMENT '查询编号：P+inforID人工的查询 ; A+qlist index+HIGH+inforID  A+qlist index+MIDDLE+inforID,...等表示自动化查询附有它们的在查询上的索引和等级',
+  `isbuyuser` VARCHAR(20) NULL COMMENT 'yes or no',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
 
@@ -157,6 +161,15 @@ CREATE TABLE IF NOT EXISTS `runtimeinformation` (
   `relatedCode` longtext,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `searchresults` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `searhID` varchar(45) DEFAULT NULL,
+  `title` text,
+  `link` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 CREATE TABLE IF NOT EXISTS `syntacticblock` (
   `id` int(11) NOT NULL,

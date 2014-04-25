@@ -111,6 +111,7 @@ public class CacheProcessing extends Thread  {
 						
 		}
 						v.setSearchValue(searhText);
+						v.setCurrentActionID(currentCache.getCurrentID());
 						
 						// 在 problem view 更新 时  Attention动作类型  动作名称"Problem View Changed"
 						ActionCache ac=currentCache.getActions().getActionCachewithActionID(currentCache.getCurrentID());
@@ -147,6 +148,7 @@ public class CacheProcessing extends Thread  {
 		
 			 querys.add(myq);
 		    qlist.setQuerys(querys);
+		    
 		}
 	}
 
