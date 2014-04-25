@@ -1011,9 +1011,7 @@ int informationID=-1;
 			return -1;
 		}
 		
-		if (query.getQueryKeyWords()==null) {
-			return -1;
-		}
+
 
 		
 		PreparedStatement ps = null;
@@ -1023,8 +1021,8 @@ int informationID=-1;
 //		  `userKeyWords` text
 //		  `time` datetime 
 //		  `costtime` int(11)
-//		  `serachID` varchar(45) 
-//		  `isbuyuser` VARCHAR(20) 
+//		  `searchID` varchar(45) 
+//		  `isbyuser` VARCHAR(20) 
 	
 		try {
 			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords,time,costtime,searchID,isbyuser)  values(?,?,?,?,?,?,?)";
@@ -1037,7 +1035,7 @@ int informationID=-1;
 			ps.setTimestamp(4, (Timestamp)query.getTime());
 			ps.setLong(5, query.getCosttime());
 			ps.setString(6, query.getSearchID());
-			ps.setBoolean(7, query.isIsbyuser());
+			ps.setString(7, query.isIsbyuser()==true?"yes":"no");
 		
 
 			result = ps.executeUpdate();

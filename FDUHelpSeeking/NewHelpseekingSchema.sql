@@ -148,8 +148,8 @@ CREATE TABLE IF NOT EXISTS `keywords` (
   `userKeyWords` text COMMENT '用户使用的关键词或自动化检索的关键词',
   `time` datetime DEFAULT NULL,
   `costtime` BIGINT  DEFAULT NULL COMMENT '消耗的时间秒单位',
-  `serachID` varchar(45) DEFAULT NULL COMMENT '查询编号：P+inforID人工的查询 ; A+qlist index+HIGH+inforID  A+qlist index+MIDDLE+inforID,...等表示自动化查询附有它们的在查询上的索引和等级',
-  `isbuyuser` VARCHAR(20) NULL COMMENT 'yes or no',
+  `searchID` varchar(45) DEFAULT NULL COMMENT '查询编号：P+inforID人工的查询 ; A+qlist index+HIGH+inforID  A+qlist index+MIDDLE+inforID,...等表示自动化查询附有它们的在查询上的索引和等级',
+  `isbyuser` VARCHAR(20) NULL COMMENT 'yes or no',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8 COMMENT='保存程序员通过agent检索的关键词，以及前100个候选关键词';
 
