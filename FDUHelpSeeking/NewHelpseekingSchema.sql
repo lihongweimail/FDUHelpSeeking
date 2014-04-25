@@ -168,7 +168,7 @@ CREATE TABLE IF NOT EXISTS `searchresults` (
   `title` text,
   `link` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=0  DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE IF NOT EXISTS `syntacticblock` (
@@ -180,6 +180,13 @@ CREATE TABLE IF NOT EXISTS `syntacticblock` (
   KEY `SYNTACTICTYPE` (`type`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `taskdecription` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `taskID` varchar(45) DEFAULT NULL,
+  `taskName` varchar(255) DEFAULT NULL,
+  `content` longtext,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 
 

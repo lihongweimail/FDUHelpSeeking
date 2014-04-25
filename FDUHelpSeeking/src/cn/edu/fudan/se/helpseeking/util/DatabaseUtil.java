@@ -35,6 +35,7 @@ import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
+import cn.edu.fudan.se.helpseeking.bean.TaskDescription;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
 
@@ -1064,8 +1065,105 @@ int informationID=-1;
 		return result;
 	}
 
-	
+	public static List<TaskDescription> getTaskDescriptionRecords() {
+		PreparedStatement ps = null;
+		List<TaskDescription> items = new ArrayList<TaskDescription>();
 
+		init();
+		try {
+			StringBuffer sqlBuffer = new StringBuffer();
+			sqlBuffer.append("select * from helpseeking.taskdecription");
+			ps = con.prepareStatement(sqlBuffer.toString());
+			rs = ps.executeQuery();
+
+			try {
+				while (rs.next()) {
+					TaskDescription item = new TaskDescription();
+					item.setTaskID(rs.getString(2));
+					item.setTaskName(rs.getString(3));
+					item.setContent(rs.getString(4));
+
+					items.add(item);
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return items;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+		closeAll();
+		return null;
+	}
+	
+	
+	public static int addTaskDescriptionToDataBase(TaskDescription taskDescription ) {
+		int result = 0;
+
+		if (taskDescription == null) {
+			return -1;
+		}
+		
+
+
+		
+		PreparedStatement ps = null;
+
+	
+		try {
+			String sql = "insert into helpseeking.taskdecription(taskID,taskName,content)  values(?,?,?)";
+
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, taskDescription.getTaskID());
+			ps.setString(2, taskDescription.getTaskName());
+			ps.setString(3, taskDescription.getContent());
+			
+
+			result = ps.executeUpdate();
+	
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+
+		return result;
+	}
+
+	
 	
 	private static int addRuntimeInformationTODataBase(
 			RuntimeInformation runtimeInformation, int runtimeInformationID) {
