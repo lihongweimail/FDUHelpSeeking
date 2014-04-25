@@ -1,8 +1,6 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -10,14 +8,8 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
-import cn.edu.fudan.se.helpseeking.bean.Action;
-import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformation;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
-import cn.edu.fudan.se.helpseeking.bean.Information;
-import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
-import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
-import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		IConsoleLineTracker {
@@ -36,15 +28,22 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 			int length = line.getLength();
 			int offset = line.getOffset();
 
-			String text = console.getDocument().get(offset, length);			
+			String text = console.getDocument().get(offset, length);
 			
-			if(text.startsWith("\tat ")){
+			if(!text.startsWith("\tat ")){
+				if(!lastLine.endsWith("\n\n")){
+					lastLine += text.replaceAll("\t", "") + "\n";
+				}else {
+					lastLine = text;
+				}
+			}else{
 				ConsoleInformationList consoleInformationList = ConsoleInformationList
 						.getInstance();
 				ArrayList<ConsoleInformation> exceptionList = consoleInformationList
 						.getExceptionList();
 				
 				if(!lastLine.startsWith("\tat ")){
+					lastLine = lastLine.replaceAll("\n", "");
 					ConsoleInformation information = new ConsoleInformation();
 					int index1 = lastLine.lastIndexOf(" ");
 					int index2 = lastLine.indexOf(":");
@@ -56,9 +55,6 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 						information.setDescription(lastLine.substring(index2 + 2));
 					}
 					exceptionList.add(information);
-					
-					
-					
 				}
 				
 				int size = exceptionList.size();
@@ -82,14 +78,9 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 					
 					
 				}
-				
-
-
-
-				
+				lastLine = text;			
 			}
 			
-			lastLine = text;
 			//ConsoleInformationList.getInstance().prettyPrint();
 			
 			
@@ -130,8 +121,10 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 			e.printStackTrace();
 		}
 	}
-
 	
+	public static void clearLastLine() {
+		lastLine = "";
+	}	
 	
 	@Override
 	public void dispose() {

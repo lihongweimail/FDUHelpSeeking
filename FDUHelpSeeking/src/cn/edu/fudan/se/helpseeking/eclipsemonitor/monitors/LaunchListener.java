@@ -28,6 +28,7 @@ public class LaunchListener extends AbstractUserActivityMonitor implements
 	public void launchAdded(ILaunch launch) {
 		//System.out.println("New launch!");
 		ConsoleInformationList.getInstance().clearConsoleInformation();
+		ConsoleLineTracker.clearLastLine();
 		/*InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
 		event.setKind(Basic.Kind.DEBUG);

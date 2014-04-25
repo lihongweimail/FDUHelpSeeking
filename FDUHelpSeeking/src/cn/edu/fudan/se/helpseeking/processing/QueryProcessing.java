@@ -28,7 +28,7 @@ public class QueryProcessing implements Observer {
 		 for (String string : test) {
 			KeyWord kw=new KeyWord();
 			kw.setKeywordName(string);
-			kw.setTagName("API");
+			//kw.setTagName("API");
 			kwl.add(kw);
 		}
 		 query.setQueryKeyWords(kwl);
