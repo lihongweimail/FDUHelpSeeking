@@ -13,11 +13,11 @@ public class Cache2 {
 	}
 	
 public static Cache2 getInstance() {
-	return Singleton.cache1;
+	return Singleton.cache2;
 }
 
 private static class Singleton {
-	 static Cache2 cache1 = new Cache2();
+	 static Cache2 cache2 = new Cache2();
 }
 
 ActionQueue actions = new ActionQueue();// 包含滑动窗口

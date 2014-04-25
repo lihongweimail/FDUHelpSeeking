@@ -3,7 +3,7 @@ package cn.edu.fudan.se.helpseeking.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ActionQueue {
+public class ActionQueue1 {
 	int actionListSize=0; //整个队列大小
 	
 	List<ActionCache> actionList=new ArrayList<ActionCache>();
@@ -13,12 +13,12 @@ public class ActionQueue {
 	int windowLeft=0;
 	int windowRight=0;
 	
-	ActionQueue()
+	ActionQueue1()
 	{
 		super();
 	}
 	
-	ActionQueue(int windowSize)
+	ActionQueue1(int windowSize)
 	{
 		this.currentWindowSize=windowSize;
 	}
@@ -30,11 +30,28 @@ public class ActionQueue {
 		this.currentWindowSize = currentWindowSize;
 	}
 	
+	public void resizeActionSlideWindowLimitSize()
+	{
+		int oldSize=actionSlideWindowLimitSize;
+		int newSize=actionSlideWindowLimitSize/2;
+		newSize=newSize<=(actionList.size()/2)? newSize : (actionList.size()/2);
+		actionSlideWindowLimitSize=newSize;
+		for (int i = 0; i <oldSize-newSize; i++) {
+			actionList.remove(0);
+			windowLeft=windowLeft+1;
+			actionListSize=actionListSize-1;
+		}
+			
+	}
+	
 	public int  moveUpWindow()
 	{
 		int removeActionID=-1;
 		windowRight=windowRight+1;
-		
+		actionSlideWindowLimitSize=actionSlideWindowLimitSize+1;
+		if (actionSlideWindowLimitSize>=currentWindowSize) {
+			actionSlideWindowLimitSize=currentWindowSize;
+		}
 	
 		if (windowRight-windowLeft>=currentWindowSize) {
 			removeActionID=actionList.get(0).getActionID();
@@ -53,20 +70,8 @@ public class ActionQueue {
 		return removeActionID;
 	}
 	
-public ActionCache getActionCachewithActionID(int actionID)
-{
-	ActionCache ac=null;
-	int size=actionList.size();
-	for (int i = size-1; i >=0; i--) {
-		if (actionList.get(i).getActionID()==actionID) {
-			ac=actionList.get(i);
-			break;
-		}
-	}
+
 	
-	
-	return ac;
-}
   public int  addSizeReturnRemoveActionID()
   {
 	  
@@ -98,7 +103,7 @@ public static int getActionSlideWindowLimitSize() {
 	return actionSlideWindowLimitSize;
 }
 public static void setActionSlideWindowLimitSize(int actionSlideWindowLimitSize) {
-	ActionQueue.actionSlideWindowLimitSize = actionSlideWindowLimitSize;
+	ActionQueue1.actionSlideWindowLimitSize = actionSlideWindowLimitSize;
 }
   
 

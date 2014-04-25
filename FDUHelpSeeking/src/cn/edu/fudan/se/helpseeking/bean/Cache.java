@@ -26,7 +26,7 @@ public class Cache  {
 		return Cache.class.getName();
 	}
 
-	ActionQueue actions = new ActionQueue();// 包含滑动窗口
+	ActionQueue actions = new ActionQueue();// 给动作一个足够大的窗口
 	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
 	private int consolesSize=0;
 	
@@ -117,7 +117,21 @@ public class Cache  {
 			return;
 		}
 		
+	//添加到cache中
+		doAddInformationToCache(information, actionID);	
+		
+		
+		//添加到cache1中
+		Cache1 myCache1=Cache1.getInstance();
+		myCache1.addInformationToCache1(information, actionID);
+		
 	
+			
+
+	}
+	
+	
+	public void doAddInformationToCache(Information information, int actionID) {
 		InformationQueue infq = new InformationQueue();
 		currentID =actionID;
 		infq.setId(currentID);
@@ -159,9 +173,6 @@ public class Cache  {
 		// 使用线程
 		CacheProcessing cpThread = new CacheProcessing();
 		cpThread.run();
-		
-		
-
 	}
 
 	//	简单的连续相同不记录模式

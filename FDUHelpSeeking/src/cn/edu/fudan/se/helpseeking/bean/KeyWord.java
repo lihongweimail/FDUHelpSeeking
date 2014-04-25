@@ -3,7 +3,7 @@ package cn.edu.fudan.se.helpseeking.bean;
 public class KeyWord {
 
 	String keywordName=null;
-	String tagName=null;
+	String tagName="Other";
 	double  score=1.0;
 	double weightOne=1.0;//基本权重
 	double  weightTwo=1.0;//附加权重

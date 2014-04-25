@@ -1,5 +1,8 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -9,9 +12,17 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.viewsupport.IProblemChangedListener;
+import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.ActionQueue;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
+import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 @SuppressWarnings("restriction")
 public class ProblemChangedListener extends AbstractUserActivityMonitor
@@ -131,6 +142,29 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 
 			}
 			ProblemInformationList.getInstance().prettyPrint();
+			
+			InteractionEvent e=new InteractionEvent();
+			e.setByuser(false);
+			e.setDate(Calendar.getInstance().getTime());
+			e.setKind(Kind.ATTENTION);
+			e.setActionName("Problem View Changed");
+			e.setOriginId("Problem View Changed");
+			Information info=new Information();
+			info.setType("Problem view changed");
+			Action action=new Action();
+			action.setTime(new Timestamp(System.currentTimeMillis()));
+			action.setByuser(false);
+			action.setActionKind(e.getKind());
+			action.setActionName(e.getActionName());
+			action.setDescription(e.getOriginId());
+			info.setAction(action);
+			//需要先写入数据库，才能得到ID
+			int actionid=DatabaseUtil.addInformationToDatabase(info);
+							
+				Cache.getInstance().addInformationToCache(info,actionid);
+				
+			DatabaseUtil.addInteractionEventToDatabase(e);
+			
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

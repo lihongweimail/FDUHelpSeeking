@@ -29,6 +29,7 @@ import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import org.eclipse.wb.swt.SWTResourceManager;
 
 public class HelpSeekingSearchView extends ViewPart {
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
@@ -66,6 +67,8 @@ public class HelpSeekingSearchView extends ViewPart {
 		txtSearch.setLayoutData(gd_txtSearch);
 
 		Button btnSearchGoogle = new Button(SearchComposite, SWT.NONE);
+		btnSearchGoogle.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 16, SWT.BOLD));
+		btnSearchGoogle.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -139,6 +142,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		});*/
 		
 		tree = new Tree(arg0, SWT.BORDER | SWT.H_SCROLL	| SWT.V_SCROLL);		
+		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {			
 			@Override
 			public void widgetSelected(SelectionEvent e) {

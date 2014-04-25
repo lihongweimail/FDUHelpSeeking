@@ -14,6 +14,8 @@ import cn.edu.fudan.se.helpseeking.bean.ActionCache;
 import cn.edu.fudan.se.helpseeking.bean.ActionInformation;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
@@ -27,6 +29,7 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
+import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -38,21 +41,9 @@ public class CacheProcessing extends Thread  {
 
 	IViewPart part;
 	
-
-	
 	public CacheProcessing()
 	{
 		
-		Display.getDefault().asyncExec(new Runnable() {
-			public void run() {
-			
-				
-				if(part == null){
-					System.currentTimeMillis();
-				}
-			}
-		});
-		 
 
 	}
 
@@ -73,44 +64,72 @@ public class CacheProcessing extends Thread  {
 				.findView(
 						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 
+		
 		synchronized (obj) {
 			// 同步块中！防止 出错！
-
-  
-	
-                 simpleTacticProcessing();
-
-
-                 
-                 
+              simpleTacticProcessing();
 			//放置在searchView
-			if(part instanceof HelpSeekingSearchView){
-				HelpSeekingSearchView v = (HelpSeekingSearchView)part;
-				String searhText="";
-				int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
-				for (int i = 0; i <candidateKeywordNum; i++) {
-							if (i==Basic.TEMP_K_KEYWORDS) {
-						break;
-					}
-							if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
-								break;
-							}
+			 simpleTacticQuery();
+			 
+			 
+
+
+		}
+	}
+
+
+
+	public void simpleTacticQuery() {
+		if(part instanceof HelpSeekingSearchView){
+			HelpSeekingSearchView v = (HelpSeekingSearchView)part;
+			String searhText="";
+			List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
+			int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
+			for (int i = 0; i <candidateKeywordNum; i++) {
+						if (i==Basic.TEMP_K_KEYWORDS) {
+					break;
+				}
+						if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
+							break;
+						}
+						
+						KeyWord kw=currentCache.getCurrentKeywordsList().get(i);
+						keyWordsforQuery.add(kw);
+						
+						if (i==0) {
+							searhText=kw.getKeywordName();
+						}
+						else
+				{searhText=searhText+" "+kw.getKeywordName();}
+						
+						
+		}
+						v.setSearchValue(searhText);
+						
+						// 在 problem view 更新 时  Attention动作类型  动作名称"Problem View Changed"
+						ActionCache ac=currentCache.getActions().getActionCachewithActionID(currentCache.getCurrentID());
+						if (ac.getAction().getActionKind()==Kind.ATTENTION 
+								&& ac.getAction().getActionName().equals("Problem View Changed")) {
+                              
+							if (keyWordsforQuery!=null) {
+								 QueryList qlist=QueryList.getInstance();
+								 Query myq=new Query();
+								  List<Query> querys= new ArrayList<Query>();
+								 myq.setQueryKeyWords(keyWordsforQuery);
+								 myq.setQueryLevel(QueryLevel.Middle);
 							
-							if (i==0) {
-								searhText=currentCache.getCurrentKeywordsList().get(i).getKeywordName();
+								 querys.add(myq);
+							    qlist.setQuerys(querys);
 							}
-							else
-					searhText=searhText+" "+currentCache.getCurrentKeywordsList().get(i).getKeywordName();
-			}
-							v.setSearchValue(searhText);
-							
+							   
+
+						}
+						
+						
 //							//测试querylist的观察事件
 //							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
 //							qp.dotest(searhText);
 //							
-			}
-
-
 		}
 	}
 
@@ -297,6 +316,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 					kw.setWeightOne(7-weight1);
 					kw.setWeightTwo(2-weight1);
 					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					kw.setTagName("Error");
 					problemCacheKeyWords.add(kw);
 				}
 			}
@@ -319,6 +339,7 @@ for (int i = 0; i < totallKeyWords.size(); i++) {
 						kw.setWeightOne(6);
 						kw.setWeightTwo(1);
 						kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+						kw.setTagName("Other");
 						problemCacheKeyWords.add(kw);
 					}
 				}
@@ -372,6 +393,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 			}
 		
 		kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+		kw.setTagName("Exception");
 	     consoleCacheKeyWords.add(kw);
 			}
 		}
@@ -400,6 +422,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 			kw.setWeightOne(7-weight2);
 			kw.setWeightTwo(2-weight2);
 			kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+			kw.setTagName("Exception");
 			consoleCacheKeyWords.add(kw);
 			
 			
@@ -434,6 +457,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(1);
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+				kw.setTagName("Other");
 				relatedExplorerKeyWords.add(kw);
 			}
 		}
@@ -457,6 +481,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(1);
 				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+				kw.setTagName("Other");
 				relatedExplorerKeyWords.add(kw);
 			}
 		}
@@ -487,10 +512,12 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				KeyWord kw=new KeyWord();
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(2);
+				kw.setTagName("Other");
 
 				for (String jestr : javaExceptionalNameList) {
 					if (str.equals(jestr)) {
 						kw.setWeightTwo(2);
+						kw.setTagName("Exception");
 						break;
 					}
 				}
@@ -520,10 +547,12 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				KeyWord kw=new KeyWord();
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(2);
-
+				kw.setTagName("Other");
+				
 				for (String jestr : javaExceptionalNameList) {
 					if (str.equals(jestr)) {
 						kw.setWeightTwo(2);
+						kw.setTagName("Exception");
 						break;
 					}
 				}
@@ -598,6 +627,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 						}
 					}
 					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					kw.setTagName("API");
 					classmodelKeyWords.add(kw);
 				}
 
@@ -639,14 +669,17 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 				//2 warning
 				if (pInfo.getType()==CompileInfoType.ERROR) {
 					kw.setWeightOne(4);
+					kw.setTagName("Error");
 				}
 				if (pInfo.getType()==CompileInfoType.WARNING) {
 					kw.setWeightOne(2);
+					kw.setTagName("Other");
 				}
 
 				for (String jestr : javaExceptionalNameList) {
 					if (str.equals(jestr)) {
 						kw.setWeightTwo(2);
+						kw.setTagName("Exception");
 						break;
 					}
 				}
@@ -699,6 +732,7 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 						}
 					}
 					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					kw.setTagName("Exception");
 					consoleViewKeyWords.add(kw);
 				}
 			}
