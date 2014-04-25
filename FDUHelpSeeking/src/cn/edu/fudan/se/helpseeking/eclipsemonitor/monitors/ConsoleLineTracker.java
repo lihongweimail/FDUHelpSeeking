@@ -1,6 +1,8 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -8,8 +10,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformation;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
+import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
+import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		IConsoleLineTracker {
@@ -48,6 +56,9 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 						information.setDescription(lastLine.substring(index2 + 2));
 					}
 					exceptionList.add(information);
+					
+					
+					
 				}
 				
 				int size = exceptionList.size();
@@ -68,11 +79,51 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 					}else{
 						lastInformation.addLocation("Unknown Source", 0);
 					}
+					
+					
 				}
+				
+
+
+
+				
 			}
 			
 			lastLine = text;
 			//ConsoleInformationList.getInstance().prettyPrint();
+			
+			
+//			//如果更新了，且是Exception信息
+//			InteractionEvent e=new InteractionEvent();
+//			e.setByuser(false);
+//			e.setDate(Calendar.getInstance().getTime());
+//			e.setKind(Kind.ATTENTION);
+//			e.setActionName("Console View Changed");
+//			e.setOriginId("Console View Changed");
+//			
+//			
+//			
+//			Information info=new Information();
+//			info.setType("Console view changed");
+//			Action action=new Action();
+//			action.setTime(new Timestamp(System.currentTimeMillis()));
+//			action.setByuser(false);
+//			action.setActionKind(e.getKind());
+//			action.setActionName(e.getActionName());
+//			action.setDescription(e.getOriginId());
+//			info.setDebugCode(null);
+//			info.setEditCode(null);
+//			info.setExplorerRelated(null);
+//			info.setIdeOutput(null);
+//			info.setAction(action);
+//			//需要先写入数据库，才能得到ID
+//			int actionid=DatabaseUtil.addInformationToDatabase(info);
+//							
+//				Cache.getInstance().addInformationToCache(info,actionid);
+//				
+//			DatabaseUtil.addInteractionEventToDatabase(e);	
+			
+			
 
 		} catch (BadLocationException e) {
 			// TODO Auto-generated catch block
@@ -80,6 +131,8 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		}
 	}
 
+	
+	
 	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub

@@ -8,6 +8,7 @@ import java.util.List;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.ActionCache;
@@ -56,14 +57,19 @@ public class CacheProcessing extends Thread  {
 	public void run() {
 		
 		
-		part = FDUHelpSeekingPlugin
-				.getDefault()
-				.getWorkbench()
+//		part = FDUHelpSeekingPlugin
+//				.getDefault()
+//				.getWorkbench()
+//				.getActiveWorkbenchWindow()
+//				.getActivePage()
+//				.findView(
+//						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+
+		part = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow()
 				.getActivePage()
 				.findView(
 						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
-
 		
 		synchronized (obj) {
 			// 同步块中！防止 出错！
@@ -111,25 +117,36 @@ public class CacheProcessing extends Thread  {
 						if (ac.getAction().getActionKind()==Kind.ATTENTION 
 								&& ac.getAction().getActionName().equals("Problem View Changed")) {
                               
-							if (keyWordsforQuery!=null) {
-								 QueryList qlist=QueryList.getInstance();
-								 Query myq=new Query();
-								  List<Query> querys= new ArrayList<Query>();
-								 myq.setQueryKeyWords(keyWordsforQuery);
-								 myq.setQueryLevel(QueryLevel.Middle);
-							
-								 querys.add(myq);
-							    qlist.setQuerys(querys);
-							}
-							   
+							notifiyQueryList(keyWordsforQuery);
 
 						}
 						
+						if (ac.getAction().getActionKind()==Kind.ATTENTION 
+								&& ac.getAction().getActionName().equals("Console View Changed")) {
+                              
+							notifiyQueryList(keyWordsforQuery);
+
+						}
 						
 //							//测试querylist的观察事件
 //							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
 //							qp.dotest(searhText);
 //							
+		}
+	}
+
+
+
+	private void notifiyQueryList(List<KeyWord> keyWordsforQuery) {
+		if (keyWordsforQuery!=null) {
+			 QueryList qlist=QueryList.getInstance();
+			 Query myq=new Query();
+			  List<Query> querys= new ArrayList<Query>();
+			 myq.setQueryKeyWords(keyWordsforQuery);
+			 myq.setQueryLevel(QueryLevel.Middle);
+		
+			 querys.add(myq);
+		    qlist.setQuerys(querys);
 		}
 	}
 

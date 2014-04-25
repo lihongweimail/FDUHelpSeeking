@@ -196,19 +196,15 @@ ISelectionListener {
 				
 					
 
-				
+				//选择了一部分代码，调整为关注的代码
 				info.setType("CompileInfo");				
 				cpi.setContent(selectionContent);
-				cpi.setType(CompileInfoType.ERROR);
+				cpi.setType(CompileInfoType.WARNING);
 				ideOutput.setCompileInformation(cpi);
-				info.setIdeOutput(ideOutput); 	
+				info.setIdeOutput(ideOutput); 
 				
-					ideOutput.setCompileInformation(ProblemInformationUtil
-						.SelectProblemInformationByCursor(info.getEditCode().getCursor()));
-				ideOutput.setRuntimeInformation(ConsoleInformationUtil
-						.SelectConsoleInformationByCursor(info.getEditCode().getCursor()));
 				
-				info.setIdeOutput(ideOutput);	
+				
 				action.setTime(new Timestamp(System.currentTimeMillis()));
 				action.setActionKind(event.getKind());
 				action.setActionName(event.getActionName());
