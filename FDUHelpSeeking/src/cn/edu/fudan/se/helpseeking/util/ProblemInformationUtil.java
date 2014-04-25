@@ -109,7 +109,7 @@ public class ProblemInformationUtil {
 		return compileInformation;
 	}
 	
-	private static void generateCompileInformationbyProblemInformation(
+	public static void generateCompileInformationbyProblemInformation(
 			CompileInformation compileInformation, ProblemInformation problemInformation){
 		compileInformation = new CompileInformation();
 		compileInformation.setContent(problemInformation.getDescription());

@@ -12,15 +12,13 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.internal.ui.JavaPlugin;
 import org.eclipse.jdt.internal.ui.viewsupport.IProblemChangedListener;
-import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
-import cn.edu.fudan.se.helpseeking.bean.ActionQueue;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
-import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
@@ -141,7 +139,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 				}
 
 			}
-			ProblemInformationList.getInstance().prettyPrint();
+			//ProblemInformationList.getInstance().prettyPrint();
 			
 			InteractionEvent e=new InteractionEvent();
 			e.setByuser(false);
@@ -168,7 +166,7 @@ public class ProblemChangedListener extends AbstractUserActivityMonitor
 
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			// e.printStackTrace();
 		}
 
 	}

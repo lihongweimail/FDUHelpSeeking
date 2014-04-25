@@ -1,13 +1,15 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ITypeRoot;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IMarkSelection;
@@ -31,6 +33,8 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
+import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
@@ -41,7 +45,7 @@ import cn.edu.fudan.se.helpseeking.util.ProblemInformationUtil;
 
 @SuppressWarnings("restriction")
 public class SelectionListener extends AbstractUserActivityMonitor implements
-ISelectionListener {
+		ISelectionListener {
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
@@ -54,17 +58,15 @@ ISelectionListener {
 		Information info = new Information();
 		Action action = new Action();
 		IDEOutput ideOutput = new IDEOutput();
-		CompileInformation cpi=new CompileInformation();
-		RuntimeInformation ri=new RuntimeInformation();
-		ExplorerRelated eRelated=new ExplorerRelated();
-		EditorInfo editorInfo=new EditorInfo();
-		ExplorerInfo explorerInfo=new ExplorerInfo();
-		
-		//--------------
-		
+		CompileInformation cpi = new CompileInformation();
+		RuntimeInformation ri = new RuntimeInformation();
+		ExplorerRelated eRelated = new ExplorerRelated();
+		EditorInfo editorInfo = new EditorInfo();
+		ExplorerInfo explorerInfo = new ExplorerInfo();
 
-		if (selection instanceof IStructuredSelection)
-		{
+		// --------------
+
+		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection s = (IStructuredSelection) selection;
 			if (s.getFirstElement() == null) {
 				return;
@@ -72,10 +74,12 @@ ISelectionListener {
 				event.setOriginId("Select: " + s.getFirstElement().toString()
 						+ " from Part: " + part.getTitle());
 				// add
-				String selectName=s.getFirstElement().toString().substring(0, s.getFirstElement().toString().length()>20?20:s.getFirstElement().toString().length());
-               event.setActionName("Select "+selectName);
+				String selectName = s.getFirstElement().toString().substring(0,
+								s.getFirstElement().toString().length() > 20 ? 20
+										: s.getFirstElement().toString().length());
+				event.setActionName("Select " + selectName);
 				selectionContent = s.getFirstElement().toString();
-				//				System.out.println("part0");
+				// System.out.println("part0");
 
 				Object object = s.getFirstElement();
 				if (object instanceof IJavaElement) {
@@ -84,217 +88,264 @@ ISelectionListener {
 
 				} else if (object instanceof MarkerItem) {
 					MarkerItem entry = (MarkerItem) object;
-					//add for get problem view item message
-					selectionContent =entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
-					//					System.out.println("marker element: "+selectionContent);
-				}
-				
-				
-			}
-			
-//		System.out.println(part.getClass().getName().toString());
-//			
-//			if (part.getClass().getName().toString().equals("org.eclipse.ui.navigator.resources.ProjectExplorer")) 
-//			{
-//				List<String> objectNList=new ArrayList<String>();
-//				objectNList.add(selectionContent);
-//				explorerInfo.setSelectObjectNameList(objectNList);
-//				eRelated.setExplorerInfo(explorerInfo);
-//
-//		
-//	
-//			info.setType("ExplorerRelated");
-//		info.setExplorerRelated(eRelated);
-//	
-//			action.setTime(new Timestamp(System.currentTimeMillis()));
-//			action.setActionKind(event.getKind());
-//			action.setActionName(event.getActionName());
-//			action.setDescription(event.getOriginId());
-//			action.setByuser(true);
-//			info.setAction(action);
-//			
-//		
-//
-//			//需要先写入数据库，才能得到ID
-//			int actionid1=DatabaseUtil.addInformationToDatabase(info);
-//
-//
-//			//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-//			IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-//			if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-//
-//				Cache.getInstance().addInformationToCache(info,actionid1);
-//			}
-//			//add end
-//			
-//			
-//			}
-			
-		} else if (selection instanceof ITextSelection) {
-			ITextSelection s = (ITextSelection) selection;
-			if (s.getLength() == 0) {
-				event.setActionName("InsertCursor");
-				event.setOriginId("Insert cursor in line " + s.getStartLine() 
-						+ " of Part " + part.getTitle());
-			
+					IMarker m = entry.getMarker();
+					// add for get problem view item message
+					/*
+					 * selectionContent =
+					 * entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
+					 */
+					// System.out.println("marker element: "+selectionContent);
+					ProblemInformation information = new ProblemInformation();
 
-
-				IEditorPart unitEditor = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-						.getActivePage().getActiveEditor();
-				if(unitEditor instanceof CompilationUnitEditor){
-					ITypeRoot typeRoot = JavaUI
-							.getEditorInputTypeRoot(unitEditor.getEditorInput());
-					ICompilationUnit icu = (ICompilationUnit) typeRoot
-							.getAdapter(ICompilationUnit.class);
-
-				
-	
-					
-					info.setType("EditCode");
-					info.setEditCode(CodeUtil.createEditCodeBySelection(icu, s));
-			
-									ideOutput.setCompileInformation(ProblemInformationUtil
-							.SelectProblemInformationByCursor(info.getEditCode().getCursor()));
-					ideOutput.setRuntimeInformation(ConsoleInformationUtil
-							.SelectConsoleInformationByCursor(info.getEditCode().getCursor()));
+					information.setSeverity(m.getAttribute("severity", 0));
+					information.setDescription(m.getAttribute("message", ""));
+					ICompilationUnit unit = JavaCore
+							.createCompilationUnitFrom((IFile) m.getResource());
+					try {
+						IJavaElement e = unit.getElementAt(m.getAttribute(
+								"charStart", 0));
+						if (e != null
+								&& e.getElementType() >= IJavaElement.METHOD) {
+							e = e.getAncestor(IJavaElement.METHOD);
+							if (e != null) {
+								IMethod method = (IMethod) e;
+								information.setSource(method.getSource());
+							}
+						}
+					} catch (JavaModelException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+										
+					info.setType("CompileInfo");
+					ProblemInformationUtil.generateCompileInformationbyProblemInformation(
+							cpi, information);					
+					ideOutput.setCompileInformation(cpi);
 					info.setIdeOutput(ideOutput);	
-					
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
 					action.setActionName(event.getActionName());
 					action.setDescription(event.getOriginId());
 					action.setByuser(true);
 					info.setAction(action);
-					
-				
-				
 
-					//需要先写入数据库，才能得到ID
-					int actionid1=DatabaseUtil.addInformationToDatabase(info);
+					// 需要先写入数据库，才能得到ID
+					int actionid1 = DatabaseUtil.addInformationToDatabase(info);
 
-
-					//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-					IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+					// add hongwei 20140414 测试 在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart = PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getActivePage()
+							.getActivePart();
 					if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
-
-						Cache.getInstance().addInformationToCache(info,actionid1);
+						Cache.getInstance().addInformationToCache(info, actionid1);
 					}
-					//add end
+				}
 
+			}
 
+			// System.out.println(part.getClass().getName().toString());
+			//
+			// if
+			// (part.getClass().getName().toString().equals("org.eclipse.ui.navigator.resources.ProjectExplorer"))
+			// {
+			// List<String> objectNList=new ArrayList<String>();
+			// objectNList.add(selectionContent);
+			// explorerInfo.setSelectObjectNameList(objectNList);
+			// eRelated.setExplorerInfo(explorerInfo);
+			//
+			//
+			//
+			// info.setType("ExplorerRelated");
+			// info.setExplorerRelated(eRelated);
+			//
+			// action.setTime(new Timestamp(System.currentTimeMillis()));
+			// action.setActionKind(event.getKind());
+			// action.setActionName(event.getActionName());
+			// action.setDescription(event.getOriginId());
+			// action.setByuser(true);
+			// info.setAction(action);
+			//
+			//
+			//
+			// //需要先写入数据库，才能得到ID
+			// int actionid1=DatabaseUtil.addInformationToDatabase(info);
+			//
+			//
+			// //add hongwei 20140414 测试 在插件自己的5个视图中不监控数据
+			// IWorkbenchPart
+			// currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+			// if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
+			//
+			// Cache.getInstance().addInformationToCache(info,actionid1);
+			// }
+			// //add end
+			//
+			//
+			// }
+
+		} else if (selection instanceof ITextSelection) {
+			ITextSelection s = (ITextSelection) selection;
+			if (s.getLength() == 0) {
+				event.setActionName("InsertCursor");
+				event.setOriginId("Insert cursor in line " + s.getStartLine()
+						+ " of Part " + part.getTitle());
+
+				IEditorPart unitEditor = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage()
+						.getActiveEditor();
+				if (unitEditor instanceof CompilationUnitEditor) {
+					ITypeRoot typeRoot = JavaUI
+							.getEditorInputTypeRoot(unitEditor.getEditorInput());
+					ICompilationUnit icu = (ICompilationUnit) typeRoot
+							.getAdapter(ICompilationUnit.class);
+
+					info.setType("EditCode");
+					info.setEditCode(CodeUtil.createEditCodeBySelection(icu, s));
+
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.SelectProblemInformationByCursor(info
+									.getEditCode().getCursor()));
+					ideOutput.setRuntimeInformation(ConsoleInformationUtil
+							.SelectConsoleInformationByCursor(info
+									.getEditCode().getCursor()));
+					info.setIdeOutput(ideOutput);
+
+					action.setTime(new Timestamp(System.currentTimeMillis()));
+					action.setActionKind(event.getKind());
+					action.setActionName(event.getActionName());
+					action.setDescription(event.getOriginId());
+					action.setByuser(true);
+					info.setAction(action);
+
+					// 需要先写入数据库，才能得到ID
+					int actionid1 = DatabaseUtil.addInformationToDatabase(info);
+
+					// add hongwei 20140414 测试 在插件自己的5个视图中不监控数据
+					IWorkbenchPart currentIViewPart = PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow().getActivePage()
+							.getActivePart();
+					if (!ExceptionalPartAndView
+							.checkPartAndView(currentIViewPart)) {
+						Cache.getInstance().addInformationToCache(info,
+								actionid1);
+					}
+					// add end
 
 				}
-				//System.out.println("光标位置：" + s.getStartLine());
+				// System.out.println("光标位置：" + s.getStartLine());
 				return;// do things about cursor and code when length == 0
-			}else{
+			} else {
 				event.setOriginId("Select: " + s.getText() + " from Part: "
 						+ part.getTitle());
-				event.setActionName("Select "+s.getText().substring(0, s.getText().length()>20?20:s.getText().length()));
+				event.setActionName("Select "
+						+ s.getText().substring(
+								0,
+								s.getText().length() > 20 ? 20 : s.getText()
+										.length()));
 				// add
 				selectionContent = s.getText();
-				//				System.out.println("part1");
-				
-					
+				// System.out.println("part1");
 
-				//选择了一部分代码，调整为关注的代码
-				info.setType("CompileInfo");				
+				// 选择了一部分代码，调整为关注的代码
+				info.setType("CompileInfo");
 				cpi.setContent(selectionContent);
 				cpi.setType(CompileInfoType.WARNING);
 				ideOutput.setCompileInformation(cpi);
-				info.setIdeOutput(ideOutput); 
-				
-				
-				
+				info.setIdeOutput(ideOutput);
+
 				action.setTime(new Timestamp(System.currentTimeMillis()));
 				action.setActionKind(event.getKind());
 				action.setActionName(event.getActionName());
 				action.setDescription(event.getOriginId());
 				action.setByuser(true);
 				info.setAction(action);
-				
-		
 
-				//需要先写入数据库，才能得到ID
-				int actionid1=DatabaseUtil.addInformationToDatabase(info);
+				// 需要先写入数据库，才能得到ID
+				int actionid1 = DatabaseUtil.addInformationToDatabase(info);
 
-
-				//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-				IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+				// add hongwei 20140414 测试 在插件自己的5个视图中不监控数据
+				IWorkbenchPart currentIViewPart = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage()
+						.getActivePart();
 				if (!ExceptionalPartAndView.checkPartAndView(currentIViewPart)) {
 
-					Cache.getInstance().addInformationToCache(info,actionid1);
+					Cache.getInstance().addInformationToCache(info, actionid1);
 				}
-				//add end
-				
-				
+				// add end
+
 			}
 
 		} else if (selection instanceof IMarkSelection) {
 			IMarkSelection s = (IMarkSelection) selection;
 			event.setOriginId("Select: " + s.getDocument().get()
 					+ " from Part: " + part.getTitle());
-			event.setActionName("Select "+s.getDocument().get().substring(0, s.getDocument().get().length()>20?20:s.getDocument().get().length()));
+			event.setActionName("Select "
+					+ s.getDocument()
+							.get()
+							.substring(
+									0,
+									s.getDocument().get().length() > 20 ? 20
+											: s.getDocument().get().length()));
 			// add
 			selectionContent = s.getDocument().get();
-			//			System.out.println("part2");
+			// System.out.println("part2");
 
 		}
 
-
-
-
-		//			System.out.println("测试problem或console视图选择："+part.getClass().toString());
+		// System.out.println("测试problem或console视图选择："+part.getClass().toString());
 		// 可以加工
-		if (part.getClass().getName().toString().equals("org.eclipse.ui.internal.console.ConsoleView") || part.getClass().getName().toString().equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
+		if (part.getClass().getName().toString()
+				.equals("org.eclipse.ui.internal.console.ConsoleView")
+				|| part.getClass()
+						.getName()
+						.toString()
+						.equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
 
-		
-	
-
-
-			if (part.getClass().getName().toString().equals("org.eclipse.ui.internal.console.ConsoleView")) {
-				info.setType("RuntimeInfo");		
+			if (part.getClass().getName().toString()
+					.equals("org.eclipse.ui.internal.console.ConsoleView")) {
+				info.setType("RuntimeInfo");
 
 				ri.setContent(selectionContent);
 				ri.setType(RuntimeInfoType.ExceptionalMessage);
 
-				ideOutput.setRuntimeInformation(ri);;
+				ideOutput.setRuntimeInformation(ri);
+				;
 				info.setIdeOutput(ideOutput);
 			}
 
-			if (part.getClass().getName().toString().equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
-				info.setType("CompileInfo");				
+			if (part.getClass()
+					.getName()
+					.toString()
+					.equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
+				info.setType("CompileInfo");
 				cpi.setContent(selectionContent);
 				cpi.setType(CompileInfoType.ERROR);
 				ideOutput.setCompileInformation(cpi);
-				info.setIdeOutput(ideOutput); 	
+				info.setIdeOutput(ideOutput);
 			}
 
-		action.setTime(new Timestamp(System.currentTimeMillis()));
-		action.setActionKind(event.getKind());
-		action.setActionName(event.getActionName());
-		action.setDescription(event.getOriginId());
-		action.setByuser(event.isByuser());
-		info.setAction(action);
+			action.setTime(new Timestamp(System.currentTimeMillis()));
+			action.setActionKind(event.getKind());
+			action.setActionName(event.getActionName());
+			action.setDescription(event.getOriginId());
+			action.setByuser(event.isByuser());
+			info.setAction(action);
 
+			// 需要先写入数据库，才能得到ID
+			int actionid1 = DatabaseUtil.addInformationToDatabase(info);
 
-		//需要先写入数据库，才能得到ID
-		int actionid1=DatabaseUtil.addInformationToDatabase(info);
-
-		//add hongwei   20140414 测试  在插件自己的5个视图中不监控数据
-		//		IWorkbenchPart currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
-		if (!ExceptionalPartAndView.checkPartAndView(part)) {
-			Cache.getInstance().addInformationToCache(info,actionid1);
-
-		}
-		
+			// add hongwei 20140414 测试 在插件自己的5个视图中不监控数据
+			// IWorkbenchPart
+			// currentIViewPart=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart();
+			if (!ExceptionalPartAndView.checkPartAndView(part)) {
+				Cache.getInstance().addInformationToCache(info, actionid1);
+			}
 
 		}
 
-
-		//		System.out.println("selection action in this Part: " + part.getTitle());
-		//		System.out.println("selectionContent: " + selectionContent);
-
-
+		// System.out.println("selection action in this Part: " +
+		// part.getTitle());
+		// System.out.println("selectionContent: " + selectionContent);
 
 		DatabaseUtil.addInteractionEventToDatabase(event);
 	}
@@ -302,7 +353,7 @@ ISelectionListener {
 	@Override
 	public void start() {
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-		.addPostSelectionListener(this);
+				.addPostSelectionListener(this);
 		setEnabled(true);
 	}
 
@@ -312,7 +363,7 @@ ISelectionListener {
 			return;
 		}
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-		.removePostSelectionListener(this);
+				.removePostSelectionListener(this);
 		setEnabled(false);
 	}
 
