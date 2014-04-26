@@ -21,8 +21,9 @@ public class ProblemInformationUtil {
 				if(problemInformation.getPath().contains(bp.getFileName())){
 					int differ = problemInformation.getLineNumber() - bp.getLineNo();
 					if(differ > -5 && differ < 5){
-						generateCompileInformationbyProblemInformation(compileInformation, 
-								problemInformation);
+						compileInformation = 
+								generateCompileInformationbyProblemInformation(
+										problemInformation);
 						found = true;
 					}
 				}
@@ -33,8 +34,9 @@ public class ProblemInformationUtil {
 				if(problemInformation.getPath().contains(bp.getFileName())){
 					int differ = problemInformation.getLineNumber() - bp.getLineNo();
 					if(differ > -5 && differ < 5){
-						generateCompileInformationbyProblemInformation(compileInformation, 
-								problemInformation);
+						compileInformation = 
+								generateCompileInformationbyProblemInformation(
+										problemInformation);
 						found = true;
 					}
 				}
@@ -43,16 +45,18 @@ public class ProblemInformationUtil {
 		if(!found){
 			if(list.getErrorList().size() > 0){
 				ProblemInformation problemInformation = list.getErrorList().get(0);
-				generateCompileInformationbyProblemInformation(compileInformation, 
-						problemInformation);
+				compileInformation = 
+						generateCompileInformationbyProblemInformation(
+								problemInformation);
 				found = true;
 			}
 		}
 		if(!found){
 			if(list.getWarningList().size() > 0){
 				ProblemInformation problemInformation = list.getWarningList().get(0);
-				generateCompileInformationbyProblemInformation(compileInformation, 
-						problemInformation);
+				compileInformation = 
+						generateCompileInformationbyProblemInformation(
+								problemInformation);
 				found = true;
 			}
 		}
@@ -70,8 +74,9 @@ public class ProblemInformationUtil {
 				if(problemInformation.getPath().contains(c.getFileName())){
 					int differ = problemInformation.getLineNumber() - c.getLineNo();
 					if(differ > -5 && differ < 5){
-						generateCompileInformationbyProblemInformation(compileInformation, 
-								problemInformation);
+						compileInformation = 
+								generateCompileInformationbyProblemInformation(
+										problemInformation);
 						found = true;
 					}
 				}
@@ -82,8 +87,9 @@ public class ProblemInformationUtil {
 				if(problemInformation.getPath().contains(c.getFileName())){
 					int differ = problemInformation.getLineNumber() - c.getLineNo();
 					if(differ > -5 && differ < 5){
-						generateCompileInformationbyProblemInformation(compileInformation, 
-								problemInformation);
+						compileInformation = 
+								generateCompileInformationbyProblemInformation(
+										problemInformation);
 						found = true;
 					}
 				}
@@ -92,16 +98,18 @@ public class ProblemInformationUtil {
 		if(!found){
 			if(list.getErrorList().size() > 0){
 				ProblemInformation problemInformation = list.getErrorList().get(0);
-				generateCompileInformationbyProblemInformation(compileInformation, 
-						problemInformation);
+				compileInformation = 
+						generateCompileInformationbyProblemInformation(
+								problemInformation);
 				found = true;
 			}
 		}
 		if(!found){
 			if(list.getWarningList().size() > 0){
 				ProblemInformation problemInformation = list.getWarningList().get(0);
-				generateCompileInformationbyProblemInformation(compileInformation, 
-						problemInformation);
+				compileInformation = 
+						generateCompileInformationbyProblemInformation(
+								problemInformation);
 				found = true;
 			}
 		}
@@ -109,9 +117,9 @@ public class ProblemInformationUtil {
 		return compileInformation;
 	}
 	
-	public static void generateCompileInformationbyProblemInformation(
-			CompileInformation compileInformation, ProblemInformation problemInformation){
-		compileInformation = new CompileInformation();
+	public static CompileInformation generateCompileInformationbyProblemInformation(
+			ProblemInformation problemInformation){
+		CompileInformation compileInformation = new CompileInformation();
 		compileInformation.setContent(problemInformation.getDescription());
 		compileInformation.setRelatedCode(problemInformation.getSource());
 		switch(problemInformation.getSeverity()){
@@ -122,6 +130,7 @@ public class ProblemInformationUtil {
 				compileInformation.setType(CompileInfoType.WARNING);
 				break;
 		}
+		return compileInformation;
 	}
 
 }

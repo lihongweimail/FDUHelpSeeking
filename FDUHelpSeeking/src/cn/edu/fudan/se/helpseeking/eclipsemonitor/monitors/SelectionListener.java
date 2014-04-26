@@ -65,7 +65,6 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		ExplorerInfo explorerInfo = new ExplorerInfo();
 
 		// --------------
-
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection s = (IStructuredSelection) selection;
 			if (s.getFirstElement() == null) {
@@ -95,6 +94,9 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					 * entry.getAttributeValue(IMarker.MESSAGE, "hongwei");
 					 */
 					// System.out.println("marker element: "+selectionContent);
+					if(m == null)
+						return;
+					
 					ProblemInformation information = new ProblemInformation();
 
 					information.setSeverity(m.getAttribute("severity", 0));
@@ -117,10 +119,9 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 						e1.printStackTrace();
 					}
 										
-					info.setType("CompileInfo");
-					ProblemInformationUtil.generateCompileInformationbyProblemInformation(
-							cpi, information);					
-					ideOutput.setCompileInformation(cpi);
+					info.setType("CompileInfo");				
+					ideOutput.setCompileInformation(ProblemInformationUtil
+							.generateCompileInformationbyProblemInformation(information));
 					info.setIdeOutput(ideOutput);	
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());

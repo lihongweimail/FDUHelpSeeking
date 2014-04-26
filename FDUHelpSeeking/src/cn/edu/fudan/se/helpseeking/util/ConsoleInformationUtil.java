@@ -37,8 +37,9 @@ public class ConsoleInformationUtil {
 							for(Integer linenumber : entry.getValue()){
 								int differ = linenumber - bp.getLineNo();
 								if(differ > -5 && differ < 5){
-									generateRuntimeInformationbyConsoleInformation(
-										runtimeInformation, consoleInformation);
+									runtimeInformation = 
+											generateRuntimeInformationbyConsoleInformation(
+													consoleInformation);
 									found = true;
 									break;
 								}
@@ -49,7 +50,7 @@ public class ConsoleInformationUtil {
 			}
 		}
 		if(!found && list.size() > 0){
-			generateRuntimeInformationbyConsoleInformation(runtimeInformation, list.get(0));
+			runtimeInformation = generateRuntimeInformationbyConsoleInformation(list.get(0));
 		}
 				
 		return runtimeInformation;
@@ -78,8 +79,9 @@ public class ConsoleInformationUtil {
 							for(Integer linenumber : entry.getValue()){
 								int differ = linenumber - c.getLineNo();
 								if(differ > -5 && differ < 5){
-									generateRuntimeInformationbyConsoleInformation(
-										runtimeInformation, consoleInformation);
+									runtimeInformation = 
+										generateRuntimeInformationbyConsoleInformation(
+												consoleInformation);
 									found = true;
 									break;
 								}
@@ -90,18 +92,19 @@ public class ConsoleInformationUtil {
 			}
 		}
 		if(!found && list.size() > 0){
-			generateRuntimeInformationbyConsoleInformation(runtimeInformation, list.get(0));
+			runtimeInformation = generateRuntimeInformationbyConsoleInformation(list.get(0));
 		}
 				
 		return runtimeInformation;
 	}
 	
-	private static void generateRuntimeInformationbyConsoleInformation(
-			RuntimeInformation runtimeInformation, ConsoleInformation consoleInformation) {
-		runtimeInformation = new RuntimeInformation();
+	private static RuntimeInformation generateRuntimeInformationbyConsoleInformation(
+			ConsoleInformation consoleInformation) {
+		RuntimeInformation runtimeInformation = new RuntimeInformation();
 		runtimeInformation.setExceptionName(consoleInformation.getExceptionName());
 		runtimeInformation.setContent(consoleInformation.getDescription());
 		runtimeInformation.setType(RuntimeInfoType.ExceptionalMessage);
+		return runtimeInformation;
 	}
 
 }
