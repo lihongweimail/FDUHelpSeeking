@@ -5,14 +5,13 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
 import javax.sql.DataSource;
-
-import org.eclipse.jdt.core.dom.ThisExpression;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
@@ -33,7 +32,6 @@ import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
-import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 import cn.edu.fudan.se.helpseeking.bean.TaskDescription;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
@@ -47,6 +45,7 @@ public class DatabaseUtil {
 	//	public static final String PWD = "123456";
 
 	private static Connection con = null;
+	private static  Statement	stmt=null;
 	//	for mysql jdbc link
 	public static final String DRIVER = "com.mysql.jdbc.Driver";
 	private static InteractionEvent lastEvent = null;
@@ -56,30 +55,12 @@ public class DatabaseUtil {
 	public static  String PWD = "root";
 	private static ResultSet rs = null;
 	public static DataSource source = null;
-    public static  String URL = "jdbc:mysql://localhost:3306/helpseeking";
+    public static  String URL = "jdbc:mysql://localhost:3306/";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
 	public static  String USER = "root";
 
 	
-	
-	//数据库和表的创建
-public static final String databaseSQL = "CREATE DATABASE IF NOT EXISTS `helpseeking`";
-public static final String usedatabaseSQL="use helpseeking";
-public static final String tableActionSQL = "CREATE TABLE IF NOT EXISTS `helpseeking`.`action` ( "
-		+ "   `id` int(11) NOT NULL AUTO_INCREMENT,"
-		+ "  `time` timestamp NULL DEFAULT NULL,"
-		+ "  `endtime` timestamp NULL DEFAULT NULL,"
-		+ "  `actionKind` varchar(45) DEFAULT NULL ,"
-		+ "  `actionName` varchar(45) DEFAULT NULL,"
-		+ "  `description` text,"
-		+ "  `byuser` varchar(10) DEFAULT NULL,"
-		+ "  `user` varchar(45) DEFAULT NULL,"
-		+ "  PRIMARY KEY (`id`),"
-		+ "  KEY `ACTIONKIND` (`actionKind`), "
-		+ "  KEY `ACTIONNAME` (`actionName`),"
-		+ "  KEY `USER` (`user`)"
-		+ ") ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8";	
-	
+		
 	
 	public static String getPWD() {
 		return PWD;
@@ -106,8 +87,30 @@ public static final String tableActionSQL = "CREATE TABLE IF NOT EXISTS `helpsee
 	}
 
 		
-	
 
+	public static void initialDB()
+	{		
+		Resource mydbsqlResource=new Resource();
+		String Sql=mydbsqlResource.getResource("/NewHelpseekingSchema.sql",true);
+		List<String> mysql=CommUtil.arrayToList(Sql.split(";"));
+	for (String sqlstatement : mysql) {
+		
+		try
+		{
+			stmt.executeUpdate(sqlstatement);
+		}
+		catch (SQLException e)
+		{			
+			e.printStackTrace();
+		}
+		
+	}
+		
+
+	
+	}
+	
+	
 	private static int addActionAndgetID(Action action) {
 		int actionID=-1;
 		int addresult=0;
@@ -1531,6 +1534,7 @@ int informationID=-1;
 static int dbError=0;
 
 	public static Connection getCon() {
+		dbError=0;
 		try {
 			Class.forName(DRIVER);
 		} catch (ClassNotFoundException e) {
@@ -1539,6 +1543,8 @@ static int dbError=0;
 		}
 		try {
 			con = DriverManager.getConnection(URL, USER, PWD);
+			stmt=con.createStatement();
+			
 			if (con!=null) {
 				System.out.println("DATABASE LINK SUCCESS");
 				
@@ -1548,6 +1554,7 @@ static int dbError=0;
 			}
 			//			con.setAutoCommit(false);//设置为false时可能批处理提交容易,并不是自动提交，这样不 需要频繁验证。处理回滚事务。
 
+			initialDB();
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -1631,7 +1638,7 @@ static int dbError=0;
 			
 	}
 
-	public static int init() {
+public static int init() {
 	
    con=getCon();
    

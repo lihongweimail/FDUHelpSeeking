@@ -3,6 +3,7 @@ package cn.edu.fudan.se.helpseeking.views;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -32,6 +33,7 @@ import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -204,6 +206,21 @@ public class HelpSeekingSearchView extends ViewPart {
 					for (WEBResult webResult : googlesearchList) {
 						String xml = webResult.getTitleNoFormatting();
 						xml = xml.replaceAll("&quot;", "\"");
+						
+						//去除无关
+						List<String> tempListforQurey=CommUtil.stringToList(search,Basic.SPLIT_STRING);
+						Collections.sort(tempListforQurey);
+						String tempString=webResult.getTitleNoFormatting()+webResult.getContent();
+						List<String> tempListSearch=CommUtil.stringToList(tempString,Basic.SPLIT_STRING);
+						Collections.sort(tempListSearch);
+						
+						if (Collections.disjoint(tempListforQurey, tempListSearch)) {
+							continue;
+						}
+						
+						
+						
+						
 						TreeItem parent = null;
 						String tag = keyWords.get(0).getTagName();
 						if(tag.equals("Exception")){
@@ -309,6 +326,19 @@ public class HelpSeekingSearchView extends ViewPart {
 				String xml = webResult.getTitleNoFormatting();
 				xml = xml.replaceAll("&quot;", "\"");
 				// 去除无关的项目 （采用标题中文字匹配）
+				List<String> tempListforQurey=CommUtil.stringToList(queryText,Basic.SPLIT_STRING);
+				Collections.sort(tempListforQurey);
+				String tempString=webResult.getTitleNoFormatting()+webResult.getContent();
+				List<String> tempListSearch=CommUtil.stringToList(tempString,Basic.SPLIT_STRING);
+				Collections.sort(tempListSearch);
+				
+				if (Collections.disjoint(tempListforQurey, tempListSearch)) {
+//					System.out.println("no disjoint");
+					continue;
+				}
+				
+//				System.out.println("disjoint");
+				
 				//list.add(xml);
 				TreeItem item = new TreeItem(tree, SWT.NONE);
 				item.setText(xml);

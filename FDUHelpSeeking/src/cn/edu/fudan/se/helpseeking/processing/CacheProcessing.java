@@ -1,20 +1,14 @@
 package cn.edu.fudan.se.helpseeking.processing;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
-import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.ActionCache;
 import cn.edu.fudan.se.helpseeking.bean.ActionInformation;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
@@ -38,14 +32,14 @@ import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
-import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 
 
 public class CacheProcessing extends Thread  {
 
-	IViewPart part;
+	IViewPart part ;
+			
 	
 	public CacheProcessing()
 	{
@@ -61,18 +55,54 @@ public class CacheProcessing extends Thread  {
 
 	public void run() {
 		
-		
-		part = FDUHelpSeekingPlugin
-				.getDefault()
-				.getWorkbench()
-				.getActiveWorkbenchWindow()
-				.getActivePage()
-				.findView(
-						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 
+		
+			
+//			part=FDUHelpSeekingPlugin.getINSTANCE().getHelpSearchViewPart();
+//		if (part==null) {
+//			part = FDUHelpSeekingPlugin
+//					.getDefault()
+//					.getWorkbench()
+//					.getActiveWorkbenchWindow()
+//					.getActivePage()
+//					.findView(
+//							"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+//
+//		}
+//
+		
 
 		
 		synchronized (obj) {
+			
+			
+			if (PlatformUI.getWorkbench() == null)
+			{   return;}
+			if(PlatformUI.getWorkbench().getActiveWorkbenchWindow()== null)
+			{ return; }
+			if(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()== null	) 
+			{
+				return;		
+			}
+			
+			
+			IWorkbenchPage page = PlatformUI.getWorkbench()
+			          .getActiveWorkbenchWindow().getActivePage();
+			try {
+				part=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+				
+			
+			} catch (Exception e) {
+				e.printStackTrace();
+				return;
+			}
+//			part = (IViewPart)PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(
+//						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+//			if (part==null) {	return;	}
+				
+		
+
+			
 			// 同步块中！防止 出错！
               simpleTacticProcessing();
 			//放置在searchView
@@ -194,7 +224,7 @@ public class CacheProcessing extends Thread  {
 	//		另外，有必要建立一个异常列表文件，记录各种异常名称，如果以上信息中出现了该异常词汇，则该异常词汇权重为基本权重两倍(weightTwo)！
 	 String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
 	 Resource myResource=new Resource();
-	 String javaExceptionalName = myResource.getResource(javaExceptionalFileName);
+	 String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
 
 	 List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
 
@@ -552,6 +582,12 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 		EditCode  eCodeInfo=currentCache.findEditCodeWithID(currentID);
 		DebugCode dCodeInfo=currentCache.findDebugCodeWithID(currentID);
 
+		if (eCodeInfo==null && dCodeInfo==null) {
+			
+					return null;
+			
+		}
+		
 		if (eCodeInfo!=null)
 		{
 			// 取代码等信息
@@ -582,9 +618,6 @@ if (cil.getExceptionList().size()==currentCache.getConsolesSize()) {
 
 			}
 			}
-		} else
-		{
-			codeKeyWords=null;
 		}
 
 

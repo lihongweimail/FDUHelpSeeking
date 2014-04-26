@@ -3,7 +3,12 @@ package cn.edu.fudan.se.helpseeking.views;
 
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
@@ -12,12 +17,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
@@ -37,9 +36,11 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.TaskDescription;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.Images;
-import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView;
+import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 public class HelpSeekingCommentsView extends ViewPart {
@@ -118,6 +119,13 @@ public class HelpSeekingCommentsView extends ViewPart {
 				txtTaskID.setText(iName[0]);
 				txtTaskName.setText(iName[1]);
 				
+				TokenExtractor tokenExtractor=new TokenExtractor();
+				
+				List<String> hh=CommUtil.removeDuplicateWithOrder(tokenExtractor.getIdentifierOccurenceOfString((String)item.getData()));
+							
+				Cache.getInstance().setTaskDescription(hh);
+				
+								
 			}
 			
 			@Override
@@ -142,6 +150,8 @@ public class HelpSeekingCommentsView extends ViewPart {
 	
 	}
 
+
+	
 	private void genTree() {
 		myTaskList=DatabaseUtil.getTaskDescriptionRecords();
 		if (myTaskList!=null && myTaskList.size()>0) {
@@ -207,7 +217,10 @@ public class HelpSeekingCommentsView extends ViewPart {
 		
 		addTaskAction = new Action() {
 			public void run() {
-				showMessage("add a new Task");
+				if (!showMessage("add a new Task")) {
+					return;
+				}
+				
 				saveTaskAction.setEnabled(true);
 				addTaskAction.setEnabled(false);
 				taskContentMemo=txtContent.getText();
@@ -230,7 +243,11 @@ public class HelpSeekingCommentsView extends ViewPart {
 		
 		saveTaskAction = new Action() {
 			public void run() {
-				showMessage("Save Task");
+				
+				if (!showMessage("Save Task")) {
+					return;
+				}
+				
 				saveTaskAction.setEnabled(false);
 				addTaskAction.setEnabled(true);
 
@@ -272,7 +289,12 @@ public class HelpSeekingCommentsView extends ViewPart {
 		
 		refreshTaskAction = new Action() {
 			public void run() {
-				showMessage("Refresh All Tasks");
+				;
+				if (!showMessage("Refresh All Tasks")) {
+					return;
+				}
+
+				
 				addTaskAction.setEnabled(true);
 				saveTaskAction.setEnabled(false);
 				
@@ -302,8 +324,9 @@ public class HelpSeekingCommentsView extends ViewPart {
 
 
 
-	private void showMessage(String message) {
-		MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
+	private boolean  showMessage(String message) {
+		
+		return MessageDialog.openConfirm(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				"Comments View", message);
 	
 	}

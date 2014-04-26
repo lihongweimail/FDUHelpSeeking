@@ -11,7 +11,9 @@ import java.security.CodeSource;
 import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
@@ -26,9 +28,29 @@ public class CommUtil
 	}
 	
 	
+	
+	
 	private static int minLength =2;
 	
-	public List<String> removeStopWordsFromList( List<String> tokens) {
+	public static List<String> removeDuplicateWithOrder(List<String> list) {
+		Collections.sort(list);
+		List<String> listTemp= new ArrayList<String>();  
+		 Iterator<String> it=list.iterator();  
+		 while(it.hasNext()){  
+		  String a=it.next();  
+		  if(listTemp.contains(a)){  
+		   it.remove();  
+		  }  
+		  else{  
+		   listTemp.add(a);  
+		  }  
+		 }  
+		        return listTemp;
+		}
+
+	
+	
+	public static List<String> removeStopWordsFromList( List<String> tokens) {
 		List<String> result=new ArrayList<String>();
 		 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
 		  
@@ -58,7 +80,7 @@ public class CommUtil
 	}
 
 	
-public  List<String> removeStopWordsAsList( String tokens) {
+public static List<String> removeStopWordsAsList( String tokens) {
 	List<String> result=new ArrayList<String>();
 	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
 	  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
@@ -118,37 +140,6 @@ public static  String  removeStopWordsAsString(String tokens)
 	return result;
 	
 }
-
-public   String  getResource( String resourcePath) {    
-	
-	//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
-	// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
-		String content="";
-        //返回读取指定资源的输入流    
-		try{
-        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
-        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
-        
-    	StringBuilder buffer = new StringBuilder();
-		String line = null;
-
-		while (null != (line = in.readLine()))
-		{
-			buffer.append("\t" + line);
-			buffer.append("\n");
-
-		}
-
-		content = buffer.toString();
-		in.close();
-
-	}
-	catch (IOException e)
-	{
-		e.printStackTrace();
-	}
-	return content;
-    }    
 
 
 
@@ -322,5 +313,19 @@ public   String  getResource( String resourcePath) {
 				
 		return trimMethodName;
 		
+	}
+
+
+
+	public static List<String> stringToList(String tempString,
+			String splitString) 
+	{		
+		List<String> result = new ArrayList<String>();
+		for(String str : tempString.split(splitString))
+		{
+			if(str.trim().length()>0)
+				result.add(str);			
+		}
+		return result;
 	}
 }

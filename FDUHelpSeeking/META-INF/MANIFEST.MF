@@ -30,4 +30,5 @@ Bundle-ClassPath: .,
  lib/edu.mit.jwi_2.1.5.jar,
  lib/intt.jar,
  lib/xwork-core-2.1.4-jdk14.jar,
- lib/dom4j-1.6.jar
+ lib/dom4j-1.6.jar,
+ lib/commons-collections-3.2.jar

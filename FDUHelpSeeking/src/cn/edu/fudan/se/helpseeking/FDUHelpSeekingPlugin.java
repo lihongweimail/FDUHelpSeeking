@@ -19,6 +19,7 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -85,6 +86,16 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 	protected Set<IPerspectiveListener> perspectiveListeners = new HashSet<IPerspectiveListener>();
 	protected Set<ISelectionListener> postSelectionListeners = new HashSet<ISelectionListener>();
 	private IWorkbenchWindow launchingWorkbenchWindow = null;
+	
+	private IViewPart helpSearchViewPart;
+
+	public IViewPart getHelpSearchViewPart() {
+		return helpSearchViewPart;
+	}
+
+	public void setHelpSearchViewPart(IViewPart helpSearchViewPart) {
+		this.helpSearchViewPart = helpSearchViewPart;
+	}
 
 	public FDUHelpSeekingPlugin() {
 		INSTANCE = this;
@@ -191,6 +202,14 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 			activityContextManager.init(monitors);
 			updateActivityTimeout();
 			activityContextManager.start();
+			
+			helpSearchViewPart = FDUHelpSeekingPlugin
+					.getDefault()
+					.getWorkbench()
+					.getActiveWorkbenchWindow()
+					.getActivePage()
+					.findView(
+							"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 		} catch (Exception e) {
 			StatusHandler.log(new Status(IStatus.ERROR,
 					FDUHelpSeekingPlugin.PLUGIN_ID, "Monitor UI start failed",

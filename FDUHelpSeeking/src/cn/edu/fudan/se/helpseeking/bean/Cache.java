@@ -47,6 +47,9 @@ public class Cache  {
 	List<InformationQueue> informations = new ArrayList<InformationQueue>();
 
 	ProblemInformationList problems = ProblemInformationList.getInstance();
+	
+	List<String> taskDescription;
+	
 
 	private int problemsSize=0;
 
@@ -60,6 +63,16 @@ public class Cache  {
 
 	
 	
+	
+
+
+	
+	public List<String> getTaskDescription() {
+		return taskDescription;
+	}
+	public void setTaskDescription(List<String> taskDescription) {
+		this.taskDescription = taskDescription;
+	}
 	
 	private void addActions(Action action, int id) {
 
@@ -120,10 +133,10 @@ public class Cache  {
 	//添加到cache中
 		doAddInformationToCache(information, actionID);	
 		
-		
-		//添加到cache1中
-		Cache1 myCache1=Cache1.getInstance();
-		myCache1.addInformationToCache1(information, actionID);
+//		
+//		//添加到cache1中
+//		Cache1 myCache1=Cache1.getInstance();
+//		myCache1.addInformationToCache1(information, actionID);
 		
 	
 			

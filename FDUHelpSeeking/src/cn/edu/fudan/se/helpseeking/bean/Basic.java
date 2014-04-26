@@ -639,5 +639,7 @@ public class Basic {
 		}
 	}
 
+
+	public static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 	
 }

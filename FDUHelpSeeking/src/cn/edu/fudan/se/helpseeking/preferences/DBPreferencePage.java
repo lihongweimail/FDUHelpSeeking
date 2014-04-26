@@ -22,6 +22,7 @@ import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 public class DBPreferencePage extends FieldEditorPreferencePage  implements IWorkbenchPreferencePage{
 
 	private StringFieldEditor dbURLStringFieldEditor;
+	private StringFieldEditor dbNameStringFieldEditor;
 	private StringFieldEditor userNameStringFieldEditor;
 	private StringFieldEditor pswStringFieldEditor;
 	
@@ -37,6 +38,9 @@ public class DBPreferencePage extends FieldEditorPreferencePage  implements IWor
 		dbURLStringFieldEditor=new StringFieldEditor(PreferenceConstants.URL_KEY, "DB URL: ", getFieldEditorParent());
 		addField(dbURLStringFieldEditor);
 		
+		dbNameStringFieldEditor=new StringFieldEditor(PreferenceConstants.DATABASE_KEY, "DB_NAME", getFieldEditorParent());
+		addField(dbNameStringFieldEditor);
+		
 		userNameStringFieldEditor=new StringFieldEditor(PreferenceConstants.USERNAME_KEY, "User Name: ", getFieldEditorParent());
 		addField(userNameStringFieldEditor);
 		
@@ -48,6 +52,36 @@ public class DBPreferencePage extends FieldEditorPreferencePage  implements IWor
 	protected void contributeButtons( Composite parent)
 	{
 		super.contributeButtons(parent);
+		Button initialDBButton=new Button( parent,SWT.NONE);
+		initialDBButton.setText("Create DB and TABLES");
+		((GridLayout) parent.getLayout() ).numColumns++;
+		
+	   initialDBButton.addSelectionListener(new SelectionListener() {
+		
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			// TODO Auto-generated method stub
+			int result=0;
+			result=DatabaseUtil.initDB(dbURLStringFieldEditor.getStringValue(), userNameStringFieldEditor.getStringValue(), pswStringFieldEditor.getStringValue());
+			
+			if (result==-1) {
+		MessageDialog.openInformation(getShell(), "HELPSEEKING DB PARAMETER ERROR! ", "Please check Configuration!" );
+			}
+			if (result==0) {
+				MessageDialog.openInformation(getShell(), "HELPSEEKING DB SUCCESS! ", "Congratuation!" );
+			}
+			
+			
+		}
+		
+		@Override
+		public void widgetDefaultSelected(SelectionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	});
+		
+		
 		Button testButton=new Button( parent,SWT.NONE);
 		testButton.setText("Test DB link");
 		((GridLayout) parent.getLayout() ).numColumns++;
@@ -58,7 +92,7 @@ public class DBPreferencePage extends FieldEditorPreferencePage  implements IWor
 		public void widgetSelected(SelectionEvent e) {
 			// TODO Auto-generated method stub
 			int result=0;
-			result=DatabaseUtil.initDB(dbURLStringFieldEditor.getStringValue(), userNameStringFieldEditor.getStringValue(), pswStringFieldEditor.getStringValue());
+			result=DatabaseUtil.initDB(dbURLStringFieldEditor.getStringValue()+dbNameStringFieldEditor.getStringValue(), userNameStringFieldEditor.getStringValue(), pswStringFieldEditor.getStringValue());
 			
 			if (result==-1) {
 		MessageDialog.openInformation(getShell(), "HELPSEEKING DB PARAMETER ERROR! ", "Please check Configuration!" );
