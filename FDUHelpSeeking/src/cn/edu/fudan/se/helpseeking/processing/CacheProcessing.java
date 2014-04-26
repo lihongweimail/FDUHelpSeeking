@@ -39,6 +39,7 @@ import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
+import cn.edu.fudan.se.helpseeking.util.Resource;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 
 
@@ -61,19 +62,15 @@ public class CacheProcessing extends Thread  {
 	public void run() {
 		
 		
-//		part = FDUHelpSeekingPlugin
-//				.getDefault()
-//				.getWorkbench()
-//				.getActiveWorkbenchWindow()
-//				.getActivePage()
-//				.findView(
-//						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
-
-		part = PlatformUI.getWorkbench()
+		part = FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
 				.getActiveWorkbenchWindow()
 				.getActivePage()
 				.findView(
 						"cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+
+
 		
 		synchronized (obj) {
 			// 同步块中！防止 出错！
@@ -191,45 +188,13 @@ public class CacheProcessing extends Thread  {
 	}
 
 
-	public   String  getResource( String resourcePath) {    
-		
-		//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
-		// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
-			String content="";
-	        //返回读取指定资源的输入流    
-			try{
-	        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
-	        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
-	        
-	    	StringBuilder buffer = new StringBuilder();
-			String line = null;
-
-			while (null != (line = in.readLine()))
-			{
-				buffer.append("\t" + line);
-				buffer.append("\n");
-
-			}
-
-			content = buffer.toString();
-			in.close();
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return content;
-	    }    
-
-
-	
 	
 	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 
 	//		另外，有必要建立一个异常列表文件，记录各种异常名称，如果以上信息中出现了该异常词汇，则该异常词汇权重为基本权重两倍(weightTwo)！
-	 String javaExceptionalFileName ="\\StopResource\\" +"javaExceptionalName.txt";
-	 String javaExceptionalName = getResource(javaExceptionalFileName);
+	 String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
+	 Resource myResource=new Resource();
+	 String javaExceptionalName = myResource.getResource(javaExceptionalFileName);
 
 	 List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
 

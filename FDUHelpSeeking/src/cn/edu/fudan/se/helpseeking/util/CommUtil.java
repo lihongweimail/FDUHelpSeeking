@@ -165,8 +165,8 @@ public   String  getResource( String resourcePath) {
 	{	
 		 List<String> keyWords=new ArrayList<String>();
 		  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
-		stopfileName = "\\" + stop_list_path +  "\\" + stopfileName;
-		userStopFileName="\\"+ stop_list_path + "\\"+userStopFileName;
+		stopfileName = "/" + stop_list_path +  "/" + stopfileName;
+		userStopFileName="/"+ stop_list_path + "/"+userStopFileName;
 		
 		Resource myResource=new Resource();
 	     String tempKeyWords1 = myResource.getResource(stopfileName).toLowerCase();

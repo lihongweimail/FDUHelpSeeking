@@ -10,6 +10,7 @@ import java.util.List;
 import uk.ac.open.crc.intt.IdentifierNameTokeniser;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
+import cn.edu.fudan.se.helpseeking.util.Resource;
 
 
 public class FudanIdentifierNameTokeniser 
@@ -54,46 +55,18 @@ public class FudanIdentifierNameTokeniser
 		
 	}
 	
-	public   String  getResource( String resourcePath) {    
-		
-		//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
-		// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
-			String content="";
-	        //返回读取指定资源的输入流    
-			try{
-	        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
-	        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
-	        
-	    	StringBuilder buffer = new StringBuilder();
-			String line = null;
-
-			while (null != (line = in.readLine()))
-			{
-				buffer.append("\t" + line);
-				buffer.append("\n");
-
-			}
-
-			content = buffer.toString();
-			in.close();
-
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-		return content;
-	    }    
-
+	
 
 	
 	private void constructDefaultFilterString(String stopfileName, String userStopFileName)
 	{	
-		stopfileName = "\\" + stop_list_path +  "\\" + stopfileName;
-		userStopFileName="\\"+ stop_list_path + "\\"+userStopFileName;
+		stopfileName = "/" + stop_list_path +  "/" + stopfileName;
+		userStopFileName="/"+ stop_list_path + "/"+userStopFileName;
 		
-	     String tempKeyWords1 = getResource(stopfileName);
-	     String tempKeyWords2 = getResource(userStopFileName);
+		Resource myR1=new Resource();
+		Resource myR2=new Resource();
+	     String tempKeyWords1 = myR1.getResource(stopfileName);
+	     String tempKeyWords2 = myR2.getResource(userStopFileName);
 	     
 	     keyWords=CommUtil.arrayToList((tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING));
 	     for (int i = 0; i < keyWords.size()-1; i++) {
