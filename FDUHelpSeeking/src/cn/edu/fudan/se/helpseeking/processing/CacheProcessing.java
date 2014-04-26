@@ -1,5 +1,9 @@
 package cn.edu.fudan.se.helpseeking.processing;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -113,53 +117,121 @@ public class CacheProcessing extends Thread  {
 						v.setSearchValue(searhText);
 						v.setCurrentActionID(currentCache.getCurrentID());
 						
+						int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。     
+						
+						
+						notifiyQueryList(keyWordsforQuery,QueryLevel.Middle,mode);
+						
+						
 						// 在 problem view 更新 时  Attention动作类型  动作名称"Problem View Changed"
 						ActionCache ac=currentCache.getActions().getActionCachewithActionID(currentCache.getCurrentID());
 						if (ac.getAction().getActionKind()==Kind.ATTENTION 
 								&& ac.getAction().getActionName().equals("Problem View Changed")) {
-                              
-							notifiyQueryList(keyWordsforQuery);
+                              mode=2;
+							notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 
-						}
+						} 
 						
 						if (ac.getAction().getActionKind()==Kind.ATTENTION 
 								&& ac.getAction().getActionName().equals("Console View Changed")) {
-                              
-							notifiyQueryList(keyWordsforQuery);
+                              mode=2;
+							notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 
-						}
+						}	
+						
+						if (mode==2)
+							QueryList.getInstance().startSearch();
+						
+		}
 						
 //							//测试querylist的观察事件
 //							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
 //							qp.dotest(searhText);
 //							
 		}
-	}
 
 
 
-	private void notifiyQueryList(List<KeyWord> keyWordsforQuery) {
+
+	private void notifiyQueryList(List<KeyWord> keyWordsforQuery, QueryLevel qLevel,int mode) {
+		
+		QueryList qlist=QueryList.getInstance();
+		boolean addNewItem=true;
+		
 		if (keyWordsforQuery!=null) {
-			 QueryList qlist=QueryList.getInstance();
+			
+	if (mode==1) {
+				
+				int index=qlist.findIndexofModeOne();
+				if (index!=-1){
+					addNewItem=false;
+					Query oldq=qlist.getQuerys().get(index);
+					  oldq.setQueryKeyWords(keyWordsforQuery);
+					 oldq.setInforID(currentCache.getCurrentID());
+					 oldq.setQueryKeyWords(keyWordsforQuery);
+					
+				}
+				
+				
+			}
+			
+	if (addNewItem) {
+			
 			 Query myq=new Query();
 			  List<Query> querys= new ArrayList<Query>();
 			 myq.setQueryKeyWords(keyWordsforQuery);
-			 myq.setQueryLevel(QueryLevel.Middle);
-		
+			 myq.setQueryLevel(qLevel);
+			 myq.setInforID(currentCache.getCurrentID());
+			 myq.setMode(mode);
 			 querys.add(myq);
 		    qlist.setQuerys(querys);
+		    }
 		    
 		}
 	}
 
 
+	public   String  getResource( String resourcePath) {    
+		
+		//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
+		// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
+			String content="";
+	        //返回读取指定资源的输入流    
+			try{
+	        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
+	        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
+	        
+	    	StringBuilder buffer = new StringBuilder();
+			String line = null;
+
+			while (null != (line = in.readLine()))
+			{
+				buffer.append("\t" + line);
+				buffer.append("\n");
+
+			}
+
+			content = buffer.toString();
+			in.close();
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return content;
+	    }    
+
+
+	
+	
 	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 
 	//		另外，有必要建立一个异常列表文件，记录各种异常名称，如果以上信息中出现了该异常词汇，则该异常词汇权重为基本权重两倍(weightTwo)！
-	static String javaExceptionalFileName = CommUtil.getCurrentProjectPath() + "\\StopResource\\" +"javaExceptionalName.txt";
-	static String javaExceptionalName = FileHelper.getContent(javaExceptionalFileName);
+	 String javaExceptionalFileName ="\\StopResource\\" +"javaExceptionalName.txt";
+	 String javaExceptionalName = getResource(javaExceptionalFileName);
 
-	static List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
+	 List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
 
 	public void simpleTacticProcessing()
 	{

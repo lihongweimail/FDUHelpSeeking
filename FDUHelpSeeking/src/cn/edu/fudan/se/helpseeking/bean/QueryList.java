@@ -10,8 +10,39 @@ public class QueryList extends Observable {
 
 	private List<Query> querys;
 
+	
+	
+	
+	
 	private QueryList() {
 		querys = new ArrayList<Query>();
+	}
+
+	
+	public int findIndexofModeOne() {
+		int index=-1;
+		if (querys!=null && querys.size()>0) {
+			
+		for (int i = 0; i < querys.size(); i++) {
+			Query q=querys.get(i);
+			if (q.getMode()==1) {
+				index=i;
+				break;
+			}
+			
+			
+		}
+			
+			
+		}
+		
+		
+		return index;
+	}
+	
+	public void clear() {
+		
+		this.querys= new ArrayList<Query>();
 	}
 
 	public List<Query> getQuerys() {
@@ -20,6 +51,11 @@ public class QueryList extends Observable {
 
 	public void setQuerys(List<Query> newQuerys) {
 		this.querys = newQuerys;
+		
+	}
+	
+	public void startSearch()
+	{
 		HelpSeekingSearchView.searchQueryList();
 	}
 

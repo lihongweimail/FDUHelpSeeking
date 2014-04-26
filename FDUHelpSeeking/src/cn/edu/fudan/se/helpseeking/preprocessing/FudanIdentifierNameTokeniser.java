@@ -1,12 +1,15 @@
 package cn.edu.fudan.se.helpseeking.preprocessing;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 import uk.ac.open.crc.intt.IdentifierNameTokeniser;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
-import cn.edu.fudan.se.helpseeking.util.INIHelper;
 
 
 public class FudanIdentifierNameTokeniser 
@@ -21,10 +24,10 @@ public class FudanIdentifierNameTokeniser
 	
 	
 	static {
-		INIHelper iniHelper = new INIHelper("conf.ini");
-		stop_list_path = iniHelper.getValue("IDENTIFIEREXTRACTOR", "path", "StopResource");
-		JAVA_STOP_LIST_FILENAME = iniHelper.getValue("IDENTIFIEREXTRACTOR", "javaStopList", "javaStopList.txt");
-		USER_STOP_LIST_FILENAME= iniHelper.getValue("IDENTIFIEREXTRACTOR", "userStopList", "userStopList.txt");
+	
+		stop_list_path = "StopResource";
+		JAVA_STOP_LIST_FILENAME ="javaStopList.txt";
+		USER_STOP_LIST_FILENAME= "userStopList.txt";
 		
 	}
 
@@ -51,13 +54,46 @@ public class FudanIdentifierNameTokeniser
 		
 	}
 	
+	public   String  getResource( String resourcePath) {    
+		
+		//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
+		// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
+			String content="";
+	        //返回读取指定资源的输入流    
+			try{
+	        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
+	        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
+	        
+	    	StringBuilder buffer = new StringBuilder();
+			String line = null;
+
+			while (null != (line = in.readLine()))
+			{
+				buffer.append("\t" + line);
+				buffer.append("\n");
+
+			}
+
+			content = buffer.toString();
+			in.close();
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return content;
+	    }    
+
+
+	
 	private void constructDefaultFilterString(String stopfileName, String userStopFileName)
 	{	
-		stopfileName = CommUtil.getCurrentProjectPath() + "\\" + stop_list_path +  "\\" + stopfileName;
-		userStopFileName=CommUtil.getCurrentProjectPath()+"\\"+ stop_list_path + "\\"+userStopFileName;
+		stopfileName = "\\" + stop_list_path +  "\\" + stopfileName;
+		userStopFileName="\\"+ stop_list_path + "\\"+userStopFileName;
 		
-	     String tempKeyWords1 = FileHelper.getContent(stopfileName);
-	     String tempKeyWords2 = FileHelper.getContent(userStopFileName);
+	     String tempKeyWords1 = getResource(stopfileName);
+	     String tempKeyWords2 = getResource(userStopFileName);
 	     
 	     keyWords=CommUtil.arrayToList((tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING));
 	     for (int i = 0; i < keyWords.size()-1; i++) {

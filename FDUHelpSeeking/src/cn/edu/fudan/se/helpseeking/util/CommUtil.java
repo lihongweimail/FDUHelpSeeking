@@ -1,7 +1,10 @@
 package cn.edu.fudan.se.helpseeking.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
@@ -25,7 +28,7 @@ public class CommUtil
 	
 	private static int minLength =2;
 	
-	public static List<String> removeStopWordsFromList( List<String> tokens) {
+	public List<String> removeStopWordsFromList( List<String> tokens) {
 		List<String> result=new ArrayList<String>();
 		 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
 		  
@@ -55,7 +58,7 @@ public class CommUtil
 	}
 
 	
-public static List<String> removeStopWordsAsList( String tokens) {
+public  List<String> removeStopWordsAsList( String tokens) {
 	List<String> result=new ArrayList<String>();
 	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
 	  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
@@ -85,7 +88,7 @@ public static List<String> removeStopWordsAsList( String tokens) {
 	
 }
 
-public static String  removeStopWordsAsString(String tokens) 
+public static  String  removeStopWordsAsString(String tokens) 
 {
 	String result=" ";
 	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
@@ -116,6 +119,40 @@ public static String  removeStopWordsAsString(String tokens)
 	
 }
 
+public   String  getResource( String resourcePath) {    
+	
+	//编译阶段将文件放入到BIN目录，  生成JAR包时 记得将文件打包到JAR包的根目录下； 使用相对路径
+	// “/a/b.txt”  和 “a/b.txt”不同一个是从根出发， 一个是从当前调用这个方法的类所在的相对路径出发。  通常选前面的格式
+		String content="";
+        //返回读取指定资源的输入流    
+		try{
+        InputStream is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
+        BufferedReader in=new BufferedReader(new InputStreamReader(is));  
+        
+    	StringBuilder buffer = new StringBuilder();
+		String line = null;
+
+		while (null != (line = in.readLine()))
+		{
+			buffer.append("\t" + line);
+			buffer.append("\n");
+
+		}
+
+		content = buffer.toString();
+		in.close();
+
+	}
+	catch (IOException e)
+	{
+		e.printStackTrace();
+	}
+	return content;
+    }    
+
+
+
+
 
 	/**
 	 * @param stop_list_path    "StopResource"
@@ -128,11 +165,12 @@ public static String  removeStopWordsAsString(String tokens)
 	{	
 		 List<String> keyWords=new ArrayList<String>();
 		  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
-		stopfileName = CommUtil.getCurrentProjectPath() + "\\" + stop_list_path +  "\\" + stopfileName;
-		userStopFileName=CommUtil.getCurrentProjectPath()+"\\"+ stop_list_path + "\\"+userStopFileName;
+		stopfileName = "\\" + stop_list_path +  "\\" + stopfileName;
+		userStopFileName="\\"+ stop_list_path + "\\"+userStopFileName;
 		
-	     String tempKeyWords1 = FileHelper.getContent(stopfileName).toLowerCase();
-	     String tempKeyWords2 = FileHelper.getContent(userStopFileName).toLowerCase();
+		Resource myResource=new Resource();
+	     String tempKeyWords1 = myResource.getResource(stopfileName).toLowerCase();
+	     String tempKeyWords2 = myResource.getResource(userStopFileName).toLowerCase();
 	     
 	     keyWords=CommUtil.arrayToList((tempKeyWords1+","+tempKeyWords2).split(SPLIT_STRING));
 	     for (int i = 0; i < keyWords.size()-1; i++) {

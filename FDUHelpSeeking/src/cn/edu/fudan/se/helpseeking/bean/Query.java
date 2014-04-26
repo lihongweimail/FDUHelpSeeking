@@ -22,8 +22,21 @@ public class Query {
 	String searchID;  
 	long costtime;//消耗的时间 秒为单位
 	
-	boolean isbyuser=false;
+	boolean isbyuser=false;  //表示默认为自动检索
 	
+	int mode=0;//0 是初值不处理      1 是每个动作可能产生的查询，需要对query改写                           2 为了自动检索准备的查询不能改写，表示新增      
+
+	
+	public int getMode() {
+		return mode;
+	}
+
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+
+
 	public void makeCandidateKeywords(List<KeyWord> currentKeywordsList, int limit)
 	{
 		setCandidateKeywords(null);

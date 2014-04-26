@@ -81,70 +81,7 @@ public class HelpSeekingSearchView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				//list.removeAll();
-				tree.removeAll();
-				String queryText = txtSearch.getText().trim();
-				// list.add("key words:"+queryText);
-				// list.add("search results:");
-				//
-				if (part instanceof HelpSeekingSolutionView) {
-					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
-					// v.getMyBrower().setNewUrl(
-					// "https://www.google.com/search?newwindow=1&q="+queryText);
-					// https://www.google.com.hk/#newwindow=1&q=
-					v.getMyBrower().setNewUrl(
-							"http://www.baidu.com/s?wd=" + queryText);
-				}
-				// "https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q="
-				
-				Query query=new Query();
-				query.setInforID(getCurrentActionID());
-				Timestamp starttime=new Timestamp(System.currentTimeMillis());
-				query.setTime(starttime);
-				query.setIsbyuser(true);
-				query.setQueryLevel(QueryLevel.Middle);
-				query.setUseKeywords(queryText);
-				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
-				String searchID="P"+query.getInforID();
-				query.setSearchID(searchID);
-							
-				
-				
-				SearchResults sResults=new SearchResults();
-				sResults.setSearchID(searchID);
-
-				LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
-				try {
-					googlesearchList = apiCall.searchWeb(queryText);
-					for (WEBResult webResult : googlesearchList) {
-						String xml = webResult.getTitleNoFormatting();
-						xml = xml.replaceAll("&quot;", "\"");
-						// 去除无关的项目 （采用标题中文字匹配）
-						//list.add(xml);
-						TreeItem item = new TreeItem(tree, SWT.NONE);
-						item.setText(xml);
-						item.setData(webResult.getUrl());
-						SearchNode sNode=new SearchNode();
-						sNode.setTitle(xml);
-						sNode.setLink(webResult.getUrl());
-						sResults.getSearchNode().add(sNode);
-						
-					}
-
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				
-				
-				Timestamp endtime=new Timestamp(System.currentTimeMillis());
-				
-				query.setCosttime(endtime.getTime()-starttime.getTime());
-			// 需要保存关键词和当前cache到数据库中：
-				DatabaseUtil.addKeyWordsToDataBase(query);
-				for (SearchNode snNode : sResults.getSearchNode()) {
-					DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
-					
-				}
+				doSimpleSearch();
 	
 
 			}
@@ -317,7 +254,8 @@ public class HelpSeekingSearchView extends ViewPart {
 
 			
 		}
-		
+		//清除query 准备下一轮 自动查询构造
+		querys.clear();
 		exception.setExpanded(true);
 		api.setExpanded(true);
 		error.setExpanded(true);
@@ -330,6 +268,73 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	public void setCurrentActionID(int currentActionID) {
 		this.currentActionID = currentActionID;
+	}
+
+	private void doSimpleSearch() {
+		tree.removeAll();
+		String queryText = txtSearch.getText().trim();
+		// list.add("key words:"+queryText);
+		// list.add("search results:");
+		//
+		if (part instanceof HelpSeekingSolutionView) {
+			HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
+			// v.getMyBrower().setNewUrl(
+			// "https://www.google.com/search?newwindow=1&q="+queryText);
+			// https://www.google.com.hk/#newwindow=1&q=
+			v.getMyBrower().setNewUrl(
+					"http://www.baidu.com/s?wd=" + queryText);
+		}
+		// "https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q="
+		
+		Query query=new Query();
+		query.setInforID(getCurrentActionID());
+		Timestamp starttime=new Timestamp(System.currentTimeMillis());
+		query.setTime(starttime);
+		query.setIsbyuser(true);
+		query.setQueryLevel(QueryLevel.Middle);
+		query.setUseKeywords(queryText);
+		query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+		String searchID="P"+query.getInforID();
+		query.setSearchID(searchID);
+					
+		
+		
+		SearchResults sResults=new SearchResults();
+		sResults.setSearchID(searchID);
+
+		LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
+		try {
+			googlesearchList = apiCall.searchWeb(queryText);
+			for (WEBResult webResult : googlesearchList) {
+				String xml = webResult.getTitleNoFormatting();
+				xml = xml.replaceAll("&quot;", "\"");
+				// 去除无关的项目 （采用标题中文字匹配）
+				//list.add(xml);
+				TreeItem item = new TreeItem(tree, SWT.NONE);
+				item.setText(xml);
+				item.setData(webResult.getUrl());
+				SearchNode sNode=new SearchNode();
+				sNode.setTitle(xml);
+				sNode.setLink(webResult.getUrl());
+				sResults.getSearchNode().add(sNode);
+				
+			}
+
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		
+		Timestamp endtime=new Timestamp(System.currentTimeMillis());
+		
+		query.setCosttime(endtime.getTime()-starttime.getTime());
+// 需要保存关键词和当前cache到数据库中：
+		DatabaseUtil.addKeyWordsToDataBase(query);
+		for (SearchNode snNode : sResults.getSearchNode()) {
+			DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
+			
+		}
 	}
 	
 	
