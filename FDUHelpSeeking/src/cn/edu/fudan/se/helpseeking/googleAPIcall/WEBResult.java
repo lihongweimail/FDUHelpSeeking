@@ -66,7 +66,7 @@ public class WEBResult {
       public String getTitle() { return title; }
       public void setUrl(String url) { this.url = url; }
       public void setTitle(String title) { this.title = title; }
-      public String toString() { return "Result[url:" + url +",title:" + title + "]"; }
+      public String toString() { return "\n[\nurl:\t\t\t\t" + url +"\ntitle(no formatting):\t" + title + "\n]\n"; }
   
 
 }

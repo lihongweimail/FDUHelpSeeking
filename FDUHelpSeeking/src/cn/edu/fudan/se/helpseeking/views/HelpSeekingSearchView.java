@@ -35,6 +35,7 @@ import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.FileHelper;
 
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -55,8 +56,10 @@ public class HelpSeekingSearchView extends ViewPart {
 				.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 	}
 	static IViewPart part;
+	String username = System.getProperties().getProperty("user.name");
 	
 	private int currentActionID;
+	private static String  currentSearchID="";
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -131,6 +134,11 @@ public class HelpSeekingSearchView extends ViewPart {
 							+ list.getSelectionIndex());
 					System.out.println(googlesearchList.get(
 							list.getSelectionIndex()).getUrl());*/
+					
+					String content ="\n---------\n[user:]\t\t\t\t"+username+ "\n[at time:]\t\t\t" +(new Timestamp(System.currentTimeMillis())).toString()
+							              +"\n[Current searchID:]\t"+getCurrentSearchID() +"\n[Selected Item:]\n"+item.getText()+"\n"+(String)item.getData()+"\n---------\n";
+					FileHelper.appendContentToFile("result.txt", content);
+					
 				}
 			}
 			
@@ -144,6 +152,16 @@ public class HelpSeekingSearchView extends ViewPart {
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
+	}
+	
+	
+
+	public static String getCurrentSearchID() {
+		return currentSearchID;
+	}
+
+	public static void setCurrentSearchID(String SearchID) {
+		currentSearchID = SearchID;
 	}
 
 	public void setSearchValue(String search) {
@@ -166,6 +184,8 @@ public class HelpSeekingSearchView extends ViewPart {
 		List<Query> querys = QueryList.getInstance().getQuerys();
 		int qindex=0;
 		for(Query query : querys){
+			
+			String searchResultOutput="\n============\n";
 			
 			SearchResults sResults=new SearchResults();
 			starttime=new Timestamp(System.currentTimeMillis());
@@ -193,7 +213,11 @@ public class HelpSeekingSearchView extends ViewPart {
 				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 				String searchID="A"+String.valueOf(qindex)+query.getQueryLevel()+query.getInforID();
 				query.setSearchID(searchID);
-							
+				if (currentSearchID.equals("")|| currentSearchID==null) {
+					currentSearchID=searchID;
+				}else {
+					currentSearchID=currentSearchID+searchID;
+				}			
 				
 				
 				
@@ -207,6 +231,9 @@ public class HelpSeekingSearchView extends ViewPart {
 						String xml = webResult.getTitleNoFormatting();
 						xml = xml.replaceAll("&quot;", "\"");
 						
+						
+						String useString="\n[Filter this item:]\n";
+						
 						//去除无关
 						List<String> tempListforQurey=CommUtil.stringToList(search,Basic.SPLIT_STRING);
 						Collections.sort(tempListforQurey);
@@ -215,10 +242,13 @@ public class HelpSeekingSearchView extends ViewPart {
 						Collections.sort(tempListSearch);
 						
 						if (Collections.disjoint(tempListforQurey, tempListSearch)) {
+							searchResultOutput=searchResultOutput+useString+webResult.toString();
 							continue;
 						}
 						
+						useString="\n[Use item:]\n";
 						
+						searchResultOutput=searchResultOutput+useString+webResult.toString();
 						
 						
 						TreeItem parent = null;
@@ -258,18 +288,24 @@ public class HelpSeekingSearchView extends ViewPart {
 			}
 			
 			
-			
-			Timestamp endtime=new Timestamp(System.currentTimeMillis());
+	Timestamp endtime=new Timestamp(System.currentTimeMillis());
 			
 			query.setCosttime(endtime.getTime()-starttime.getTime());
+		
 		// 需要保存关键词和当前cache到数据库中：
 			DatabaseUtil.addKeyWordsToDataBase(query);
 			for (SearchNode snNode : sResults.getSearchNode()) {
 				DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
 				
+				
+				
 			}
 
-			
+				searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
+				FileHelper.appendContentToFile("result.txt", searchResultOutput);
+					
+
+		
 		}
 		//清除query 准备下一轮 自动查询构造
 		querys.clear();
@@ -314,7 +350,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		String searchID="P"+query.getInforID();
 		query.setSearchID(searchID);
 					
-		
+		String searchResultOutput="\n============\n";
 		
 		SearchResults sResults=new SearchResults();
 		sResults.setSearchID(searchID);
@@ -325,6 +361,10 @@ public class HelpSeekingSearchView extends ViewPart {
 			for (WEBResult webResult : googlesearchList) {
 				String xml = webResult.getTitleNoFormatting();
 				xml = xml.replaceAll("&quot;", "\"");
+				
+				
+				String useString="\n[Filter this item:]\n";
+
 				// 去除无关的项目 （采用标题中文字匹配）
 				List<String> tempListforQurey=CommUtil.stringToList(queryText,Basic.SPLIT_STRING);
 				Collections.sort(tempListforQurey);
@@ -334,9 +374,14 @@ public class HelpSeekingSearchView extends ViewPart {
 				
 				if (Collections.disjoint(tempListforQurey, tempListSearch)) {
 //					System.out.println("no disjoint");
+					searchResultOutput=searchResultOutput+useString+webResult.toString();
 					continue;
 				}
 				
+				useString="\n[Use item:]\n";
+				
+				searchResultOutput=searchResultOutput+useString+webResult.toString();
+		
 //				System.out.println("disjoint");
 				
 				//list.add(xml);
@@ -347,6 +392,10 @@ public class HelpSeekingSearchView extends ViewPart {
 				sNode.setTitle(xml);
 				sNode.setLink(webResult.getUrl());
 				sResults.getSearchNode().add(sNode);
+				
+				searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
+				FileHelper.appendContentToFile("result.txt", searchResultOutput);
+				
 				
 			}
 
@@ -359,6 +408,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		Timestamp endtime=new Timestamp(System.currentTimeMillis());
 		
 		query.setCosttime(endtime.getTime()-starttime.getTime());
+		setCurrentSearchID(query.getSearchID());
 // 需要保存关键词和当前cache到数据库中：
 		DatabaseUtil.addKeyWordsToDataBase(query);
 		for (SearchNode snNode : sResults.getSearchNode()) {

@@ -123,20 +123,20 @@ public class LoopGoogleAPICall {
 				
 				
 				for (int m = 0; m < limit; m++) {
-					System.out.println("Result " + (++j) + " :");
-					System.out.println("Title: "
-							+ tempRresults.getResponseData().getResults().get(m)
-							.getTitle());
-					System.out.println("Title no formatting: " +tempRresults.getResponseData().getResults().get(m).getTitleNoFormatting());
-					System.out.println("URL: "
-							+ tempRresults.getResponseData().getResults().get(m)
-							.getUrl() + "\n");
+//					System.out.println("Result " + (++j) + " :");
+//					System.out.println("Title: "
+//							+ tempRresults.getResponseData().getResults().get(m)
+//							.getTitle());
+//					System.out.println("Title no formatting: " +tempRresults.getResponseData().getResults().get(m).getTitleNoFormatting());
+//					System.out.println("URL: "
+//							+ tempRresults.getResponseData().getResults().get(m)
+//							.getUrl() + "\n");
 					results.add(tempRresults.getResponseData().getResults().get(m));
 				}
 			}
 		}
 
-		System.out.println(results.size());
+//		System.out.println(results.size());
 		return results;
 	}
 

@@ -10,8 +10,8 @@ public class Query {
 	QueryLevel queryLevel=QueryLevel.Other;         
 	// 这组关键词的重要程度： “high” 表示当前动作触发的查询， “middle”表示上下文条件下触发的
 	
-	int inforID;
-	Timestamp time;
+	int inforID=0;
+	Timestamp time=null;
 	String candidateKeywords=null;  //候选中的前300个词
 	String useKeywords=null;
 
@@ -19,7 +19,7 @@ public class Query {
 //	P+inforID人工的查询 ; 
 //	A+qlist index+HIGH+inforID  A+qlist index+MIDDLE+inforID,...等  A+1+queryLevel+inforID
 //	表示自动化查询附有它们的在查询上的索引和等级'
-	String searchID;  
+	String searchID=null;  
 	long costtime;//消耗的时间 秒为单位
 	
 	boolean isbyuser=false;  //表示默认为自动检索
@@ -117,6 +117,17 @@ public class Query {
 		this.queryLevel = queryLevel;
 	}
 
+	public String toString() {
+		String result="";
+		if (getInforID()!=0 && getSearchID()!=null && !getQueryKeyWords().isEmpty() && getQueryLevel()!=null && !getCandidateKeywords().isEmpty()&& getTime()!=null){	
+		result="\n[\nQuery:"+"\nsearchID: \t["+getSearchID()+"]\n"+"\nquery level:\t"+getQueryLevel()+"\ninforID: \t"+getInforID();
+		result=result+"\nuse Keywords:\n"+getUseKeywords().toString()+"\ncandidate keywords:\n"+getCandidateKeywords().toString();
+		
+		result=result+"\nuser manual:\t"+isIsbyuser()+"\ntime:\t"+getTime()+"\n]\n";
+		}
+		
+		return result;
+	}
 	
 	
 }
