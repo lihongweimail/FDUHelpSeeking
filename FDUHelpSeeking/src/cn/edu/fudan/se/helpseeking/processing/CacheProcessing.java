@@ -142,6 +142,7 @@ public class CacheProcessing extends Thread  {
 						
 		}
 						v.setSearchValue(searhText);
+						
 						v.setCurrentActionID(currentCache.getCurrentID());
 						
 						int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。     

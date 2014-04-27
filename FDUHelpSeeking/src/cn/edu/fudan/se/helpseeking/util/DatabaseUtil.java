@@ -13,6 +13,9 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
@@ -36,6 +39,7 @@ import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 import cn.edu.fudan.se.helpseeking.bean.TaskDescription;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 
 public class DatabaseUtil {
 	//for oracle jdbc link
@@ -43,7 +47,7 @@ public class DatabaseUtil {
 	//	public static final String URL = "jdbc:oracle:thin:@localhost:1521:MONITOR";
 	//	public static final String USER = "MONITOR";
 	//	public static final String PWD = "123456";
-
+	
 	private static Connection con = null;
 	private static  Statement	stmt=null;
 	//	for mysql jdbc link
@@ -52,12 +56,12 @@ public class DatabaseUtil {
 	private static Information lastInformation=null;
 
 
-	public static  String PWD = "root";
+	public static  String PWD =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.PASSWORD_KEY);//"root";
 	private static ResultSet rs = null;
 	public static DataSource source = null;
-    public static  String URL = "jdbc:mysql://localhost:3306/";
+    public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
-	public static  String USER = "root";
+	public static  String USER =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.USERNAME_KEY);//"root";
 
 	
 		
@@ -1638,9 +1642,11 @@ static int dbError=0;
 			
 	}
 
+	
+	
 public static int init() {
 	
-   con=getCon();
+	   con=getCon();
    
 
 return dbError;
