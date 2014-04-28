@@ -141,7 +141,9 @@ public class CacheProcessing extends Thread  {
 						
 						
 		}
-						v.setSearchValue(searhText);
+					
+			//TODO  为编译无自动提示功能版本而注释掉自动赋值 代码
+			v.setSearchValue(searhText);
 						
 						v.setCurrentActionID(currentCache.getCurrentID());
 						
@@ -166,16 +168,14 @@ public class CacheProcessing extends Thread  {
 							notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 
 						}	
-						
+
+		//TODO  为编译无自动提示功能版本而注释 掉如下代码
 						if (mode==2)
 							QueryList.getInstance().startSearch();
 						
 		}
 						
-//							//测试querylist的观察事件
-//							QueryProcessing qp=new QueryProcessing(QueryList.getInstance());
-//							qp.dotest(searhText);
-//							
+
 		}
 
 

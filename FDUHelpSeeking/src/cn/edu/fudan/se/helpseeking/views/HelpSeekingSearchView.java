@@ -3,6 +3,8 @@ package cn.edu.fudan.se.helpseeking.views;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -41,6 +43,32 @@ import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
 
 public class HelpSeekingSearchView extends ViewPart {
+	
+//	private static class Singleton extends ViewPart{
+//		
+//		private static final HelpSeekingSearchView INSTANCE=new HelpSeekingSearchView();
+//
+//		@Override
+//		public void createPartControl(Composite arg0) {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//
+//		@Override
+//		public void setFocus() {
+//			// TODO Auto-generated method stub
+//			
+//		}
+//		
+//	}
+//	
+	
+//	public static final HelpSeekingSearchView getInstance()
+//	{
+//		return Singleton.INSTANCE;
+//	}
+//
+	
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
 
 	private Text txtSearch;
@@ -48,7 +76,10 @@ public class HelpSeekingSearchView extends ViewPart {
 	private static Tree tree;
 	private static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 
+	
+
 	public HelpSeekingSearchView() {
+		super();
 		part = FDUHelpSeekingPlugin
 				.getDefault()
 				.getWorkbench()
@@ -56,6 +87,8 @@ public class HelpSeekingSearchView extends ViewPart {
 				.getActivePage()
 				.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 	}
+	
+	
 	static IViewPart part;
 	
 	String username = System.getProperties().getProperty("user.name");
@@ -73,7 +106,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		SearchComposite.setLayout(new GridLayout(2, false));
 		
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
-		txtSearch.setText("hello world");
+		txtSearch.setText("");
 		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
 				1, 1);
 		gd_txtSearch.heightHint = 20;
@@ -197,7 +230,7 @@ public class HelpSeekingSearchView extends ViewPart {
 	public static void searchQueryList() {
 		tree.removeAll();
 
-		Timestamp starttime;
+		
 		
 		List<Query> querys = QueryList.getInstance().getQuerys();
 		int qindex=0;
@@ -247,6 +280,7 @@ public class HelpSeekingSearchView extends ViewPart {
 				for (WEBResult webResult : googlesearchList) {
 					String xml = webResult.getTitleNoFormatting();
 					xml = xml.replaceAll("&quot;", "\"");
+					xml.replaceAll("&#39", "\'");
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					
 					TreeItem item = new TreeItem(tree, SWT.NONE);
@@ -263,33 +297,43 @@ public class HelpSeekingSearchView extends ViewPart {
 					
 					//后续在这里适当过滤一下  如果有异常名字则显示出来   或者 是 
 //					List<String> tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-					content=content+search;
+					content=content+" "+search;
 					List<String> tempContent=CommUtil.arrayToList(content.split(Basic.SPLIT_STRING));
 					
 					String boldWords="";
+					javaExceptionalNameList.retainAll(tempContent);
+					for(Iterator it = javaExceptionalNameList.iterator();it.hasNext();){  
+			            if (boldWords.equals(""))
+			            boldWords=(String)it.next();
+			            else
+						boldWords=boldWords+";"+(String)it.next();
+			        }  
 					
-					for(String str: tempContent)
+//					for(String str: tempContent)
+//					
+//					{
+//					for (String jestr : javaExceptionalNameList)
+//					{
+//						if (str.equals(jestr))
+//						{
+//							if (boldWords.equals("")) {
+//								boldWords=jestr;
+//							}else {
+//								
+//							boldWords=boldWords+";"+jestr;
+//							}
+//							break;
+//						}
+//					}
+//					}
 					
-					{
-					for (String jestr : javaExceptionalNameList)
-					{
-						if (str.equals(jestr))
-						{
-							if (boldWords.equals("")) {
-								boldWords=jestr;
-							}else {
-								
-							boldWords=boldWords+";"+jestr;
-							}
-						}
-					}
-					}
-					
-					if (boldWords.equals("")) {
+					if (!boldWords.equals("")) {
+											
 					TreeItem subitem=new TreeItem(item, SWT.NONE);
 					subitem.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_RED));
 					subitem.setText(boldWords);
+					item.setExpanded(true);
 					}
 
 					
@@ -355,10 +399,10 @@ public class HelpSeekingSearchView extends ViewPart {
 		tResult5.setUrl("http://developer.android.com/reference/java/lang/Throwable.html");
 		webResults.add(tResult5);
 		
-		Timestamp starttime;
+		
 		String searchResultOutput="\n============\n";
 		SearchResults sResults=new SearchResults();
-		starttime=new Timestamp(System.currentTimeMillis());
+		
 		
 					for (WEBResult webResult : webResults) {
 					String xml = webResult.getTitleNoFormatting();
@@ -414,7 +458,7 @@ public class HelpSeekingSearchView extends ViewPart {
 				}
 
 			
-			Timestamp endtime=new Timestamp(System.currentTimeMillis());
+
 			
 			for (SearchNode snNode : sResults.getSearchNode()) {
 				DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);

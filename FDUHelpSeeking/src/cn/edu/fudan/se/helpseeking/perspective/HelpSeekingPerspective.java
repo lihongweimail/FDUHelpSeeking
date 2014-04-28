@@ -25,9 +25,11 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		bottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 //		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView");
 //		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView");
-		//bottom.addView(IPageLayout.);
 		
 		
+	
+		
+		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 		layout.addPerspectiveShortcut(ID);
 	
 		

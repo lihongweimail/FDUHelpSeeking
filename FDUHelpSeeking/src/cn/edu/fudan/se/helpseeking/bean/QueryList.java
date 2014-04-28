@@ -4,16 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PlatformUI;
+
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
+
+
+
 
 public class QueryList extends Observable {
 
 	private List<Query> querys;
-
-	
-	
-	
-	
+ 	
 	private QueryList() {
 		querys = new ArrayList<Query>();
 	}
@@ -54,8 +56,9 @@ public class QueryList extends Observable {
 		
 	}
 	
-	public void startSearch()
+	public void startSearch( )
 	{
+		
 		HelpSeekingSearchView.searchQueryList();
 	}
 
