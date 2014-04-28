@@ -92,6 +92,22 @@
    <extension
          point="org.eclipse.core.runtime.preferences">
          <initializer class="cn.edu.fudan.se.helpseeking.preferences.PreferenceInitializer"/>
+   </extension>
+   <extension
+         id="cn.edu.fudan.se.helpseeking.helpseekingsearchviewextensions"
+         name="cn.edu.fudan.se.helpseeking.helpseekingsearchviewextensions"
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="*">
+         <view
+               closeable="false"
+               id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
+               minimized="false"
+               relationship="stack"
+               standalone="true"
+               visible="true">
+         </view>
+      </perspectiveExtension>
    </extension> 
    
 </plugin>

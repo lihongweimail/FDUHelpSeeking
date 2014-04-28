@@ -21,9 +21,11 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Text;
@@ -81,18 +83,23 @@ public class HelpSeekingCommentsView extends ViewPart {
 		
 		Composite north=new Composite(parent, SWT.NONE);
 		north.setLayoutData(BorderLayout.NORTH);
-		north.setLayout(new GridLayout(3,false));
+		north.setLayout(new GridLayout(4,false));
 		
+		
+		label = new Label(north, SWT.NONE);
+		label.setText("Task ID: ");
+		
+		txtTaskID=new Text(north, SWT.NONE);
+		txtTaskID.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
+		txtTaskID.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
+		txtTaskID.setEditable(false);
 		
 		label = new Label(north, SWT.NONE);
 		label.setText("Task Name: ");
 		
-		txtTaskID=new Text(north, SWT.NONE);
-		txtTaskID.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 1, 1));
-		txtTaskID.setEditable(false);
-		
 		txtTaskName=new Text(north, SWT.WRAP | SWT.H_SCROLL | SWT.CANCEL);
 		txtTaskName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+		txtTaskName.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_CYAN));
 		txtTaskName.setEditable(false);
 		
 		

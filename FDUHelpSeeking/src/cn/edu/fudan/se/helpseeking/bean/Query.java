@@ -119,7 +119,7 @@ public class Query {
 
 	public String toString() {
 		String result="";
-		if (getInforID()!=0 && getSearchID()!=null && !getQueryKeyWords().isEmpty() && getQueryLevel()!=null && !getCandidateKeywords().isEmpty()&& getTime()!=null){	
+		if (getInforID()!=0 && getSearchID()!=null && getQueryKeyWords()!=null && getQueryLevel()!=null && !getCandidateKeywords().isEmpty()&& getTime()!=null){	
 		result="\n[\nQuery:"+"\nsearchID: \t["+getSearchID()+"]\n"+"\nquery level:\t"+getQueryLevel()+"\ninforID: \t"+getInforID();
 		result=result+"\nuse Keywords:\n"+getUseKeywords().toString()+"\ncandidate keywords:\n"+getCandidateKeywords().toString();
 		

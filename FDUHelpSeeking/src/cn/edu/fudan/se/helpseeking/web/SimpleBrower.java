@@ -338,5 +338,18 @@ public class SimpleBrower  implements ControlListener
 //		myComposite.redraw();
 ////		myComposite.pack();
 		
+	}
+	
+	public void setDisableButton(boolean state) {
+		 backButton.setVisible(state);//后退按钮  
+		 forwardButton.setVisible(state);;//前进按钮  
+		    stopButton.setVisible(state);;//停止按钮  
+		    locationText.setVisible(state);//显示url的文本框  
+		    goButton.setVisible(state);//转向按钮  
+		     
+		    homeButton.setVisible(state);//主页按钮  
+		     
+		    refreshButton.setVisible(state);//刷新按钮  
+		
 	}  
 }

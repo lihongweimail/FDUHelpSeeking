@@ -17,8 +17,8 @@ public class LoopGoogleAPICall {
 	public static void main(String[] args) throws IOException {
 
 		LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
-//		apiCall.searchWeb("ImageIO.read   getResource  java  lang IllegalArgumentException javax imageio ImageIO read Unknown Source");
-		apiCall.commSearch();
+		apiCall.searchWeb("ImageIO.read   getResource  java  lang IllegalArgumentException javax imageio ImageIO read Unknown Source");
+//		apiCall.commSearch();
 	}
 
 	public static void commSearch() throws MalformedURLException,
@@ -27,6 +27,7 @@ public class LoopGoogleAPICall {
 
 		// String address =
 		// "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=";
+		String query = "variable value used the of";
 
 		for (int i = 0; i < 9; i = i + 4) {
 
@@ -35,8 +36,7 @@ public class LoopGoogleAPICall {
 			// for setting query limit web pages language for English
 			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&lr=lang_en&start="
 					+ i + "&q=";
-			String query = "Java Mismatch Or Never Ending Program";
-			// "类型不匹配 程序不能结束 Java Mismatch Or Never Ending Program";
+						// "类型不匹配 程序不能结束 Java Mismatch Or Never Ending Program";
 			String charset = "UTF-8";
 
 			URL url = new URL(address + URLEncoder.encode(query, charset));
@@ -114,7 +114,7 @@ public class LoopGoogleAPICall {
 			
 			GoogleAPICallResults tempRresults = new Gson().fromJson(reader,
 					GoogleAPICallResults.class);
-			
+//			System.out.println(tempRresults.toString());
 			if (tempRresults.getResponseData() != null 
 					&& tempRresults.getResponseData().getResults().size()>0) {
 				// Show title and URL of each results
@@ -123,14 +123,14 @@ public class LoopGoogleAPICall {
 				
 				
 				for (int m = 0; m < limit; m++) {
-//					System.out.println("Result " + (++j) + " :");
-//					System.out.println("Title: "
-//							+ tempRresults.getResponseData().getResults().get(m)
-//							.getTitle());
-//					System.out.println("Title no formatting: " +tempRresults.getResponseData().getResults().get(m).getTitleNoFormatting());
-//					System.out.println("URL: "
-//							+ tempRresults.getResponseData().getResults().get(m)
-//							.getUrl() + "\n");
+					System.out.println("Result " + (++j) + " :");
+					System.out.println("Title: "
+							+ tempRresults.getResponseData().getResults().get(m)
+							.getTitle());
+					System.out.println("Title no formatting: " +tempRresults.getResponseData().getResults().get(m).getTitleNoFormatting());
+					System.out.println("URL: "
+							+ tempRresults.getResponseData().getResults().get(m)
+							.getUrl() + "\n");
 					results.add(tempRresults.getResponseData().getResults().get(m));
 				}
 			}

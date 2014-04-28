@@ -42,7 +42,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 		
 		  String newUrl="about:blank";
 		  
-		   myBrower = new SimpleBrower();  	
+		   myBrower = new SimpleBrower();
+//		  myBrower.setDisableButton(true);
           myBrower.setMyComposite(arg0);
 	        myBrower.createShow();  
 	        myBrower.setNewUrl( newUrl);
