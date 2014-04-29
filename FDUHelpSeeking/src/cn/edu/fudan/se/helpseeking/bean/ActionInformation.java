@@ -8,9 +8,14 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 public class ActionInformation {
 	
 	Kind actionKind;                //kind
-	String actionName = null;   //originId 的第一部分（有冒号时，前面部分）
+	String actionName = null;   //actionname (来源于 :originId 的第一部分（有冒号时，前面部分）)
     int count=0;
     float frequency=0;
+    
+    
+    
+    
+    
     List<Integer>actionIDList=new ArrayList<Integer>();
 //    几类信息的字符串 
 //    0 对应Debugcode

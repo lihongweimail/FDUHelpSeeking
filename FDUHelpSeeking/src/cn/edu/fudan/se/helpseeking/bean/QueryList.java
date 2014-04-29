@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Observable;
 
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
+import cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView;
 
 
 
@@ -56,11 +58,8 @@ public class QueryList extends Observable {
 		
 	}
 	
-	public void startSearch( )
-	{
-		
-		HelpSeekingSearchView.searchQueryList();
-	}
+	
+
 
 	public static QueryList getInstance() {
 		return Singleton.queryList;

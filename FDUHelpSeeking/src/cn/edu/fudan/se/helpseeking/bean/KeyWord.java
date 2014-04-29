@@ -8,6 +8,9 @@ public class KeyWord {
 	double weightOne=1.0;//基本权重
 	double  weightTwo=1.0;//附加权重
 	
+	
+	
+	
 	public String getTagName() {
 		return tagName;
 	}

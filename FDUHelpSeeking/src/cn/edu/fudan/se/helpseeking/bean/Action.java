@@ -21,6 +21,10 @@ public class Action {
 //	'Part Deactivated: Project Explorer'
 //	'Requesting Java AST from selection'
 	String description;  //  originId
+	
+	
+	
+	
 	boolean byuser = false;
 	
 	public String getUser() {

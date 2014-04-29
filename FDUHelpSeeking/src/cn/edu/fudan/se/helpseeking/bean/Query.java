@@ -37,6 +37,12 @@ public class Query {
 	}
 
 
+	
+	
+	/**
+	 * @param currentKeywordsList  所有可能的候选词
+	 * @param limit    指定生成多少个候选关键词
+	 */
 	public void makeCandidateKeywords(List<KeyWord> currentKeywordsList, int limit)
 	{
 		setCandidateKeywords(null);

@@ -1,5 +1,10 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import java.util.List;
+
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.util.Resource;
+
 public class Basic {
 
 	/**
@@ -592,12 +597,6 @@ public class Basic {
 	}
 
 	
-	//从候选检索词中取词数量
-	public final static int TEMP_K_KEYWORDS =5;
-	//爆出到数据库中最大的候选检索词保留数量
-	public final static int MAX_CANDIDATE_KEYWORDS=100;
-	
-	
 	
 	public enum QueryLevel {
 		High,
@@ -641,5 +640,23 @@ public class Basic {
 
 
 	public static final String SPLIT_STRING =  "[\\[\\]&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+	
+//	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+
+	//		另外，有必要建立一个异常列表文件，记录各种异常名称，如果以上信息中出现了该异常词汇，则该异常词汇权重为基本权重两倍(weightTwo)！
+	public static final  String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
+	public static final  Resource myResource=new Resource();
+	public static final String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
+
+	public static final List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
+	
+	//从候选检索词中取词数量
+	public final static int TEMP_K_KEYWORDS =5;
+	//爆出到数据库中最大的候选检索词保留数量
+	public final static int MAX_CANDIDATE_KEYWORDS=100;
+	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
+	  public final static int SLIDE_WINDOW_SIZE=300;
+	
+
 	
 }

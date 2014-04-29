@@ -16,6 +16,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -71,6 +72,7 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
 
+	private Label label;
 	private Text txtCandidateSearch;
 	private Text txtSearchBox;
 	//private static org.eclipse.swt.widgets.List list;
@@ -104,9 +106,10 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		Composite SearchComposite = new Composite(arg0, SWT.NONE);
 		SearchComposite.setLayoutData(BorderLayout.NORTH);
-		SearchComposite.setLayout(new GridLayout(2, false));
+		SearchComposite.setLayout(new GridLayout(3, false));
 		
-		
+		label = new Label(SearchComposite, SWT.NONE);
+		label.setText("SearchBox:");
 		txtSearchBox = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
 		txtSearchBox.setText("");
 		GridData agd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
@@ -148,6 +151,8 @@ public class HelpSeekingSearchView extends ViewPart {
 		btnSearchGoogle.setText("Search");
 
 		
+		label = new Label(SearchComposite, SWT.NONE);
+		label.setText("CandidateWords:");
 		txtCandidateSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
 		txtCandidateSearch.setText("");
 		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
@@ -167,7 +172,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 			}
 		});
-		btnSwitchWords.setText("Switch to search box");
+		btnSwitchWords.setText("Switch to SearchBox");
 
 	
 		
@@ -179,6 +184,10 @@ public class HelpSeekingSearchView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				
 				TreeItem item = (TreeItem) e.item;
+				
+				if (item.getData()==null) {
+					return;
+				}
 				
 				///////////////////////////////////////////////////////////////
 				
@@ -244,14 +253,17 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	
 	
-	 static String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
-	static  Resource myResource=new Resource();
-	 static String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
-
-	 static List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
-
+//	 static String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
+//	static  Resource myResource=new Resource();
+//	 static String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
+//
+//	 static List<String> Basic.javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
+//
 	
-	public static void searchQueryList() {
+	public  void searchQueryList() {
+		
+		System.out.println("say begin auto query web! starting ...");
+		
 		tree.removeAll();
 
 		
@@ -276,6 +288,7 @@ public class HelpSeekingSearchView extends ViewPart {
 			}else {
 				currentSearchID=currentSearchID+searchID;
 			}			
+			txtCandidateSearch.setText(search);
 			
 			dosearch(query, searchID, search);
 			}
@@ -345,6 +358,8 @@ public class HelpSeekingSearchView extends ViewPart {
 						if (!content.equals("")) {
     					TreeItem contentItem=new TreeItem(item, SWT.NULL);
 					    contentItem.setText(content);
+//					    contentItem.setData(webResult.getUrl());
+					    contentItem.setData(null);
 					    }
 					}
 					
@@ -358,7 +373,7 @@ public class HelpSeekingSearchView extends ViewPart {
 					List<String> tempContent=CommUtil.arrayToList(compareContent.split(Basic.SPLIT_STRING));
 					
 					 Set<String> boldWords=new HashSet<String>();;
-//					tempContent.retainAll(javaExceptionalNameList);
+//					tempContent.retainAll(Basic.javaExceptionalNameList);
 //					for(Iterator it = tempContent.iterator();it.hasNext();){  
 //			            if (boldWords.equals(""))
 //			            boldWords=(String)it.next();
@@ -366,18 +381,13 @@ public class HelpSeekingSearchView extends ViewPart {
 //						boldWords=boldWords+";"+(String)it.next();
 //			        }  
 		
-					if ((javaExceptionalNameList==null) || (javaExceptionalNameList.size()==0))
-						if (javaExceptionalName==null || javaExceptionalName.equals("")) {
-							javaExceptionalNameList=null;
-						}else
-					     javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
 
-					if (javaExceptionalNameList!=null)
+					if (Basic.javaExceptionalNameList!=null)
 					{	for(String str: tempContent)
 					
 					{
 						
-					for (String jestr : javaExceptionalNameList)
+					for (String jestr : Basic.javaExceptionalNameList)
 					{
 						if (str.equals(jestr))
 						{
@@ -500,7 +510,7 @@ public class HelpSeekingSearchView extends ViewPart {
 					for(String str: tempContent)
 					
 					{
-					for (String jestr : javaExceptionalNameList)
+					for (String jestr : Basic.javaExceptionalNameList)
 					{
 						if (str.equals(jestr))
 						{

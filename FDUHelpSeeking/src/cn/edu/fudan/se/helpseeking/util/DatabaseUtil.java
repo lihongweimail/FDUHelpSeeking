@@ -832,6 +832,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 	public static synchronized int addInformationToDatabase(Information information)  {
 		int resu = 0;
 
+
 		if (information.equals(lastInformation)) {
 			return 0;
 		}

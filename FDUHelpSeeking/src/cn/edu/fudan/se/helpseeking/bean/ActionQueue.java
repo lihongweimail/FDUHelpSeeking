@@ -7,8 +7,8 @@ public class ActionQueue {
 	int actionListSize=0; //整个队列大小
 	
 	List<ActionCache> actionList=new ArrayList<ActionCache>();
-	int currentWindowSize=10;//当前窗口的大小，windowRight-windowLeft<=actionSlideWindowLimitSize
-	private static int actionSlideWindowLimitSize=0;   //这个值今后要在配置中获取。
+	int currentWindowSize=Basic.SLIDE_WINDOW_SIZE;//当前窗口的大小，windowRight-windowLeft<=actionSlideWindowLimitSize
+	private static int actionSlideWindowLimitSize=0;   //这个值今后要在配置中获取。 暂时未使用！！！
 
 	int windowLeft=0;
 	int windowRight=0;
