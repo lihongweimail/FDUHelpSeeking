@@ -119,12 +119,48 @@ public class Query {
 
 	public String toString() {
 		String result="";
-		if (getInforID()!=0 && getSearchID()!=null && getQueryKeyWords()!=null && getQueryLevel()!=null && !getCandidateKeywords().isEmpty()&& getTime()!=null){	
-		result="\n[\nQuery:"+"\nsearchID: \t["+getSearchID()+"]\n"+"\nquery level:\t"+getQueryLevel()+"\ninforID: \t"+getInforID();
-		result=result+"\nuse Keywords:\n"+getUseKeywords().toString()+"\ncandidate keywords:\n"+getCandidateKeywords().toString();
 		
-		result=result+"\nuser manual:\t"+isIsbyuser()+"\ntime:\t"+getTime()+"\n]\n";
+		String searchID="";
+		String querykeywords="";
+		String candidatekeywords="";
+		String timeString="";
+		String infoIdString=String.valueOf(getInforID());
+		
+		
+		if (getSearchID()!=null)
+			{
+		     searchID=getSearchID();
+			}
+		
+		if (getQueryKeyWords()!=null) {
+			if(!getQueryKeyWords().isEmpty()) {
+				querykeywords=getQueryKeyWords().toString();
 		}
+	
+		}
+		
+		if (getSearchID()!=null)
+		{
+	     searchID=getSearchID();
+		}
+	
+	if (getCandidateKeywords()!=null) {
+		if(!getCandidateKeywords().isEmpty()) {
+			candidatekeywords=getQueryKeyWords().toString();
+	}
+
+	}
+		if( getTime()!=null)
+		{
+		timeString=getTime().toString();
+		}
+		
+
+		
+		result="\n[\nQuery:"+"\nsearchID: \t["+searchID+"]\n"+"\nquery level:\t"+getQueryLevel()+"\ninforID: \t"+infoIdString;
+		result=result+"\nuse Keywords:\n"+querykeywords+"\ncandidate keywords:\n"+candidatekeywords;
+		
+		result=result+"\nuser manual:\t"+isIsbyuser()+"\ntime:\t"+timeString+"\n]\n";
 		
 		return result;
 	}

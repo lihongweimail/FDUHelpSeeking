@@ -143,7 +143,7 @@ public class CacheProcessing extends Thread  {
 		}
 					
 			//TODO  为编译无自动提示功能版本而注释掉自动赋值 代码
-			v.setSearchValue(searhText);
+			v.setCandidateSearchWords(searhText);
 						
 						v.setCurrentActionID(currentCache.getCurrentID());
 						

@@ -12,17 +12,24 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		// TODO Auto-generated method stub
 		String editorArea = layout.getEditorArea();
 		layout.addView(IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.LEFT, 0.15f, editorArea);
+		IFolderLayout right=layout.createFolder("right", IPageLayout.RIGHT, 0.65f, editorArea);
 //		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView", IPageLayout.RIGHT, 0.7f, editorArea);
-		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView", IPageLayout.RIGHT, 0.7f, editorArea);
-		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView",  IPageLayout.BOTTOM, 0.6f, "cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
+//		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView", IPageLayout.RIGHT, 0.7f, editorArea);
+//		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView",  IPageLayout.BOTTOM, 0.7f, "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+		
+		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);
 		
 		
 //		bottom.addView(IPageLayout.ID_PROP_SHEET);
 //		bottom.addView(IPageLayout.ID_TASK_LIST);
-//		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		
+		
 		bottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+		
 //		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView");
 //		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView");
 		

@@ -10,6 +10,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.stream.events.StartDocument;
+
 import com.google.gson.Gson;
 
 public class LoopGoogleAPICall {
@@ -17,8 +19,10 @@ public class LoopGoogleAPICall {
 	public static void main(String[] args) throws IOException {
 
 		LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
-		apiCall.searchWeb("ImageIO.read   getResource  java  lang IllegalArgumentException javax imageio ImageIO read Unknown Source");
+		System.out.println("start search...");
+		apiCall.searchWeb("getResource IllegalArgumentException");
 //		apiCall.commSearch();
+		System.out.println("End search.");
 	}
 
 	public static void commSearch() throws MalformedURLException,

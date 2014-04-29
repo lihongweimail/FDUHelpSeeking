@@ -3,9 +3,9 @@ package cn.edu.fudan.se.helpseeking.views;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -71,7 +71,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
 
-	private Text txtSearch;
+	private Text txtCandidateSearch;
+	private Text txtSearchBox;
 	//private static org.eclipse.swt.widgets.List list;
 	private static Tree tree;
 	private static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
@@ -105,13 +106,14 @@ public class HelpSeekingSearchView extends ViewPart {
 		SearchComposite.setLayoutData(BorderLayout.NORTH);
 		SearchComposite.setLayout(new GridLayout(2, false));
 		
-		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
-		txtSearch.setText("");
-		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
+		
+		txtSearchBox = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
+		txtSearchBox.setText("");
+		GridData agd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
 				1, 1);
-		gd_txtSearch.heightHint = 20;
-		gd_txtSearch.widthHint = -1;
-		txtSearch.setLayoutData(gd_txtSearch);
+		agd_txtSearch.heightHint = 20;
+		agd_txtSearch.widthHint = -1;
+		txtSearchBox.setLayoutData(agd_txtSearch);
 
 		Button btnSearchGoogle = new Button(SearchComposite, SWT.NONE);
 		btnSearchGoogle.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
@@ -122,7 +124,7 @@ public class HelpSeekingSearchView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				//list.removeAll();
 				tree.removeAll();
-				String queryText = txtSearch.getText().trim();
+				String queryText = txtSearchBox.getText().trim();
 				Query query=new Query();
 				query.setInforID(getCurrentActionID());
 				Timestamp starttime=new Timestamp(System.currentTimeMillis());
@@ -145,9 +147,31 @@ public class HelpSeekingSearchView extends ViewPart {
 		});
 		btnSearchGoogle.setText("Search");
 
+		
+		txtCandidateSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
+		txtCandidateSearch.setText("");
+		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
+				1, 1);
+		gd_txtSearch.heightHint = 20;
+		gd_txtSearch.widthHint = -1;
+		txtCandidateSearch.setLayoutData(gd_txtSearch);
+
+		Button btnSwitchWords = new Button(SearchComposite, SWT.NONE);
+		btnSwitchWords.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
+		btnSwitchWords.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		btnSwitchWords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		btnSwitchWords.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+	         txtSearchBox.setText(txtCandidateSearch.getText());
+
+			}
+		});
+		btnSwitchWords.setText("Switch to search box");
+
 	
 		
-		tree = new Tree(arg0, SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
+		tree = new Tree(arg0, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
 		tree.setLayoutData(BorderLayout.CENTER);
 		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {			
@@ -214,8 +238,8 @@ public class HelpSeekingSearchView extends ViewPart {
 		currentSearchID = SearchID;
 	}
 
-	public void setSearchValue(String search) {
-		txtSearch.setText(search);
+	public void setCandidateSearchWords(String search) {
+		txtCandidateSearch.setText(search);
 	}
 	
 	
@@ -280,59 +304,104 @@ public class HelpSeekingSearchView extends ViewPart {
 				for (WEBResult webResult : googlesearchList) {
 					String xml = webResult.getTitleNoFormatting();
 					xml = xml.replaceAll("&quot;", "\"");
-					xml.replaceAll("&#39", "\'");
+					xml.replaceAll("&#39;", "\'");
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					
-					TreeItem item = new TreeItem(tree, SWT.NONE);
-
-					String content=xml+" "+webResult.getContent();
-				
+					TreeItem item = new TreeItem(tree, SWT.NULL);
 					item.setText(xml);
 					item.setData(webResult.getUrl());
+
+					String compareContent=xml+" "+webResult.getContent();
+				
 					
 					SearchNode sNode=new SearchNode();
 					sNode.setTitle(xml);
 					sNode.setLink(webResult.getUrl());
 					sResults.getSearchNode().add(sNode);
 					
+					//展示 URL
+					TreeItem urlItem=new TreeItem(item, SWT.NULL);
+//					urlItem.setForeground(Display.getDefault()
+//							.getSystemColor(SWT.COLOR_BLUE));
+					urlItem.setText(webResult.getUrl());
+					urlItem.setData(webResult.getUrl());
+					
+					//展示语言
+					if (webResult.getLanguage()!=null) {
+						TreeItem languageItem=new TreeItem(item, SWT.NULL);
+					languageItem.setText(webResult.getLanguage());
+
+					}
+					
+					//展示content  内容  还需要 优化处理  显示关键词 附近的词 构成的串 并突出显示
+					if (webResult.getContent()!=null) {
+						
+						String content=webResult.getContent();
+						
+						//处理content  保留部分文字
+						
+						
+						
+						if (!content.equals("")) {
+    					TreeItem contentItem=new TreeItem(item, SWT.NULL);
+					    contentItem.setText(content);
+					    }
+					}
+					
+					
+					//展开节点
+					item.setExpanded(true);
+					
 					//后续在这里适当过滤一下  如果有异常名字则显示出来   或者 是 
 //					List<String> tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-					content=content+" "+search;
-					List<String> tempContent=CommUtil.arrayToList(content.split(Basic.SPLIT_STRING));
+					compareContent=compareContent+" "+search;
+					List<String> tempContent=CommUtil.arrayToList(compareContent.split(Basic.SPLIT_STRING));
 					
-					String boldWords="";
-					javaExceptionalNameList.retainAll(tempContent);
-					for(Iterator it = javaExceptionalNameList.iterator();it.hasNext();){  
-			            if (boldWords.equals(""))
-			            boldWords=(String)it.next();
-			            else
-						boldWords=boldWords+";"+(String)it.next();
-			        }  
+					 Set<String> boldWords=new HashSet<String>();;
+//					tempContent.retainAll(javaExceptionalNameList);
+//					for(Iterator it = tempContent.iterator();it.hasNext();){  
+//			            if (boldWords.equals(""))
+//			            boldWords=(String)it.next();
+//			            else
+//						boldWords=boldWords+";"+(String)it.next();
+//			        }  
+		
+					if ((javaExceptionalNameList==null) || (javaExceptionalNameList.size()==0))
+						if (javaExceptionalName==null || javaExceptionalName.equals("")) {
+							javaExceptionalNameList=null;
+						}else
+					     javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
+
+					if (javaExceptionalNameList!=null)
+					{	for(String str: tempContent)
 					
-//					for(String str: tempContent)
-//					
-//					{
-//					for (String jestr : javaExceptionalNameList)
-//					{
-//						if (str.equals(jestr))
-//						{
-//							if (boldWords.equals("")) {
-//								boldWords=jestr;
-//							}else {
-//								
-//							boldWords=boldWords+";"+jestr;
-//							}
-//							break;
-//						}
-//					}
-//					}
+					{
+						
+					for (String jestr : javaExceptionalNameList)
+					{
+						if (str.equals(jestr))
+						{
+							boldWords.add(jestr);
+							break;
+						}
+					}
+					}
+					}
 					
-					if (!boldWords.equals("")) {
-											
-					TreeItem subitem=new TreeItem(item, SWT.NONE);
+					if (!boldWords.isEmpty()) {
+					String myExceptioinName="";
+					
+					for (String exceptionName : boldWords) {
+						if(myExceptioinName.equals(""))
+							myExceptioinName=exceptionName;
+						else 
+							myExceptioinName=myExceptioinName+" ; "+exceptionName;
+					}
+						
+					TreeItem subitem=new TreeItem(item, SWT.NULL);
 					subitem.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_RED));
-					subitem.setText(boldWords);
+					subitem.setText(myExceptioinName);
 					item.setExpanded(true);
 					}
 
@@ -370,8 +439,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	private void doTestTree()
 	{
 		//由于GOOGLE 封掉了IP  没法测试  使用这组测试数据
-		txtSearch.setText("printStackTrace java.lang.Throwable ClassCastException");
-		String search=txtSearch.getText();
+		txtSearchBox.setText("printStackTrace java.lang.Throwable ClassCastException");
+		String search=txtSearchBox.getText();
 		List<WEBResult> webResults=new ArrayList<>();
 		
 		WEBResult tResult1=new WEBResult();
