@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.omg.CORBA.PUBLIC_MEMBER;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic;
+
 public class CommUtil 
 {
 	private static final String SPLITE_STRING = "[; ]";
@@ -112,11 +114,15 @@ public static List<String> removeStopWordsAsList( String tokens) {
 
 public static  String  removeStopWordsAsString(String tokens) 
 {
-	String result=" ";
-	 List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
-	  String SPLIT_STRING = "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+	String result="";
+if (tokens==null ||tokens.equals("")) {
+	return null;
 	
-	  for (String token : tokens.split(SPLIT_STRING)) {
+}
+	List<String> keyWords=constructDefaultFilterString("StopResource","javaStopList.txt","userStopList.txt");
+	 
+	
+	  for (String token : tokens.split(Basic.SPLIT_STRING)) {
 	 
 	if(token.length() >= minLength && (int) token.charAt(0)< 255)
 	{	
@@ -131,7 +137,10 @@ public static  String  removeStopWordsAsString(String tokens)
 		}
 		
 		if (!flage) {
-				result=result.trim()+token+";";
+			if (result.equals("")) {
+				result=token;
+			}else
+				{result=result+";"+token;}
 		}
 		
 		}

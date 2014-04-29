@@ -650,13 +650,63 @@ public class Basic {
 
 	public static final List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
 	
+	
+	
+	
+	
 	//从候选检索词中取词数量
 	public final static int TEMP_K_KEYWORDS =5;
 	//爆出到数据库中最大的候选检索词保留数量
 	public final static int MAX_CANDIDATE_KEYWORDS=100;
 	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
-	  public final static int SLIDE_WINDOW_SIZE=300;
+	public final static int SLIDE_WINDOW_SIZE=20;
 	
+	//权重  距离   老化   频率
+	
+	public final static double DISTANCE_RATIO=0.01;
+	public final static double OLD_RATIO=0.1;
+	public final static double FREQUENCY_RATIO=0.01;
+	
+	
+	
+	
+	
+	public enum KeyWordsLevel {
+			Level_One,
+			Level_Two,
+			Level_Three,
+			Level_Four,
+			Level_Five,
+			Level_Six,
+			Level_Seven,
+			Other;
+  
+			public int getLevelNumber() {
+				switch (this) {
+				case Level_One:
+					return 1; //$NON-NLS-1$
+				case Level_Two:
+					return 2; //$NON-NLS-1$
+				case Level_Three:
+					return 3; //$NON-NLS-1$
+				case Level_Four:
+					return 4; //$NON-NLS-1$
+				case Level_Five:
+					return 5; //$NON-NLS-1$
+				case Level_Six:
+					return 6; //$NON-NLS-1$
+				case Level_Seven:
+					return 7; //$NON-NLS-1$
+				case Other:
+					return 0; //$NON-NLS-1$			
+				default:
+					return -1; //$NON-NLS-1$
+				}
+			}
+
+		}
+
+	  
 
 	
 }

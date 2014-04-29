@@ -7,6 +7,7 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 
 public class ActionInformation {
 	
+	int actionID=0;
 	Kind actionKind;                //kind
 	String actionName = null;   //actionname (来源于 :originId 的第一部分（有冒号时，前面部分）)
     int count=0;
@@ -43,6 +44,14 @@ public class ActionInformation {
     
     
     
+	public int getActionID() {
+	return actionID;
+}
+
+public void setActionID(int actionID) {
+	this.actionID = actionID;
+}
+
 	public String[] getInforString() {
 		return inforString;
 	}

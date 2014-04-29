@@ -35,6 +35,9 @@ public class ConsoleInformationList {
 		}
 	}
 	
+	
+
+	
 	public void clearConsoleInformation() {
 		exceptionList.clear();
 	}
