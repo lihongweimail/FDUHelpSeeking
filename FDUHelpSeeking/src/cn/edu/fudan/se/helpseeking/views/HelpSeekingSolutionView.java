@@ -2,8 +2,9 @@ package cn.edu.fudan.se.helpseeking.views;
 
 import java.io.IOException;
 import java.sql.Timestamp;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -17,6 +18,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -39,6 +41,8 @@ import cn.edu.fudan.se.helpseeking.util.Resource;
 import cn.edu.fudan.se.helpseeking.web.SimpleBrower;
 
 public class HelpSeekingSolutionView extends ViewPart {
+	public HelpSeekingSolutionView() {
+	}
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
 	public static SimpleBrower myBrower;
@@ -122,6 +126,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 			}
 		});
 		tree = new Tree(SearchComposite, SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL);
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {
 			@Override
@@ -139,6 +144,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 		item.setData("www.renren.com");*/
 
 		tabItem.setControl(SearchComposite);
+		new Label(SearchComposite, SWT.NONE);
 		tabFolder.setSelection(tabItem);
 	}
 
@@ -168,85 +174,149 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 
 	private static void dosearch(Query query, String searchID, String search) {
+
 		Timestamp starttime;
-		String searchResultOutput = "\n============\n";
-		SearchResults sResults = new SearchResults();
-		starttime = new Timestamp(System.currentTimeMillis());
-
+		String searchResultOutput="\n============\n";
+		SearchResults sResults=new SearchResults();
+		starttime=new Timestamp(System.currentTimeMillis());
+		
 		sResults.setSearchID(searchID);
-		query.setTime(starttime);
-		query.setIsbyuser(false);
-		query.setUseKeywords(search);
-		query.makeCandidateKeywords(Cache.getInstance()
-				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+			query.setTime(starttime);
+			query.setIsbyuser(false);
+			query.setUseKeywords(search);
+			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+		
 
-		LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
-		try {
-			List<WEBResult> googlesearchList = apiCall.searchWeb(search);
-			for (WEBResult webResult : googlesearchList) {
-				String xml = webResult.getTitleNoFormatting();
-				xml = xml.replaceAll("&quot;", "\"");
-				xml.replaceAll("&#39", "\'");
-				searchResultOutput = searchResultOutput + "\n"
-						+ webResult.toString();
+			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
+			try {
+				List<WEBResult> googlesearchList = apiCall.searchWeb(search);
+				for (WEBResult webResult : googlesearchList) {
+					String xml = webResult.getTitleNoFormatting();
+					xml = xml.replaceAll("&quot;", "\"");
+					xml.replaceAll("&#39;", "\'");
+					xml.replaceAll("<b>", " ");
+					xml.replaceAll("</"," ");
+					xml.replaceAll("b>","");
+					
+					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
+					
+					TreeItem item = new TreeItem(tree, SWT.NONE);
+					
+					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
+					item.setData(webResult.getUrl());
 
-				TreeItem item = new TreeItem(tree, SWT.NONE);
+					String compareContent=xml+" "+webResult.getContent();
+				
+					
+					SearchNode sNode=new SearchNode();
+					sNode.setTitle(xml);
+					sNode.setLink(webResult.getUrl());
+					sResults.getSearchNode().add(sNode);
+					
+					//展示 URL
+					TreeItem urlItem=new TreeItem(item, SWT.NULL);
+//					urlItem.setForeground(Display.getDefault()
+//							.getSystemColor(SWT.COLOR_BLUE));
+					urlItem.setText(webResult.getUrl());
+					urlItem.setData(webResult.getUrl());
+					
+					//展示语言
+					if (webResult.getLanguage()!=null) {
+						TreeItem languageItem=new TreeItem(item, SWT.NULL);
+					languageItem.setText(webResult.getLanguage());
 
-				String content = xml + " " + webResult.getContent();
-
-				item.setText(xml);
-				item.setData(webResult.getUrl());
-
-				SearchNode sNode = new SearchNode();
-				sNode.setTitle(xml);
-				sNode.setLink(webResult.getUrl());
-				sResults.getSearchNode().add(sNode);
-
-				// 后续在这里适当过滤一下 如果有异常名字则显示出来 或者 是
-				// List<String>
-				// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-				content = content + " " + search;
-				List<String> tempContent = CommUtil.arrayToList(content
-						.split(Basic.SPLIT_STRING));
-
-				String boldWords = "";
-				javaExceptionalNameList.retainAll(tempContent);
-				for (Iterator<String> it = javaExceptionalNameList.iterator(); it
-						.hasNext();) {
-					if (boldWords.equals(""))
-						boldWords = (String) it.next();
-					else
-						boldWords = boldWords + ";" + (String) it.next();
-				}
-
-				if (!boldWords.equals("")) {
-
-					TreeItem subitem = new TreeItem(item, SWT.NONE);
-					subitem.setForeground(Display.getDefault().getSystemColor(
-							SWT.COLOR_RED));
-					subitem.setText(boldWords);
+					}
+					
+					//展示content  内容  还需要 优化处理  显示关键词 附近的词 构成的串 并突出显示
+					if (webResult.getContent()!=null) {
+						
+						String content=webResult.getContent();
+						
+						//处理content  保留部分文字
+						
+						
+						
+						if (!content.equals("")) {
+    					TreeItem contentItem=new TreeItem(item, SWT.NULL);
+					    contentItem.setText(content.length()>50?content.substring(0,47)+"...":content);
+//					    contentItem.setData(webResult.getUrl());
+					    contentItem.setData(null);
+					    }
+					}
+					
+					
+					//展开节点
 					item.setExpanded(true);
+					
+					//后续在这里适当过滤一下  如果有异常名字则显示出来   或者 是 
+//					List<String> tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
+					compareContent=compareContent+" "+search;
+					List<String> tempContent=CommUtil.arrayToList(compareContent.split(Basic.SPLIT_STRING));
+					
+					 Set<String> boldWords=new HashSet<String>();;
+//					tempContent.retainAll(Basic.javaExceptionalNameList);
+//					for(Iterator it = tempContent.iterator();it.hasNext();){  
+//			            if (boldWords.equals(""))
+//			            boldWords=(String)it.next();
+//			            else
+//						boldWords=boldWords+";"+(String)it.next();
+//			        }  
+		
+
+					if (Basic.javaExceptionalNameList!=null)
+					{	for(String str: tempContent)
+					
+					{
+						
+					for (String jestr : Basic.javaExceptionalNameList)
+					{
+						if (str.equals(jestr))
+						{
+							boldWords.add(jestr);
+							break;
+						}
+					}
+					}
+					}
+					
+					if (!boldWords.isEmpty()) {
+					String myExceptioinName="";
+					
+					for (String exceptionName : boldWords) {
+						if(myExceptioinName.equals(""))
+							myExceptioinName=exceptionName;
+						else 
+							myExceptioinName=myExceptioinName+" ; "+exceptionName;
+					}
+						
+					TreeItem subitem=new TreeItem(item, SWT.NULL);
+					subitem.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_RED));
+					subitem.setText(myExceptioinName);
+					item.setExpanded(true);
+					}
+
+					
 				}
 
+					
+			} catch (IOException e1) {
+				e1.printStackTrace();
 			}
-
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-
-		Timestamp endtime = new Timestamp(System.currentTimeMillis());
-
-		query.setCosttime(endtime.getTime() - starttime.getTime());
-
+			
+			Timestamp endtime=new Timestamp(System.currentTimeMillis());
+			
+			query.setCosttime(endtime.getTime()-starttime.getTime());
+		
 		// 需要保存关键词和当前cache到数据库中：
-		DatabaseUtil.addKeyWordsToDataBase(query);
-		for (SearchNode snNode : sResults.getSearchNode()) {
-			DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(),
-					snNode);
-		}
-		searchResultOutput = query.toString() + searchResultOutput
-				+ "\n============\n";
-		FileHelper.appendContentToFile("result.txt", searchResultOutput);
+			DatabaseUtil.addKeyWordsToDataBase(query);
+			for (SearchNode snNode : sResults.getSearchNode()) {
+				DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
+			}
+				searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
+				FileHelper.appendContentToFile("result.txt", searchResultOutput);
+
+		
 	}
 
 }
