@@ -125,6 +125,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				
 				//list.removeAll();
 				tree.removeAll();
 				String queryText = txtSearchBox.getText().trim();
