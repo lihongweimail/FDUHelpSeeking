@@ -5,12 +5,19 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
+import javax.swing.text.html.HTMLDocument.HTMLReader.HiddenAction;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FormAttachment;
+import org.eclipse.swt.layout.FormData;
+import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -72,11 +79,12 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
 
-	private Label label;
-	private Text txtCandidateSearch;
-	private Text txtSearchBox;
+//	private Label label;
+//	private Text txtCandidateSearch;
+//	private Text txtSearchBox;
 	//private static org.eclipse.swt.widgets.List list;
 	private static Tree tree;
+	private static Tree searchTree;
 	private static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 
 	
@@ -98,87 +106,178 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	private int currentActionID;
 	private static String  currentSearchID="";
+	Composite SearchComposite;
+	Composite tagComposite ;
 
 	@Override
 	public void createPartControl(Composite arg0) {
 		BorderLayout myboBorderLayout=new BorderLayout();
 		arg0.setLayout(myboBorderLayout);
 
-		Composite SearchComposite = new Composite(arg0, SWT.NONE);
-		SearchComposite.setLayoutData(BorderLayout.NORTH);
-		SearchComposite.setLayout(new GridLayout(3, false));
+		 SearchComposite = new Composite(arg0, SWT.NONE);
+		SearchComposite.setLayoutData(BorderLayout.CENTER);
+		SearchComposite.setLayout(new GridLayout(4, false));
 		
-		label = new Label(SearchComposite, SWT.NONE);
-		label.setText("SearchBox:");
-		txtSearchBox = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
-		txtSearchBox.setText("");
-		GridData agd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1);
-		agd_txtSearch.heightHint = 20;
-		agd_txtSearch.widthHint = -1;
-		txtSearchBox.setLayoutData(agd_txtSearch);
+//		label = new Label(SearchComposite, SWT.NONE);
+//		label.setText("SearchBox:");
+//		txtSearchBox = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
+//		txtSearchBox.setText("");
+//		GridData agd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
+//				1, 1);
+//		agd_txtSearch.heightHint = 20;
+//		agd_txtSearch.widthHint = -1;
+//		txtSearchBox.setLayoutData(agd_txtSearch);
+//
+//		Button btnSearchGoogle = new Button(SearchComposite, SWT.NONE);
+//		btnSearchGoogle.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
+//		btnSearchGoogle.setForeground(SWTResourceManager.getColor(0, 0, 0));
+//		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+//		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//				
+//				//list.removeAll();
+//				tree.removeAll();
+//				String queryText = txtSearchBox.getText().trim();
+//				Query query=new Query();
+//				query.setInforID(getCurrentActionID());
+//				Timestamp starttime=new Timestamp(System.currentTimeMillis());
+//				query.setTime(starttime);
+//				query.setIsbyuser(true);
+//				query.setQueryLevel(QueryLevel.Middle);
+//				query.setUseKeywords(queryText);
+//				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+//				String searchID="P"+query.getInforID();
+//				query.setSearchID(searchID);
+//				
+//				
+//				
+//				//为测试注释，正式使用请注释 doTestTree()  !!!!!!!!!!!!
+//				dosearch(query, searchID, queryText);
+////				doTestTree();
+//	
+//
+//			}
+//		});
+//		btnSearchGoogle.setText("Search");
+//
+//		
+//		label = new Label(SearchComposite, SWT.NONE);
+//		label.setText("CandidateWords:");
+//		txtCandidateSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
+//		txtCandidateSearch.setText("");
+//		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
+//				1, 1);
+//		gd_txtSearch.heightHint = 20;
+//		gd_txtSearch.widthHint = -1;
+//		txtCandidateSearch.setLayoutData(gd_txtSearch);
+//
+//		Button btnSwitchWords = new Button(SearchComposite, SWT.NONE);
+//		btnSwitchWords.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
+//		btnSwitchWords.setForeground(SWTResourceManager.getColor(0, 0, 0));
+//		btnSwitchWords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+//		btnSwitchWords.addSelectionListener(new SelectionAdapter() {
+//			@Override
+//			public void widgetSelected(SelectionEvent e) {
+//	         txtSearchBox.setText(txtCandidateSearch.getText());
+//
+//			}
+//		});
+//		btnSwitchWords.setText("Switch to SearchBox");
 
-		Button btnSearchGoogle = new Button(SearchComposite, SWT.NONE);
-		btnSearchGoogle.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
-		btnSearchGoogle.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
+		searchTree=  new Tree(SearchComposite, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
+		GridData gd_searchTree = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
+		gd_searchTree.widthHint = 165;
+		searchTree.setLayoutData(gd_searchTree);
+		searchTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		searchTree.addSelectionListener(new SelectionListener() {
+			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				TreeItem item = (TreeItem) e.item;
+			
+				///////////////////////////////////////////////////////////////
 				
-				//list.removeAll();
-				tree.removeAll();
-				String queryText = txtSearchBox.getText().trim();
-				Query query=new Query();
-				query.setInforID(getCurrentActionID());
-				Timestamp starttime=new Timestamp(System.currentTimeMillis());
-				query.setTime(starttime);
-				query.setIsbyuser(true);
-				query.setQueryLevel(QueryLevel.Middle);
-				query.setUseKeywords(queryText);
-				query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
-				String searchID="P"+query.getInforID();
-				query.setSearchID(searchID);
+				if (PlatformUI.getWorkbench() == null)
+				{   return;}
+				if(PlatformUI.getWorkbench().getActiveWorkbenchWindow()== null)
+				{ return; }
+				if(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()== null	) 
+				{
+					return;		
+				}
 				
-				
-				
-				//为测试注释，正式使用请注释 doTestTree()  !!!!!!!!!!!!
-				dosearch(query, searchID, queryText);
-//				doTestTree();
-	
+			
+				IWorkbenchPage page = PlatformUI.getWorkbench()
+				          .getActiveWorkbenchWindow().getActivePage();
+				try {
+					part=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+					
+				} catch (Exception ple) {
+					ple.printStackTrace();
+					return;
+				}
 
+				
+				if ((part instanceof HelpSeekingSolutionView) )
+				{
+					
+					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
+				   
+					
+					String temp = v.getTxtSearch().getText();
+					
+						String temp2="";
+						boolean flag=true;
+						for (String str : temp.split("[ ]")) 
+						{
+							if (!str.equals(item.getText())) 
+							{
+								if (temp2.equals("")) 
+								{
+									temp2=str;
+								}
+								else
+								{
+									temp2=temp2+" "+str;
+								}
+							}else {
+								flag=false;
+							}
+							
+						
+							
+						}
+						
+						if (flag) {
+							if (temp2.equals("")) 
+							{
+								temp2=item.getText();
+							}
+							else
+							{
+								temp2=temp2+" "+item.getText();
+							}
+						}
+				
+					v.getTxtSearch().setText(temp2);
+					
+				}
+				
 			}
-		});
-		btnSearchGoogle.setText("Search");
-
-		
-		label = new Label(SearchComposite, SWT.NONE);
-		label.setText("CandidateWords:");
-		txtCandidateSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP | SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL | SWT.MULTI);
-		txtCandidateSearch.setText("");
-		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.CENTER, true, false,
-				1, 1);
-		gd_txtSearch.heightHint = 20;
-		gd_txtSearch.widthHint = -1;
-		txtCandidateSearch.setLayoutData(gd_txtSearch);
-
-		Button btnSwitchWords = new Button(SearchComposite, SWT.NONE);
-		btnSwitchWords.setFont(SWTResourceManager.getFont("Microsoft YaHei UI", 10, SWT.BOLD));
-		btnSwitchWords.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		btnSwitchWords.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnSwitchWords.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-	         txtSearchBox.setText(txtCandidateSearch.getText());
-
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
 			}
 		});
-		btnSwitchWords.setText("Switch to SearchBox");
-
-	
 		
-		tree = new Tree(arg0, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
-		tree.setLayoutData(BorderLayout.CENTER);
+		
+		tree = new Tree(SearchComposite, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
+		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
+		gd_tree.widthHint = 346;
+		tree.setLayoutData(gd_tree);
 		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {			
 			@Override
@@ -216,8 +315,8 @@ public class HelpSeekingSearchView extends ViewPart {
 				if ((part instanceof HelpSeekingSolutionView) && item.getData() != null)
 				{
 					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
-				v.getMyBrower().setDisableButton(false);
-				v.getMyBrower().setNewUrl((String) item.getData());
+			
+				HelpSeekingSolutionView.openNewTabByURL(item.getText(), (String)item.getData());
 				
 				String content ="\n---------\n[user:]\t\t\t\t"+username+ "\n[at time:]\t\t\t" +(new Timestamp(System.currentTimeMillis())).toString()
 						              +"\n[Current searchID:]\t"+getCurrentSearchID() +"\n[Selected Item:]\n"+item.getText()+"\n"+(String)item.getData()+"\n---------\n";
@@ -248,8 +347,62 @@ public class HelpSeekingSearchView extends ViewPart {
 		currentSearchID = SearchID;
 	}
 
+
+
+	
 	public void setCandidateSearchWords(String search) {
-		txtCandidateSearch.setText(search);
+
+		//TODO 分割字符串
+		if (search==null || search.trim().equals("")) {
+			return;
+		}
+		
+
+		List<String> prepare=CommUtil.stringToList(search,"[ ]",3);
+		if (prepare==null || prepare.size()<=0) {
+			return;
+		}
+		
+		searchTree.removeAll();
+		for (String str : prepare) {
+			
+		
+		
+		TreeItem item = new TreeItem(searchTree, SWT.CHECK);
+		String temp="";
+		if(str.length()>20)
+		{
+			String[] atempList=str.split("[;:]");
+			int len=0;
+			for (int i = 0; i < atempList.length; i++)
+			{
+				len=len+atempList[i].length();
+				if (temp.equals("")) 
+				{
+					temp=atempList[i];
+				}
+				else
+				{
+					temp=temp+" "+atempList[i];
+				if (len>20) 
+				{
+					break;
+				}
+				}
+				
+			}
+			
+		}else {
+			temp=str;
+		}
+			
+		item.setText(temp);
+		item.setData(str);
+        item.setChecked(false);
+        }
+		
+		
+		
 	}
 	
 	
@@ -289,7 +442,11 @@ public class HelpSeekingSearchView extends ViewPart {
 			}else {
 				currentSearchID=currentSearchID+searchID;
 			}			
-			txtCandidateSearch.setText(search);
+			
+			if (search==null|| search.equals("")) {
+				continue;
+			}
+//			txtCandidateSearch.setText(search);
 			
 			dosearch(query, searchID, search);
 			}
@@ -319,10 +476,15 @@ public class HelpSeekingSearchView extends ViewPart {
 					String xml = webResult.getTitleNoFormatting();
 					xml = xml.replaceAll("&quot;", "\"");
 					xml.replaceAll("&#39;", "\'");
+					xml.replaceAll("<b>", " ");
+					xml.replaceAll("</"," ");
+					xml.replaceAll("b>","");
+					
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					
 					TreeItem item = new TreeItem(tree, SWT.NULL);
-					item.setText(xml);
+					
+					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
 					item.setData(webResult.getUrl());
 
 					String compareContent=xml+" "+webResult.getContent();
@@ -358,7 +520,7 @@ public class HelpSeekingSearchView extends ViewPart {
 						
 						if (!content.equals("")) {
     					TreeItem contentItem=new TreeItem(item, SWT.NULL);
-					    contentItem.setText(content);
+					    contentItem.setText(content.length()>50?content.substring(0,47)+"...":content);
 //					    contentItem.setData(webResult.getUrl());
 					    contentItem.setData(null);
 					    }
@@ -450,8 +612,8 @@ public class HelpSeekingSearchView extends ViewPart {
 	private void doTestTree()
 	{
 		//由于GOOGLE 封掉了IP  没法测试  使用这组测试数据
-		txtSearchBox.setText("printStackTrace java.lang.Throwable ClassCastException");
-		String search=txtSearchBox.getText();
+//		txtSearchBox.setText("printStackTrace java.lang.Throwable ClassCastException");
+//		String search=txtSearchBox.getText();
 		List<WEBResult> webResults=new ArrayList<>();
 		
 		WEBResult tResult1=new WEBResult();
@@ -503,7 +665,7 @@ public class HelpSeekingSearchView extends ViewPart {
 					
 					//后续在这里适当过滤一下  如果有异常名字则显示出来   或者 是 
 //					List<String> tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-					content=content+search;
+//					content=content+search;
 					List<String> tempContent=CommUtil.arrayToList(content.split(Basic.SPLIT_STRING));
 					
 					String boldWords="";

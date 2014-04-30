@@ -152,7 +152,7 @@ public class Query {
 	
 	if (getCandidateKeywords()!=null) {
 		if(!getCandidateKeywords().isEmpty()) {
-			candidatekeywords=getQueryKeyWords().toString();
+			candidatekeywords=getCandidateKeywords().toString();
 	}
 
 	}

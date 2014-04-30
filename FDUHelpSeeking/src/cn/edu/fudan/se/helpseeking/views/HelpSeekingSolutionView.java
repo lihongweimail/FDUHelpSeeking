@@ -53,6 +53,16 @@ public class HelpSeekingSolutionView extends ViewPart {
 	private static Tree tree;
 	private Text txtSearch;
 
+	
+	
+	public Text getTxtSearch() {
+		return txtSearch;
+	}
+
+	public void setTxtSearch(Text txtSearch) {
+		this.txtSearch = txtSearch;
+	}
+
 	public SimpleBrower getMyBrower() {
 		return myBrower;
 	}

@@ -1,22 +1,12 @@
 package cn.edu.fudan.se.helpseeking.util;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.security.CodeSource;
-import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
-
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 
@@ -266,6 +256,17 @@ if (tokens==null ||tokens.equals("")) {
 		return result;
 	}
 	
+	public static List<String> stringToList(String strContent, String mySpliteString)
+	{
+		List<String> result = new ArrayList<String>();
+		for(String str : strContent.split(mySpliteString))
+		{
+			if(str.trim().length()>0)
+				result.add(str);			
+		}
+		return result;
+	}
+	
 	public static String getDateTime()
 	{
 		String result;
@@ -327,12 +328,12 @@ if (tokens==null ||tokens.equals("")) {
 
 
 	public static List<String> stringToList(String tempString,
-			String splitString) 
+			String splitString, int miniLength) 
 	{		
 		List<String> result = new ArrayList<String>();
 		for(String str : tempString.split(splitString))
 		{
-			if(str.trim().length()>0)
+			if(str.trim().length()>miniLength)
 				result.add(str);			
 		}
 		return result;

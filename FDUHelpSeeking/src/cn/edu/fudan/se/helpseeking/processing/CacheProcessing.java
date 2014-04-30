@@ -1128,7 +1128,7 @@ public class CacheProcessing extends Thread  {
 
 		if(part instanceof HelpSeekingSearchView){
 			HelpSeekingSearchView v = (HelpSeekingSearchView)part;
-			String searhText="";
+			String searchText="";
 			List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
 			int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
 			for (int i = 0; i <candidateKeywordNum; i++) {
@@ -1144,18 +1144,19 @@ public class CacheProcessing extends Thread  {
 				keyWordsforQuery.add(kw);
 
 				if (i==0) {
-					searhText=kw.getKeywordName();
+					searchText=kw.getKeywordName();
 				}
 				else
 				{
-					searhText=searhText+" "+kw.getKeywordName();
+					searchText=searchText+" "+kw.getKeywordName();
 				}
 
 
 			}
 
 			//TODO  为编译无自动提示功能版本而注释掉自动赋值 代码
-			v.setCandidateSearchWords(searhText);
+			v.setCandidateSearchWords(searchText);
+			System.out.println(searchText);
 
 			v.setCurrentActionID(currentCache.getCurrentID());
 
