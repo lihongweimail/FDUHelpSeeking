@@ -6,20 +6,17 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -51,7 +48,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 	private static String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
 	private static List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
 
-	private static TabFolder tabFolder;
+	private static CTabFolder tabFolder;
+	private static CTabItem tabItem;
 	private static Tree tree;
 	private Text txtSearch;
 
@@ -71,8 +69,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 	public void createPartControl(Composite arg0) {
 		arg0.setLayout(new FillLayout());
 
-		tabFolder = new TabFolder(arg0, SWT.NONE);
-		final TabItem tabItem = new TabItem(tabFolder, SWT.NONE);
+		tabFolder = new CTabFolder(arg0, SWT.NONE);		
+		tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Search Page");
 
 		Composite SearchComposite = new Composite(tabFolder, SWT.NONE);
@@ -127,28 +125,11 @@ public class HelpSeekingSolutionView extends ViewPart {
 			}
 		});
 		TreeItem item = new TreeItem(tree, SWT.NONE);
-		item.setText("百度");
-		item.setData("www.baidu.com");
+		item.setText("人人");
+		item.setData("www.renren.com");
 
 		tabItem.setControl(SearchComposite);
-		
-		tabFolder.addMouseListener(new MouseListener() {			
-			@Override
-			public void mouseUp(MouseEvent e) {
-				if(e.button == 3){					
-					TabItem item = tabFolder.getItem(new Point(e.x, e.y));
-					if(item != tabItem){
-						item.dispose();
-					}
-				}
-			}			
-			@Override
-			public void mouseDown(MouseEvent e) {
-			}			
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-			}
-		});
+		tabFolder.setSelection(tabItem);
 	}
 
 	@Override
@@ -158,7 +139,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 	
 	public static void openNewTabByURL(String title, String url) {
-		final TabItem tab = new TabItem(tabFolder, SWT.NONE);
+		final CTabItem tab = new CTabItem(tabFolder, SWT.CLOSE);
 		tab.setText(title);
 
 		Composite tabComposite = new Composite(tabFolder, SWT.NONE);
@@ -167,9 +148,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 		SimpleBrower myBrower = new SimpleBrower();
 		myBrower.setMyComposite(tabComposite);
 		myBrower.createShow();
+		myBrower.refreshBrowser();
 		myBrower.setDisableButton(true);
 		myBrower.setNewUrl(url);
-		myBrower.refreshBrowser();
 
 		tab.setControl(tabComposite);
 		
@@ -220,7 +201,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 
 				String boldWords = "";
 				javaExceptionalNameList.retainAll(tempContent);
-				for (Iterator it = javaExceptionalNameList.iterator(); it
+				for (Iterator<String> it = javaExceptionalNameList.iterator(); it
 						.hasNext();) {
 					if (boldWords.equals(""))
 						boldWords = (String) it.next();

@@ -1,9 +1,6 @@
 package cn.edu.fudan.se.helpseeking.web;
 
 //import java.awt.Composite;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.ControlEvent;
@@ -14,6 +11,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Text;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 public class SimpleBrower implements ControlListener {
 
@@ -117,21 +118,23 @@ public class SimpleBrower implements ControlListener {
 				forwardButton.setEnabled(browser.isForwardEnabled());
 				progressBar.setSelection(0);
 				
-				/*if(!resized){
+				if(!resized){
 					resized = true;
 					String text = browser.getText();
 					String resize = "<script type=\"text/javascript\">"
-							+ "document.body.style.zoom=\"50%\""
+							+ "document.body.style.zoom=\"70%\""
 							+ "</script>";
 					
-					Pattern p = Pattern.compile("<body[/s/S]*>");
-					Matcher m = p.matcher(text);
-					System.out.println(text.substring(m.regionStart(), 
-							m.regionEnd()));
+					Document doc = Jsoup.parse(text); 
+					//System.out.println(doc.html());
+					Elements children = doc.select("html > *");
+					for(Element child : children){
+						child.prepend(resize);
+					}
+					//System.out.println(doc.html());
 					
-					browser.setText(text);
-					
-				}*/
+					browser.setText(doc.html());				
+				}
 			}
 		});
 		// 注册浏览器状态改变事件
@@ -141,10 +144,11 @@ public class SimpleBrower implements ControlListener {
 			}
 		});
 		// 初始状态打开主页的url
-		browser.setUrl(HOME_URL);
+		// browser.setUrl(HOME_URL);
 	}
 
 	public void setNewUrl(String Url) {
+		resetResized();
 		browser.setUrl(Url);
 		//System.out.println(browser.getText());
 	}
@@ -383,9 +387,9 @@ public class SimpleBrower implements ControlListener {
 	public void setDisableButton(boolean state) {
 		backButton.setVisible(state);// 后退按钮
 		forwardButton.setVisible(state);
-		;// 前进按钮
+		// 前进按钮
 		stopButton.setVisible(state);
-		;// 停止按钮
+		// 停止按钮
 		locationText.setVisible(state);// 显示url的文本框
 		goButton.setVisible(state);// 转向按钮
 
