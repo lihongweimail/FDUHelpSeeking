@@ -124,9 +124,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		TreeItem item = new TreeItem(tree, SWT.NONE);
+		/*TreeItem item = new TreeItem(tree, SWT.NONE);
 		item.setText("人人");
-		item.setData("www.renren.com");
+		item.setData("www.renren.com");*/
 
 		tabItem.setControl(SearchComposite);
 		tabFolder.setSelection(tabItem);
