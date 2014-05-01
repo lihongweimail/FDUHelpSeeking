@@ -83,13 +83,23 @@ public class HelpSeekingSolutionView extends ViewPart {
 	public void createPartControl(Composite arg0) {
 		arg0.setLayout(new FillLayout());
 
+		
 		tabFolder = new CTabFolder(arg0, SWT.NONE);		
 		tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Search Page");
+		
 
+	
 		Composite SearchComposite = new Composite(tabFolder, SWT.NONE);
+		tabItem.setControl(SearchComposite);
+//		new Label(SearchComposite, SWT.NONE);
+//		new Label(SearchComposite, SWT.NONE);
+		tabFolder.setSelection(tabItem);
+		
 		SearchComposite.setLayoutData(BorderLayout.NORTH);
 		SearchComposite.setLayout(new GridLayout(2, false));
+		
+		
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
 				| SWT.MULTI);
@@ -125,7 +135,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 				dosearch(query, searchID, queryText);
 			}
 		});
-		tree = new Tree(SearchComposite, SWT.FILL | SWT.H_SCROLL | SWT.V_SCROLL);
+		tree = new Tree(SearchComposite, SWT.BORDER);
 		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {
@@ -143,9 +153,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 		item.setText("人人");
 		item.setData("www.renren.com");*/
 
-		tabItem.setControl(SearchComposite);
-		new Label(SearchComposite, SWT.NONE);
-		tabFolder.setSelection(tabItem);
+		
 	}
 
 	@Override
@@ -196,7 +204,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 					xml.replaceAll("&#39;", "\'");
 					xml.replaceAll("<b>", " ");
 					xml.replaceAll("</"," ");
-					xml.replaceAll("b>","");
+					xml.replaceAll("b>"," ");
 					
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					

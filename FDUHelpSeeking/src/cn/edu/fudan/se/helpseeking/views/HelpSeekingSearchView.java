@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -79,7 +80,7 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"; //$NON-NLS-1$
 
-//	private Label label;
+	private Label label;
 //	private Text txtCandidateSearch;
 //	private Text txtSearchBox;
 	//private static org.eclipse.swt.widgets.List list;
@@ -116,7 +117,10 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		 SearchComposite = new Composite(arg0, SWT.NONE);
 		SearchComposite.setLayoutData(BorderLayout.CENTER);
-		SearchComposite.setLayout(new GridLayout(4, false));
+		GridLayout gl_SearchComposite = new GridLayout(4, true);
+		gl_SearchComposite.marginWidth = 1;
+		gl_SearchComposite.horizontalSpacing = 1;
+		SearchComposite.setLayout(gl_SearchComposite);
 		
 //		label = new Label(SearchComposite, SWT.NONE);
 //		label.setText("SearchBox:");
@@ -185,10 +189,18 @@ public class HelpSeekingSearchView extends ViewPart {
 //		});
 //		btnSwitchWords.setText("Switch to SearchBox");
 
-		searchTree=  new Tree(SearchComposite, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
-		GridData gd_searchTree = new GridData(SWT.LEFT, SWT.FILL, true, true, 1, 1);
-		gd_searchTree.widthHint = 165;
-		searchTree.setLayoutData(gd_searchTree);
+		label = new Label(SearchComposite, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,1,1));
+		label.setText("Candidate Query Words:");
+		
+		label = new Label(SearchComposite, SWT.NONE);
+		label.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,3,1));
+		label.setText("Recommanded solution links:");
+
+
+		searchTree=  new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		
+		searchTree.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 1, 1));
 		searchTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		searchTree.addSelectionListener(new SelectionListener() {
 			
@@ -273,11 +285,12 @@ public class HelpSeekingSearchView extends ViewPart {
 			}
 		});
 		
+	
+
+				
+		tree = new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		
-		tree = new Tree(SearchComposite, SWT.SINGLE|SWT.FULL_SELECTION| SWT.FILL | SWT.H_SCROLL	| SWT.V_SCROLL);		
-		GridData gd_tree = new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1);
-		gd_tree.widthHint = 346;
-		tree.setLayoutData(gd_tree);
+		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		tree.addSelectionListener(new SelectionListener() {			
 			@Override

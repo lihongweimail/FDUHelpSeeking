@@ -662,12 +662,35 @@ public ProblemInformationList getProblems() {
 
 		//移除候选关键词
 				
+				
+//				List<KeyWordsCandidates> consoleCacheKeyWords=new ArrayList<>();
+//				List<KeyWordsCandidates> problemCacheKeyWords=new ArrayList<>();
 //				List<KeyWordsCandidates> classmodelKeyWords=new ArrayList<>();
 ////				List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
 ////				List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
 //				List<KeyWordsCandidates> codeKeyWords=new ArrayList<>();
 //				List<KeyWordsCandidates> relatedExplorerKeyWords=new ArrayList<>();
-				
+//新增对历史上console和problem view 对应信息的删除动作	 revise 80后新增的		
+				for (int j1 = 0; j1 < consoleCacheKeyWords.size(); j1++) {
+					
+					if (consoleCacheKeyWords.get(j1).getActionID() == removeActionID) {
+						consoleCacheKeyWords.remove(j1);
+						
+						break;
+					}
+				}
+	
+				for (int j1 = 0; j1 < problemCacheKeyWords.size(); j1++) {
+					
+					if (problemCacheKeyWords.get(j1).getActionID() == removeActionID) {
+						problemCacheKeyWords.remove(j1);
+						
+						break;
+					}
+				}
+	
+
+				//revise 80 版本的内容
 				for (int j1 = 0; j1 < classmodelKeyWords.size(); j1++) {
 					
 					if (classmodelKeyWords.get(j1).getActionID() == removeActionID) {
