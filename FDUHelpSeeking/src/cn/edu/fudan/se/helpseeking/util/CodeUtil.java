@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.helpseeking.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -24,6 +25,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.MethodDeclaration;
 import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.SimpleName;
+import org.eclipse.jdt.core.dom.TypeParameter;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jface.text.ITextSelection;
@@ -33,6 +35,7 @@ import cn.edu.fudan.se.helpseeking.bean.ClassModel;
 import cn.edu.fudan.se.helpseeking.bean.Cursor;
 import cn.edu.fudan.se.helpseeking.bean.DebugCode;
 import cn.edu.fudan.se.helpseeking.bean.EditCode;
+import cn.edu.fudan.se.helpseeking.bean.MethodInfo;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 
 @SuppressWarnings("restriction")
@@ -68,10 +71,6 @@ public class CodeUtil {
 		}
 		ec.setSyntacticBlock(sblock);
 
-		ClassModel cmodel = new ClassModel();
-		cmodel.setType(sblock.getType());
-		cmodel.setCode(sblock.getCode());
-
 		final CompilationUnit cu = ASTUtil.parse(unit);
 		final ArrayList<ASTNode> nodes = new ArrayList<>();
 		final ArrayList<Integer> linenumbers = new ArrayList<>();
@@ -101,17 +100,14 @@ public class CodeUtil {
 		if(nodes.size() != 0 && index != -1)
 			node = nodes.get(index);
 
-		final List<String> internalCallee = new ArrayList<>();
-		final List<String> belowClass = new ArrayList<>();
+		ClassModel cmodel;
 		if(node != null){
-			
-			constructClassModelByNode(node, cu, prefix, s.getStartLine(), internalCallee, 
-					belowClass);
-			
+			cmodel = constructClassModelByNode(node, cu, prefix, s.getStartLine());			
+		}else {
+			cmodel = new ClassModel();
 		}
-
-		cmodel.setBelowClass(belowClass);
-		cmodel.setInternalCallee(internalCallee);
+		cmodel.setType(sblock.getType());
+		cmodel.setCode(sblock.getCode());
 		ec.setClassModel(cmodel);
 
 		Cursor c = new Cursor();
@@ -188,6 +184,17 @@ public class CodeUtil {
 			}
 			
 			if(node != null){
+				if(node instanceof MethodDeclaration){
+					cmodel.setReturnType(((MethodDeclaration) node).getReturnType2().toString());
+					List<TypeParameter> typeParams = ((MethodDeclaration) node).typeParameters();
+					String[] paraTypes = new String[typeParams.size()];
+					int i = 0;
+					for(TypeParameter typeParam : typeParams){
+						paraTypes[i] = typeParam.toString();
+						i ++;
+					}
+					cmodel.setParaTypes(paraTypes);
+				}
 				c.setLineNo(cu.getLineNumber(node.getStartPosition()) - 1);
 				
 				final List<String> internalCallee = new ArrayList<>();
@@ -335,24 +342,30 @@ public class CodeUtil {
 		}
 		dc.setSyntacticBlock(sblock);
 
-		ClassModel cmodel = new ClassModel();
+		ClassModel cmodel = constructClassModelByNode(node, cu, prefix, bpoint.getLineNo());
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
-		final List<String> internalCallee = new ArrayList<>();
-		final List<String> belowClass = new ArrayList<>();
-		constructClassModelByNode(node, cu, prefix, bpoint.getLineNo(), internalCallee, 
-				belowClass);
-		cmodel.setBelowClass(belowClass);
-		cmodel.setInternalCallee(internalCallee);
 		dc.setClassModel(cmodel);
 
 		return dc;
 	}
 	
-	private static void constructClassModelByNode(ASTNode node, final CompilationUnit cu, 
-			final String prefix, final int lineNumber, final List<String> internalCallee, 
-			final List<String> belowClass){
+	private static ClassModel constructClassModelByNode(ASTNode node, final CompilationUnit cu, 
+			final String prefix, final int lineNumber){
+		ClassModel classModel = new ClassModel();
+		final List<String> internalCallee = new ArrayList<>(); 
+		final List<String> belowClass = new ArrayList<>();
+		final HashMap<String, MethodInfo> calleeInfo = new HashMap<>();
 		if(node instanceof MethodDeclaration){
+			classModel.setReturnType(((MethodDeclaration) node).getReturnType2().toString());
+			List<TypeParameter> typeParams = ((MethodDeclaration) node).typeParameters();
+			String[] paraTypes = new String[typeParams.size()];
+			int i = 0;
+			for(TypeParameter typeParam : typeParams){
+				paraTypes[i] = typeParam.toString();
+				i ++;
+			}
+			classModel.setParaTypes(paraTypes);
 			node.accept(new ASTVisitor() {
 				public boolean visit(SimpleName name) {
 					int differ = cu.getLineNumber(name.getStartPosition()) 
@@ -383,14 +396,28 @@ public class CodeUtil {
 						IMethodBinding binding = method.resolveMethodBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
-							if (element instanceof IMethod) {
-								String classString = ((IMethod) element).getDeclaringType()
+							if (element instanceof IMethod) {								
+								IMethod methodelement = (IMethod) element;
+								String classString = methodelement.getDeclaringType()
 										.getPackageFragment().getElementName() + "." 
-										+ ((IMethod) element).getDeclaringType().getElementName();
+										+ methodelement.getDeclaringType().getElementName();
 								if(!classString.startsWith(prefix)){
-									internalCallee.add(classString + "." + ((IMethod) element)
-											.getElementName());
+									String methodString = classString + "." + methodelement
+											.getElementName();
+									internalCallee.add(methodString);
 									belowClass.add(classString);
+									if (!calleeInfo.containsKey(methodString)) {
+										MethodInfo methodInfo = new MethodInfo();
+										try {
+											methodInfo.setReturnType(methodelement
+													.getReturnType());
+											methodInfo.setParaTypes(methodelement
+													.getParameterTypes());
+											calleeInfo.put(methodString, methodInfo);
+										} catch (JavaModelException e) {
+											e.printStackTrace();
+										}
+									}
 								}
 							}
 						}
@@ -406,13 +433,27 @@ public class CodeUtil {
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
 							if (element instanceof IMethod) {
-								String classString = ((IMethod) element).getDeclaringType()
+								IMethod methodelement = (IMethod) element;
+								String classString = methodelement.getDeclaringType()
 										.getPackageFragment().getElementName() + "." 
-										+ ((IMethod) element).getDeclaringType().getElementName();
+										+ methodelement.getDeclaringType().getElementName();
 								if(!classString.startsWith(prefix)){
-									internalCallee.add(classString + "." + ((IMethod) element)
-											.getElementName());
+									String methodString = classString + "." + methodelement
+											.getElementName();
+									internalCallee.add(methodString);
 									belowClass.add(classString);
+									if (!calleeInfo.containsKey(methodString)) {
+										MethodInfo methodInfo = new MethodInfo();
+										try {
+											methodInfo.setReturnType(methodelement
+													.getReturnType());
+											methodInfo.setParaTypes(methodelement
+													.getParameterTypes());
+											calleeInfo.put(methodString, methodInfo);
+										} catch (JavaModelException e) {
+											e.printStackTrace();
+										}
+									}
 								}
 							}
 						}
@@ -445,13 +486,27 @@ public class CodeUtil {
 					if(binding != null){
 						IJavaElement element = binding.getJavaElement();
 						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
+							IMethod methodelement = (IMethod) element;
+							String classString = methodelement.getDeclaringType()
 									.getPackageFragment().getElementName() + "." 
-									+ ((IMethod) element).getDeclaringType().getElementName();
+									+ methodelement.getDeclaringType().getElementName();
 							if(!classString.startsWith(prefix)){
-								internalCallee.add(classString + "." + ((IMethod) element)
-										.getElementName());
+								String methodString = classString + "." + methodelement
+										.getElementName();
+								internalCallee.add(methodString);
 								belowClass.add(classString);
+								if (!calleeInfo.containsKey(methodString)) {
+									MethodInfo methodInfo = new MethodInfo();
+									try {
+										methodInfo.setReturnType(methodelement
+												.getReturnType());
+										methodInfo.setParaTypes(methodelement
+												.getParameterTypes());
+										calleeInfo.put(methodString, methodInfo);
+									} catch (JavaModelException e) {
+										e.printStackTrace();
+									}
+								}
 							}
 						}
 					}
@@ -463,13 +518,27 @@ public class CodeUtil {
 					if(binding != null){
 						IJavaElement element = binding.getJavaElement();
 						if (element instanceof IMethod) {
-							String classString = ((IMethod) element).getDeclaringType()
+							IMethod methodelement = (IMethod) element;
+							String classString = methodelement.getDeclaringType()
 									.getPackageFragment().getElementName() + "." 
-									+ ((IMethod) element).getDeclaringType().getElementName();
+									+ methodelement.getDeclaringType().getElementName();
 							if(!classString.startsWith(prefix)){
-								internalCallee.add(classString + "." + ((IMethod) element)
-										.getElementName());
+								String methodString = classString + "." + methodelement
+										.getElementName();
+								internalCallee.add(methodString);
 								belowClass.add(classString);
+								if (!calleeInfo.containsKey(methodString)) {
+									MethodInfo methodInfo = new MethodInfo();
+									try {
+										methodInfo.setReturnType(methodelement
+												.getReturnType());
+										methodInfo.setParaTypes(methodelement
+												.getParameterTypes());
+										calleeInfo.put(methodString, methodInfo);
+									} catch (JavaModelException e) {
+										e.printStackTrace();
+									}
+								}
 							}
 						}
 					}
@@ -477,6 +546,11 @@ public class CodeUtil {
 				}
 			});
 		}
+		
+		classModel.setBelowClass(belowClass);
+		classModel.setInternalCallee(internalCallee);
+		classModel.setCalleeInfo(calleeInfo);
+		return classModel;
 	}
 
 }
