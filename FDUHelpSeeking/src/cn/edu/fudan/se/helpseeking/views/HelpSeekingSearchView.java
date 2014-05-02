@@ -5,41 +5,33 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
-import javax.swing.text.html.HTMLDocument.HTMLReader.HiddenAction;
-
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
-import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.bean.KeyWordsCandidates;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
@@ -49,7 +41,6 @@ import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
-import cn.edu.fudan.se.helpseeking.util.Resource;
 
 public class HelpSeekingSearchView extends ViewPart {
 	
@@ -84,8 +75,8 @@ public class HelpSeekingSearchView extends ViewPart {
 //	private Text txtCandidateSearch;
 //	private Text txtSearchBox;
 	//private static org.eclipse.swt.widgets.List list;
-	private static Tree tree;
-	private static Tree searchTree;
+	private static Tree searchResultsTree;
+	private static Tree keywordsTree;
 	private static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 
 	
@@ -109,6 +100,20 @@ public class HelpSeekingSearchView extends ViewPart {
 	private static String  currentSearchID="";
 	Composite SearchComposite;
 	Composite tagComposite ;
+	
+	Button keywordsPrevious;
+	Button keywordsNext;
+	static Button autoResultsPrevious;
+	static Button autoResultsNext;
+	
+	 List<KeyWordsCandidates> mycacheCandWordTrees=Cache.getInstance().getCacheCandWordTrees();
+	 int mycacheCandWordTreesIndex=0;
+	 boolean mycachecandwordtreesFlag=true;
+
+	 //TODO:  还没完
+	 static List<SearchResults> mycacheAutoSearchResults=Cache.getInstance().getCacheAutoSearchResults();
+	 int mycacheAutoSearchResultsIndex=0;
+	 static boolean mycacheAutoSearchResultsFlag=true;
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -117,7 +122,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		 SearchComposite = new Composite(arg0, SWT.NONE);
 		SearchComposite.setLayoutData(BorderLayout.CENTER);
-		GridLayout gl_SearchComposite = new GridLayout(4, true);
+		GridLayout gl_SearchComposite = new GridLayout(24, true);
 		gl_SearchComposite.marginWidth = 1;
 		gl_SearchComposite.horizontalSpacing = 1;
 		SearchComposite.setLayout(gl_SearchComposite);
@@ -188,26 +193,329 @@ public class HelpSeekingSearchView extends ViewPart {
 //			}
 //		});
 //		btnSwitchWords.setText("Switch to SearchBox");
+		
+
 
 		label = new Label(SearchComposite, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,1,1));
-		label.setText("Candidate Query Words:");
+		label.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,4,1));
+		label.setText("Candidate Words:");
+		
+
+		
+		keywordsPrevious=new Button(SearchComposite, SWT.CENTER);
+		keywordsPrevious.setEnabled(false);
+		keywordsPrevious.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+			if (mycacheCandWordTrees.size()>0) {
+						//有新加入的数据时，重新开始计算头部
+					if (!mycachecandwordtreesFlag) {
+						mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
+					}
+					//开关
+					mycachecandwordtreesFlag=true;
+					
+					if (mycacheCandWordTreesIndex-1==-1) {
+						mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
+					}
+					
+					keywordsTree.removeAll();
+					TreeItem noderoot=new TreeItem(keywordsTree, SWT.CHECK);
+					noderoot.setText("history index:"+String.valueOf(mycacheCandWordTreesIndex-1));
+					noderoot.setChecked(false);
+					noderoot.setData(false);
+					noderoot.setExpanded(true);
+					noderoot.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_RED));
+					
+					List<KeyWord> kWords=mycacheCandWordTrees.get(mycacheCandWordTreesIndex-1).getKeyWords();
+					for (int j = 0; j < kWords.size(); j++) {
+						TreeItem item=new TreeItem(keywordsTree, SWT.CHECK);
+						item.setText(kWords.get(j).getKeywordName());
+					    item.setChecked(false);
+						item.setExpanded(true);
+					}
+					
+					mycacheCandWordTreesIndex=mycacheCandWordTreesIndex-1;
+						keywordsNext.setEnabled(true);
+					if (mycacheCandWordTreesIndex==0) {
+						
+						keywordsPrevious.setEnabled(false);
+					}
+
+				}
+
+				
+			}
+		});
+		keywordsPrevious.setImage(ResourceManager.getPluginImage("cn.edu.fudan.se.helpseeking", "icons/previous.gif"));
+		GridData gd_keywordsPrevious = new GridData(SWT.RIGHT,SWT.TOP,true,false,1,1);
+		gd_keywordsPrevious.heightHint = 16;
+		keywordsPrevious.setLayoutData(gd_keywordsPrevious);
+		
+		//////////////////
+		keywordsNext=new Button(SearchComposite, SWT.CENTER);
+		keywordsNext.setEnabled(false);
+		keywordsNext.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+			
+				if (mycacheCandWordTrees.size()>0) {
+					//index=size+1，重新开始计算头部
+					
+					if ((mycacheCandWordTreesIndex<=0)) {
+						mycacheCandWordTreesIndex=1;
+					}else 
+					{if ((mycacheCandWordTreesIndex>=mycacheCandWordTrees.size()+1)) {
+						mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
+					}
+					}
+					
+					
+					//开关
+					mycachecandwordtreesFlag=true;
+					keywordsTree.removeAll();
+				
+			
+					TreeItem noderoot=new TreeItem(keywordsTree, SWT.CHECK);
+					noderoot.setText("history index:"+String.valueOf(mycacheCandWordTreesIndex-1));
+					noderoot.setExpanded(true);
+					noderoot.setChecked(false);
+					noderoot.setData(false);
+					noderoot.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_RED));
+					
+					List<KeyWord> kWords=mycacheCandWordTrees.get(mycacheCandWordTreesIndex-1).getKeyWords();
+					for (int j = 0; j < kWords.size(); j++) {
+						TreeItem item=new TreeItem(keywordsTree, SWT.CHECK);
+						item.setText(kWords.get(j).getKeywordName());
+						item.setChecked(false);
+						item.setExpanded(true);
+					}
+					
+					
+					mycacheCandWordTreesIndex=mycacheCandWordTreesIndex+1;
+					
+					keywordsPrevious.setEnabled(true);
+					if (mycacheCandWordTreesIndex>mycacheCandWordTrees.size()) {
+						mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
+						keywordsNext.setEnabled(false);		
+					}
+					
+				}
+			}
+		});
+		keywordsNext.setImage(ResourceManager.getPluginImage("cn.edu.fudan.se.helpseeking", "icons/next.gif"));
+		GridData gd_keywordsNext = new GridData(SWT.LEFT,SWT.TOP,true,false,1,1);
+		gd_keywordsNext.heightHint = 16;
+		keywordsNext.setLayoutData(gd_keywordsNext);
+		
+		
+		//================
+	
 		
 		label = new Label(SearchComposite, SWT.NONE);
-		label.setLayoutData(new GridData(SWT.LEFT,SWT.TOP,true,false,3,1));
+		label.setLayoutData(new GridData(SWT.CENTER,SWT.TOP,true,false,16,1));
 		label.setText("Recommanded solution links:");
 
+		autoResultsPrevious=new Button(SearchComposite, SWT.CENTER);
+		autoResultsPrevious.setEnabled(false);
+		autoResultsPrevious.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+				
+			if (mycacheAutoSearchResults.size()>0) {
+						//有新加入的数据时，重新开始计算头部
+					if (!mycacheAutoSearchResultsFlag) {
+						mycacheAutoSearchResultsIndex=mycacheAutoSearchResults.size();
+					}
+					//开关
+					mycacheAutoSearchResultsFlag=true;
+					
+					if (mycacheAutoSearchResultsIndex-1==-1) {
+						mycacheAutoSearchResultsIndex=mycacheAutoSearchResults.size();
+					}
+					
+					searchResultsTree.removeAll();
+					TreeItem noderoot=new TreeItem(searchResultsTree, SWT.CHECK);
+					noderoot.setText("history index:"+String.valueOf(mycacheAutoSearchResultsIndex-1));
+					noderoot.setChecked(false);
+					noderoot.setData(false);
+					
+					noderoot.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_GREEN));
+					
+					List<SearchNode> sNodes=mycacheAutoSearchResults.get(mycacheAutoSearchResultsIndex-1).getSearchNode();
+					for (int j = 0; j < sNodes.size(); j++) {
+						// TODO   NEED DETATIL 
+						TreeItem item=new TreeItem(searchResultsTree, SWT.CHECK);
+						item.setText(sNodes.get(j).getTitle());
+						item.setData(sNodes.get(j).getLink());
+					    item.setChecked(false);
+						item.setForeground(Display.getDefault()
+								.getSystemColor(SWT.COLOR_BLUE));
+						
+						TreeItem urlitem=new TreeItem(item, SWT.CHECK);
+						urlitem.setText(sNodes.get(j).getLink());
+						urlitem.setData(sNodes.get(j).getLink());
+						urlitem.setChecked(false);
+						urlitem.setExpanded(true);
+						
+						TreeItem contentitem=new TreeItem(item, SWT.CHECK);
+						contentitem.setText(sNodes.get(j).getContents());
+						contentitem.setChecked(false);
+						contentitem.setExpanded(true);
+						
+						if (sNodes.get(j).getJavaExceptionNames()!=null) {
+							TreeItem javaExcptionitem=new TreeItem(item, SWT.CHECK);
+							javaExcptionitem.setText(sNodes.get(j).getJavaExceptionNames());
+							javaExcptionitem.setChecked(false);
+							javaExcptionitem.setExpanded(true);
+							javaExcptionitem.setForeground(Display.getDefault()
+									.getSystemColor(SWT.COLOR_RED));
+						}
+						
+						item.setExpanded(true);
+						
+					}
+					
+					noderoot.setExpanded(true);
+					
+					mycacheAutoSearchResultsIndex=mycacheAutoSearchResultsIndex-1;
+						autoResultsNext.setEnabled(true);
+					if (mycacheAutoSearchResultsIndex==0) {
+						
+						autoResultsPrevious.setEnabled(false);
+					}
 
-		searchTree=  new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
+				}
+
+				
+			}
+		});
+		autoResultsPrevious.setImage(ResourceManager.getPluginImage("cn.edu.fudan.se.helpseeking", "icons/previous.gif"));
+		GridData gd_autoResultsPrevious = new GridData(SWT.RIGHT,SWT.TOP,true,false,1,1);
+		gd_autoResultsPrevious.heightHint = 16;
+		autoResultsPrevious.setLayoutData(gd_autoResultsPrevious);
 		
-		searchTree.setLayoutData(new GridData(SWT.CENTER, SWT.FILL, true, true, 1, 1));
-		searchTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		searchTree.addSelectionListener(new SelectionListener() {
+		//////////////////
+		autoResultsNext=new Button(SearchComposite, SWT.CENTER);
+		autoResultsNext.setEnabled(false);
+		autoResultsNext.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				
+
+
+				if (mycacheAutoSearchResults.size()>0) {
+					//index=size+1，重新开始计算头部
+					if(mycacheAutoSearchResultsIndex<=0)
+					{
+						mycacheAutoSearchResultsIndex=1;
+					}else
+					{	
+					if ((mycacheAutoSearchResultsIndex>=mycacheAutoSearchResults.size()+1)) {
+						mycacheAutoSearchResultsIndex=mycacheAutoSearchResults.size();
+					
+					}
+					}
+					
+					//开关
+					mycachecandwordtreesFlag=true;
+					searchResultsTree.removeAll();
+				
+			
+					TreeItem noderoot=new TreeItem(searchResultsTree, SWT.CHECK);
+					noderoot.setText("history index:"+String.valueOf(mycacheAutoSearchResultsIndex-1));
+					
+					noderoot.setChecked(false);
+					noderoot.setData(false);
+					noderoot.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_GREEN));
+					
+					List<SearchNode> sNodes=mycacheAutoSearchResults.get(mycacheAutoSearchResultsIndex-1).getSearchNode();
+					for (int j = 0; j < sNodes.size(); j++) {
+						// TODO   NEED DETATIL 
+						TreeItem item=new TreeItem(searchResultsTree, SWT.CHECK);
+						item.setText(sNodes.get(j).getTitle());
+					    item.setChecked(false);
+					
+						item.setData(sNodes.get(j).getLink());
+						item.setForeground(Display.getDefault()
+								.getSystemColor(SWT.COLOR_BLUE));
+						
+						TreeItem urlitem=new TreeItem(item, SWT.CHECK);
+						urlitem.setText(sNodes.get(j).getLink());
+						urlitem.setData(sNodes.get(j).getLink());
+						urlitem.setChecked(false);
+						urlitem.setExpanded(true);
+						
+						TreeItem contentitem=new TreeItem(item, SWT.CHECK);
+						contentitem.setText(sNodes.get(j).getContents());
+						contentitem.setChecked(false);
+						contentitem.setExpanded(true);
+						
+						if (sNodes.get(j).getJavaExceptionNames()!=null) {
+							TreeItem javaExcptionitem=new TreeItem(item, SWT.CHECK);
+							javaExcptionitem.setText(sNodes.get(j).getJavaExceptionNames());
+							javaExcptionitem.setChecked(false);
+							javaExcptionitem.setExpanded(true);
+							javaExcptionitem.setForeground(Display.getDefault()
+									.getSystemColor(SWT.COLOR_RED));
+
+						}
+						
+						item.setExpanded(true);
+					}
+					
+					noderoot.setExpanded(true);
+					
+					mycacheAutoSearchResultsIndex=mycacheCandWordTreesIndex+1;
+					
+					autoResultsPrevious.setEnabled(true);
+					if (mycacheAutoSearchResultsIndex>mycacheAutoSearchResults.size()) {
+						
+						autoResultsNext.setEnabled(false);
+						mycacheAutoSearchResultsIndex=mycacheAutoSearchResults.size();
+					}
+					
+				}
+				
+				
+			}
+		});
+		autoResultsNext.setImage(ResourceManager.getPluginImage("cn.edu.fudan.se.helpseeking", "icons/next.gif"));
+		GridData gd_autoResultsNext = new GridData(SWT.LEFT,SWT.TOP,true,false,1,1);
+		gd_autoResultsNext.heightHint = 16;
+		autoResultsNext.setLayoutData(gd_autoResultsNext);
+	
+		
+		
+		
+		
+		keywordsTree=  new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		
+		keywordsTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 6, 1));
+		keywordsTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		keywordsTree.addSelectionListener(new SelectionListener() {
 			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 			
+				if (item.getData()!=null) {
+					if (! (item.getData() instanceof String)) {
+						if ((boolean)item.getData()==false) {
+							return;
+						}
+					}
+					
+				}
+				
+				
 				///////////////////////////////////////////////////////////////
 				
 				if (PlatformUI.getWorkbench() == null)
@@ -288,11 +596,11 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 
 				
-		tree = new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		searchResultsTree = new Tree(SearchComposite, SWT.BORDER | SWT.FULL_SELECTION);
 		
-		tree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
-		tree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		tree.addSelectionListener(new SelectionListener() {			
+		searchResultsTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 18, 1));
+		searchResultsTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		searchResultsTree.addSelectionListener(new SelectionListener() {			
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
@@ -300,6 +608,16 @@ public class HelpSeekingSearchView extends ViewPart {
 				
 				if (item.getData()==null) {
 					return;
+				}
+				
+				//判断
+				if (item.getData()!=null) {
+					if (! (item.getData() instanceof String)) {
+						if ((boolean)item.getData()==false) {
+							return;
+						}
+					}
+					
 				}
 				
 				///////////////////////////////////////////////////////////////
@@ -343,6 +661,11 @@ public class HelpSeekingSearchView extends ViewPart {
 			}
 		});
 		
+		
+
+		
+		
+		
 	}
 
 	@Override
@@ -376,12 +699,58 @@ public class HelpSeekingSearchView extends ViewPart {
 			return;
 		}
 		
-		searchTree.removeAll();
+		System.out.println("search:"+search);
+		
+		if(keywordsTree.getItemCount()>0)
+		{	
+		//去除重复推荐词list
+		boolean flag=true;
+		int j=0;
+		for (int i = 0; i < prepare.size(); i++) {
+		
+			if (keywordsTree.getItem(0).getText().length()>14) {
+				
+			
+			if ("history index:".equals(keywordsTree.getItem(0).getText().substring(0, 14))) {
+				j=j+1;
+			}
+			}
+			
+			if (!prepare.get(i).equals(keywordsTree.getItem(j).getText())) {
+				flag=false;
+				
+				break;
+			}
+			j=j+1;
+			if (j==keywordsTree.getItemCount()) {
+				break;
+			}
+			
+			
+		}
+		
+		if (flag) {
+//			System.out.println("say dupilcate candidate words");
+//			System.out.println("new: "+search);
+//			String temp=" ";
+//			for (int i = 0; i < keywordsTree.getItemCount(); i++) {
+//				temp=temp.trim()+" "+keywordsTree.getItem(i).getText();
+//			}
+//			System.out.println("old: "+temp);
+			return;
+		}
+		
+		}
+		
+		keywordsTree.removeAll();
+		
+		List<KeyWord> backupKeywords=new ArrayList<>();
+		
 		for (String str : prepare) {
 			
 		
 		
-		TreeItem item = new TreeItem(searchTree, SWT.CHECK);
+		TreeItem item = new TreeItem(keywordsTree, SWT.CHECK);
 		String temp="";
 		if(str.length()>20)
 		{
@@ -412,7 +781,25 @@ public class HelpSeekingSearchView extends ViewPart {
 		item.setText(temp);
 		item.setData(str);
         item.setChecked(false);
+        
+        KeyWord kw=new KeyWord();
+        kw.setKeywordName(temp);
+        
+        backupKeywords.add(kw);
+        
         }
+		
+		
+		
+		// save a new tree
+		 
+		KeyWordsCandidates tempCandidatesbackup=new KeyWordsCandidates();
+		tempCandidatesbackup.setKeyWords(backupKeywords);
+		
+		Cache.getInstance().getCacheCandWordTrees().add(tempCandidatesbackup);
+		keywordsNext.setEnabled(false);
+		keywordsPrevious.setEnabled(true);
+		mycachecandwordtreesFlag=false;
 		
 		
 		
@@ -420,25 +807,18 @@ public class HelpSeekingSearchView extends ViewPart {
 	
 	
 	
-//	 static String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
-//	static  Resource myResource=new Resource();
-//	 static String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
-//
-//	 static List<String> Basic.javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(Basic.SPLIT_STRING));
-//
-	
 	public  void searchQueryList() {
 		
+		
+		
+		
+		
 		System.out.println("say begin auto query web! starting ...");
-		
-		tree.removeAll();
-
-		
-		
+	
 		List<Query> querys = QueryList.getInstance().getQuerys();
 		int qindex=0;
 		
-		
+	
 		
 		for(Query query : querys){
 			
@@ -464,6 +844,8 @@ public class HelpSeekingSearchView extends ViewPart {
 			dosearch(query, searchID, search);
 			}
 
+		
+		
 		//清除query 准备下一轮 自动查询构造
 		querys.clear();
 
@@ -473,14 +855,20 @@ public class HelpSeekingSearchView extends ViewPart {
 		Timestamp starttime;
 		String searchResultOutput="\n============\n";
 		SearchResults sResults=new SearchResults();
+		
+		//为了历史记录
+		SearchResults tempSearchResults=new SearchResults();
+		
+		
 		starttime=new Timestamp(System.currentTimeMillis());
 		
 		sResults.setSearchID(searchID);
-			query.setTime(starttime);
+		tempSearchResults.setSearchID(searchID);
+					query.setTime(starttime);
 			query.setIsbyuser(false);
 			query.setUseKeywords(search);
 			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
-		
+			searchResultsTree.removeAll();
 
 			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
 			try {
@@ -495,32 +883,39 @@ public class HelpSeekingSearchView extends ViewPart {
 					
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					
-					TreeItem item = new TreeItem(tree, SWT.NULL);
-					
-					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
+					TreeItem item = new TreeItem(searchResultsTree, SWT.NULL);
+					String resultTitle=xml.length()>50?xml.substring(0,47)+"...":xml;
+					item.setText(resultTitle);
+					item.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_BLUE));
+
 					item.setData(webResult.getUrl());
 
 					String compareContent=xml+" "+webResult.getContent();
 				
 					
 					SearchNode sNode=new SearchNode();
-					sNode.setTitle(xml);
+					sNode.setTitle(resultTitle);
 					sNode.setLink(webResult.getUrl());
-					sResults.getSearchNode().add(sNode);
+					
+					
+					//TODO: 为了备份用作历史检索
+					SearchNode tempsSearchNode=new SearchNode();
+					tempsSearchNode.setTitle(xml);
+					tempsSearchNode.setLink(webResult.getUrl());
+					
 					
 					//展示 URL
 					TreeItem urlItem=new TreeItem(item, SWT.NULL);
-//					urlItem.setForeground(Display.getDefault()
-//							.getSystemColor(SWT.COLOR_BLUE));
 					urlItem.setText(webResult.getUrl());
 					urlItem.setData(webResult.getUrl());
 					
 					//展示语言
-					if (webResult.getLanguage()!=null) {
-						TreeItem languageItem=new TreeItem(item, SWT.NULL);
-					languageItem.setText(webResult.getLanguage());
-
-					}
+//					if (webResult.getLanguage()!=null) {
+//						TreeItem languageItem=new TreeItem(item, SWT.NULL);
+//					languageItem.setText(webResult.getLanguage());
+//
+//					}
 					
 					//展示content  内容  还需要 优化处理  显示关键词 附近的词 构成的串 并突出显示
 					if (webResult.getContent()!=null) {
@@ -533,11 +928,17 @@ public class HelpSeekingSearchView extends ViewPart {
 						
 						if (!content.equals("")) {
     					TreeItem contentItem=new TreeItem(item, SWT.NULL);
-					    contentItem.setText(content.length()>50?content.substring(0,47)+"...":content);
+    					String resultContent=content.length()>50?content.substring(0,47)+"...":content;
+					    contentItem.setText(resultContent);
 //					    contentItem.setData(webResult.getUrl());
+					    sNode.setContents(resultContent);
+					    tempsSearchNode.setContents(resultContent);
 					    contentItem.setData(null);
 					    }
 					}
+					
+					
+					
 					
 					
 					//展开节点
@@ -588,13 +989,23 @@ public class HelpSeekingSearchView extends ViewPart {
 					subitem.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_RED));
 					subitem.setText(myExceptioinName);
+					sNode.setJavaExceptionNames(myExceptioinName);
+					tempsSearchNode.setJavaExceptionNames(myExceptioinName);
 					item.setExpanded(true);
 					}
+					
 
+					sResults.getSearchNode().add(sNode);
+					
+					if (tempsSearchNode.getTitle()!=null && !tempsSearchNode.getTitle().trim().equals("")) {
+						tempSearchResults.getSearchNode().add(tempsSearchNode);	
+					}
+					
 					
 				}
 
-					
+				
+				
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
@@ -602,6 +1013,15 @@ public class HelpSeekingSearchView extends ViewPart {
 			Timestamp endtime=new Timestamp(System.currentTimeMillis());
 			
 			query.setCosttime(endtime.getTime()-starttime.getTime());
+			
+			
+			if (tempSearchResults.getSearchNode().size()>0) {
+				mycacheAutoSearchResultsFlag=false;
+				autoResultsNext.setEnabled(false);
+				autoResultsPrevious.setEnabled(true);
+				mycacheAutoSearchResults.add(tempSearchResults);
+			}
+			
 		
 		// 需要保存关键词和当前cache到数据库中：
 			DatabaseUtil.addKeyWordsToDataBase(query);
@@ -664,7 +1084,7 @@ public class HelpSeekingSearchView extends ViewPart {
 					xml = xml.replaceAll("&quot;", "\"");
 					searchResultOutput=searchResultOutput+"\n"+webResult.toString();
 					
-					TreeItem item = new TreeItem(tree, SWT.NONE);
+					TreeItem item = new TreeItem(searchResultsTree, SWT.NONE);
 
 					String content=xml+" "+webResult.getContent();
 				

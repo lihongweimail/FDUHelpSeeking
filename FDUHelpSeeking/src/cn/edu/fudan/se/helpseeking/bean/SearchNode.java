@@ -4,6 +4,8 @@ public class SearchNode {
 
 	String title;
 	String link;
+	String contents;
+	String javaExceptionNames;
 	public String getTitle() {
 		return title;
 	}
@@ -16,5 +18,19 @@ public class SearchNode {
 	public void setLink(String link) {
 		this.link = link;
 	}
+	public String getContents() {
+		return contents;
+	}
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
+	public String getJavaExceptionNames() {
+		return javaExceptionNames;
+	}
+	public void setJavaExceptionNames(String javaExceptionNames) {
+		this.javaExceptionNames = javaExceptionNames;
+	}
+	
+	
 	
 }

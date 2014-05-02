@@ -21,7 +21,16 @@ public class KeyWordsCandidates {
  *     */
 	
 
+	int index=0;//the words list index 
 	
+	public int getIndex() {
+	return index;
+}
+
+public void setIndex(int index) {
+	this.index = index;
+}
+
 	int actionID=0;//记录这组词汇的来源， 用作移除的动作时，移除对应的关键词
 	
 	int frequency=0;//该动作所属类别的频率值

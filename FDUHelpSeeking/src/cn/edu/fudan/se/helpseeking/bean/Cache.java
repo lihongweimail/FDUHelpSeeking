@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.eclipse.swt.widgets.Tree;
+
+import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 
@@ -51,10 +54,44 @@ public class Cache  {
 	ProblemInformationListCopy oldProblemsCopy=null;
 	List<String> taskDescription;
 	
+	List<KeyWordsCandidates> cacheCandWordTrees=new ArrayList<>();
+	int cacheCandWordTreesIndex=0;
+	List<SearchResults> cacheAutoSearchResults=new ArrayList<>();
+	int cacheAutoSearchResultsIndex=0;
 
 	private int problemsSize=0;
 
 
+	
+	
+	
+	
+
+	public List<KeyWordsCandidates> getCacheCandWordTrees() {
+		return cacheCandWordTrees;
+	}
+	public void setCacheCandWordTrees(List<KeyWordsCandidates> cacheCandWordTrees) {
+		this.cacheCandWordTrees = cacheCandWordTrees;
+	}
+	public List<SearchResults> getCacheAutoSearchResults() {
+		return cacheAutoSearchResults;
+	}
+	public void setCacheAutoSearchResults(List<SearchResults> cacheAutoSearchResults) {
+		this.cacheAutoSearchResults = cacheAutoSearchResults;
+	}
+	public int getCacheCandWordTreesIndex() {
+		return cacheCandWordTreesIndex;
+	}
+	public void setCacheCandWordTreesIndex(int cacheCandWordTreesIndex) {
+		this.cacheCandWordTreesIndex = cacheCandWordTreesIndex;
+	}
+
+	public int getCacheAutoSearchResultsIndex() {
+		return cacheAutoSearchResultsIndex;
+	}
+	public void setCacheAutoSearchResultsIndex(int cacheAutoSearchResultsIndex) {
+		this.cacheAutoSearchResultsIndex = cacheAutoSearchResultsIndex;
+	}
 	private boolean  compareProblemsAndCopy() {
 		boolean result=true;
 

@@ -59,6 +59,8 @@ public class Images {
 	public static final ImageDescriptor STOP_DEACTIVATE = create("stop_deactivate.gif");
 	public static final ImageDescriptor TYPES = create("types.gif");
 	public static final ImageDescriptor VOLATILE_CO = create("volatile.gif");
+	public static final ImageDescriptor PREVIOUS = create("previous.gif");
+	public static final ImageDescriptor NEXT = create("next.gif");
 
 	private static ImageDescriptor create(String name) {
 		try {
