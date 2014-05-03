@@ -8,9 +8,24 @@ public class KeyWord {
 	double weightOne=1.0;//基本权重
 	double  weightTwo=1.0;//附加权重
 	
+	String searchID;
+	int positionInRecommandlist;
 	
 	
 	
+	
+	public String getSearchID() {
+		return searchID;
+	}
+	public void setSearchID(String searchID) {
+		this.searchID = searchID;
+	}
+	public int getPositionInRecommandlist() {
+		return positionInRecommandlist;
+	}
+	public void setPositionInRecommandlist(int positionInRecommandlist) {
+		this.positionInRecommandlist = positionInRecommandlist;
+	}
 	public String getTagName() {
 		return tagName;
 	}

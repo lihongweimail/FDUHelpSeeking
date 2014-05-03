@@ -34,7 +34,7 @@
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
             icon="icons/abstract.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
-            name="Help Seeking Search View"
+            name="Help Seeking Recommand View"
             restorable="true">
       </view>
       <view

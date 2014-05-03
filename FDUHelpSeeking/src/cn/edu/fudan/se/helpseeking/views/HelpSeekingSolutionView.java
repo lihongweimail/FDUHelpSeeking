@@ -2,13 +2,21 @@ package cn.edu.fudan.se.helpseeking.views;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.xwork.ObjectUtils.Null;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Listener;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -18,7 +26,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -32,6 +42,7 @@ import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
+import cn.edu.fudan.se.helpseeking.bean.TabRecord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -58,7 +69,28 @@ public class HelpSeekingSolutionView extends ViewPart {
 	private Text txtSearch;
 
 	
+	private int currentActionID=0;
+	private String currentSearchID="0";
 	
+
+	
+
+	public String getCurrentSearchID() {
+		return currentSearchID;
+	}
+
+	public void setCurrentSearchID(String currentSearchID) {
+		this.currentSearchID = currentSearchID;
+	}
+
+	public int getCurrentActionID() {
+		return currentActionID;
+	}
+
+	public void setCurrentActionID(int currentActionID) {
+		this.currentActionID = currentActionID;
+	}
+
 	public Text getTxtSearch() {
 		return txtSearch;
 	}
@@ -78,15 +110,99 @@ public class HelpSeekingSolutionView extends ViewPart {
 	public void useOleBrowser() {
 		// TODO Auto-generated method stub
 	}
+	
+	List<TabRecord> myTabRecords=new ArrayList<>();
+	
 
 	@Override
 	public void createPartControl(Composite arg0) {
 		arg0.setLayout(new FillLayout());
 
 		
-		tabFolder = new CTabFolder(arg0, SWT.NONE);		
+		tabFolder = new CTabFolder(arg0, SWT.NONE);
+		
+	//TODO 监听器 部分
+		
+		
+		//记录对TAB的选择事件
+		tabFolder.addSelectionListener(new SelectionAdapter() {
+		
+			@Override
+			 public void widgetSelected(final SelectionEvent e)
+			{
+				if (tabFolder.getSelectionIndex()==0) {
+					System.out.println(tabFolder.getItem(0).getText());
+				}
+				
+				System.out.println("widget selected:\n"+tabFolder.getSelectionIndex()+"\n"+e.toString()+"\n"+e.getClass());
+				
+				
+			}
+		});
+		
+		//记录对TAB的关闭，打开等事件
+		tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
+			
+			@Override
+			public void showList(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void restore(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+				System.out.println("restore:\n" +event.toString()+"\n"+event.getClass());
+			}
+			
+			@Override
+			public void minimize(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void maximize(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void close(CTabFolderEvent event) {
+				// TODO Auto-generated method stub
+				System.out.println("close:\n" +event.toString()+"\n"+event.getClass());
+			}
+		});
+		
+		tabFolder.addDisposeListener(new DisposeListener() {
+			
+			@Override
+			public void widgetDisposed(DisposeEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("dispose:\n" +e.toString()+"\n"+e.getClass());
+			}
+		});
+		
+		tabFolder.addFocusListener(new FocusListener() {
+			
+			@Override
+			public void focusLost(FocusEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("focuse lost:\n" +e.toString()+"\n"+e.getClass());
+			}
+			
+			@Override
+			public void focusGained(FocusEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("focuse gained:\n" +e.toString()+"\n"+e.getClass());
+			}
+		});
+		
+	
+		
 		tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Search Page");
+		
 		
 
 	
@@ -95,6 +211,10 @@ public class HelpSeekingSolutionView extends ViewPart {
 //		new Label(SearchComposite, SWT.NONE);
 //		new Label(SearchComposite, SWT.NONE);
 		tabFolder.setSelection(tabItem);
+//		SearchComposite.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
+
+		
+		
 		
 		SearchComposite.setLayoutData(BorderLayout.NORTH);
 		SearchComposite.setLayout(new GridLayout(2, false));
@@ -118,7 +238,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				tree.removeAll();
+				
+				System.out.println("Say start manual search ...");
+				
 				String queryText = txtSearch.getText().trim();
 				Query query = new Query();
 				// query.setInforID(getCurrentActionID());
@@ -126,11 +248,14 @@ public class HelpSeekingSolutionView extends ViewPart {
 				query.setTime(starttime);
 				query.setIsbyuser(true);
 				query.setQueryLevel(QueryLevel.Middle);
+				query.setInforID(getCurrentActionID());
 				query.setUseKeywords(queryText);
 				query.makeCandidateKeywords(Cache.getInstance()
 						.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 				String searchID = "P" + query.getInforID();
 				query.setSearchID(searchID);
+				setCurrentSearchID(searchID);
+				query.setIsbyuser(true);
 
 				dosearch(query, searchID, queryText);
 			}
@@ -163,22 +288,32 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 	
 	public static void openNewTabByURL(String title, String url) {
-		final CTabItem tab = new CTabItem(tabFolder, SWT.CLOSE);
-		tab.setText(title);
+			if (url!=null) {
+			if (!url.equals("")) {
 
-		Composite tabComposite = new Composite(tabFolder, SWT.NONE);
-		tabComposite.setLayoutData(BorderLayout.NORTH);
-		tabComposite.setLayout(new GridLayout(2, false));
-		SimpleBrower myBrower = new SimpleBrower();
-		myBrower.setMyComposite(tabComposite);
-		myBrower.createShow();
-		myBrower.refreshBrowser();
-		myBrower.setDisableButton(true);
-		myBrower.setNewUrl(url);
+				final CTabItem tab = new CTabItem(tabFolder, SWT.CLOSE);
+				tab.setText(title);
 
-		tab.setControl(tabComposite);
+				Composite tabComposite = new Composite(tabFolder, SWT.NONE);
+				tabComposite.setLayoutData(BorderLayout.NORTH);
+				tabComposite.setLayout(new GridLayout(2, false));
+				SimpleBrower myBrower = new SimpleBrower();
+				myBrower.setMyComposite(tabComposite);
+				myBrower.createShow();
+				myBrower.refreshBrowser();
+				myBrower.setDisableButton(true);
+
+				myBrower.setNewUrl(url);
+				tab.setControl(tabComposite);
+
+				tabFolder.setSelection(tab);	
+
+			}
+
+			}
+
+
 		
-		tabFolder.setSelection(tab);
 	}
 
 	private static void dosearch(Query query, String searchID, String search) {
@@ -198,6 +333,10 @@ public class HelpSeekingSolutionView extends ViewPart {
 			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
 			try {
 				List<WEBResult> googlesearchList = apiCall.searchWeb(search);
+				if (googlesearchList.size()>0) {
+					tree.removeAll();
+				
+				
 				for (WEBResult webResult : googlesearchList) {
 					String xml = webResult.getTitleNoFormatting();
 					xml = xml.replaceAll("&quot;", "\"");
@@ -212,6 +351,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 					
 					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
 					item.setData(webResult.getUrl());
+					item.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_BLUE));
 
 					String compareContent=xml+" "+webResult.getContent();
 				
@@ -219,7 +360,12 @@ public class HelpSeekingSolutionView extends ViewPart {
 					SearchNode sNode=new SearchNode();
 					sNode.setTitle(xml);
 					sNode.setLink(webResult.getUrl());
-					sResults.getSearchNode().add(sNode);
+					
+					sNode.setSearchID(searchID);
+					
+					
+				
+					
 					
 					//展示 URL
 					TreeItem urlItem=new TreeItem(item, SWT.NULL);
@@ -227,6 +373,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 //							.getSystemColor(SWT.COLOR_BLUE));
 					urlItem.setText(webResult.getUrl());
 					urlItem.setData(webResult.getUrl());
+					
 					
 					//展示语言
 					if (webResult.getLanguage()!=null) {
@@ -246,9 +393,13 @@ public class HelpSeekingSolutionView extends ViewPart {
 						
 						if (!content.equals("")) {
     					TreeItem contentItem=new TreeItem(item, SWT.NULL);
-					    contentItem.setText(content.length()>50?content.substring(0,47)+"...":content);
+    					String tempcontents=content.length()>50?content.substring(0,47)+"...":content;
+					    contentItem.setText(tempcontents);
 //					    contentItem.setData(webResult.getUrl());
 					    contentItem.setData(null);
+					    sNode.setContents(tempcontents);
+					    
+					    
 					    }
 					}
 					
@@ -297,32 +448,41 @@ public class HelpSeekingSolutionView extends ViewPart {
 							myExceptioinName=myExceptioinName+" ; "+exceptionName;
 					}
 						
+					sNode.setJavaExceptionNames(myExceptioinName);
 					TreeItem subitem=new TreeItem(item, SWT.NULL);
 					subitem.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_RED));
 					subitem.setText(myExceptioinName);
-					item.setExpanded(true);
+					subitem.setData(null);
+					subitem.setExpanded(true);
+					
 					}
 
+					item.setExpanded(true);
+					sResults.getSearchNode().add(sNode);
+					
 					
 				}
+				
+				Timestamp endtime=new Timestamp(System.currentTimeMillis());
+				
+				query.setCosttime(endtime.getTime()-starttime.getTime());
+			
+			// 需要保存关键词和当前cache到数据库中：
+				DatabaseUtil.addKeyWordsToDataBase(query);
+				for (SearchNode snNode : sResults.getSearchNode()) {
+					DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
+				}
+					searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
+					FileHelper.appendContentToFile("result.txt", searchResultOutput);
 
+				
+				}
 					
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
 			
-			Timestamp endtime=new Timestamp(System.currentTimeMillis());
-			
-			query.setCosttime(endtime.getTime()-starttime.getTime());
-		
-		// 需要保存关键词和当前cache到数据库中：
-			DatabaseUtil.addKeyWordsToDataBase(query);
-			for (SearchNode snNode : sResults.getSearchNode()) {
-				DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(), snNode);
-			}
-				searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
-				FileHelper.appendContentToFile("result.txt", searchResultOutput);
 
 		
 	}

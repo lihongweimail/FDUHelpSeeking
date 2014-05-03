@@ -1248,13 +1248,15 @@ int informationID=-1;
 //		  `link` text,
 	
 		try {
-			String sql = "insert into helpseeking.searchresults(searhID,title,link)  values(?,?,?)";
+			String sql = "insert into helpseeking.searchresults(searhID,title,link,contents,javaExceptionNames)  values(?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
 			ps.setString(1, searchID);
 			ps.setString(2, sNode.getTitle());
 			ps.setString(3, sNode.getLink());
+			ps.setString(4, sNode.getContents());
+			ps.setString(5, sNode.getJavaExceptionNames());
 			
 
 			result = ps.executeUpdate();

@@ -6,6 +6,34 @@ public class SearchNode {
 	String link;
 	String contents;
 	String javaExceptionNames;
+	
+	
+	String queryWords;
+	String searchID;
+	
+	int positionInResultslist;
+	
+	
+	
+	
+	public int getPositionInResultslist() {
+		return positionInResultslist;
+	}
+	public void setPositionInResultslist(int positionInResultslist) {
+		this.positionInResultslist = positionInResultslist;
+	}
+	public String getSearchID() {
+		return searchID;
+	}
+	public void setSearchID(String searchID) {
+		this.searchID = searchID;
+	}
+	public String getQueryWords() {
+		return queryWords;
+	}
+	public void setQueryWords(String queryWords) {
+		this.queryWords = queryWords;
+	}
 	public String getTitle() {
 		return title;
 	}

@@ -37,6 +37,31 @@ public class Query {
 	}
 
 
+	public String genUserkeywords(List<KeyWord> keyWordsforQuery)
+	{
+		String result="";
+		
+		if (keyWordsforQuery==null || keyWordsforQuery.size()<=0) {
+			return null;			
+		}
+		
+		for (KeyWord keyWord : keyWordsforQuery) {
+		
+			if (result.equals("")) {
+				result=keyWord.getKeywordName();
+				
+			}else {
+				result=result+" "+keyWord.getKeywordName();
+			}
+			
+			
+			
+		}
+		
+		
+		return result;
+		
+	}
 	
 	
 	/**

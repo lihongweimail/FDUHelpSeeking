@@ -34,6 +34,7 @@ import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
+import cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView;
 
 
 public class CacheProcessing extends Thread  {
@@ -50,6 +51,7 @@ public class CacheProcessing extends Thread  {
 
 
 	IViewPart part ;
+	IViewPart partSolutionView;
 
 	public CacheProcessing()
 	{
@@ -185,6 +187,7 @@ public class CacheProcessing extends Thread  {
 					.getActiveWorkbenchWindow().getActivePage();
 			try {
 				part=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+				partSolutionView=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 
 
 			} catch (Exception e) {
@@ -1125,6 +1128,10 @@ public class CacheProcessing extends Thread  {
 
 
 
+		if (partSolutionView instanceof HelpSeekingSolutionView) {
+			HelpSeekingSolutionView v2=(HelpSeekingSolutionView) partSolutionView;
+			v2.setCurrentActionID(currentCache.getCurrentID());
+		}
 
 		if(part instanceof HelpSeekingSearchView){
 			HelpSeekingSearchView v = (HelpSeekingSearchView)part;
@@ -1154,11 +1161,13 @@ public class CacheProcessing extends Thread  {
 
 			}
 
+			
+			v.setCurrentActionID(currentCache.getCurrentID());
 			//TODO  为编译无自动提示功能版本而注释掉自动赋值 代码
-			v.setCandidateSearchWords(searchText);
+			v.setCandidateSearchWords(searchText,keyWordsforQuery);
 			System.out.println(searchText);
 
-			v.setCurrentActionID(currentCache.getCurrentID());
+			
 
 			int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。     
 

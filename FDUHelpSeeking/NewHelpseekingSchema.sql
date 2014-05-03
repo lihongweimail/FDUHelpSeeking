@@ -32,7 +32,7 @@ CREATE TABLE IF NOT EXISTS `keywords` ( `id` int(11) NOT NULL AUTO_INCREMENT,  `
 
 CREATE TABLE IF NOT EXISTS `runtimeinformation` ( `id` int(11) NOT NULL, `type` varchar(45) DEFAULT NULL ,  `content` text,  `relatedCode` longtext,  PRIMARY KEY (`id`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `searchresults` ( `id` int(11) NOT NULL AUTO_INCREMENT, `searhID` varchar(45) DEFAULT NULL, `title` text, `link` text,  PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=0  DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `searchresults` ( `id` int(11) NOT NULL AUTO_INCREMENT,  `searhID` varchar(45) DEFAULT NULL,  `title` text,  `link` text,  `contents` text,  `javaExceptionNames` text,  PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=0 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `syntacticblock` (`id` int(11) NOT NULL,`type` varchar(45) DEFAULT NULL, `code` longtext, `exceptionName` varchar(45) DEFAULT NULL, PRIMARY KEY (`id`), KEY `SYNTACTICTYPE` (`type`)) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
