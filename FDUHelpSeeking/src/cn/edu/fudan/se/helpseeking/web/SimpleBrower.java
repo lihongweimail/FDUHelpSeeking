@@ -122,7 +122,7 @@ public class SimpleBrower implements ControlListener {
 					resized = true;
 					String text = browser.getText();
 					String resize = "<script type=\"text/javascript\">"
-							+ "document.body.style.zoom=\"70%\""
+							+ "document.body.style.zoom=\"100%\""
 							+ "</script>";
 					
 					Document doc = Jsoup.parse(text); 

@@ -272,9 +272,10 @@ public class Cache  {
 			boolean flag=true;
 			for (ConsoleInformationListCopy ciflc : oldConsolesCopy) {
 				if (cif.getExceptionName().equals(ciflc.getExceptionName())) {
-					if (cif.getDescription().equals(ciflc.getDescription())) {
+					if(cif.getDescription()!=null  && ciflc.getDescription()!=null)
+					{if (cif.getDescription().equals(ciflc.getDescription())) {
 						flag=false;
-					}
+					}}
 				}
 				
 				

@@ -1154,6 +1154,9 @@ public class HelpSeekingSearchView extends ViewPart {
 				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 
 		LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
+		
+		
+		
 		try {
 			googlesearchList = apiCall.searchWeb(search);
 

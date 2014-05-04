@@ -106,7 +106,9 @@ public class LoopGoogleAPICall {
 		int j = 0; // count for the results
 
 		for (int i = 0; i < 9; i = i + 4) {
-			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&lr=lang_en&start="
+//			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&lr=lang_en&start="
+//					+ i + "&q=";
+			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&start="
 					+ i + "&q=";
 
 			String query = keywords; // "Programcreek";

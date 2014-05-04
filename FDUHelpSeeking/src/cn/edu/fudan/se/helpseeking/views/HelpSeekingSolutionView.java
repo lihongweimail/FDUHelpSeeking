@@ -554,6 +554,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
 
+			
+			
 			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
 			
 			
