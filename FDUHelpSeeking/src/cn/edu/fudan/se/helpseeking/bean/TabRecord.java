@@ -1,7 +1,10 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
+
+import org.omg.CORBA.INTERNAL;
 
 public class TabRecord {
 	
@@ -10,19 +13,42 @@ public class TabRecord {
 	String urlRecord;
 	Timestamp starTimestamp;
 	Timestamp endTimestamp;
-	String solutionID;
+	String solutionID;// 唯一编号 actionid + SERCHTYPE+SEARCHID+POSTION
 	String searchID;
 	int currentActionID;
 	int searchResultsListPostion;
-	List<Long> useTimeList;
-	String titleRecord;
+	int totallistnumber;
+	List<Long> useTimeList=new ArrayList<Long>();
+	String titleRecord;  //真实标题名
 	String contentRecord;
 	
+	String searchType;  // auto or  manual
+	
+	int reOpenIndex; //url相同的再次打开  分开记录 但是记录下这个 
 	
 	
 	
 	
 	
+	
+	public int getReOpenIndex() {
+		return reOpenIndex;
+	}
+	public void setReOpenIndex(int reOpenIndex) {
+		this.reOpenIndex = reOpenIndex;
+	}
+	public int getTotallistnumber() {
+		return totallistnumber;
+	}
+	public void setTotallistnumber(int totallistnumber) {
+		this.totallistnumber = totallistnumber;
+	}
+	public String getSearchType() {
+		return searchType;
+	}
+	public void setSearchType(String searchType) {
+		this.searchType = searchType;
+	}
 	public String getTitleRecord() {
 		return titleRecord;
 	}

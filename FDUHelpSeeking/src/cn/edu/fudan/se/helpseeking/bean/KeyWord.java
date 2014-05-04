@@ -1,5 +1,7 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import java.sql.Timestamp;
+
 public class KeyWord {
 
 	String keywordName=null;
@@ -8,12 +10,42 @@ public class KeyWord {
 	double weightOne=1.0;//基本权重
 	double  weightTwo=1.0;//附加权重
 	
-	String searchID;
+	String searchID;   //从候选的推荐组号  一般是U开头
 	int positionInRecommandlist;
+	int positionInUseString;
+	boolean isRecommand=true;
+	
+	String lastSearchID;//最后 真正 使用search button时的searchID    一般是A开头
+	
+	Timestamp times;
 	
 	
 	
 	
+	public Timestamp getTimes() {
+		return times;
+	}
+	public void setTimes(Timestamp times) {
+		this.times = times;
+	}
+	public boolean isRecommand() {
+		return isRecommand;
+	}
+	public void setRecommand(boolean isRecommand) {
+		this.isRecommand = isRecommand;
+	}
+	public int getPositionInUseString() {
+		return positionInUseString;
+	}
+	public void setPositionInUseString(int positionInUseString) {
+		this.positionInUseString = positionInUseString;
+	}
+	public String getLastSearchID() {
+		return lastSearchID;
+	}
+	public void setLastSearchID(String lastSearchID) {
+		this.lastSearchID = lastSearchID;
+	}
 	public String getSearchID() {
 		return searchID;
 	}

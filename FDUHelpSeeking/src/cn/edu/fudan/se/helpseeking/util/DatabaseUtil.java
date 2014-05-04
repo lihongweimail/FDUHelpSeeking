@@ -32,11 +32,14 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
+import cn.edu.fudan.se.helpseeking.bean.TabRecord;
 import cn.edu.fudan.se.helpseeking.bean.TaskDescription;
+import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.BehaviorItem;
 import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
@@ -1020,18 +1023,8 @@ int informationID=-1;
 			return -1;
 		}
 		
-
-
 		
 		PreparedStatement ps = null;
-//		 `id` int(11) 
-//		  `inforID` int(11) 
-//		  `candidateKeyWords`
-//		  `userKeyWords` text
-//		  `time` datetime 
-//		  `costtime` int(11)
-//		  `searchID` varchar(45) 
-//		  `isbyuser` VARCHAR(20) 
 	
 		try {
 			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords,time,costtime,searchID,isbyuser)  values(?,?,?,?,?,?,?)";
@@ -1072,6 +1065,196 @@ int informationID=-1;
 
 		return result;
 	}
+	
+	
+	public static int addBrowserUseToDataBase(TabRecord tabRecord) {
+		int result = 0;
+
+		if (tabRecord == null) {
+			return -1;
+		}
+		
+
+	
+	
+		PreparedStatement ps = null;
+	
+		try {
+			String sql = "insert into helpseeking.usebrowserinformation(tabName,urlRecord,searchResultsListPostion,totallistnumber,useTimes,reOpenIndex,titleRecord,totalTime,starTimestamp,endTimestamp,solutionID,searchID,searchType,contentRecord)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
+			ps = con.prepareStatement(sql);
+
+			long totaltime=0l;
+			int usetimes=0;
+			if (tabRecord.getUseTimeList().size()>0) {
+				for (int j = 0; j < tabRecord.getUseTimeList().size(); j++) {
+					totaltime=totaltime+tabRecord.getUseTimeList().get(j);
+					if (tabRecord.getUseTimeList().get(j)>0) {
+						usetimes=usetimes+1;
+					}
+				}
+			}
+			
+			ps.setString(1, tabRecord.getTabName());
+			ps.setString(2, tabRecord.getUrlRecord());
+			ps.setInt(3, tabRecord.getSearchResultsListPostion());
+			ps.setInt(4, tabRecord.getTotallistnumber());
+			ps.setInt(5, usetimes);
+			ps.setInt(6, tabRecord.getReOpenIndex());	
+			ps.setString(7, tabRecord.getTitleRecord());
+			ps.setLong(8, totaltime);
+			ps.setTimestamp(9, tabRecord.getStarTimestamp());	
+			ps.setTimestamp(10, tabRecord.getEndTimestamp());
+			ps.setString(11, tabRecord.getSolutionID());
+			ps.setString(12, tabRecord.getSearchID());
+			ps.setString(13, tabRecord.getSearchType());
+			ps.setString(14, tabRecord.getContentRecord());
+			
+			result = ps.executeUpdate();
+	
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+
+		
+		return result;
+		
+		
+	}
+	
+	
+public static int addSearchWordsToDataBase(List<KeyWord> currentSearchWords) {
+		int result = 0;
+
+		if (currentSearchWords == null) {
+			return -1;
+		}
+		
+
+if (currentSearchWords.size()>0) {
+	
+
+for (int i = 0; i < currentSearchWords.size(); i++) {
+	
+	
+		PreparedStatement ps = null;
+	
+		try {
+			String sql = "insert into helpseeking.usekeywords(keywordname,searchid,positioninrecommandlist,positioninusestring,lastsearchid,isrecommand,times)  values(?,?,?,?,?,?,?)";
+
+			ps = con.prepareStatement(sql);
+
+			ps.setString(1, currentSearchWords.get(i).getKeywordName());
+			ps.setString(2, currentSearchWords.get(i).getSearchID());
+			ps.setInt(3, currentSearchWords.get(i).getPositionInRecommandlist());
+			ps.setInt(4, currentSearchWords.get(i).getPositionInUseString());
+			ps.setString(5, currentSearchWords.get(i).getLastSearchID());
+			ps.setString(6, currentSearchWords.get(i).isRecommand()?"recommand":"userInput");	
+			ps.setTimestamp(7, currentSearchWords.get(i).getTimes());		
+
+			result = ps.executeUpdate();
+	
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+}
+}	
+		
+		return result;
+		
+}
+
+
+public static int addUseResultsRecord(UseResultsRecord urr) {
+	int result = 0;
+
+	if (urr == null) {
+		return -1;
+	}
+	
+
+	PreparedStatement ps = null;
+
+	try {
+		String sql = "insert into helpseeking.useresultsrecord(searchID,solutionID,title,url,content,totallist,position,type,time)  values(?,?,?,?,?,?,?,?,?)";
+
+		ps = con.prepareStatement(sql);
+
+		ps.setString(1, urr.getSearchID());
+		ps.setString(2, urr.getSolutionID());
+		ps.setString(3, urr.getTitle());
+		ps.setString(4, urr.getUrl());
+		ps.setString(5, urr.getContent());
+		ps.setInt(6, urr.getTotallist());
+		ps.setInt(7, urr.getPosition());	
+		ps.setString(8, urr.getType());	
+		ps.setTimestamp(9, urr.getTime());		
+
+		result = ps.executeUpdate();
+
+		// }
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		if (rs != null)
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		if (ps != null)
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+
+	
+	return result;
+	
+}
+
+	
+	
 
 	public static List<TaskDescription> getTaskDescriptionRecords() {
 		PreparedStatement ps = null;
@@ -1120,6 +1303,8 @@ int informationID=-1;
 		closeAll();
 		return null;
 	}
+	
+	
 	
 	
 	public static int addTaskDescriptionToDataBase(TaskDescription taskDescription ) {
@@ -1468,7 +1653,7 @@ int informationID=-1;
 		try {
 			StringBuffer sqlBuffer = new StringBuffer();
 			sqlBuffer.append(sqlString);
-			//			"select max(id) from helpseeking.syntacticblock "
+			//			"select max(id) from syntacticblock "
 			ps = con.prepareStatement(sqlBuffer.toString());
 			rs = ps.executeQuery();
 			List<Integer> items=new ArrayList<Integer>();
@@ -1741,7 +1926,7 @@ return dbError;
 		List<String> dbugupClass=new ArrayList<String>();
 		List<String> dbugbelowClass=new ArrayList<String>();
 
-		dbuginteralcaller.add("cn.edu.fudan.se.helpseeking.util.DatabaseUtil.main(String[])");
+		dbuginteralcallee.add("cu.fudan.se.helpseeking.util.DatabaseUtil.main(String[])");
 		dbuginteralcallee.add("cn.edu.fudan.se.helpseeking.bean.ClassModel.setCode(String)");
 		dbuginteralcallee.add("cn.edu.fudan.se.helpseeking.bean.Breakpoint.setLineNo(int)");
 		dbugupClass=null;
@@ -1859,6 +2044,10 @@ return dbError;
 
 		return ideOutput;
 	}
+
+
+
+
 
 }
 
