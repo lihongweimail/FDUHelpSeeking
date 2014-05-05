@@ -10,7 +10,7 @@ import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 
 public class CrawlWebPages {
 
-	static LoopGoogleAPICall myGoogleSearch = new LoopGoogleAPICall();
+	static LoopGoogleAPICall myGoogleSearch = new LoopGoogleAPICall("test");
 	static List<WEBResult> searchResults = new ArrayList<WEBResult>();
 
 	public void haha() {

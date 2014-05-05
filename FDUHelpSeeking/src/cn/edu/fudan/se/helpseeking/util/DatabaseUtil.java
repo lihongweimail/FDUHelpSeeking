@@ -51,6 +51,11 @@ public class DatabaseUtil {
 	//	public static final String USER = "MONITOR";
 	//	public static final String PWD = "123456";
 	
+//	sqlite link 
+//	JDBC_DRIVER=org.sqlite.JDBC
+//	DB_URL=jdbc:sqlite:
+//	DB_FILENAME=videocount.db
+	
 	private static Connection con = null;
 	private static  Statement	stmt=null;
 	//	for mysql jdbc link

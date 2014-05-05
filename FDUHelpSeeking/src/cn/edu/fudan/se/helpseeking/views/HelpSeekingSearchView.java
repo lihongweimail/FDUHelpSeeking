@@ -1,6 +1,5 @@
 package cn.edu.fudan.se.helpseeking.views;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -1127,7 +1126,12 @@ public class HelpSeekingSearchView extends ViewPart {
 			}
 			// txtCandidateSearch.setText(search);
 
-			dosearch(query, searchID, search);
+			try {
+				dosearch(query, searchID, search);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 
 		// 清除query 准备下一轮 自动查询构造
@@ -1135,7 +1139,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	}
 
-	private static void dosearch(Query query, String searchID, String search) {
+	private static void dosearch(Query query, String searchID, String search) throws InterruptedException {
 		Timestamp starttime;
 		String searchResultOutput = "\n============\n";
 		SearchResults sResults = new SearchResults();
@@ -1153,12 +1157,33 @@ public class HelpSeekingSearchView extends ViewPart {
 		query.makeCandidateKeywords(Cache.getInstance()
 				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 
-		LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
+	LoopGoogleAPICall apiCall = new LoopGoogleAPICall(search);
+		
+			apiCall.start();
+			apiCall.join();
 		
 		
 		
-		try {
-			googlesearchList = apiCall.searchWeb(search);
+//	
+//			
+//			Timer timer=new Timer();
+//			timer.schedule(new TimerTask() {
+//				
+//				@Override
+//				public void run() {
+//					if (googlesearchList==null)
+//					{
+//						return;
+//					}
+//					if (googlesearchList.size()<=0) {
+//						return;
+//					}
+//					apiCall.cancel();
+//					
+//				}
+//			}, Basic.WAIT_GOOGLE_TIME);
+			
+			googlesearchList = apiCall.getCurrentResults();
 
 			// 防止为空值
 			if (googlesearchList.size() > 0) {
@@ -1332,9 +1357,7 @@ public class HelpSeekingSearchView extends ViewPart {
 				System.out.println("No return results!");
 			}
 
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
+	
 
 	}
 

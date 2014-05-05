@@ -10,21 +10,65 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.stream.events.StartDocument;
-
 import com.google.gson.Gson;
 
-public class LoopGoogleAPICall {
+public class LoopGoogleAPICall extends Thread{
 
 	public static void main(String[] args) throws IOException {
 
-		LoopGoogleAPICall apiCall=new LoopGoogleAPICall();
+		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("getResource IllegalArgumentException");
 		System.out.println("start search...");
 		apiCall.searchWeb("getResource IllegalArgumentException");
 //		apiCall.commSearch();
 		System.out.println("End search.");
 	}
 
+	static String search="";
+	public volatile boolean stop=false;
+	
+	
+	public static String getSearch() {
+		return search;
+	}
+
+
+	public static void setSearch(String search) {
+		LoopGoogleAPICall.search = search;
+	}
+
+
+	public LoopGoogleAPICall(String search) {
+      
+		setSearch(search);
+		
+
+	}
+	
+	
+	public void cancel() {
+		
+	}
+	public void run()
+	{
+		
+		
+			
+			try {
+				searchWeb(search);
+				
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+		
+		
+	}
+	
+	
+	
+	
 	public static void commSearch() throws MalformedURLException,
 	UnsupportedEncodingException, IOException {
 		int j = 0; // count for the results
@@ -98,10 +142,26 @@ public class LoopGoogleAPICall {
 //	自定义的搜索引擎
 //	"https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=" 
 	
+	List<WEBResult> currentResults = new ArrayList<WEBResult>();
 	
+	
+	
+	public List<WEBResult> getCurrentResults() {
+		return currentResults;
+	}
+
+	public void setCurrentResults(List<WEBResult> currentResults) {
+		this.currentResults = currentResults;
+	}
+
 	public  List<WEBResult> searchWeb(String keywords) throws IOException {
 
 		List<WEBResult> results = new ArrayList<WEBResult>();
+        
+		 for (int i = 0; i < currentResults.size(); i++) {
+			currentResults.remove(i);
+		}
+
 
 		int j = 0; // count for the results
 
@@ -137,7 +197,21 @@ public class LoopGoogleAPICall {
 					System.out.println("URL: "
 							+ tempRresults.getResponseData().getResults().get(m)
 							.getUrl() + "\n");
-					results.add(tempRresults.getResponseData().getResults().get(m));
+					WEBResult old=tempRresults.getResponseData().getResults().get(m);
+					results.add(old);
+					WEBResult temp=new WEBResult();
+					temp.setContent(old.getContent());
+					temp.setLanguage(old.getLanguage());
+					temp.setLocation(old.getLocation());
+					temp.setPublishedDate(old.getPublishedDate());;
+					temp.setPublisher(old.getPublisher());
+					temp.setSignedRedirectUrl(old.getSignedRedirectUrl());
+					temp.setTitle(old.getTitle());
+					temp.setTitleNoFormatting(old.getTitleNoFormatting());
+					temp.setUnescapedUrl(old.getUnescapedUrl());
+					temp.setUrl(old.getUrl());
+					currentResults.add(temp);
+					
 				}
 			}
 		}

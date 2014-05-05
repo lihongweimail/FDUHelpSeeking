@@ -1,6 +1,5 @@
 package cn.edu.fudan.se.helpseeking.views;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -374,7 +373,12 @@ public class HelpSeekingSolutionView extends ViewPart {
 				setCurrentSearchID(searchID);
 				query.setIsbyuser(true);
 
-				dosearch(query, searchID, queryText);
+				try {
+					dosearch(query, searchID, queryText);
+				} catch (InterruptedException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 				}
 				
 				
@@ -539,8 +543,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 
 	
 	static SearchResults sResults;
+	static List<WEBResult> googlesearchList=new ArrayList<WEBResult>();
 	
-	private static void dosearch(Query query, String searchID, String search) {
+	private static void dosearch(Query query, String searchID, String search) throws InterruptedException {
 
 		Timestamp starttime;
 		String searchResultOutput="\n============\n";
@@ -554,13 +559,41 @@ public class HelpSeekingSolutionView extends ViewPart {
 			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
 
+	
+			 LoopGoogleAPICall apiCall = new LoopGoogleAPICall(search);
+			apiCall.start();
+			apiCall.join();
 			
+//			Thread.sleep(Basic.WAIT_GOOGLE_TIME);
+//			apiCall.stop=true;
+//			apiCall.interrupt();
+//			Thread.sleep(3000);			
+			googlesearchList = apiCall.getCurrentResults();
 			
-			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
-			
-			
-			try {
-				List<WEBResult> googlesearchList = apiCall.searchWeb(search);
+//			LoopGoogleAPICall apiCall = new LoopGoogleAPICall();
+//			
+//			
+//			try {
+//				
+//				
+//				Timer timer=new Timer();
+//				timer.schedule(new TimerTask() {
+//					
+//					@Override
+//					public void run() {
+//						if (googlesearchList==null)
+//						{
+//							return;
+//						}
+//						if (googlesearchList.size()<=0) {
+//							return;
+//						}
+//						
+//					}
+//				}, Basic.WAIT_GOOGLE_TIME);
+//				
+//				googlesearchList = apiCall.searchWeb(search);
+				
 				if (googlesearchList.size()>0) {
 					tree.removeAll();
 				
@@ -752,10 +785,10 @@ public class HelpSeekingSolutionView extends ViewPart {
 					System.out.println("No return results!");
 				}
 					
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			
+//			} catch (IOException e1) {
+//				e1.printStackTrace();
+//			}
+//			
 
 		
 	}

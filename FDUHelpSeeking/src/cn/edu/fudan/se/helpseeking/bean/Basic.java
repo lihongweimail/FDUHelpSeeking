@@ -666,6 +666,7 @@ public class Basic {
 	public final static double DISTANCE_RATIO=0.01;
 	public final static double OLD_RATIO=0.1;
 	public final static double FREQUENCY_RATIO=0.01;
+	public final static int WAIT_GOOGLE_TIME=20000;
 	
 	
 	
