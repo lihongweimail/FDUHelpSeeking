@@ -733,6 +733,11 @@ public class HelpSeekingSolutionView extends ViewPart {
 			
 				//生成选择和自己输入的关键词并记录数据库
 				
+				for (int i = 0; i < currentSearchWords.size(); i++) {
+					currentSearchWords.remove(i);
+				}
+				
+				
 				List<String> searchWords=CommUtil.arrayToList(search.split("[ ]"));
 				
 				for (int i = 0; i < searchWords.size(); i++) {
@@ -748,6 +753,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 							sendfromselectSearchWords.get(j).setPositionInUseString(j);
 							sendfromselectSearchWords.get(j).setRecommand(true);
 							sendfromselectSearchWords.get(j).setTimes(starttime);
+							sendfromselectSearchWords.get(j).setLastSearchID(searchID);
 						currentSearchWords.add(sendfromselectSearchWords.get(j));
 						flag=false;
 						}
