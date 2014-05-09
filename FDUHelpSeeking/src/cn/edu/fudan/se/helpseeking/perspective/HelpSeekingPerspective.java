@@ -18,7 +18,7 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 //		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView",  IPageLayout.BOTTOM, 0.7f, "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 		
 		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
+//		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
 		right.addView(IPageLayout.ID_PROBLEM_VIEW);
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);

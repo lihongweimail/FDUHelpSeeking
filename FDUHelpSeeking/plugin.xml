@@ -12,7 +12,7 @@
    <extension
          point="org.eclipse.ui.views">
       <category
-            name="Help Seeking Monitor"
+            name="amAssist Monitor"
             id="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor">
       </category>
       <view
@@ -20,21 +20,21 @@
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
             icon="icons/types.gif"
             id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView"
-            name="Context Recommendation View">
+            name="Context Recommendation">
       </view>
       <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
             icon="icons/seq.gif"
             id="cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView"
-            name="Behavior Sequence View">
+            name="Behavior Sequence">
       </view>
       <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
             icon="icons/abstract.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView"
-            name="Help Seeking Recommand View"
+            name="amAssist Recommand"
             restorable="true">
       </view>
       <view
@@ -42,7 +42,7 @@
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
             icon="icons/enum.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
-            name="Help Seeking Solution View"
+            name="amAssist Web Browser"
             restorable="true">
       </view>
       <view
@@ -50,7 +50,7 @@
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"
             icon="icons/refresh.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView"
-            name="Help Seeking Comments View"
+            name="amAssist Comments"
             restorable="true">
       </view>
    </extension>
@@ -60,14 +60,14 @@
             class="cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"
             icon="icons/volatile_co.gif"
             id="cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"
-            name="Help Seeking Perspective">
+            name="amAssist Perspective">
       </perspective>
    </extension>
    
    <extension
         point="org.eclipse.ui.preferencePages">
    <page
-       name="FDUHelpSeeking Configuration"
+       name="amAssist Configuration"
        class="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
        id="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"> 
        </page>
@@ -76,6 +76,12 @@
          class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
          id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
          name="DBPreferencePage">
+   </page>
+   <page
+         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+         class="cn.edu.fudan.se.helpseeking.preferences.SearchEngineSetPreferencePage"
+         id="cn.edu.fudan.se.helpseeking.preferences.SearchEngineSetPreferencePage"
+         name="Google Custom Search Engine Set">
    </page>
    </extension>
    <extension

@@ -10,7 +10,7 @@
 	<classpathentry kind="lib" path="lib/args4j-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/intt.jar"/>
 	<classpathentry kind="lib" path="lib/edu.mit.jwi_2.1.5.jar"/>
-	<classpathentry kind="lib" path="lib/gson-2.2.4.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.2.4.jar" sourcepath="lib/gson-2.2.4-sources.jar"/>
 	<classpathentry kind="lib" path="lib/xwork-core-2.1.4-jdk14.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>

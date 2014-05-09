@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -41,6 +42,7 @@ import cn.edu.fudan.se.helpseeking.bean.SearchResults;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
@@ -106,12 +108,26 @@ public class HelpSeekingSearchView extends ViewPart {
 	List<KeyWord> tagButton = null;
 	Label canlabel;
 	Composite fatherComposite;
+	//TODO ...
+	String mySearch="DefaultHandler SAXParser javax.xml.parsers.SAXParser.parse";
+
+	public String getMySearch() {
+		return mySearch;
+	}
+
+
+
+	public void setMySearch(String mySearch) {
+		this.mySearch = mySearch;
+	}
+
+
 
 	@Override
 	public void createPartControl(Composite arg0) {
 		BorderLayout myboBorderLayout = new BorderLayout();
 		arg0.setLayout(myboBorderLayout);
-		
+
 		fatherComposite=arg0;
 
 		northcomposite = new Composite(arg0, SWT.NONE);
@@ -128,7 +144,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		canlabel = new Label(northtableComposite, SWT.NONE);
 		canlabel.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 22,	1));
-		canlabel.setText("Candidate Words:");
+		canlabel.setText("Working Focus:");
 
 		keywordsPrevious = new Button(northtableComposite, SWT.CENTER);
 		keywordsPrevious.setEnabled(false);
@@ -144,11 +160,11 @@ public class HelpSeekingSearchView extends ViewPart {
 					// mycacheCandWordTreesIndex=mycacheCandWordTrees.size()-1;
 					// }else
 					// {
-					
-					
+
+
 					mycacheCandWordTreesIndex = mycacheCandWordTreesIndex - 1;
-					
-					
+
+
 					if (mycacheCandWordTreesIndex<0 ) {
 						keywordsPrevious.setEnabled(false);
 						northtableComposite.redraw();
@@ -161,11 +177,11 @@ public class HelpSeekingSearchView extends ViewPart {
 						if (mycacheCandWordTreesIndex>=mycacheCandWordTrees.size()) {
 							mycacheCandWordTreesIndex=mycacheCandWordTrees.size()-1;
 						}
-						
+
 					}
-					
-					
-/*					
+
+
+					/*					
 					if (mycacheCandWordTreesIndex <0) {
 						mycacheCandWordTreesIndex = 0;
 					} else {
@@ -175,28 +191,28 @@ public class HelpSeekingSearchView extends ViewPart {
 									.size();
 						}
 					}
-*/
+					 */
 					// }
 					// //开关
-	
+
 					if(mycandwordtreesSelectFlag == false)
 					{mycandwordtreesSelectFlag = true;
-					canlabel.setText("Candidate Words:"+"  history index:"+mycacheCandWordTreesIndex);
+					canlabel.setText("Working Focus:"+"  history index:"+mycacheCandWordTreesIndex);
 					northtableComposite.redraw();
 					northtableComposite.pack();
 					return;
-					
+
 					}
-					
-				
+
+
 					System.out.println("keyword previous: index"+mycacheCandWordTreesIndex);
-					
+
 					keywordsNext.setEnabled(true);
 
-/*					if (mycacheCandWordTreesIndex == -1) {
+					/*					if (mycacheCandWordTreesIndex == -1) {
 
 						keywordsPrevious.setEnabled(false);
-						
+
 						northtableComposite.redraw();
 						northtableComposite.pack();
 
@@ -208,9 +224,9 @@ public class HelpSeekingSearchView extends ViewPart {
 						return;
 					}
 
-*/					//移除原有数据
-			
-					
+					 */					//移除原有数据
+
+
 					Control[] children = tagComposite.getChildren();
 					for(Control child : children){
 						if(!(child.isDisposed())){
@@ -224,13 +240,13 @@ public class HelpSeekingSearchView extends ViewPart {
 					myRowLayout.marginTop = 3;
 					myRowLayout.marginRight = 3;
 					myRowLayout.marginBottom = 3;
-					
+
 					myRowLayout.wrap = true;
 					myRowLayout.pack = true;
 					myRowLayout.justify = true;
 					tagComposite.setLayout(myRowLayout);
 
-					canlabel.setText("Candidate Words:"+"  history index:"+mycacheCandWordTreesIndex);
+					canlabel.setText("Working Focus:"+"  history index:"+mycacheCandWordTreesIndex);
 
 
 					List<KeyWord> kWords = mycacheCandWordTrees.get(
@@ -259,31 +275,31 @@ public class HelpSeekingSearchView extends ViewPart {
 						});
 
 					}
-//					
-				northtableComposite.redraw();
-				northtableComposite.pack();
+					//					
+					northtableComposite.redraw();
+					northtableComposite.pack();
 
-				tagComposite.redraw();
-				tagComposite.pack();
-				
-				
-				
-				mycandwordtreesSelectFlag = true;
-				
+					tagComposite.redraw();
+					tagComposite.pack();
 
-//				SearchComposite.redraw();
-//				SearchComposite.pack();
-				if (mycacheCandWordTreesIndex==0) {
-					keywordsPrevious.setEnabled(false);
+
+
+					mycandwordtreesSelectFlag = true;
+
+
+					//				SearchComposite.redraw();
+					//				SearchComposite.pack();
+					if (mycacheCandWordTreesIndex==0) {
+						keywordsPrevious.setEnabled(false);
+					}
+
 				}
-					
-				}
-				
-				
+
+
 			}
 		});
-		
-		
+
+
 		keywordsPrevious.setImage(ResourceManager.getPluginImage(
 				"cn.edu.fudan.se.helpseeking", "icons/previous.gif"));
 		GridData gd_keywordsPrevious = new GridData(SWT.RIGHT, SWT.TOP, true,
@@ -310,17 +326,17 @@ public class HelpSeekingSearchView extends ViewPart {
 
 						tagComposite.redraw();
 						tagComposite.pack();
-						
+
 						return;
 					}else {
 						if (mycacheCandWordTreesIndex<0) {
-							
+
 							mycacheCandWordTreesIndex=0;
 						}
 					}
-					
-					
-/*					if ((mycacheCandWordTreesIndex < -1)) {
+
+
+					/*					if ((mycacheCandWordTreesIndex < -1)) {
 						mycacheCandWordTreesIndex = -1;
 					} else {
 						if ((mycacheCandWordTreesIndex >= mycacheCandWordTrees
@@ -330,15 +346,15 @@ public class HelpSeekingSearchView extends ViewPart {
 						}
 					}
 
-*/					// 开关
+					 */					// 开关
 					mycandwordtreesSelectFlag = true;
 
 					// /
-			
+
 					System.out.println("keyword next: index"+mycacheCandWordTreesIndex);
 
 					keywordsPrevious.setEnabled(true);
-/*					if (mycacheCandWordTreesIndex >= mycacheCandWordTrees
+					/*					if (mycacheCandWordTreesIndex >= mycacheCandWordTrees
 							.size()) {
 						// mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
 						keywordsNext.setEnabled(false);
@@ -350,11 +366,11 @@ public class HelpSeekingSearchView extends ViewPart {
 
 //						SearchComposite.redraw();
 //						SearchComposite.pack();
-						
-						
+
+
 						return;
 					}
-*/					// /
+					 */					// /
 					//移除原有数据
 
 					Control[] children = tagComposite.getChildren();
@@ -370,14 +386,14 @@ public class HelpSeekingSearchView extends ViewPart {
 					myRowLayout.marginTop = 3;
 					myRowLayout.marginRight = 3;
 					myRowLayout.marginBottom = 3;
-					
+
 					myRowLayout.wrap = true;
 					myRowLayout.pack = true;
 					myRowLayout.justify = true;
 					tagComposite.setLayout(myRowLayout);
 
 
-					canlabel.setText("Candidate Words:"+"  history index:"+mycacheCandWordTreesIndex);
+					canlabel.setText("Working Focus:"+"  history index:"+mycacheCandWordTreesIndex);
 
 
 					List<KeyWord> kWords = mycacheCandWordTrees.get(
@@ -405,24 +421,24 @@ public class HelpSeekingSearchView extends ViewPart {
 						});
 
 					}
-					
-				northtableComposite.redraw();
-				northtableComposite.pack();
 
-				tagComposite.redraw();
-				tagComposite.pack();
+					northtableComposite.redraw();
+					northtableComposite.pack();
 
-//				SearchComposite.redraw();
-//				SearchComposite.pack();
+					tagComposite.redraw();
+					tagComposite.pack();
 
-				if (mycacheCandWordTreesIndex==mycacheCandWordTrees.size()-1) {
-					keywordsNext.setEnabled(false);
+					//				SearchComposite.redraw();
+					//				SearchComposite.pack();
+
+					if (mycacheCandWordTreesIndex==mycacheCandWordTrees.size()-1) {
+						keywordsNext.setEnabled(false);
+					}
+
+
 				}
-					
-					
-				}
-		
-				
+
+
 			}
 		});
 		keywordsNext.setImage(ResourceManager.getPluginImage(
@@ -441,14 +457,51 @@ public class HelpSeekingSearchView extends ViewPart {
 		myRowLayout.marginTop = 3;
 		myRowLayout.marginRight = 3;
 		myRowLayout.marginBottom = 3;
-		
+
 		myRowLayout.wrap = true;
 		myRowLayout.pack = true;
 		myRowLayout.justify = true;
 		tagComposite.setLayout(myRowLayout);
 
-		
-		new Button(tagComposite, SWT.NONE).setText(" ");
+
+
+		new Button(tagComposite, SWT.NONE).setText("");
+		//		Button hello=new Button(tagComposite, SWT.NONE);
+		//		hello.setText("SAXParser");
+		//       hello.addSelectionListener(new SelectionListener() {
+		//			
+		//			@Override
+		//			public void widgetSelected(SelectionEvent e) {
+		//				// TODO Auto-generated method stub
+		//				
+		//				 try {
+		//					domysearch();
+		//				} catch (InterruptedException e1) {
+		//					// TODO Auto-generated catch block
+		//					e1.printStackTrace();
+		//				}
+		//				
+		//			}
+		//			
+		//			@Override
+		//			public void widgetDefaultSelected(SelectionEvent e) {
+		//				// TODO Auto-generated method stub
+		//				
+		//			}
+		//		});
+		//		new Button(tagComposite, SWT.NONE).setText("DefaultHandler");
+		//		new Button(tagComposite, SWT.NONE).setText("NullPointerException");
+		//		new Button(tagComposite, SWT.NONE).setText("HashMap");
+		//		new Button(tagComposite, SWT.NONE).setText("SAXParser.parse(File,DefaultHandler)");
+		//		
+		//		
+
+
+
+
+
+
+
 		// =====================================
 		SearchComposite = new Composite(northcomposite, SWT.NONE);
 		SearchComposite.setLayoutData(BorderLayout.SOUTH);
@@ -461,7 +514,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		label = new Label(SearchComposite, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, true, false, 22, 1));
-		label.setText("Recommanded solution links:");
+		label.setText(" Recommended Resources:");
 
 		autoResultsPrevious = new Button(SearchComposite, SWT.CENTER);
 		autoResultsPrevious.setEnabled(false);
@@ -512,9 +565,9 @@ public class HelpSeekingSearchView extends ViewPart {
 							mycacheAutoSearchResultsIndex - 1).getSearchNode();
 					setCurrentSearchID(mycacheAutoSearchResults.get(
 							mycacheAutoSearchResultsIndex - 1).getSearchID());
-					
+
 					currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
-					
+
 					for (int j = 0; j < sNodes.size(); j++) {
 						// TODO NEED DETATIL
 						TreeItem item = new TreeItem(searchResultsTree,
@@ -616,9 +669,9 @@ public class HelpSeekingSearchView extends ViewPart {
 							mycacheAutoSearchResultsIndex - 1).getSearchNode();
 					setCurrentSearchID(mycacheAutoSearchResults.get(
 							mycacheAutoSearchResultsIndex - 1).getSearchID());
-					
+
 					currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
-					
+
 					for (int j = 0; j < sNodes.size(); j++) {
 						// TODO NEED DETATIL
 						TreeItem item = new TreeItem(searchResultsTree,
@@ -726,56 +779,56 @@ public class HelpSeekingSearchView extends ViewPart {
 				}
 				// SearchNode
 				// recordNode=mycacheAutoSearchResults.get(searchResultsTree.getSelectionCount()+selectindex);
-				
 
-				
-				
+
+
+
 
 				if ((part instanceof HelpSeekingSolutionView)
 						&& item.getData() != null) {
 					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
-					
-					
-		               String content="";
-						String compData1=item.getText();
-						String compData2=(String)item.getData();
-						
-						int currentindex=0;
-						List <SearchNode> searchNode=mycacheAutoSearchResults.get(currentautosearcresultsindex).getSearchNode();
-						int totalresults=searchNode.size();
-						
-						
-						for (int i = 0; i < searchNode.size(); i++) {
-							
-							if (compData1.equals(searchNode.get(i).getTitle())) {
-								
-								if (compData2.equals(searchNode.get(i).getLink())) {
-									
-									currentindex=searchNode.get(i).getPositionInResultslist();
-									content=searchNode.get(i).getContents();
-									compData1=searchNode.get(i).getTitle();
-								}
-								
-								
+
+
+					String content="";
+					String compData1=item.getText();
+					String compData2=(String)item.getData();
+
+					int currentindex=0;
+					List <SearchNode> searchNode=mycacheAutoSearchResults.get(currentautosearcresultsindex).getSearchNode();
+					int totalresults=searchNode.size();
+
+
+					for (int i = 0; i < searchNode.size(); i++) {
+
+						if (compData1.equals(searchNode.get(i).getTitle())) {
+
+							if (compData2.equals(searchNode.get(i).getLink())) {
+
+								currentindex=searchNode.get(i).getPositionInResultslist();
+								content=searchNode.get(i).getContents();
+								compData1=searchNode.get(i).getTitle();
 							}
-							
-							
+
+
 						}
-						
-						UseResultsRecord urr=new UseResultsRecord();
-						urr.setContent(content);
-						urr.setPosition(currentindex);
-						urr.setSearchID(currentSearchID);
-						urr.setSolutionID("0-0");
-						urr.setTitle(compData1);
-						urr.setTotallist(totalresults);
-						urr.setType("Auto");
-						urr.setUrl(compData2);
-						urr.setTime(new Timestamp(System.currentTimeMillis()));
-						
-						HelpSeekingSolutionView.openNewTabByURL(urr);
-					
-					
+
+
+					}
+
+					UseResultsRecord urr=new UseResultsRecord();
+					urr.setContent(content);
+					urr.setPosition(currentindex);
+					urr.setSearchID(currentSearchID);
+					urr.setSolutionID("0-0");
+					urr.setTitle(compData1);
+					urr.setTotallist(totalresults);
+					urr.setType("Auto");
+					urr.setUrl(compData2);
+					urr.setTime(new Timestamp(System.currentTimeMillis()));
+
+					HelpSeekingSolutionView.openNewTabByURL(urr);
+
+
 
 					String xcontent = "\n---------\n[user:]\t\t\t\t"
 							+ username
@@ -896,6 +949,218 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	}
 
+
+
+	public void domysearch() throws InterruptedException
+	{
+		List<WEBResult> webResults = new ArrayList<>();
+
+		WEBResult tResult1 = new WEBResult();
+		tResult1.setTitleNoFormatting("SAX XML Parser throwing Null Pointer Exception - Stack Overflow [SAXParser,NullPointerException]");
+		tResult1.setUrl("http://stackoverflow.com/questions/8761121/sax-xml-parser-throwing-null-pointer-exception");
+		tResult1.setContent("an SAX XML Parser in Java and I keep getting a null pointer exception that I can't seem to figure out how to fix.");
+		webResults.add(tResult1);
+
+		WEBResult tResult2 = new WEBResult();
+		tResult2.setTitleNoFormatting("android - NullPointerException While Parsing XML - Stack Overflow [SAXParser,NullPointerException]");
+		tResult2.setUrl("http://stackoverflow.com/questions/7147855/nullpointerexception-while-parsing-xml");
+		tResult2.setContent("... I am getting a NullPointerException. I've searched on StackOverflow and Google .. Any ideas on what I should do to fix this?");
+		webResults.add(tResult2);
+
+		WEBResult tResult3 = new WEBResult();
+		tResult3.setTitleNoFormatting("XML parsing using SaxParser with complete code | Java Code Geeks [SAXParser]");
+		tResult3.setUrl("http://www.javacodegeeks.com/2012/01/xml-parsing-using-saxparser-with.html");
+		tResult3.setContent("SAX parser use callback function (org.xml.sax.helpers.DefaultHandler) ... extend DefaultHandler and override few methods ...");
+		webResults.add(tResult3);
+
+		WEBResult tResult4 = new WEBResult();
+		tResult4.setTitleNoFormatting("[#JDK-7157610] NullPointerException occurs when parsing XML ...[https://bugs.openjdk.java.net/browse/JDK-7157610]");
+		tResult4.setUrl("https://bugs.openjdk.java.net/browse/JDK-7157610");
+		tResult4.setContent("The problem is found in JAXP RI 1.4.5.... SAXParserFactory object, XMLReader object or DocumentBuilderFactory object, NullPointerException..");
+		webResults.add(tResult4);
+
+		WEBResult tResult5 = new WEBResult();
+		tResult5.setTitleNoFormatting("null pointer exception using SAX XML Parser ...[NullPointerException]");
+		tResult5.setUrl("http://http://stackoverflow.com/questions/8761121/sax-xml-parser-throwing-null-pointer-exception");
+		tResult5.setContent("...SAX Parser for XML Parsing. The problem is if I print, everything is fine. ...");
+		webResults.add(tResult5);
+
+		WEBResult tResult6 = new WEBResult();
+		tResult6.setTitleNoFormatting("File.listFiles() returns null pointer exception | DaniWeb [NullPointerException]");
+		tResult6.setUrl(" http://www.daniweb.com/software-development/java/threads/459574/file.listfiles-returns-null-pointer-exception");
+		tResult6.setContent("...the lastmodified file from a folder,... File.listFiles() method ... returning a null pointer exception ...");
+		webResults.add(tResult6);
+
+		WEBResult tResult7 = new WEBResult();
+		tResult7.setTitleNoFormatting("Step By Step guide to Read XML file in Java Using SAX Parser ...[SAXParser]");
+		tResult7.setUrl("http://javarevisited.blogspot.com/2011/12/parse-read-xml-file-java-sax-parser.html");
+		tResult7.setContent("Reading XML file in java using SAX Parser is little different than reading xml file in Java with DOM parser ...");
+		webResults.add(tResult7);
+
+		WEBResult tResult8 = new WEBResult();
+		tResult8.setTitleNoFormatting("ParserFactory | Android Developers ");
+		tResult8.setUrl("http://developer.android.com/reference/org/xml/sax/helpers/ParserFactory.html");
+		tResult8.setContent("ParserFactory... Java-specific class for dynamically loading SAX parsers. .. SAX parser...");
+		webResults.add(tResult8);
+
+		googlesearchList = webResults;
+
+		String searchResultOutput="\n============\n";
+		SearchResults sResults = new SearchResults();
+		SearchResults tempSearchResults = new SearchResults();
+
+		Timestamp  starttime = new Timestamp(System.currentTimeMillis());
+
+		//		sResults.setSearchID(searchID);
+		//		tempSearchResults.setSearchID(searchID);
+
+		// 防止为空值
+		if (googlesearchList.size() > 0) {
+			searchResultsTree.removeAll();
+
+			int  indexsearchresultlist=0;
+			for (WEBResult webResult : googlesearchList) {
+				String xml = webResult.getTitleNoFormatting();
+				xml = xml.replaceAll("&quot;", "\"");
+				xml.replaceAll("&#39;", "\'");
+				xml.replaceAll("<b>", " ");
+				xml.replaceAll("</", " ");
+				xml.replaceAll("b>", "");
+
+				searchResultOutput = searchResultOutput + "\n"
+						+ webResult.toString();
+
+				TreeItem item = new TreeItem(searchResultsTree, SWT.NULL);
+				String resultTitle = xml;
+				item.setText(resultTitle);
+				item.setForeground(Display.getDefault().getSystemColor(
+						SWT.COLOR_BLUE));
+
+				item.setData(webResult.getUrl());
+
+				String compareContent = xml + " " + webResult.getContent();
+
+				SearchNode sNode = new SearchNode();
+				sNode.setTitle(resultTitle);
+				sNode.setLink(webResult.getUrl());
+				//				sNode.setSearchID(searchID);
+				sNode.setPositionInResultslist(indexsearchresultlist);
+
+
+				// TODO: 为了备份用作历史检索
+				SearchNode tempsSearchNode = new SearchNode();
+				tempsSearchNode.setTitle(xml);
+				tempsSearchNode.setLink(webResult.getUrl());
+				//				tempsSearchNode.setSearchID(searchID);
+				tempsSearchNode.setPositionInResultslist(indexsearchresultlist);
+
+
+				indexsearchresultlist=indexsearchresultlist+1;
+
+				// 展示 URL
+				TreeItem urlItem = new TreeItem(item, SWT.NULL);
+				urlItem.setText(webResult.getUrl());
+				urlItem.setData(webResult.getUrl());
+
+				// 展示语言
+				// if (webResult.getLanguage()!=null) {
+				// TreeItem languageItem=new TreeItem(item, SWT.NULL);
+				// languageItem.setText(webResult.getLanguage());
+				//
+				// }
+
+				// 展示content 内容 还需要 优化处理 显示关键词 附近的词 构成的串 并突出显示
+				if (webResult.getContent() != null) {
+
+					String content = webResult.getContent();
+
+					// 处理content 保留部分文字
+
+					if (!content.equals("")) {
+						TreeItem contentItem = new TreeItem(item, SWT.NULL);
+						String resultContent =  content;
+						contentItem.setText(resultContent);
+						// contentItem.setData(webResult.getUrl());
+						sNode.setContents(resultContent);
+						tempsSearchNode.setContents(resultContent);
+						contentItem.setData(null);
+					}
+				}
+
+				// 展开节点
+				item.setExpanded(true);
+
+				// 后续在这里适当过滤一下 如果有异常名字则显示出来 或者 是
+				// List<String>
+				// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
+				String search="DefaultHandler SAXParser NullPointerException  HashMap";
+				compareContent = compareContent + " " +search ;
+				List<String> tempContent = CommUtil
+						.arrayToList(compareContent
+								.split(Basic.SPLIT_STRING));
+
+				Set<String> boldWords = new HashSet<String>();
+				;
+				// tempContent.retainAll(Basic.javaExceptionalNameList);
+				// for(Iterator it = tempContent.iterator();it.hasNext();){
+				// if (boldWords.equals(""))
+				// boldWords=(String)it.next();
+				// else
+				// boldWords=boldWords+";"+(String)it.next();
+				// }
+
+				if (Basic.javaExceptionalNameList != null) {
+					for (String str : tempContent)
+
+					{
+
+						for (String jestr : Basic.javaExceptionalNameList) {
+							if (str.equals(jestr)) {
+								boldWords.add(jestr);
+								break;
+							}
+						}
+					}
+				}
+
+				//				if (!boldWords.isEmpty()) {
+				//					String myExceptioinName = "";
+				//
+				//					for (String exceptionName : boldWords) {
+				//						if (myExceptioinName.equals(""))
+				//							myExceptioinName = exceptionName;
+				//						else
+				//							myExceptioinName = myExceptioinName + " ; "
+				//									+ exceptionName;
+				//					}
+				//
+				//					TreeItem subitem = new TreeItem(item, SWT.NULL);
+				//					subitem.setForeground(Display.getDefault()
+				//							.getSystemColor(SWT.COLOR_RED));
+				//					subitem.setText(myExceptioinName);
+				//					sNode.setJavaExceptionNames(myExceptioinName);
+				//					tempsSearchNode.setJavaExceptionNames(myExceptioinName);
+				//					item.setExpanded(true);
+				//				}
+
+				sNode.setQueryWords(search);
+				tempsSearchNode.setQueryWords(search);
+
+				sResults.getSearchNode().add(sNode);
+
+				if (tempsSearchNode.getTitle() != null
+						&& !tempsSearchNode.getTitle().trim().equals("")) {
+					tempSearchResults.getSearchNode().add(tempsSearchNode);
+				}
+
+			}
+		}
+	}
+
+
+
+
+
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
@@ -957,18 +1222,18 @@ public class HelpSeekingSearchView extends ViewPart {
 		// keywordsTree.removeAll();
 
 		tagButton=new ArrayList<>();
-		canlabel.setText("Candidate Words:");
-		
-		
+		canlabel.setText("Working Focus:");
+
+
 		Control[] children = tagComposite.getChildren();
 		for(Control child : children){
 			if(!(child.isDisposed())){
 				child.dispose();
 			}
 		}
-		
-		
-		
+
+
+
 		tagComposite.setLayoutData(BorderLayout.CENTER);
 		RowLayout myRowLayout = new RowLayout();
 		myRowLayout.type = SWT.HORIZONTAL;
@@ -976,12 +1241,12 @@ public class HelpSeekingSearchView extends ViewPart {
 		myRowLayout.marginTop = 3;
 		myRowLayout.marginRight = 3;
 		myRowLayout.marginBottom = 3;
-		
+
 		myRowLayout.wrap = true;
 		myRowLayout.pack = true;
 		myRowLayout.justify = true;
 		tagComposite.setLayout(myRowLayout);
-		
+
 
 		List<KeyWord> backupKeywords = new ArrayList<>();
 
@@ -1061,8 +1326,8 @@ public class HelpSeekingSearchView extends ViewPart {
 		northtableComposite.pack();
 		tagComposite.redraw();
 		tagComposite.pack();
-//		SearchComposite.redraw();
-//		SearchComposite.pack();
+		//		SearchComposite.redraw();
+		//		SearchComposite.pack();
 
 		// save a new tree
 
@@ -1156,208 +1421,212 @@ public class HelpSeekingSearchView extends ViewPart {
 		query.setUseKeywords(search);
 		query.makeCandidateKeywords(Cache.getInstance()
 				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
-
-	LoopGoogleAPICall apiCall = new LoopGoogleAPICall(search);
 		
-			apiCall.start();
-			apiCall.join();
-		
-		
-		
-//	
-//			
-//			Timer timer=new Timer();
-//			timer.schedule(new TimerTask() {
-//				
-//				@Override
-//				public void run() {
-//					if (googlesearchList==null)
-//					{
-//						return;
-//					}
-//					if (googlesearchList.size()<=0) {
-//						return;
-//					}
-//					apiCall.cancel();
-//					
-//				}
-//			}, Basic.WAIT_GOOGLE_TIME);
-			
-			googlesearchList = apiCall.getCurrentResults();
+		IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+		String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+		String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
 
-			// 防止为空值
-			if (googlesearchList.size() > 0) {
-				searchResultsTree.removeAll();
+		LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,cse_cx,search);
 
-				int  indexsearchresultlist=0;
-				for (WEBResult webResult : googlesearchList) {
-					String xml = webResult.getTitleNoFormatting();
-					xml = xml.replaceAll("&quot;", "\"");
-					xml.replaceAll("&#39;", "\'");
-					xml.replaceAll("<b>", " ");
-					xml.replaceAll("</", " ");
-					xml.replaceAll("b>", "");
+		apiCall.start();
+		apiCall.join();
 
-					searchResultOutput = searchResultOutput + "\n"
-							+ webResult.toString();
 
-					TreeItem item = new TreeItem(searchResultsTree, SWT.NULL);
-					String resultTitle = xml.length() > 50 ? xml.substring(0,
-							47) + "..." : xml;
-					item.setText(resultTitle);
-					item.setForeground(Display.getDefault().getSystemColor(
-							SWT.COLOR_BLUE));
 
-					item.setData(webResult.getUrl());
+		//	
+		//			
+		//			Timer timer=new Timer();
+		//			timer.schedule(new TimerTask() {
+		//				
+		//				@Override
+		//				public void run() {
+		//					if (googlesearchList==null)
+		//					{
+		//						return;
+		//					}
+		//					if (googlesearchList.size()<=0) {
+		//						return;
+		//					}
+		//					apiCall.cancel();
+		//					
+		//				}
+		//			}, Basic.WAIT_GOOGLE_TIME);
 
-					String compareContent = xml + " " + webResult.getContent();
+		googlesearchList = apiCall.getCurrentResults();
 
-					SearchNode sNode = new SearchNode();
-					sNode.setTitle(resultTitle);
-					sNode.setLink(webResult.getUrl());
-					sNode.setSearchID(searchID);
-					sNode.setPositionInResultslist(indexsearchresultlist);
-					
+		// 防止为空值
+		if (googlesearchList.size() > 0) {
+			searchResultsTree.removeAll();
 
-					// TODO: 为了备份用作历史检索
-					SearchNode tempsSearchNode = new SearchNode();
-					tempsSearchNode.setTitle(xml);
-					tempsSearchNode.setLink(webResult.getUrl());
-					tempsSearchNode.setSearchID(searchID);
-					tempsSearchNode.setPositionInResultslist(indexsearchresultlist);
-					
-					
-					indexsearchresultlist=indexsearchresultlist+1;
+			int  indexsearchresultlist=0;
+			for (WEBResult webResult : googlesearchList) {
+				String xml = webResult.getTitleNoFormatting();
+				xml = xml.replaceAll("&quot;", "\"");
+				xml.replaceAll("&#39;", "\'");
+				xml.replaceAll("<b>", " ");
+				xml.replaceAll("</", " ");
+				xml.replaceAll("b>", "");
 
-					// 展示 URL
-					TreeItem urlItem = new TreeItem(item, SWT.NULL);
-					urlItem.setText(webResult.getUrl());
-					urlItem.setData(webResult.getUrl());
+				searchResultOutput = searchResultOutput + "\n"
+						+ webResult.toString();
 
-					// 展示语言
-					// if (webResult.getLanguage()!=null) {
-					// TreeItem languageItem=new TreeItem(item, SWT.NULL);
-					// languageItem.setText(webResult.getLanguage());
-					//
-					// }
+				TreeItem item = new TreeItem(searchResultsTree, SWT.NULL);
+				String resultTitle = xml.length() > 50 ? xml.substring(0,
+						47) + "..." : xml;
+				item.setText(resultTitle);
+				item.setForeground(Display.getDefault().getSystemColor(
+						SWT.COLOR_BLUE));
 
-					// 展示content 内容 还需要 优化处理 显示关键词 附近的词 构成的串 并突出显示
-					if (webResult.getContent() != null) {
+				item.setData(webResult.getUrl());
 
-						String content = webResult.getContent();
+				String compareContent = xml + " " + webResult.getContent();
 
-						// 处理content 保留部分文字
+				SearchNode sNode = new SearchNode();
+				sNode.setTitle(resultTitle);
+				sNode.setLink(webResult.getUrl());
+				sNode.setSearchID(searchID);
+				sNode.setPositionInResultslist(indexsearchresultlist);
 
-						if (!content.equals("")) {
-							TreeItem contentItem = new TreeItem(item, SWT.NULL);
-							String resultContent = content.length() > 50 ? content
-									.substring(0, 47) + "..."
-									: content;
-							contentItem.setText(resultContent);
-							// contentItem.setData(webResult.getUrl());
-							sNode.setContents(resultContent);
-							tempsSearchNode.setContents(resultContent);
-							contentItem.setData(null);
-						}
+
+				// TODO: 为了备份用作历史检索
+				SearchNode tempsSearchNode = new SearchNode();
+				tempsSearchNode.setTitle(xml);
+				tempsSearchNode.setLink(webResult.getUrl());
+				tempsSearchNode.setSearchID(searchID);
+				tempsSearchNode.setPositionInResultslist(indexsearchresultlist);
+
+
+				indexsearchresultlist=indexsearchresultlist+1;
+
+				// 展示 URL
+				TreeItem urlItem = new TreeItem(item, SWT.NULL);
+				urlItem.setText(webResult.getUrl());
+				urlItem.setData(webResult.getUrl());
+
+				// 展示语言
+				// if (webResult.getLanguage()!=null) {
+				// TreeItem languageItem=new TreeItem(item, SWT.NULL);
+				// languageItem.setText(webResult.getLanguage());
+				//
+				// }
+
+				// 展示content 内容 还需要 优化处理 显示关键词 附近的词 构成的串 并突出显示
+				if (webResult.getContent() != null) {
+
+					String content = webResult.getContent();
+
+					// 处理content 保留部分文字
+
+					if (!content.equals("")) {
+						TreeItem contentItem = new TreeItem(item, SWT.NULL);
+						String resultContent = content.length() > 50 ? content
+								.substring(0, 47) + "..."
+								: content;
+						contentItem.setText(resultContent);
+						// contentItem.setData(webResult.getUrl());
+						sNode.setContents(resultContent);
+						tempsSearchNode.setContents(resultContent);
+						contentItem.setData(null);
 					}
+				}
 
-					// 展开节点
-					item.setExpanded(true);
+				// 展开节点
+				item.setExpanded(true);
 
-					// 后续在这里适当过滤一下 如果有异常名字则显示出来 或者 是
-					// List<String>
-					// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-					compareContent = compareContent + " " + search;
-					List<String> tempContent = CommUtil
-							.arrayToList(compareContent
-									.split(Basic.SPLIT_STRING));
+				// 后续在这里适当过滤一下 如果有异常名字则显示出来 或者 是
+				// List<String>
+				// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
+				compareContent = compareContent + " " + search;
+				List<String> tempContent = CommUtil
+						.arrayToList(compareContent
+								.split(Basic.SPLIT_STRING));
 
-					Set<String> boldWords = new HashSet<String>();
-					;
-					// tempContent.retainAll(Basic.javaExceptionalNameList);
-					// for(Iterator it = tempContent.iterator();it.hasNext();){
-					// if (boldWords.equals(""))
-					// boldWords=(String)it.next();
-					// else
-					// boldWords=boldWords+";"+(String)it.next();
-					// }
+				Set<String> boldWords = new HashSet<String>();
+				;
+				// tempContent.retainAll(Basic.javaExceptionalNameList);
+				// for(Iterator it = tempContent.iterator();it.hasNext();){
+				// if (boldWords.equals(""))
+				// boldWords=(String)it.next();
+				// else
+				// boldWords=boldWords+";"+(String)it.next();
+				// }
 
-					if (Basic.javaExceptionalNameList != null) {
-						for (String str : tempContent)
+				if (Basic.javaExceptionalNameList != null) {
+					for (String str : tempContent)
 
-						{
+					{
 
-							for (String jestr : Basic.javaExceptionalNameList) {
-								if (str.equals(jestr)) {
-									boldWords.add(jestr);
-									break;
-								}
+						for (String jestr : Basic.javaExceptionalNameList) {
+							if (str.equals(jestr)) {
+								boldWords.add(jestr);
+								break;
 							}
 						}
 					}
+				}
 
-					if (!boldWords.isEmpty()) {
-						String myExceptioinName = "";
+				if (!boldWords.isEmpty()) {
+					String myExceptioinName = "";
 
-						for (String exceptionName : boldWords) {
-							if (myExceptioinName.equals(""))
-								myExceptioinName = exceptionName;
-							else
-								myExceptioinName = myExceptioinName + " ; "
-										+ exceptionName;
-						}
-
-						TreeItem subitem = new TreeItem(item, SWT.NULL);
-						subitem.setForeground(Display.getDefault()
-								.getSystemColor(SWT.COLOR_RED));
-						subitem.setText(myExceptioinName);
-						sNode.setJavaExceptionNames(myExceptioinName);
-						tempsSearchNode.setJavaExceptionNames(myExceptioinName);
-						item.setExpanded(true);
+					for (String exceptionName : boldWords) {
+						if (myExceptioinName.equals(""))
+							myExceptioinName = exceptionName;
+						else
+							myExceptioinName = myExceptioinName + " ; "
+									+ exceptionName;
 					}
 
-					sNode.setQueryWords(search);
-					tempsSearchNode.setQueryWords(search);
-
-					sResults.getSearchNode().add(sNode);
-
-					if (tempsSearchNode.getTitle() != null
-							&& !tempsSearchNode.getTitle().trim().equals("")) {
-						tempSearchResults.getSearchNode().add(tempsSearchNode);
-					}
-
+					TreeItem subitem = new TreeItem(item, SWT.NULL);
+					subitem.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_RED));
+					subitem.setText(myExceptioinName);
+					sNode.setJavaExceptionNames(myExceptioinName);
+					tempsSearchNode.setJavaExceptionNames(myExceptioinName);
+					item.setExpanded(true);
 				}
 
-				Timestamp endtime = new Timestamp(System.currentTimeMillis());
+				sNode.setQueryWords(search);
+				tempsSearchNode.setQueryWords(search);
 
-				query.setCosttime(endtime.getTime() - starttime.getTime());
+				sResults.getSearchNode().add(sNode);
 
-				if (tempSearchResults.getSearchNode().size() > 0) {
-					myAutoSearchResultsSelectFlag = false;
-					autoResultsNext.setEnabled(false);
-					autoResultsPrevious.setEnabled(true);
-					mycacheAutoSearchResults.add(tempSearchResults);
-					mycacheAutoSearchResultsIndex = mycacheAutoSearchResults
-							.size();
-					currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
+				if (tempsSearchNode.getTitle() != null
+						&& !tempsSearchNode.getTitle().trim().equals("")) {
+					tempSearchResults.getSearchNode().add(tempsSearchNode);
 				}
 
-				// 需要保存关键词和当前cache到数据库中：
-				DatabaseUtil.addKeyWordsToDataBase(query);
-				for (SearchNode snNode : sResults.getSearchNode()) {
-					DatabaseUtil.addSearchResultsTODataBase(
-							sResults.getSearchID(), snNode);
-				}
-				searchResultOutput = query.toString() + searchResultOutput
-						+ "\n============\n";
-				FileHelper
-				.appendContentToFile("result.txt", searchResultOutput);
-
-			}else {
-				System.out.println("No return results!");
 			}
 
-	
+			Timestamp endtime = new Timestamp(System.currentTimeMillis());
+
+			query.setCosttime(endtime.getTime() - starttime.getTime());
+
+			if (tempSearchResults.getSearchNode().size() > 0) {
+				myAutoSearchResultsSelectFlag = false;
+				autoResultsNext.setEnabled(false);
+				autoResultsPrevious.setEnabled(true);
+				mycacheAutoSearchResults.add(tempSearchResults);
+				mycacheAutoSearchResultsIndex = mycacheAutoSearchResults
+						.size();
+				currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
+			}
+
+			// 需要保存关键词和当前cache到数据库中：
+			DatabaseUtil.addKeyWordsToDataBase(query);
+			for (SearchNode snNode : sResults.getSearchNode()) {
+				DatabaseUtil.addSearchResultsTODataBase(
+						sResults.getSearchID(), snNode);
+			}
+			searchResultOutput = query.toString() + searchResultOutput
+					+ "\n============\n";
+			FileHelper
+			.appendContentToFile("result.txt", searchResultOutput);
+
+		}else {
+			System.out.println("No return results!");
+		}
+
+
 
 	}
 
@@ -1377,29 +1646,44 @@ public class HelpSeekingSearchView extends ViewPart {
 		List<WEBResult> webResults = new ArrayList<>();
 
 		WEBResult tResult1 = new WEBResult();
-		tResult1.setTitleNoFormatting("ClassCastException Throwable (Java Platform SE 7 ) - Oracle Documentation");
-		tResult1.setUrl("http://docs.oracle.com/javase/7/docs/api/java/lang/Throwable.html");
+		tResult1.setTitleNoFormatting("SAX XML Parser throwing Null Pointer Exception - Stack Overflow [SAXParser,NullPointerException]");
+		tResult1.setUrl("http://stackoverflow.com/questions/8761121/sax-xml-parser-throwing-null-pointer-exception");
 		webResults.add(tResult1);
 
 		WEBResult tResult2 = new WEBResult();
-		tResult2.setTitleNoFormatting("Java.lang.Throwable.printStackTrace() Method Example");
-		tResult2.setUrl("http://www.tutorialspoint.com/java/lang/throwable_printstacktrace.htm");
+		tResult2.setTitleNoFormatting("android - NullPointerException While Parsing XML - Stack Overflow [SAXParser,NullPointerException]");
+		tResult2.setUrl("http://stackoverflow.com/questions/7147855/nullpointerexception-while-parsing-xml");
 		webResults.add(tResult2);
 
 		WEBResult tResult3 = new WEBResult();
-		tResult3.setTitleNoFormatting("Class java.lang.Throwable");
-		tResult3.setUrl("http://pic.dhe.ibm.com/infocenter/adiehelp/v5r1m1/topic/com.sun.api.doc/java/lang/Throwable.html");
+		tResult3.setTitleNoFormatting("XML parsing using SaxParser with complete code | Java Code Geeks [SAXParser]");
+		tResult3.setUrl("http://www.javacodegeeks.com/2012/01/xml-parsing-using-saxparser-with.html");
 		webResults.add(tResult3);
 
 		WEBResult tResult4 = new WEBResult();
-		tResult4.setTitleNoFormatting("Class java.lang.Throwable ArrayIndexOutOfBoundsException");
-		tResult4.setUrl("http://www.cis.upenn.edu/~bcpierce/courses/629/jdkdocs/api/java.lang.Throwable.html");
+		tResult4.setTitleNoFormatting("[#JDK-7157610] NullPointerException occurs when parsing XML ...[https://bugs.openjdk.java.net/browse/JDK-7157610]");
+		tResult4.setUrl("https://bugs.openjdk.java.net/browse/JDK-7157610");
 		webResults.add(tResult4);
 
 		WEBResult tResult5 = new WEBResult();
-		tResult5.setTitleNoFormatting("ArithmeticException Throwable | Android Developers");
-		tResult5.setUrl("http://developer.android.com/reference/java/lang/Throwable.html");
+		tResult5.setTitleNoFormatting("IBM PM21145: NULLPOINTEREXCEPTION IN SAX PARSER ...[NullPointerException]");
+		tResult5.setUrl("http://www.ibm.com/support/docview.wss%3Fuid%3Dswg1PM21145");
 		webResults.add(tResult5);
+
+		WEBResult tResult6 = new WEBResult();
+		tResult5.setTitleNoFormatting("File.listFiles() returns null pointer exception | DaniWeb [NullPointerException]");
+		tResult5.setUrl(" http://www.daniweb.com/software-development/java/threads/459574/file.listfiles-returns-null-pointer-exception");
+		webResults.add(tResult6);
+
+		WEBResult tResult7 = new WEBResult();
+		tResult5.setTitleNoFormatting("Step By Step guide to Read XML file in Java Using SAX Parser ...[SAXParser]");
+		tResult5.setUrl("http://javarevisited.blogspot.com/2011/12/parse-read-xml-file-java-sax-parser.html");
+		webResults.add(tResult7);
+
+		WEBResult tResult8 = new WEBResult();
+		tResult5.setTitleNoFormatting("ParserFactory | Android Developers ");
+		tResult5.setUrl("http://developer.android.com/reference/org/xml/sax/helpers/ParserFactory.html");
+		webResults.add(tResult8);
 
 		String searchResultOutput = "\n============\n";
 		SearchResults sResults = new SearchResults();
@@ -1482,7 +1766,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		try {
 			part = page
 					.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-			
+
 
 		} catch (Exception ple) {
 			ple.printStackTrace();
@@ -1495,9 +1779,9 @@ public class HelpSeekingSearchView extends ViewPart {
 
 			String temp = v.getTxtSearch().getText();
 			System.out.println("hello buttons"+btn.getData());
-			
-		
-			
+
+
+
 			String temp2 = "";
 			boolean flag = true;
 			for (String str : temp.split("[ ]")) {
@@ -1525,37 +1809,37 @@ public class HelpSeekingSearchView extends ViewPart {
 					temp2 = temp2 + " " + btn.getText();
 				}
 			}
-			
-			
-			
-	
-	if (!temp2.trim().equals("")) {
-		
-		List <KeyWord> mysendoutKeyWords=new ArrayList<>();		
-		List<String> searchWords=CommUtil.arrayToList(temp2.split("[ ]"));
-			for (int i = 0; i < searchWords.size(); i++) {
-			
-				for (int j = 0; j < tagButton.size(); j++) {
-					
-					if (tagButton.get(j).getKeywordName().trim().equals(searchWords.get(i).trim())) {
-						tagButton.get(j).setPositionInRecommandlist((Integer)btn.getData());
-						tagButton.get(j).setRecommand(true);
-						mysendoutKeyWords.add(tagButton.get(j));
-					
+
+
+
+
+			if (!temp2.trim().equals("")) {
+
+				List <KeyWord> mysendoutKeyWords=new ArrayList<>();		
+				List<String> searchWords=CommUtil.arrayToList(temp2.split("[ ]"));
+				for (int i = 0; i < searchWords.size(); i++) {
+
+					for (int j = 0; j < tagButton.size(); j++) {
+
+						if (tagButton.get(j).getKeywordName().trim().equals(searchWords.get(i).trim())) {
+							tagButton.get(j).setPositionInRecommandlist((Integer)btn.getData());
+							tagButton.get(j).setRecommand(true);
+							mysendoutKeyWords.add(tagButton.get(j));
+
+						}
+
 					}
-					
+
 				}
-				
-			}
-			
-			
-			
-			v.setTxtSeachText(mysendoutKeyWords);
-	}	
+
+
+
+				v.setTxtSeachText(mysendoutKeyWords);
+			}	
 
 			v.getTxtSearch().setText(temp2);
 			HelpSeekingSolutionView.getTabFolder().setSelection(0);
-			
+
 
 		}
 	}

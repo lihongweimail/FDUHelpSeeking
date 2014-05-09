@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Listener;
@@ -33,6 +34,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
@@ -44,6 +46,7 @@ import cn.edu.fudan.se.helpseeking.bean.TabRecord;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
@@ -55,7 +58,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
-	public static SimpleBrower myBrower;
+//	public static SimpleBrower myBrower;
 	 
 	private static String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
 	private static  Resource myResource=new Resource();
@@ -107,13 +110,13 @@ public class HelpSeekingSolutionView extends ViewPart {
 		this.txtSearch = txtSearch;
 	}
 
-	public SimpleBrower getMyBrower() {
-		return myBrower;
-	}
-
-	public void setMyBrower(SimpleBrower myBrower) {
-		HelpSeekingSolutionView.myBrower = myBrower;
-	}
+//	public SimpleBrower getMyBrower() {
+//		return myBrower;
+//	}
+//
+//	public void setMyBrower(SimpleBrower myBrower) {
+//		HelpSeekingSolutionView.myBrower = myBrower;
+//	}
 
 	public void useOleBrowser() {
 		// TODO Auto-generated method stub
@@ -296,7 +299,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	
 		
 		tabItem = new CTabItem(tabFolder, SWT.NONE);
-		tabItem.setText("Search Page");
+		tabItem.setText("Search");
 		
 		
 
@@ -559,8 +562,12 @@ public class HelpSeekingSolutionView extends ViewPart {
 			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
 
-	
-			 LoopGoogleAPICall apiCall = new LoopGoogleAPICall(search);
+			IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+			String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+			String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+
+			LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,cse_cx,search);
+			 
 			apiCall.start();
 			apiCall.join();
 			
@@ -701,25 +708,25 @@ public class HelpSeekingSolutionView extends ViewPart {
 					}
 					}
 					
-					if (!boldWords.isEmpty()) {
-					String myExceptioinName="";
-					
-					for (String exceptionName : boldWords) {
-						if(myExceptioinName.equals(""))
-							myExceptioinName=exceptionName;
-						else 
-							myExceptioinName=myExceptioinName+" ; "+exceptionName;
-					}
-						
-					sNode.setJavaExceptionNames(myExceptioinName);
-					TreeItem subitem=new TreeItem(item, SWT.NULL);
-					subitem.setForeground(Display.getDefault()
-							.getSystemColor(SWT.COLOR_RED));
-					subitem.setText(myExceptioinName);
-					subitem.setData(null);
-					subitem.setExpanded(true);
-					
-					}
+//					if (!boldWords.isEmpty()) {
+//					String myExceptioinName="";
+//					
+//					for (String exceptionName : boldWords) {
+//						if(myExceptioinName.equals(""))
+//							myExceptioinName=exceptionName;
+//						else 
+//							myExceptioinName=myExceptioinName+" ; "+exceptionName;
+//					}
+//						
+//					sNode.setJavaExceptionNames(myExceptioinName);
+//					TreeItem subitem=new TreeItem(item, SWT.NULL);
+//					subitem.setForeground(Display.getDefault()
+//							.getSystemColor(SWT.COLOR_RED));
+//					subitem.setText(myExceptioinName);
+//					subitem.setData(null);
+//					subitem.setExpanded(true);
+//					
+//					}
 
 					item.setExpanded(true);
 					sResults.getSearchNode().add(sNode);

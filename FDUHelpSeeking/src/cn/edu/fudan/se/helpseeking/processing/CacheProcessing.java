@@ -1163,7 +1163,7 @@ public class CacheProcessing extends Thread  {
 
 			
 			v.setCurrentActionID(currentCache.getCurrentID());
-			//TODO  为编译无自动提示功能版本而注释掉自动赋值 代码
+			//TODO  受控实验 开快关 为编译无自动提示功能版本而注释掉自动赋值 代码
 			v.setCandidateSearchWords(searchText,keyWordsforQuery);
 			System.out.println(searchText);
 
@@ -1193,7 +1193,7 @@ public class CacheProcessing extends Thread  {
 			}	
 
 			System.out.println("say tactic mode = " +mode );
-			//TODO  为编译无自动提示功能版本而注释 掉如下代码
+			//TODO  受控实验开关 为编译无自动提示功能版本而注释 掉如下代码
 			if (mode==2)
 				v.searchQueryList();
 

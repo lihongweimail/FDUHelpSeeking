@@ -23,5 +23,16 @@ public class PreferenceConstants {
 	public static final String SELECTTACTIC_DEFAULT="Simple Tactic";
 	
 	
+	
+	//CUSTOME SEARCH ENGINE SET VALUE
+	public static final String CSE_KEY="$CSE_KEY";
+	public static final String CSE_CX="$CSE_CX";
+			//key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM
+			//cx=017576662512468239146:omuauf_lfve
+	
+	public static final String CSE_KEY_DEFAULT="AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM";
+	public static final String CSE_CX_DEFAULT="017576662512468239146:omuauf_lfve";
+	
+	
 
 }

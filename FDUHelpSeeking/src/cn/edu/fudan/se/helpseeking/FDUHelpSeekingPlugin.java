@@ -170,6 +170,7 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 			String dbURL=ps.getString(PreferenceConstants.URL_KEY);
 			String dbname=ps.getString(PreferenceConstants.USERNAME_KEY);
 			String dbpwd=ps.getString(PreferenceConstants.PASSWORD_KEY);
+		
 			int connection=	DatabaseUtil.initDB(dbURL,dbname,dbpwd);
 			
 			if (connection<0) {
