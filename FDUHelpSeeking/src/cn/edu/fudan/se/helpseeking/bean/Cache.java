@@ -472,39 +472,7 @@ public class Cache {
 			return;
 		}
 		
-		boolean result=false;
-		Action newEnterAction = information.getAction();
-		if (informations.size() > 0) {
-			
-			int size=informations.size()<Basic.Mini_Actions?informations.size():Basic.Mini_Actions;
 
-			// 如果历史上在5秒内有相同的动作和描述业禁止出现;倒数的5个动作中有相同的 则不计入
-			for (int i=informations.size()-1;i>informations.size()-size;i--) {
-			
-				Action testAction = informations.get(i).getInformation().getAction();
-				if (newEnterAction.getActionKind().equals(testAction.getActionKind())
-						&& newEnterAction.getActionName().equals(testAction.getActionName())) {
-					
-            if (newEnterAction.getDescription().equals(testAction.getDescription())) {
-	                                      result=true;
-	                                      break;
-                                  }
-            
-			if (newEnterAction.getTime().getTime()
-							- testAction.getTime().getTime() < Basic.MINI_Action_Time) {
-						result = true;
-						break;
-					}
-
-				}
-			}
-
-		}
-		
-
-		if (result) {
-			return;
-		}
 		
 		// 添加到cache中
 		doAddInformationToCache(information, actionID);
@@ -536,18 +504,39 @@ public class Cache {
 			// System.out.println("not find action");
 			return false;
 		}
+		
+		
+		
+	
+		if (informations.size() > 0) {
+			
+			int size=informations.size()<Basic.Mini_Actions?informations.size():Basic.Mini_Actions;
 
-		if (lastCacheAction.getActionKind().equals(
-				newEnterAction.getActionKind())
-				&& lastCacheAction.getActionName().equals(
-						newEnterAction.getActionName())) {
-			result = true;
-			// System.out.println("the same action: "+
-			// newEnterAction.getActionKind().toString()+" : "+newEnterAction.getActionName());
-		} else {
-			result = false;
-			// System.out.println("the action is not same");
+			// 如果历史上在5秒内有相同的动作和描述业禁止出现;倒数的5个动作中有相同的 则不计入
+			for (int i=informations.size()-1;i>informations.size()-size;i--) {
+			
+				Action testAction = informations.get(i).getInformation().getAction();
+				if (newEnterAction.getActionKind().equals(testAction.getActionKind())
+						&& newEnterAction.getActionName().toLowerCase().trim().equals(testAction.getActionName().toLowerCase().trim())) {
+					    result=true;
+					    
+            if (newEnterAction.getDescription().toLowerCase().trim().equals(testAction.getDescription().toLowerCase().trim())) {
+	                                      result=true;
+	                                      break;
+                                  }
+            
+			if (newEnterAction.getTime().getTime()
+							- testAction.getTime().getTime() < Basic.MINI_Action_Time) {
+						result = true;
+						break;
+					}
+
+				}
+			}
+
 		}
+		
+
 
 		return result;
 
@@ -670,22 +659,27 @@ public class Cache {
 			if (dc != null) {
 				if (dc.getBreakpoint() != null) {
 
-					if (dc.getBreakpoint().getFileName().trim()
+					if (dc.getBreakpoint().getFileName()!=null)
+					{if (dc.getBreakpoint().getFileName().trim()
 							.equals(classFileName)) {
 						informations.get(i).getInformation().setDebugCode(null);
 
+					}
 					}
 				}
 			}
 
 			if (ec != null) {
 				if (ec.getCursor() != null) {
-
+                     if (ec.getCursor().getFileName()!=null) {
+						
+				
 					if (ec.getCursor().getFileName().trim()
 							.equals(classFileName)) {
 						informations.get(i).getInformation().setEditCode(null);
-						;
+						
 
+					}	
 					}
 				}
 			}
@@ -693,18 +687,37 @@ public class Cache {
 		}
 
 		for (int j1 = 0; j1 < debugCodes.size(); j1++) {
-			if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName()
+			if (debugCodes.get(j1).getDebugCode()!=null) {
+				if (debugCodes.get(j1).getDebugCode().getBreakpoint()!=null) {
+					if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName()!=null) {
+							if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName()
 					.trim().equals(classFileName)) {
 				debugCodes.remove(j1);
 			}
+					}
+					
+				}
+				
+			}
+			
+		
 		}
 
 		for (int j1 = 0; j1 < editCodes.size(); j1++) {
-			if (editCodes.get(j1).getEditCode().getCursor().getFileName()
+			if (editCodes.get(j1).getEditCode()!=null) {
+				if (editCodes.get(j1).getEditCode().getCursor()!=null) {
+					if (editCodes.get(j1).getEditCode().getCursor().getFileName()!=null) {
+							if (editCodes.get(j1).getEditCode().getCursor().getFileName()
 					.trim().equals(classFileName)) {
 				editCodes.remove(j1);
 				break;
 			}
+					}
+					
+				}
+				
+			}
+		
 		}
 
 	}
@@ -1200,9 +1213,11 @@ if (paraType.length>0 )
 
 	public String[][] getVarialToAPImap(ClassModel classModel) {
 
-		if (classModel == null) {
+		if (classModel == null || classModel.getCalleeInfo()==null) {
 			return null;
 		}
+			
+	
 
 		Set<String> apiName = classModel.getCalleeInfo().keySet();
 
@@ -1283,6 +1298,8 @@ if (paraType.length>0 )
 			i = i + 1;
 
 		}
+		
+		
 		return result;
 
 	}
@@ -1412,6 +1429,7 @@ if (paraType.length>0 )
 							String[] methodnamestr = calleestr
 									.split(Basic.SPLIT_STRING);
 
+							if (getCurrentClassModel().calleeInfo!=null && getCurrentClassModel().calleeInfo.get(calleestr)!=null){
 							MethodInfo mif = getCurrentClassModel().calleeInfo
 									.get(calleestr);
 							
@@ -1429,6 +1447,7 @@ if (paraType.length>0 )
 							} else {
 								finalcalleestr = finalcalleestr + ";"
 										+ calleequrifyname;
+							}
 							}
 
 						}

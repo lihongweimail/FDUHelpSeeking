@@ -157,11 +157,6 @@ public class HelpSeekingSearchView extends ViewPart {
 				// mycacheCandWordTreesIndex 真实的位置index：从0开始记
 				if (mycacheCandWordTrees.size() > 0) {
 					// 有新加入的数据时，重新开始计算头部
-					// if (!mycachecandwordtreesFlag) {
-					// mycacheCandWordTreesIndex=mycacheCandWordTrees.size()-1;
-					// }else
-					// {
-
 
 					mycacheCandWordTreesIndex = mycacheCandWordTreesIndex - 1;
 
@@ -181,26 +176,14 @@ public class HelpSeekingSearchView extends ViewPart {
 
 					}
 
-
-					/*					
-					if (mycacheCandWordTreesIndex <0) {
-						mycacheCandWordTreesIndex = 0;
-					} else {
-						if (mycacheCandWordTreesIndex >= mycacheCandWordTrees
-								.size()) {
-							mycacheCandWordTreesIndex = mycacheCandWordTrees
-									.size();
-						}
-					}
-					 */
-					// }
-					// //开关
-
 					if(mycandwordtreesSelectFlag == false)
 					{mycandwordtreesSelectFlag = true;
 					canlabel.setText("Working Focus:"+"  history index:"+mycacheCandWordTreesIndex);
 					northtableComposite.redraw();
 					northtableComposite.pack();
+					tagComposite.redraw();
+					tagComposite.pack();
+					
 					return;
 
 					}
@@ -210,22 +193,6 @@ public class HelpSeekingSearchView extends ViewPart {
 
 					keywordsNext.setEnabled(true);
 
-					/*					if (mycacheCandWordTreesIndex == -1) {
-
-						keywordsPrevious.setEnabled(false);
-
-						northtableComposite.redraw();
-						northtableComposite.pack();
-
-						tagComposite.redraw();
-						tagComposite.pack();
-
-//						SearchComposite.redraw();
-//						SearchComposite.pack();
-						return;
-					}
-
-					 */					//移除原有数据
 
 
 					Control[] children = tagComposite.getChildren();
@@ -337,17 +304,6 @@ public class HelpSeekingSearchView extends ViewPart {
 					}
 
 
-					/*					if ((mycacheCandWordTreesIndex < -1)) {
-						mycacheCandWordTreesIndex = -1;
-					} else {
-						if ((mycacheCandWordTreesIndex >= mycacheCandWordTrees
-								.size()-1)) {
-							mycacheCandWordTreesIndex = mycacheCandWordTrees
-									.size() - 2;
-						}
-					}
-
-					 */					// 开关
 					mycandwordtreesSelectFlag = true;
 
 					// /
@@ -355,23 +311,6 @@ public class HelpSeekingSearchView extends ViewPart {
 					System.out.println("keyword next: index"+mycacheCandWordTreesIndex);
 
 					keywordsPrevious.setEnabled(true);
-					/*					if (mycacheCandWordTreesIndex >= mycacheCandWordTrees
-							.size()) {
-						// mycacheCandWordTreesIndex=mycacheCandWordTrees.size();
-						keywordsNext.setEnabled(false);
-						northtableComposite.redraw();
-						northtableComposite.pack();
-
-						tagComposite.redraw();
-						tagComposite.pack();
-
-//						SearchComposite.redraw();
-//						SearchComposite.pack();
-
-
-						return;
-					}
-					 */					// /
 					//移除原有数据
 
 					Control[] children = tagComposite.getChildren();
@@ -526,48 +465,53 @@ public class HelpSeekingSearchView extends ViewPart {
 
 				if (mycacheAutoSearchResults.size() > 0) {
 					// 有新加入的数据时，重新开始计算头部
-					// if (!mycacheAutoSearchResultsFlag) {
-					// mycacheAutoSearchResultsIndex=mycacheAutoSearchResults.size()-1;
-					// }
-					// else{
 
-					if (mycacheAutoSearchResultsIndex <= -1) {
-						mycacheAutoSearchResultsIndex = 0;
+					mycacheAutoSearchResultsIndex = mycacheAutoSearchResultsIndex - 1;
+					
+					if (mycacheAutoSearchResultsIndex <0) {
+						autoResultsPrevious.setEnabled(false);
+						SearchComposite.redraw();
+						SearchComposite.pack();
+						return;
 					} else {
-						if (mycacheAutoSearchResultsIndex >= mycacheAutoSearchResults
-								.size()) {
+						if (mycacheAutoSearchResultsIndex >= mycacheAutoSearchResults.size()) {
 							mycacheAutoSearchResultsIndex = mycacheAutoSearchResults
 									.size() - 1;
 						}
 					}
-					// }
-					// //开关
-					myAutoSearchResultsSelectFlag = true;
-
-					mycacheAutoSearchResultsIndex = mycacheAutoSearchResultsIndex - 1;
-					autoResultsNext.setEnabled(true);
-					if (mycacheAutoSearchResultsIndex == -1) {
-
-						autoResultsPrevious.setEnabled(false);
+	
+					
+					
+					if (myAutoSearchResultsSelectFlag==false) {
+						myAutoSearchResultsSelectFlag=true;
+						label.setText("Recommended Resources:"+" history index:"+mycacheAutoSearchResultsIndex);
+						SearchComposite.redraw();
+						SearchComposite.pack();
+						
 						return;
 					}
+					
+					autoResultsNext.setEnabled(true);
+				
+
 					searchResultsTree.removeAll();
+					label.setText("Recommended Resources:"+" history index:"+mycacheAutoSearchResultsIndex);
 					TreeItem noderoot = new TreeItem(searchResultsTree,
 							SWT.CHECK);
 					noderoot.setText("history index:"
-							+ String.valueOf(mycacheAutoSearchResultsIndex - 1));
+							+ String.valueOf(mycacheAutoSearchResultsIndex ));
 					noderoot.setChecked(false);
 					noderoot.setData(false);
 
 					noderoot.setForeground(Display.getDefault().getSystemColor(
-							SWT.COLOR_GREEN));
+							SWT.COLOR_BLUE));
 
 					List<SearchNode> sNodes = mycacheAutoSearchResults.get(
-							mycacheAutoSearchResultsIndex - 1).getSearchNode();
+							mycacheAutoSearchResultsIndex ).getSearchNode();
 					setCurrentSearchID(mycacheAutoSearchResults.get(
-							mycacheAutoSearchResultsIndex - 1).getSearchID());
+							mycacheAutoSearchResultsIndex ).getSearchID());
 
-					currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
+				
 
 					for (int j = 0; j < sNodes.size(); j++) {
 						// TODO NEED DETATIL
@@ -608,6 +552,15 @@ public class HelpSeekingSearchView extends ViewPart {
 					noderoot.setExpanded(true);
 
 				}
+				
+				SearchComposite.redraw();
+				SearchComposite.pack();
+				
+				myAutoSearchResultsSelectFlag=true;
+				if (mycacheAutoSearchResultsIndex==0) {
+					autoResultsPrevious.setEnabled(false);
+				}
+				
 
 			}
 		});
@@ -628,38 +581,37 @@ public class HelpSeekingSearchView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 
 				if (mycacheAutoSearchResults.size() > 0) {
+					
+					
+					mycacheAutoSearchResultsIndex = mycacheCandWordTreesIndex + 1;
 					// index=size+1，重新开始计算头部
-					if (mycacheAutoSearchResultsIndex < 0) {
-						mycacheAutoSearchResultsIndex = -1;
+					if (mycacheAutoSearchResultsIndex > mycacheAutoSearchResults.size()-1) {
+						autoResultsNext.setEnabled(false);
+						SearchComposite.redraw();
+						SearchComposite.pack();
+						
+						return;
 					} else {
-						if ((mycacheAutoSearchResultsIndex >= mycacheAutoSearchResults
-								.size())) {
-							mycacheAutoSearchResultsIndex = mycacheAutoSearchResults
-									.size() - 2;
+						if (mycacheAutoSearchResultsIndex <0) {
+							mycacheAutoSearchResultsIndex =0;
 
 						}
 					}
 
 					// 开关
 					myAutoSearchResultsSelectFlag = true;
-					mycacheAutoSearchResultsIndex = mycacheCandWordTreesIndex + 1;
-
+					
 					autoResultsPrevious.setEnabled(true);
-					if (mycacheAutoSearchResultsIndex >= mycacheAutoSearchResults
-							.size()) {
-
-						autoResultsNext.setEnabled(false);
-						mycacheAutoSearchResultsIndex = mycacheAutoSearchResults
-								.size();
-						return;
-					}
+					
+ 
 
 					searchResultsTree.removeAll();
+					label.setText("Recommended Resources:"+" history index:"+mycacheAutoSearchResultsIndex);
 
 					TreeItem noderoot = new TreeItem(searchResultsTree,
 							SWT.CHECK);
 					noderoot.setText("history index:"
-							+ String.valueOf(mycacheAutoSearchResultsIndex - 1));
+							+ String.valueOf(mycacheAutoSearchResultsIndex ));
 
 					noderoot.setChecked(false);
 					noderoot.setData(false);
@@ -667,9 +619,9 @@ public class HelpSeekingSearchView extends ViewPart {
 							SWT.COLOR_GREEN));
 
 					List<SearchNode> sNodes = mycacheAutoSearchResults.get(
-							mycacheAutoSearchResultsIndex - 1).getSearchNode();
+							mycacheAutoSearchResultsIndex ).getSearchNode();
 					setCurrentSearchID(mycacheAutoSearchResults.get(
-							mycacheAutoSearchResultsIndex - 1).getSearchID());
+							mycacheAutoSearchResultsIndex).getSearchID());
 
 					currentautosearcresultsindex=mycacheAutoSearchResultsIndex - 1;
 
@@ -710,9 +662,17 @@ public class HelpSeekingSearchView extends ViewPart {
 						item.setExpanded(true);
 					}
 
+					SearchComposite.redraw();
+					SearchComposite.pack();
+					
 					noderoot.setExpanded(true);
 
+					if (mycacheAutoSearchResultsIndex==mycacheAutoSearchResults.size()-1) {
+						autoResultsNext.setEnabled(false);
+					}
 				}
+				
+				
 
 			}
 		});
@@ -1460,26 +1420,6 @@ public class HelpSeekingSearchView extends ViewPart {
 		apiCall.start();
 		apiCall.join();
 
-
-
-		//	
-		//			
-		//			Timer timer=new Timer();
-		//			timer.schedule(new TimerTask() {
-		//				
-		//				@Override
-		//				public void run() {
-		//					if (googlesearchList==null)
-		//					{
-		//						return;
-		//					}
-		//					if (googlesearchList.size()<=0) {
-		//						return;
-		//					}
-		//					apiCall.cancel();
-		//					
-		//				}
-		//			}, Basic.WAIT_GOOGLE_TIME);
 
 		googlesearchList = apiCall.getCurrentResults();
 

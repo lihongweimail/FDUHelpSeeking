@@ -24,7 +24,7 @@ public class ExpirmentTest {
 		String good="we.are.the live";
 		int indexs=good.lastIndexOf('.');
 		String result=good.substring(0, indexs);
-		System.out.println(result);
+		System.out.println(good.substring(0,1)+" "+good.substring(1));
 	
 //		INIHelper ini=new INIHelper("/cse.ini",false);
 //		ini.getCxKeyPairs();

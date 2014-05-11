@@ -185,15 +185,21 @@ public class CodeUtil {
 			
 			if(node != null){
 				if(node instanceof MethodDeclaration){
-					cmodel.setReturnType(((MethodDeclaration) node).getReturnType2().toString());
+					
+					cmodel.setReturnType( ((MethodDeclaration) node).getReturnType2()!=null?((MethodDeclaration) node).getReturnType2().toString():null);
 					List<TypeParameter> typeParams = ((MethodDeclaration) node).typeParameters();
-					String[] paraTypes = new String[typeParams.size()];
+					if (typeParams!=null || typeParams.size()>0) {
+						String[] paraTypes = new String[typeParams.size()];
 					int i = 0;
 					for(TypeParameter typeParam : typeParams){
 						paraTypes[i] = typeParam.toString();
 						i ++;
 					}
 					cmodel.setParaTypes(paraTypes);
+					}else {
+						cmodel.setParaTypes(null);
+					}
+					
 				}
 				c.setLineNo(cu.getLineNumber(node.getStartPosition()) - 1);
 				
@@ -357,15 +363,28 @@ public class CodeUtil {
 		final List<String> belowClass = new ArrayList<>();
 		final HashMap<String, MethodInfo> calleeInfo = new HashMap<>();
 		if(node instanceof MethodDeclaration){
-			classModel.setReturnType(((MethodDeclaration) node).getReturnType2().toString());
+			if (((MethodDeclaration) node).getReturnType2()!=null) {
+				classModel.setReturnType(((MethodDeclaration) node).getReturnType2().toString()!=null?((MethodDeclaration) node).getReturnType2().toString():null);
+			}else {
+				classModel.setReturnType(null);
+			}
+			
 			List<TypeParameter> typeParams = ((MethodDeclaration) node).typeParameters();
-			String[] paraTypes = new String[typeParams.size()];
+			if(typeParams!=null||typeParams.size()>0)
+			{	String[] paraTypes = new String[typeParams.size()];
 			int i = 0;
 			for(TypeParameter typeParam : typeParams){
 				paraTypes[i] = typeParam.toString();
 				i ++;
 			}
-			classModel.setParaTypes(paraTypes);
+			
+		
+			classModel.setParaTypes(paraTypes);	
+			}
+			else {
+				classModel.setParaTypes(null);
+			}
+			
 			node.accept(new ASTVisitor() {
 				public boolean visit(SimpleName name) {
 					int differ = cu.getLineNumber(name.getStartPosition()) 

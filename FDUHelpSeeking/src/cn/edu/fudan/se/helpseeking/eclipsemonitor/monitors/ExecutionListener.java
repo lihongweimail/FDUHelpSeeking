@@ -94,8 +94,7 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 				 String fileName = icu.getPath().toString();
 				
 			
-					Cache.getInstance()
-						.removeEditCodeAsDeleteOrProblemViewChange(fileName);
+					Cache.getInstance().removeEditCodeAsDeleteOrProblemViewChange(fileName);
 					//System.out.println(fileName);
 					}
 				

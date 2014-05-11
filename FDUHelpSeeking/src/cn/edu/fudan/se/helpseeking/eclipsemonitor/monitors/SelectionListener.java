@@ -107,7 +107,9 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 					information.setSeverity(m.getAttribute("severity", 0));
 					information.setDescription(m.getAttribute("message", ""));
-					ICompilationUnit unit = JavaCore
+					
+					if ( m.getResource()!=null) {
+											ICompilationUnit unit = JavaCore
 							.createCompilationUnitFrom((IFile) m.getResource());
 					try {
 						IJavaElement e = unit.getElementAt(m.getAttribute(
@@ -124,6 +126,8 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
+					}
+
 										
 					info.setType("CompileInfo");				
 					ideOutput.setCompileInformation(ProblemInformationUtil

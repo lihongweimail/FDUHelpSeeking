@@ -18,6 +18,7 @@ public class ProblemInformationUtil {
 		
 		for(ProblemInformation problemInformation : list.getErrorList()){
 			if(!found){
+				if (problemInformation.getPath()!=null && bp.getFileName()!=null) {
 				if(problemInformation.getPath().contains(bp.getFileName())){
 					int differ = problemInformation.getLineNumber() - bp.getLineNo();
 					if(differ > -5 && differ < 5){
@@ -27,10 +28,12 @@ public class ProblemInformationUtil {
 						found = true;
 					}
 				}
+				}
 			}			
 		}
 		for(ProblemInformation problemInformation : list.getWarningList()){
 			if(!found){
+				if (problemInformation.getPath()!=null && bp.getFileName()!=null) {
 				if(problemInformation.getPath().contains(bp.getFileName())){
 					int differ = problemInformation.getLineNumber() - bp.getLineNo();
 					if(differ > -5 && differ < 5){
@@ -39,6 +42,7 @@ public class ProblemInformationUtil {
 										problemInformation);
 						found = true;
 					}
+				}
 				}
 			}			
 		}
@@ -71,6 +75,9 @@ public class ProblemInformationUtil {
 		
 		for(ProblemInformation problemInformation : list.getErrorList()){
 			if(!found){
+				if (problemInformation.getPath()!=null && c.getFileName()!=null) {
+					
+				
 				if(problemInformation.getPath().contains(c.getFileName())){
 					int differ = problemInformation.getLineNumber() - c.getLineNo();
 					if(differ > -5 && differ < 5){
@@ -79,12 +86,16 @@ public class ProblemInformationUtil {
 										problemInformation);
 						found = true;
 					}
+				
+				}
 				}
 			}			
 		}
 		for(ProblemInformation problemInformation : list.getWarningList()){
 			if(!found){
-				if(problemInformation.getPath().contains(c.getFileName())){
+				if (problemInformation.getPath()!=null && c.getFileName()!=null) {
+				
+			if(problemInformation.getPath().contains(c.getFileName())){
 					int differ = problemInformation.getLineNumber() - c.getLineNo();
 					if(differ > -5 && differ < 5){
 						compileInformation = 
@@ -93,7 +104,8 @@ public class ProblemInformationUtil {
 						found = true;
 					}
 				}
-			}			
+			}	
+		 }		
 		}
 		if(!found){
 			if(list.getErrorList().size() > 0){

@@ -40,6 +40,7 @@ import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.WindowTotalKeyWords;
+import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView;
@@ -1178,8 +1179,8 @@ public class CacheProcessing extends Thread  {
 				
             
             int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。      3新增定时检索
-            if (currentCache.getCountAutoTry()<Basic.Auto_Search_Try) {
-				if (currentCache.getTimerAutoSearchmode()==1) {
+            if (currentCache.getTimerAutoSearchmode()==1) {
+				if (currentCache.getCountAutoTry()<Basic.Auto_Search_Try) {
 //           	 Find new search key word
            	    int count =currentCache.getCountAutoTry();
            	    count=count+1;
@@ -1188,13 +1189,34 @@ public class CacheProcessing extends Thread  {
 		        mode=3;
 //           	notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 				
-			}     
-			}else {
+			}  else {
 				currentCache.setCountAutoTry(0);
+			}   
 			}
-                
-			
 
+
+            if (!searchText.equals("")) {
+
+            	String termpSearh="";
+            	String[] tempString=searchText.split("[ ]");
+
+
+            	for (int j = 0; j < tempString.length; j++) {
+            		if (tempString[j].subSequence(0,1).equals("(")) {
+            			
+            			tempString[j]=tempString[j].substring(1);
+					}
+            		if (tempString[j].subSequence(0,1).equals(".")){
+            			
+            			tempString[j]=tempString[j].substring(1);
+            		}
+            		termpSearh=termpSearh+" "+tempString[j];        
+            	}			
+
+            	searchText=termpSearh.trim();
+            } 
+
+ 
 			if (!CommUtil.compareString(searchText, Cache.getLastsearchwords())) 
 			{
 				v.setCurrentActionID(currentCache.getCurrentID());
@@ -1364,23 +1386,43 @@ public class CacheProcessing extends Thread  {
 			if (cans.length>1) {
 					
 				result=compareList.get(i).substring(0, indexs);
-				result=result+ cans[cans.length-1];
+				
+				result=result+" "+ cans[cans.length-1];
 				flag=true;
 				break;
 						
 			}
 		}
 		
+		result=result+" api example";
+		
 		if (!flag) {
 			
-			result=compareList.get(0)+"  exception";
+			if (compareList.get(0).toLowerCase().contains("exception")) {
+				result=compareList.get(0)+" exception";
+			}
+			else {
+				result=compareList.get(0)+" api example";
+			}
+			
 		}
 		
-		result=result+" api example";
+		
 		
 		}else {
 			if (ftastAll.size()>0) {
-				result=ftastAll.get(0).getName()+" api example";
+				
+				String tempString=ftastAll.get(0).getName();
+				TokenExtractor tek=new TokenExtractor();
+				
+				tempString=CommUtil.tokenListToString(tek.getIdentifierOccurenceOfString(tempString));
+				if (tempString.toLowerCase().contains("exception")) {
+					result=tempString+" exception";
+				}
+				else {
+					result=tempString+" api example";
+				}
+				
 			}
 			
 		}

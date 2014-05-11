@@ -20,13 +20,13 @@ public class LoopGoogleAPICall extends Thread{
 
 	static String cse_cx="";
 
-	
+
 	static String cse_key="";
-	
-	
-	
+
+
+
 	static String search="";
-	
+
 	public static void commSearch() throws MalformedURLException,
 	UnsupportedEncodingException, IOException {
 		int j = 0; // count for the results
@@ -97,17 +97,17 @@ public class LoopGoogleAPICall extends Thread{
 		}
 		//		}
 	}
-	
-	
-	
+
+
+
 	public static String getCse_cx() {
 		return cse_cx;
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	public static String getCse_key() {
 		return cse_key;
 	}
@@ -152,7 +152,7 @@ public class LoopGoogleAPICall extends Thread{
 
 
 	public volatile boolean stop=false;
-	
+
 	public LoopGoogleAPICall(String search) {
 
 		setSearch(search);
@@ -161,9 +161,9 @@ public class LoopGoogleAPICall extends Thread{
 
 	}
 
-	
+
 	int searchmode=1; //1 search from custom search engine API  ;  2  use the old ajax API 
-	
+
 
 	public int getSearchmode() {
 		return searchmode;
@@ -182,9 +182,9 @@ public class LoopGoogleAPICall extends Thread{
 		setCse_cx(cse_cx);
 		setSearch(search);
 		setSearchmode(1);
-		
-		
-		
+
+
+
 	}
 
 
@@ -268,56 +268,56 @@ public class LoopGoogleAPICall extends Thread{
 		Reader reader = new InputStreamReader(url.openStream(), charset);
 
 		CSEAPICallResults results = new Gson().fromJson(reader,	CSEAPICallResults.class);
-		System.out.println(results.toString());
+//		System.out.println(results.toString());
 
-List<MYITEMS> items=results.getItems();
-if(items!=null)
-{
-if (items.size()>0) {
+		List<MYITEMS> items=results.getItems();
+		if(items!=null)
+		{
+			if (items.size()>0) {
 
-		currentCSEAPICallResults=results.getItems();
+				currentCSEAPICallResults=results.getItems();
 
-		System.out.println("\n[the list size:]"
-				+ results.getItems().size());
-
-		
-		
-			for (int m = 0; m < items.size(); m++) {
+				System.out.println("\n[the list size:]"
+						+ results.getItems().size());
 
 
-				WEBResult temp=new WEBResult();
-				temp.setContent(items.get(m).getSnippet());
-				temp.setLanguage(null);
-				temp.setLocation(null);
-				temp.setPublishedDate(null);;
-				temp.setPublisher(null);
-				temp.setSignedRedirectUrl(null);
-				temp.setTitle(items.get(m).getTitle());
-				temp.setTitleNoFormatting(items.get(m).getTitle());
-				temp.setUnescapedUrl(items.get(m).getFormattedUrl());
-				temp.setUrl(items.get(m).getLink());
 
-				searchResults.add(temp);
-				currentResults.add(temp);
+				for (int m = 0; m < items.size(); m++) {
 
-				System.out.println("Result " + (++j) + " :");
-				System.out.println("Title: "
-						+ results.getItems().get(m).getTitle());
-				System.out.println("content: "
-						+ results.getItems().get(m).getSnippet());
-				System.out.println("unescapedUrl: "
-						+ results.getItems().get(m).getDisplayLink());
-				System.out.println("URL: "
-						+ results.getItems().get(m).getLink());
-				System.out.println("titleNoFormatting: "
-						+ results.getItems().get(m).getHtmlTitle());
-				System.out.println();
+
+					WEBResult temp=new WEBResult();
+					temp.setContent(items.get(m).getSnippet());
+					temp.setLanguage(null);
+					temp.setLocation(null);
+					temp.setPublishedDate(null);;
+					temp.setPublisher(null);
+					temp.setSignedRedirectUrl(null);
+					temp.setTitle(items.get(m).getTitle());
+					temp.setTitleNoFormatting(items.get(m).getTitle());
+					temp.setUnescapedUrl(items.get(m).getFormattedUrl());
+					temp.setUrl(items.get(m).getLink());
+
+					searchResults.add(temp);
+					currentResults.add(temp);
+
+					System.out.println("Result " + (++j) + " :");
+					System.out.println("Title: "
+							+ results.getItems().get(m).getTitle());
+					System.out.println("content: "
+							+ results.getItems().get(m).getSnippet());
+					System.out.println("unescapedUrl: "
+							+ results.getItems().get(m).getDisplayLink());
+					System.out.println("URL: "
+							+ results.getItems().get(m).getLink());
+					System.out.println("titleNoFormatting: "
+							+ results.getItems().get(m).getHtmlTitle());
+					System.out.println();
+
+				}
 
 			}
-
 		}
-     }
-       return searchResults;
+		return searchResults;
 
 	}
 
@@ -347,11 +347,11 @@ if (items.size()>0) {
 			else {
 				CSESearch(getCse_key(), getCse_cx(), getSearch());
 			}
-			
+
 
 
 		} catch (IOException e) {
-			
+
 			e.printStackTrace();
 		}
 
