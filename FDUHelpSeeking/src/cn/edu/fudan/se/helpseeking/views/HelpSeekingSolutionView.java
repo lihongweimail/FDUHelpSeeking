@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -30,6 +31,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
@@ -58,7 +60,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"; //$NON-NLS-1$
 
-//	public static SimpleBrower myBrower;
+
 	 
 	private static String javaExceptionalFileName ="/StopResource/javaExceptionalName.txt";
 	private static  Resource myResource=new Resource();
@@ -110,19 +112,13 @@ public class HelpSeekingSolutionView extends ViewPart {
 		this.txtSearch = txtSearch;
 	}
 
-//	public SimpleBrower getMyBrower() {
-//		return myBrower;
-//	}
 //
-//	public void setMyBrower(SimpleBrower myBrower) {
-//		HelpSeekingSolutionView.myBrower = myBrower;
+//	public void useOleBrowser() {
+//		// TODO Auto-generated method stub
 //	}
-
-	public void useOleBrowser() {
-		// TODO Auto-generated method stub
-	}
 	
 	static List<TabRecord> myTabRecords=new ArrayList<>();
+	
 	
 	static Timestamp startTabTime;
 	static Timestamp lostFocusTime;
@@ -145,6 +141,11 @@ public class HelpSeekingSolutionView extends ViewPart {
 
 		
 		tabFolder = new CTabFolder(arg0, SWT.NONE);
+		TabRecord searchTab=new TabRecord();
+		searchTab.setTabName("Search");
+		searchTab.setStarTimestamp(new Timestamp(System.currentTimeMillis()));
+		
+		myTabRecords.add(searchTab);
 		
 	//TODO 监听器 部分
 		
@@ -155,25 +156,24 @@ public class HelpSeekingSolutionView extends ViewPart {
 			@Override
 			 public void widgetSelected(final SelectionEvent e)
 			{
-				if (tabFolder.getSelectionIndex()==0) {
-					System.out.println(tabFolder.getItem(0).getText());
-				}
+//				if (tabFolder.getSelectionIndex()==0) {
+//					System.out.println(tabFolder.getItem(0).getText());
+//				}
+//				
+//				System.out.println("selectTabID"+selectTabID+"\nwidget selected:\n"+tabFolder.getSelectionIndex()+"\n"+e.toString()+"\n"+e.getClass());
+//				
+				System.out.println("before select tab id"+selectTabID);
 				
-				System.out.println("selectTabID"+selectTabID+"\nwidget selected:\n"+tabFolder.getSelectionIndex()+"\n"+e.toString()+"\n"+e.getClass());
+	     if (selectTabID>=tabFolder.getItemCount()) {
+			selectTabID=tabFolder.getSelectionIndex();
+		}
+	     System.out.println("if the last id the change to :"+selectTabID);
 				
 				Timestamp selectTabTime=new Timestamp(System.currentTimeMillis());
-				
-				int thisselect=tabFolder.getSelectionIndex();
-				if (thisselect==0 && thisselect==selectTabID) {
-					return;
-				}
-				
-				if (selectTabID!=0) {
 					
-					myTabRecords.get(selectTabID-1).getUseTimeList().add(selectTabTime.getTime()-startTabTime.getTime());
+					myTabRecords.get(selectTabID).getUseTimeList().add(selectTabTime.getTime()-startTabTime.getTime());
 					
-					
-				}
+			
 				
 				startTabTime=selectTabTime;	
 				selectTabID=tabFolder.getSelectionIndex();
@@ -194,7 +194,6 @@ public class HelpSeekingSolutionView extends ViewPart {
 			@Override
 			public void restore(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				System.out.println("restore:\n" +event.toString()+"\n"+event.getClass());
 			}
 			
 			@Override
@@ -212,22 +211,25 @@ public class HelpSeekingSolutionView extends ViewPart {
 			@Override
 			public void close(CTabFolderEvent event) {
 				// TODO Auto-generated method stub
-				System.out.println("close:\n" +event.toString()+"\n"+event.getClass()+"\n 选择的是"+ tabFolder.getSelectionIndex());
+//				System.out.println("close:\n" +event.toString()+"\n"+event.getClass()+"\n 选择的是"+ tabFolder.getSelectionIndex());
 				
-				
+				System.out.println("close current tabid:"+selectTabID);
 				Timestamp disposeTime=new Timestamp(System.currentTimeMillis());
-				if (selectTabID!=0) {
+				
+					selectTabID=tabFolder.getSelectionIndex();	
 					
-					myTabRecords.get(selectTabID-1).getUseTimeList().add(disposeTime.getTime()-startTabTime.getTime());
-					myTabRecords.get(selectTabID-1).setEndTimestamp(disposeTime);
-						DatabaseUtil.addBrowserUseToDataBase(myTabRecords.get(selectTabID-1));
-						myTabRecords.remove(selectTabID-1);
-				}
+					System.out.println("close select tabid "+selectTabID);
+					
+					myTabRecords.get(selectTabID).getUseTimeList().add(disposeTime.getTime()-startTabTime.getTime());
+					myTabRecords.get(selectTabID).setEndTimestamp(disposeTime);
+						DatabaseUtil.addBrowserUseToDataBase(myTabRecords.get(selectTabID));
+						myTabRecords.remove(selectTabID);
+			
 				startTabTime=disposeTime;		
 				
 			
 				
-				selectTabID=tabFolder.getSelectionIndex();		
+				
 				
 			}
 		});
@@ -247,14 +249,14 @@ public class HelpSeekingSolutionView extends ViewPart {
 				if (myTabRecords.size()>0) {
 					
 				
-				for (int i = 0; i < myTabRecords.size(); i++) {
+				for (int i = 1; i < myTabRecords.size(); i++) {
 					myTabRecords.get(i).setEndTimestamp(disposeTime);
 					myTabRecords.get(i).getUseTimeList().add(disposeTime.getTime()-startTabTime.getTime());
 					
 					DatabaseUtil.addBrowserUseToDataBase(myTabRecords.get(i));
 				}
 			
-				for (int i = 0; i < myTabRecords.size(); i++) {
+				for (int i = 1; i < myTabRecords.size(); i++) {
 					myTabRecords.remove(i);
 				}
 				}
@@ -263,40 +265,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 				
 			}
 		});
-		
-		tabFolder.addFocusListener(new FocusListener() {
 			
-			@Override
-			public void focusLost(FocusEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("focuse lost:\n" +e.toString()+"\n"+e.getClass());
-				lostFocusTime=new Timestamp(System.currentTimeMillis());
-//				selectTabID=tabFolder.getSelectionIndex();
-				
-//				myRecord.getUseTimeList().add(lostTabTime.getTime()-startTabTime.getTime());	
-				
-				
-			}
-			
-			@Override
-			public void focusGained(FocusEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("focuse gained:\n" +e.toString()+"\n"+e.getClass());
-				Timestamp gainFocusTime=new Timestamp(System.currentTimeMillis());
-				int thisselect=tabFolder.getSelectionIndex();
-				if (thisselect==0 && thisselect==selectTabID) {
-					return;
-				}
-				
-				if (selectTabID!=0) {
-					myTabRecords.get(selectTabID-1).getUseTimeList().add(lostFocusTime.getTime()-gainFocusTime.getTime());
-					startTabTime=gainFocusTime;		
-				}
-				selectTabID=tabFolder.getSelectionIndex();
-			}
-		});
-		
-	
 		
 		tabItem = new CTabItem(tabFolder, SWT.NONE);
 		tabItem.setText("Search");
@@ -517,13 +486,18 @@ public class HelpSeekingSolutionView extends ViewPart {
 				mytabR.setSearchType(urr.getType());
 				
 				
-				for (int i = 0; i < myTabRecords.size(); i++) {
+					for (int i = 0; i < myTabRecords.size(); i++) {
+					
+						if (myTabRecords.get(i).getUrlRecord()!=null) {
+						
 					if (myTabRecords.get(i).getUrlRecord().equals(urr.getUrl())) {
 						reopenindex=myTabRecords.get(i).getReOpenIndex();
 						mytabR.setReOpenIndex(reopenindex+1);
 					}
 					
-				}
+					}
+					
+				}	
 				
 				startTabTime=firstOpenTime;
 				
@@ -531,6 +505,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 								
 				myTabRecords.add(mytabR);
 				tab.setData(mytabR);
+				
+		
+				
 				
 				DatabaseUtil.addUseResultsRecord(urr);
 				
@@ -601,7 +578,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 //				
 //				googlesearchList = apiCall.searchWeb(search);
 				
-				if (googlesearchList.size()>0) {
+	if (googlesearchList.size()>0) {
 					tree.removeAll();
 				
 				int indexResultslist=0;
@@ -617,7 +594,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 					
 					TreeItem item = new TreeItem(tree, SWT.NONE);
 					
-					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
+//					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
+					item.setText(xml);
+
 					item.setData(webResult.getUrl());
 					item.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_BLUE));
@@ -663,7 +642,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 						
 						if (!content.equals("")) {
     					TreeItem contentItem=new TreeItem(item, SWT.NULL);
-    					String tempcontents=content.length()>50?content.substring(0,47)+"...":content;
+//    					String tempcontents=content.length()>50?content.substring(0,47)+"...":content;
+    					String tempcontents=content;
+    					
 					    contentItem.setText(tempcontents);
 //					    contentItem.setData(webResult.getUrl());
 					    contentItem.setData(null);
@@ -793,9 +774,13 @@ public class HelpSeekingSolutionView extends ViewPart {
 					searchResultOutput=query.toString()+searchResultOutput+"\n============\n";
 					FileHelper.appendContentToFile("result.txt", searchResultOutput);
 
-				
+					Cache.getInstance().setTimerAutoSearchmode(0);
+					Cache.getInstance().setLastAutoSearchTime(new Timestamp(System.currentTimeMillis()));
+					
+					
 				}else {
 					System.out.println("No return results!");
+					MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Search google faild! ", "Sorry connection wrong or no results! Please search agin wait for a while!" );
 				}
 					
 //			} catch (IOException e1) {

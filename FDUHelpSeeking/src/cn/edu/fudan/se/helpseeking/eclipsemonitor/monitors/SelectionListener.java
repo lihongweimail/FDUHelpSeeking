@@ -20,6 +20,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.swt.IFocusService;
 import org.eclipse.ui.views.markers.MarkerItem;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
@@ -28,6 +29,7 @@ import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Basic.RuntimeInfoType;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.CompileInformation;
+import cn.edu.fudan.se.helpseeking.bean.EditCode;
 import cn.edu.fudan.se.helpseeking.bean.EditorInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
@@ -36,6 +38,7 @@ import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformation;
 import cn.edu.fudan.se.helpseeking.bean.ProblemInformationList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
+import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
 import cn.edu.fudan.se.helpseeking.util.ConsoleInformationUtil;
@@ -59,6 +62,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		Action action = new Action();
 		IDEOutput ideOutput = new IDEOutput();
 		CompileInformation cpi = new CompileInformation();
+		EditCode ec=new EditCode();
 		RuntimeInformation ri = new RuntimeInformation();
 		ExplorerRelated eRelated = new ExplorerRelated();
 		EditorInfo editorInfo = new EditorInfo();
@@ -76,7 +80,9 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				String selectName = s.getFirstElement().toString().substring(0,
 								s.getFirstElement().toString().length() > 20 ? 20
 										: s.getFirstElement().toString().length());
-				event.setActionName("Select " + selectName);
+				
+				event.setActionName("select "+selectName);
+				
 				selectionContent = s.getFirstElement().toString();
 				// System.out.println("part0");
 
@@ -123,6 +129,17 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					ideOutput.setCompileInformation(ProblemInformationUtil
 							.generateCompileInformationbyProblemInformation(information));
 					info.setIdeOutput(ideOutput);	
+					ec.setClassModel(null);
+					ec.setCursor(null);
+					SyntacticBlock sb=new SyntacticBlock();
+					sb.setType("CompileInfoSelect");
+					sb.setExceptionName(selectionContent);
+					sb.setCode(selectionContent);
+					ec.setSyntacticBlock(sb);
+					info.setEditCode(ec);
+					info.setDebugCode(null);
+					info.setExplorerRelated(null);
+					
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
 					action.setActionName(event.getActionName());
@@ -217,6 +234,14 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					action.setDescription(event.getOriginId());
 					action.setByuser(true);
 					info.setAction(action);
+					
+					
+					info.setDebugCode(null);
+					info.setExplorerRelated(null);
+					
+
+					
+					
 
 					// 需要先写入数据库，才能得到ID
 					int actionid1 = DatabaseUtil.addInformationToDatabase(info);
@@ -253,6 +278,17 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				cpi.setType(CompileInfoType.WARNING);
 				ideOutput.setCompileInformation(cpi);
 				info.setIdeOutput(ideOutput);
+				ec.setClassModel(null);
+				ec.setCursor(null);
+				SyntacticBlock sb=new SyntacticBlock();
+				sb.setType("CompileInfoSelect");
+				sb.setExceptionName(selectionContent);
+				sb.setCode(selectionContent);
+				ec.setSyntacticBlock(sb);
+				info.setEditCode(ec);
+				info.setDebugCode(null);
+				info.setExplorerRelated(null);
+				
 
 				action.setTime(new Timestamp(System.currentTimeMillis()));
 				action.setActionKind(event.getKind());
@@ -310,19 +346,52 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				ri.setType(RuntimeInfoType.ExceptionalMessage);
 
 				ideOutput.setRuntimeInformation(ri);
-				;
+				
 				info.setIdeOutput(ideOutput);
+				ec.setClassModel(null);
+				ec.setCursor(null);
+				SyntacticBlock sb=new SyntacticBlock();
+				sb.setType("CompileInfoSelect");
+				sb.setExceptionName(selectionContent);
+				sb.setCode(selectionContent);
+				ec.setSyntacticBlock(sb);
+				info.setEditCode(ec);
+				info.setDebugCode(null);
+				info.setExplorerRelated(null);
+			
+				
+				event.setKind(Kind.ATTENTION);
+				event.setActionName("Console View Changed");
+				
+				
+				
 			}
 
 			if (part.getClass()
 					.getName()
 					.toString()
 					.equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
+				
+				event.setKind(Kind.ATTENTION);
 				info.setType("CompileInfo");
 				cpi.setContent(selectionContent);
 				cpi.setType(CompileInfoType.ERROR);
 				ideOutput.setCompileInformation(cpi);
 				info.setIdeOutput(ideOutput);
+				event.setActionName("Problem View Changed");
+				
+				ec.setClassModel(null);
+				ec.setCursor(null);
+				SyntacticBlock sb=new SyntacticBlock();
+				sb.setType("CompileInfoSelect");
+				sb.setExceptionName(selectionContent);
+				sb.setCode(selectionContent);
+				ec.setSyntacticBlock(sb);
+				info.setEditCode(ec);
+				info.setDebugCode(null);
+				info.setExplorerRelated(null);
+				
+				
 			}
 
 			action.setTime(new Timestamp(System.currentTimeMillis()));
@@ -349,6 +418,10 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 		// System.out.println("selectionContent: " + selectionContent);
 
 		DatabaseUtil.addInteractionEventToDatabase(event);
+		
+		
+
+		
 	}
 
 	@Override

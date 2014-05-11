@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
@@ -64,12 +65,16 @@ public class Query {
 	}
 	
 	
+	String lastcandidateWords="";
+	
 	/**
 	 * @param currentKeywordsList  所有可能的候选词
 	 * @param limit    指定生成多少个候选关键词
 	 */
 	public void makeCandidateKeywords(List<KeyWord> currentKeywordsList, int limit)
 	{
+		
+		
 		setCandidateKeywords(null);
 		
 		String mycandidateKeyWords=null;

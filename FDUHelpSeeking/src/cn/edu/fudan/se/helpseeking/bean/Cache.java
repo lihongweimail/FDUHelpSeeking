@@ -1,20 +1,17 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+import java.util.Set;
 
-import org.eclipse.swt.widgets.Tree;
+import org.apache.commons.lang.xwork.ObjectUtils.Null;
+import org.eclipse.jdt.core.Flags;
 
-import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 
-public class Cache  {
-
+public class Cache {
 
 	private static class CacheHolder {
 		public static Cache instance = new Cache();
@@ -22,66 +19,112 @@ public class Cache  {
 	}
 
 	public static Cache getInstance() {
-		
+
 		return CacheHolder.instance;
 	}
+
 	public static String getString() {
 		return Cache.class.getName();
 	}
 
 	ActionQueue actions = new ActionQueue();// 给动作一个足够大的窗口
 	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
-	List<ConsoleInformationListCopy> oldConsolesCopy=null;
-	private int consolesSize=0;
-	
+	List<ConsoleInformationListCopy> oldConsolesCopy = null;
+	private int consolesSize = 0;
+
 	ClassModel currentClassModel = new ClassModel();
+	int lastClassModelID = 0;// 初始为0，只有覆盖后调整如果值不相同;没写了classmodel
+								// 就值相同current赋给last;写了就current+1
+	int currentClassModelID = 0;// 累加只在新加入代码时累加 在classmodel内部保留设置值
 	int currentID = 0;
 	// 这个值为每次加入到cache中的信息进行编号，只加不减；
 	// 当对动作进行处理时，可以根据这个编号检索信息编号
-	
+
 	List<KeyWord> currentKeywordsList = new ArrayList<KeyWord>();
+	List<WindowTotalKeyWords> historyKeyWords = new ArrayList<WindowTotalKeyWords>();
+
 	List<DebugCodeCache> debugCodes = new ArrayList<DebugCodeCache>();
 	List<EditCodeCache> editCodes = new ArrayList<EditCodeCache>();
 
-	
 	List<ExplorerRelatedCache> explorerRelateds = new ArrayList<ExplorerRelatedCache>();
 	List<IDEOutputCache> ideOutputs = new ArrayList<IDEOutputCache>();
-	
 
 	List<InformationQueue> informations = new ArrayList<InformationQueue>();
 
 	ProblemInformationList problems = ProblemInformationList.getInstance();
-	ProblemInformationListCopy oldProblemsCopy=null;
+	ProblemInformationListCopy oldProblemsCopy = null;
 	List<String> taskDescription;
-	
-	List<KeyWordsCandidates> cacheCandWordTrees=new ArrayList<>();
-	int cacheCandWordTreesIndex=0;
-	List<SearchResults> cacheAutoSearchResults=new ArrayList<>();
-	int cacheAutoSearchResultsIndex=0;
-
-	private int problemsSize=0;
-
 
 	
+	List<KeyWordsCandidates> cacheCandWordTrees = new ArrayList<>();
+	int cacheCandWordTreesIndex = 0;
+	List<SearchResults> cacheAutoSearchResults = new ArrayList<>();
+	int cacheAutoSearchResultsIndex = 0;
 	
+	//记录最近的N个检索词
+	int countAutoTry=0;//自动检索词窗口太小使用的词重复时被拒绝检索次数 3次 则打开普通检索
 	
+	public int getCountAutoTry() {
+		return countAutoTry;
+	}
+
+	public void setCountAutoTry(int countAutoTry) {
+		this.countAutoTry = countAutoTry;
+	}
+
+	//每隔一段时间将历史查询词汇汇总 自动检索一次的信号  间隔2分钟  
+	int timerAutoSearchmode=0;  //值为0 正常态， 值为1需要检索， 值为2刚做过人工检索
+	Timestamp lastAutoSearchTime=new Timestamp(System.currentTimeMillis());
 	
+
+	public int getTimerAutoSearchmode() {
+		return timerAutoSearchmode;
+	}
+
+	public void setTimerAutoSearchmode(int timerAutoSearchmode) {
+		this.timerAutoSearchmode = timerAutoSearchmode;
+	}
+
+	public Timestamp getLastAutoSearchTime() {
+		return lastAutoSearchTime;
+	}
+
+	public void setLastAutoSearchTime(Timestamp lastAutoSearchTime) {
+		this.lastAutoSearchTime = lastAutoSearchTime;
+	}
+
+	private int problemsSize = 0;
+
+	public List<WindowTotalKeyWords> getHistoryKeyWords() {
+		return historyKeyWords;
+	}
+
+	public void setHistoryKeyWords(List<WindowTotalKeyWords> historyKeyWords) {
+		this.historyKeyWords = historyKeyWords;
+	}
 
 	public List<KeyWordsCandidates> getCacheCandWordTrees() {
 		return cacheCandWordTrees;
 	}
-	public void setCacheCandWordTrees(List<KeyWordsCandidates> cacheCandWordTrees) {
+
+	public void setCacheCandWordTrees(
+			List<KeyWordsCandidates> cacheCandWordTrees) {
 		this.cacheCandWordTrees = cacheCandWordTrees;
 	}
+
 	public List<SearchResults> getCacheAutoSearchResults() {
 		return cacheAutoSearchResults;
 	}
-	public void setCacheAutoSearchResults(List<SearchResults> cacheAutoSearchResults) {
+
+	public void setCacheAutoSearchResults(
+			List<SearchResults> cacheAutoSearchResults) {
 		this.cacheAutoSearchResults = cacheAutoSearchResults;
 	}
+
 	public int getCacheCandWordTreesIndex() {
 		return cacheCandWordTreesIndex;
 	}
+
 	public void setCacheCandWordTreesIndex(int cacheCandWordTreesIndex) {
 		this.cacheCandWordTreesIndex = cacheCandWordTreesIndex;
 	}
@@ -89,53 +132,55 @@ public class Cache  {
 	public int getCacheAutoSearchResultsIndex() {
 		return cacheAutoSearchResultsIndex;
 	}
+
 	public void setCacheAutoSearchResultsIndex(int cacheAutoSearchResultsIndex) {
 		this.cacheAutoSearchResultsIndex = cacheAutoSearchResultsIndex;
 	}
-	private boolean  compareProblemsAndCopy() {
-		boolean result=true;
 
-		
-		ProblemInformationListCopy  tempProblemsCopy=new ProblemInformationListCopy();
-		 ArrayList<ProblemInformation> errorList= new ArrayList<>();
-		 ArrayList<ProblemInformation> warningList=new ArrayList<>();
-		
-		
-		boolean resultError=true;
-		
-		
+	private boolean compareProblemsAndCopy() {
+		boolean result = true;
+
+		ProblemInformationListCopy tempProblemsCopy = new ProblemInformationListCopy();
+		ArrayList<ProblemInformation> errorList = new ArrayList<>();
+		ArrayList<ProblemInformation> warningList = new ArrayList<>();
+
+		boolean resultError = true;
+
 		for (ProblemInformation pifE : problems.getErrorList()) {
-			
-			if (problems.getErrorList().size()<=0) {
+
+			if (problems.getErrorList().size() <= 0) {
 				tempProblemsCopy.setErrorList(null);
 				break;
 			}
-			
-			if (oldProblemsCopy!=null && oldProblemsCopy.getErrorList()!=null) {
-				boolean flagError=true;
-                
-				for (ProblemInformation pifError : oldProblemsCopy.getErrorList()) {
-					if (pifE.getSeverity()==pifError.getSeverity()) {
-						if (pifE.getDescription().equals(pifError.getDescription())) {
-							if (pifE.getRelatedMethod().equals(pifError.getRelatedMethod())) {
-								
-								if (pifE.getLineNumber()==pifError.getLineNumber()) {
-									
-									flagError=false;
-									
-									
+
+			if (oldProblemsCopy != null
+					&& oldProblemsCopy.getErrorList() != null) {
+				boolean flagError = true;
+
+				for (ProblemInformation pifError : oldProblemsCopy
+						.getErrorList()) {
+					if (pifE.getSeverity() == pifError.getSeverity()) {
+						if (pifE.getDescription().equals(
+								pifError.getDescription())) {
+							if (pifE.getRelatedMethod().equals(
+									pifError.getRelatedMethod())) {
+
+								if (pifE.getLineNumber() == pifError
+										.getLineNumber()) {
+
+									flagError = false;
+
 								}
 							}
-							
-							
+
 						}
-						
+
 					}
 				}
-				
+
 				if (flagError) {
-					resultError=false;
-					ProblemInformation errorInformation=new ProblemInformation();
+					resultError = false;
+					ProblemInformation errorInformation = new ProblemInformation();
 					errorInformation.setCause(pifE.getCause());
 					errorInformation.setCharEnd(pifE.getCharEnd());
 					errorInformation.setCharStart(pifE.getCharStart());
@@ -146,16 +191,14 @@ public class Cache  {
 					errorInformation.setResource(pifE.getResource());
 					errorInformation.setSeverity(pifE.getSeverity());
 					errorInformation.setSource(pifE.getSource());
-					
+
 					errorList.add(errorInformation);
-					
-					
+
 				}
-				
-				
-			}else {
-				resultError=false;
-				ProblemInformation errorInformation=new ProblemInformation();
+
+			} else {
+				resultError = false;
+				ProblemInformation errorInformation = new ProblemInformation();
 				errorInformation.setCause(pifE.getCause());
 				errorInformation.setCharEnd(pifE.getCharEnd());
 				errorInformation.setCharStart(pifE.getCharStart());
@@ -168,67 +211,68 @@ public class Cache  {
 				errorInformation.setSource(pifE.getSource());
 				errorList.add(errorInformation);
 			}
-			
+
 		}
-		
+
 		if (!resultError) {
 			tempProblemsCopy.setErrorList(errorList);
 		}
 
-		
-		boolean resultWarning=true;	 
-		
+		boolean resultWarning = true;
+
 		for (ProblemInformation pifE : problems.getWarningList()) {
-			if (problems.getWarningList().size()<=0) {
+			if (problems.getWarningList().size() <= 0) {
 				tempProblemsCopy.setWarningList(null);
 				break;
 			}
-			
-			if (oldProblemsCopy!=null && oldProblemsCopy.getWarningList()!=null) {
-				boolean flagWarning=true;
-                
-				for (ProblemInformation pifWarning : oldProblemsCopy.getWarningList()) {
-					if (pifE.getSeverity()==pifWarning.getSeverity()) {
-						if (pifE.getDescription().equals(pifWarning.getDescription())) {
-							if (pifE.getRelatedMethod().equals(pifWarning.getRelatedMethod())) {
-								
-								if (pifE.getLineNumber()==pifWarning.getLineNumber()) {
-									
-									flagWarning=false;
-									
-									
+
+			if (oldProblemsCopy != null
+					&& oldProblemsCopy.getWarningList() != null) {
+				boolean flagWarning = true;
+
+				for (ProblemInformation pifWarning : oldProblemsCopy
+						.getWarningList()) {
+					if (pifE.getSeverity() == pifWarning.getSeverity()) {
+						if (pifE.getDescription().equals(
+								pifWarning.getDescription())) {
+							if (pifE.getRelatedMethod().equals(
+									pifWarning.getRelatedMethod())) {
+
+								if (pifE.getLineNumber() == pifWarning
+										.getLineNumber()) {
+
+									flagWarning = false;
+
 								}
 							}
-							
-							
+
 						}
-						
+
 					}
 				}
-				
+
 				if (flagWarning) {
-					resultWarning=false;
-					ProblemInformation warningInformation=new ProblemInformation();
+					resultWarning = false;
+					ProblemInformation warningInformation = new ProblemInformation();
 					warningInformation.setCause(pifE.getCause());
 					warningInformation.setCharEnd(pifE.getCharEnd());
 					warningInformation.setCharStart(pifE.getCharStart());
 					warningInformation.setDescription(pifE.getDescription());
 					warningInformation.setLineNumber(pifE.getLineNumber());
 					warningInformation.setPath(pifE.getPath());
-					warningInformation.setRelatedMethod(pifE.getRelatedMethod());
+					warningInformation
+							.setRelatedMethod(pifE.getRelatedMethod());
 					warningInformation.setResource(pifE.getResource());
 					warningInformation.setSeverity(pifE.getSeverity());
 					warningInformation.setSource(pifE.getSource());
-					
+
 					warningList.add(warningInformation);
-					
-					
+
 				}
-				
-				
-			}else {
-				resultWarning=false;
-				ProblemInformation warningInformation=new ProblemInformation();
+
+			} else {
+				resultWarning = false;
+				ProblemInformation warningInformation = new ProblemInformation();
 				warningInformation.setCause(pifE.getCause());
 				warningInformation.setCharEnd(pifE.getCharEnd());
 				warningInformation.setCharStart(pifE.getCharStart());
@@ -241,161 +285,151 @@ public class Cache  {
 				warningInformation.setSource(pifE.getSource());
 				warningList.add(warningInformation);
 			}
-			
+
 		}
-		
+
 		if (!resultWarning) {
 			tempProblemsCopy.setWarningList(warningList);
 		}
 
 		if (!resultWarning || !resultError) {
-			result=false;
+			result = false;
 		}
-		
-		
-		
+
 		return result;
 	}
-	
-	
 
-	private boolean  compareConsolesAndCopy() {
-		boolean result=true;
+	private boolean compareConsolesAndCopy() {
+		boolean result = true;
 
-		
-		List<ConsoleInformationListCopy>  tempConsolesCopy=new ArrayList<>();
-		
+		List<ConsoleInformationListCopy> tempConsolesCopy = new ArrayList<>();
+
 		for (ConsoleInformation cif : consoles.getExceptionList()) {
-			
-			if (oldConsolesCopy!=null) {
-			
-			boolean flag=true;
-			for (ConsoleInformationListCopy ciflc : oldConsolesCopy) {
-				if (cif.getExceptionName().equals(ciflc.getExceptionName())) {
-					if(cif.getDescription()!=null  && ciflc.getDescription()!=null)
-					{if (cif.getDescription().equals(ciflc.getDescription())) {
-						flag=false;
-					}}
-				}
-				
-				
-			}
-			
-			if (flag) {
 
-				result=false;
-				ConsoleInformationListCopy newNode=new ConsoleInformationListCopy();
-				newNode.setDescription(cif.getDescription());
-				newNode.setExceptionName(cif.getExceptionName());
-				tempConsolesCopy.add(newNode);		
-				
-			}
-			
-				
-			}  
-			else {
-				result=false;
-				ConsoleInformationListCopy newNode=new ConsoleInformationListCopy();
+			if (oldConsolesCopy != null) {
+
+				boolean flag = true;
+				for (ConsoleInformationListCopy ciflc : oldConsolesCopy) {
+					if (cif.getExceptionName().equals(ciflc.getExceptionName())) {
+						if (cif.getDescription() != null
+								&& ciflc.getDescription() != null) {
+							if (cif.getDescription().equals(
+									ciflc.getDescription())) {
+								flag = false;
+							}
+						}
+					}
+
+				}
+
+				if (flag) {
+
+					result = false;
+					ConsoleInformationListCopy newNode = new ConsoleInformationListCopy();
+					newNode.setDescription(cif.getDescription());
+					newNode.setExceptionName(cif.getExceptionName());
+					tempConsolesCopy.add(newNode);
+
+				}
+
+			} else {
+				result = false;
+				ConsoleInformationListCopy newNode = new ConsoleInformationListCopy();
 				newNode.setDescription(cif.getDescription());
 				newNode.setExceptionName(cif.getExceptionName());
 				tempConsolesCopy.add(newNode);
 			}
-			
-			
-		}		
-		
-		if (!result) {
-			oldConsolesCopy=tempConsolesCopy;
+
 		}
-		
-		
+
+		if (!result) {
+			oldConsolesCopy = tempConsolesCopy;
+		}
+
 		return result;
 	}
-	
-	
+
 	// 单例实现
 	private Cache() {
 
-//		System.out.println("Cache.Cache()");
+		// System.out.println("Cache.Cache()");
 	}
 
-	
-
-	
-	
-	
-
-
-	
 	public List<String> getTaskDescription() {
 		return taskDescription;
 	}
+
 	public void setTaskDescription(List<String> taskDescription) {
 		this.taskDescription = taskDescription;
 	}
-	
+
 	private void addActions(Action action, int id) {
 
 		ActionCache a = new ActionCache();
 		a.setAction(action);
 		a.setActionID(id);
 		actions.actionList.add(a);
-		
-//		增加频率
-	
-		boolean flagCount=false;
+
+		// 增加频率
+
+		boolean flagCount = false;
 		for (int j1 = 0; j1 < acFrequencysList.size(); j1++) {
-			
-			if (acFrequencysList.get(j1).getActionKind().equals(action.getActionKind()) && acFrequencysList.get(j1).getActionName().equals(action.getActionName()) ) {
-				
-				float fqc=acFrequencysList.get(j1).getFrequency();
-				fqc=fqc+1;
+
+			if (acFrequencysList.get(j1).getActionKind()
+					.equals(action.getActionKind())
+					&& acFrequencysList.get(j1).getActionName()
+							.equals(action.getActionName())) {
+
+				int fqc = acFrequencysList.get(j1).getFrequency();
+				fqc = fqc + 1;
 				acFrequencysList.get(j1).setFrequency(fqc);
-				
-				flagCount=true;
+				acFrequencysList.get(j1).getActionIDList().add(id);
+
+				flagCount = true;
 			}
 		}
-		
+
 		if (flagCount) {
-			ActionInformation aif=new ActionInformation();
+			ActionInformation aif = new ActionInformation();
 			aif.setActionID(id);
 			aif.setActionKind(action.getActionKind());
 			aif.setActionName(action.getActionName());
-			aif.setFrequency((float)1.0);
-			
+			aif.getActionIDList().add(id);
+			aif.setFrequency(1);
+			acFrequencysList.add(aif);
+
 		}
-	
-		
+
 		int removeActionID = actions.addSizeReturnRemoveActionID();
-		
+
 		if (removeActionID != -1) // 则说明动作已经放满了滑动窗口 ， 这时考虑不在窗口内的信息从信息集合中移除
 		{
-		
 
-			
 			// 最简单的策略直接删除， 后续需要可配置功能
 			removeInformationNaive(removeActionID);
-			
-		//			移除频率			
-		
+
+			// 移除频率
+
 			for (int j1 = 0; j1 < acFrequencysList.size(); j1++) {
-				
-				if (acFrequencysList.get(j1).getActionKind().equals(action.getActionKind()) && acFrequencysList.get(j1).getActionName().equals(action.getActionName()) ) {
-					
-					float fqc=acFrequencysList.get(j1).getFrequency();
-					fqc=fqc-1;
+
+				if (acFrequencysList.get(j1).getActionKind()
+						.equals(action.getActionKind())
+						&& acFrequencysList.get(j1).getActionName()
+								.equals(action.getActionName())) {
+
+					int fqc = acFrequencysList.get(j1).getFrequency();
+					fqc = fqc - 1;
 					acFrequencysList.get(j1).setFrequency(fqc);
-					
+
 					break;
 				}
 			}
 
 		}
-		
-		//求同类动作频率
 
-		
-		
+		// 求同类动作频率
+
+		actions.resetDistence();
 
 	}
 
@@ -431,67 +465,93 @@ public class Cache  {
 
 	}
 
-	public void addInformationToCache(Information information,int actionID) {
-		
-		if (checkInformation(information))
-		{
+	public void addInformationToCache(Information information, int actionID) {
+
+		if (checkInformation(information)) {
 			System.out.println("refuse one more time dupplicate action");
 			return;
 		}
 		
-	//添加到cache中
-		doAddInformationToCache(information, actionID);	
-		
-//		
-//		//添加到cache1中
-//		Cache1 myCache1=Cache1.getInstance();
-//		myCache1.addInformationToCache1(information, actionID);
-		
-	
+		boolean result=false;
+		Action newEnterAction = information.getAction();
+		if (informations.size() > 0) {
 			
+			int size=informations.size()<Basic.Mini_Actions?informations.size():Basic.Mini_Actions;
+
+			// 如果历史上在5秒内有相同的动作和描述业禁止出现;倒数的5个动作中有相同的 则不计入
+			for (int i=informations.size()-1;i>informations.size()-size;i--) {
+			
+				Action testAction = informations.get(i).getInformation().getAction();
+				if (newEnterAction.getActionKind().equals(testAction.getActionKind())
+						&& newEnterAction.getActionName().equals(testAction.getActionName())) {
+					
+            if (newEnterAction.getDescription().equals(testAction.getDescription())) {
+	                                      result=true;
+	                                      break;
+                                  }
+            
+			if (newEnterAction.getTime().getTime()
+							- testAction.getTime().getTime() < Basic.MINI_Action_Time) {
+						result = true;
+						break;
+					}
+
+				}
+			}
+
+		}
+		
+
+		if (result) {
+			return;
+		}
+		
+		// 添加到cache中
+		doAddInformationToCache(information, actionID);
 
 	}
-	
-	
 
-	
-	//	简单的连续相同不记录模式
+	// 简单的连续相同不记录模式
 	private boolean checkInformation(Information information) {
-		boolean result=false;
-		if (actions.getActionList()==null) {
-			//    	System.out.println("actons is null");
+		boolean result = false;
+		if (actions.getActionList() == null) {
+			// System.out.println("actons is null");
 			return false;
 		}
-		Action newEnterAction=information.getAction();
-		Action lastCacheAction=null;	
-		List<ActionCache> acs=actions.getActionList();
-		for (int i=acs.size()-1;i>=0;i--) {
-			if (acs.get(i).getActionID()==currentID) {
-				lastCacheAction=acs.get(i).getAction();
+		Action newEnterAction = information.getAction();
+		Action lastCacheAction = null;
+		List<ActionCache> acs = actions.getActionList();
+
+		for (int i = acs.size() - 1; i >= 0; i--) {
+			if (acs.get(i).getActionID() == currentID) {
+				lastCacheAction = acs.get(i).getAction();
 				break;
+
 			}
 		}
 
-		if (lastCacheAction==null) {
-			//    	System.out.println("not find action");
+
+
+		if (lastCacheAction == null) {
+			// System.out.println("not find action");
 			return false;
 		}
 
-		if (lastCacheAction.getActionKind().equals(newEnterAction.getActionKind())  
-				&& lastCacheAction.getActionName().equals(newEnterAction.getActionName())
-				&& lastCacheAction.getDescription().equals(newEnterAction.getDescription())) {
-			result=true;
-			//	      System.out.println("the same action: "+ newEnterAction.getActionKind().toString()+" : "+newEnterAction.getActionName());
-		}else 
-		{
-			result=false; 
-			//		System.out.println("the action is not same");
-		}		
+		if (lastCacheAction.getActionKind().equals(
+				newEnterAction.getActionKind())
+				&& lastCacheAction.getActionName().equals(
+						newEnterAction.getActionName())) {
+			result = true;
+			// System.out.println("the same action: "+
+			// newEnterAction.getActionKind().toString()+" : "+newEnterAction.getActionName());
+		} else {
+			result = false;
+			// System.out.println("the action is not same");
+		}
+
 		return result;
 
 	}
-
-
 
 	public DebugCode findDebugCodeWithID(int ID) {
 		DebugCode dc = null;
@@ -505,8 +565,7 @@ public class Cache  {
 		}
 		return dc;
 	}
-	
-	
+
 	public EditCode findEditCodeWithID(int ID) {
 		EditCode ec = null;
 		for (EditCodeCache ecc : getEditCodes()) {
@@ -530,7 +589,6 @@ public class Cache  {
 		return er;
 	}
 
-
 	public IDEOutput findIdeOutputWithID(int ID) {
 		IDEOutput ideop = null;
 		for (IDEOutputCache ideopc : getIdeOutputs()) {
@@ -543,13 +601,9 @@ public class Cache  {
 		return ideop;
 	}
 
-
-
 	public ActionQueue getActions() {
 		return actions;
 	}
-
-
 
 	public ActionQueue getActionSlideWindow() {
 		return actions;
@@ -595,757 +649,1067 @@ public class Cache  {
 		return informations;
 	}
 
-	
-public ProblemInformationList getProblems() {
-	return problems;
-}
-	
-	
+	public ProblemInformationList getProblems() {
+		return problems;
+	}
+
 	public int getProblemsSize() {
 		return problemsSize;
 	}
 
-	//	用于处理当编辑状态下，一些程序元素删除；或类修改后保存该类的文件后，该类编译通过
-	//	后在problem view中没有该类的编译错误和警告信息（再考虑是否只是没有错误信息）
-	//	在光标中有记录该类的类名文件
+	// 用于处理当编辑状态下，一些程序元素删除；或类修改后保存该类的文件后，该类编译通过
+	// 后在problem view中没有该类的编译错误和警告信息（再考虑是否只是没有错误信息）
+	// 在光标中有记录该类的类名文件
 	public void removeEditCodeAsDeleteOrProblemViewChange(String classFileName) {
-		//TODO   还有待实现
-		
-		classFileName=classFileName.trim();
+		// TODO 还有待实现
+
+		classFileName = classFileName.trim();
 		for (int i = 0; i < informations.size(); i++) {
-			DebugCode dc=informations.get(i).getInformation().getDebugCode();
-			EditCode ec=informations.get(i).getInformation().getEditCode();
-			if (dc!=null) {
-				if (dc.getBreakpoint()!=null) {
-					
-					if (dc.getBreakpoint().getFileName().trim().equals(classFileName)) {
+			DebugCode dc = informations.get(i).getInformation().getDebugCode();
+			EditCode ec = informations.get(i).getInformation().getEditCode();
+			if (dc != null) {
+				if (dc.getBreakpoint() != null) {
+
+					if (dc.getBreakpoint().getFileName().trim()
+							.equals(classFileName)) {
 						informations.get(i).getInformation().setDebugCode(null);
-						
+
 					}
 				}
 			}
-			
-			if (ec!=null) {
-				if (ec.getCursor()!=null) {
-					
-					if (ec.getCursor().getFileName().trim().equals(classFileName)) {
-						informations.get(i).getInformation().setEditCode(null);;
-						
+
+			if (ec != null) {
+				if (ec.getCursor() != null) {
+
+					if (ec.getCursor().getFileName().trim()
+							.equals(classFileName)) {
+						informations.get(i).getInformation().setEditCode(null);
+						;
+
 					}
 				}
-			}	
-	
-			
-			
 			}
-		
-				for (int j1 = 0; j1 < debugCodes.size(); j1++) {
-					if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName().trim().equals(classFileName)) {
-						debugCodes.remove(j1);
-					}
-				}
 
-				for (int j1 = 0; j1 < editCodes.size(); j1++) {
-					if (editCodes.get(j1).getEditCode().getCursor().getFileName().trim().equals(classFileName)) {
-						editCodes.remove(j1);
-						break;
-					}
-				}
+		}
 
+		for (int j1 = 0; j1 < debugCodes.size(); j1++) {
+			if (debugCodes.get(j1).getDebugCode().getBreakpoint().getFileName()
+					.trim().equals(classFileName)) {
+				debugCodes.remove(j1);
+			}
+		}
 
+		for (int j1 = 0; j1 < editCodes.size(); j1++) {
+			if (editCodes.get(j1).getEditCode().getCursor().getFileName()
+					.trim().equals(classFileName)) {
+				editCodes.remove(j1);
+				break;
+			}
+		}
 
 	}
-	
-
-		
-
 
 	private void removeInformationNaive(int removeActionID) {
 
-
-		
 		for (int i = 0; i < informations.size(); i++) {
 			if (informations.get(i).getId() == removeActionID) {
 				informations.remove(i);
-			    break;
+				break;
 			}
+		}
+		for (int j1 = 0; j1 < debugCodes.size(); j1++) {
+			if (debugCodes.get(j1).getId() == removeActionID) {
+				debugCodes.remove(j1);
+				break;
 			}
-				for (int j1 = 0; j1 < debugCodes.size(); j1++) {
-					if (debugCodes.get(j1).getId() == removeActionID) {
-						debugCodes.remove(j1);
-						break;
-					}
-				}
+		}
 
-				for (int j1 = 0; j1 < editCodes.size(); j1++) {
-					if (editCodes.get(j1).getId() == removeActionID) {
-						editCodes.remove(j1);
-						break;
-					}
-				}
+		for (int j1 = 0; j1 < editCodes.size(); j1++) {
+			if (editCodes.get(j1).getId() == removeActionID) {
+				editCodes.remove(j1);
+				break;
+			}
+		}
 
-				for (int j1 = 0; j1 < explorerRelateds.size(); j1++) {
-					if (explorerRelateds.get(j1).getId() == removeActionID) {
-						explorerRelateds.remove(j1);
-						break;
-					}
-				}
+		for (int j1 = 0; j1 < explorerRelateds.size(); j1++) {
+			if (explorerRelateds.get(j1).getId() == removeActionID) {
+				explorerRelateds.remove(j1);
+				break;
+			}
+		}
 
-				for (int j1 = 0; j1 < ideOutputs.size(); j1++) {
-					if (ideOutputs.get(j1).getId() == removeActionID) {
-						ideOutputs.remove(j1);
-						break;
-					}
-				}
+		for (int j1 = 0; j1 < ideOutputs.size(); j1++) {
+			if (ideOutputs.get(j1).getId() == removeActionID) {
+				ideOutputs.remove(j1);
+				break;
+			}
+		}
 
-		//移除候选关键词
-				
-				
-//				List<KeyWordsCandidates> consoleCacheKeyWords=new ArrayList<>();
-//				List<KeyWordsCandidates> problemCacheKeyWords=new ArrayList<>();
-//				List<KeyWordsCandidates> classmodelKeyWords=new ArrayList<>();
-////				List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
-////				List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
-//				List<KeyWordsCandidates> codeKeyWords=new ArrayList<>();
-//				List<KeyWordsCandidates> relatedExplorerKeyWords=new ArrayList<>();
-//新增对历史上console和problem view 对应信息的删除动作	 revise 80后新增的		
-				for (int j1 = 0; j1 < consoleCacheKeyWords.size(); j1++) {
-					
-					if (consoleCacheKeyWords.get(j1).getActionID() == removeActionID) {
-						consoleCacheKeyWords.remove(j1);
-						
-						break;
-					}
-				}
-	
-				for (int j1 = 0; j1 < problemCacheKeyWords.size(); j1++) {
-					
-					if (problemCacheKeyWords.get(j1).getActionID() == removeActionID) {
-						problemCacheKeyWords.remove(j1);
-						
-						break;
-					}
-				}
-	
+		// 移除候选关键词
 
-				//revise 80 版本的内容
-				for (int j1 = 0; j1 < classmodelKeyWords.size(); j1++) {
-					
-					if (classmodelKeyWords.get(j1).getActionID() == removeActionID) {
-						classmodelKeyWords.remove(j1);
-						
-						break;
-					}
-				}
-				
-			for (int j1 = 0; j1 < codeKeyWords.size(); j1++) {
-					
-					if (codeKeyWords.get(j1).getActionID() == removeActionID) {
-						codeKeyWords.remove(j1);
-						
-						break;
-					}
-				}
-			
+		// List<KeyWordsCandidates> consoleCacheKeyWords=new ArrayList<>();
+		// List<KeyWordsCandidates> problemCacheKeyWords=new ArrayList<>();
+		// List<KeyWordsCandidates> classmodelKeyWords=new ArrayList<>();
+		// // List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
+		// // List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
+		// List<KeyWordsCandidates> codeKeyWords=new ArrayList<>();
+		// List<KeyWordsCandidates> relatedExplorerKeyWords=new ArrayList<>();
+		// 新增对历史上console和problem view 对应信息的删除动作 revise 80后新增的
+		for (int j1 = 0; j1 < consoleCacheKeyWords.size(); j1++) {
+
+			if (consoleCacheKeyWords.get(j1).getActionID() == removeActionID) {
+				consoleCacheKeyWords.remove(j1);
+
+				break;
+			}
+		}
+
+		for (int j1 = 0; j1 < problemCacheKeyWords.size(); j1++) {
+
+			if (problemCacheKeyWords.get(j1).getActionID() == removeActionID) {
+				problemCacheKeyWords.remove(j1);
+
+				break;
+			}
+		}
+
+		// revise 80 版本的内容
+		for (int j1 = 0; j1 < classmodelKeyWords.size(); j1++) {
+
+			if (classmodelKeyWords.get(j1).getActionID() == removeActionID) {
+				classmodelKeyWords.remove(j1);
+
+				break;
+			}
+		}
+
+		for (int j1 = 0; j1 < codeKeyWords.size(); j1++) {
+
+			if (codeKeyWords.get(j1).getActionID() == removeActionID) {
+				codeKeyWords.remove(j1);
+
+				break;
+			}
+		}
+
 		for (int j1 = 0; j1 < relatedExplorerKeyWords.size(); j1++) {
-				
-				if (relatedExplorerKeyWords.get(j1).getActionID() == removeActionID) {
-					relatedExplorerKeyWords.remove(j1);
-					
-					break;
-				}
+
+			if (relatedExplorerKeyWords.get(j1).getActionID() == removeActionID) {
+				relatedExplorerKeyWords.remove(j1);
+
+				break;
 			}
-
-		
-
-		
+		}
 
 	}
 
-
 	public void doAddInformationToCache(Information information, int actionID) {
 		InformationQueue infq = new InformationQueue();
-		currentID =actionID;
+		currentID = actionID;
 		infq.setId(currentID);
 		infq.setInformation(information);
 
 		informations.add(infq);
 
-//		System.out.println("显示连续的编辑动作的动作名："+information.getAction().getActionKind().toString()+":"+information.getAction().getActionName()+"\n动作细节："+information.getAction().getDescription());
-		
+		// System.out.println("显示连续的编辑动作的动作名："+information.getAction().getActionKind().toString()+":"+information.getAction().getActionName()+"\n动作细节："+information.getAction().getDescription());
+
 		addActions(information.getAction(), currentID);
 
 		if (information.getDebugCode() != null) {
 			addDebugCode(information.getDebugCode(), currentID);
 			addDebugCodeKeywordsToCodeKeyWords(information.getDebugCode());
-			if (information.getDebugCode().getClassModel()!=null) {
+			if (information.getDebugCode().getClassModel() != null) {
+				currentClassModelID = currentClassModelID + 1;
 				setCurrentClassModel(information.getDebugCode().getClassModel());
-			addCurrentClassModelKeywordsToClassmodelKeyWords(1);//mode=1 取callee below class
+				addCurrentClassModelKeywordsToClassmodelKeyWords(1);// mode=1
+																	// 取callee
+																	// below
+																	// class
+
+			} else {
+				lastClassModelID = currentClassModelID;
 			}
-			
+
 		}
 
 		if (information.getEditCode() != null) {
 
 			addEditCode(information.getEditCode(), currentID);
 			addEditCodeKeywordsToCodeKeyWords(information.getEditCode());
-			if (information.getEditCode().getClassModel()!=null) {
+			if (information.getEditCode().getClassModel() != null) {
+				currentClassModelID = currentClassModelID + 1;
 				setCurrentClassModel(information.getEditCode().getClassModel());
-				addCurrentClassModelKeywordsToClassmodelKeyWords(1);//mode=1 取callee below class
+				addCurrentClassModelKeywordsToClassmodelKeyWords(1);// mode=1
+																	// 取callee
+																	// below
+																	// class
+			} else {
+				lastClassModelID = currentClassModelID;
 			}
-			
+
 		}
 
-//		if (information.getIdeOutput() != null) {
-//			addIDEOutput(information.getIdeOutput(), currentID);
-//			addKeywordsToConsoleviewKeywords(information.getIdeOutput().getRuntimeInformation());
-//			addKeywordsToProblemViewKeywords(information.getIdeOutput().getCompileInformation());
-//		}
+		// if (information.getIdeOutput() != null) {
+		// addIDEOutput(information.getIdeOutput(), currentID);
+		// addKeywordsToConsoleviewKeywords(information.getIdeOutput().getRuntimeInformation());
+		// addKeywordsToProblemViewKeywords(information.getIdeOutput().getCompileInformation());
+		// }
 
-		if (information.getExplorerRelated() != null) {
-			addExplorerRelated(information.getExplorerRelated(), currentID);
-			addKeywordsEditorInfoToRelatedExplorerKeywords(information.getExplorerRelated().getEditorInfo());
-			addKeywordsExplorerInfoToRelatedExplorerKeyWords(information.getExplorerRelated().getExplorerInfo());
-		}
-		
+		// if (information.getExplorerRelated() != null) {
+		// addExplorerRelated(information.getExplorerRelated(), currentID);
+		// addKeywordsEditorInfoToRelatedExplorerKeywords(information.getExplorerRelated().getEditorInfo());
+		// addKeywordsExplorerInfoToRelatedExplorerKeyWords(information.getExplorerRelated().getExplorerInfo());
+		// }
+
 		adjustConsolesKeywords();
 		adjustProblemsKeywords();
 
 		// 这里记得安排对每个新加入信息后的预处理处理(如有必要)
+		
 
+		//预处理方式一，定时检查并检索（满足条件后在cacheproecessing中处理词汇，从历史上的K组候选词中求词是否来源于某个包的信息多，然后加上 API example等词汇检索）
+        Timestamp curtime=new Timestamp(System.currentTimeMillis());
+        if (curtime.getTime()-getLastAutoSearchTime().getTime()>Basic.Auto_Search_Timer) {        	
+			setTimerAutoSearchmode(1);
+			setLastAutoSearchTime(curtime);
+		}   
+        
+		
 		// 使用线程
 		CacheProcessing cpThread = new CacheProcessing();
 		cpThread.run();
+		
+		
 	}
 
-	
-	
-
-	List<ActionInformation> acFrequencysList=new ArrayList<>();
-
-
-
-
+	List<ActionInformation> acFrequencysList = new ArrayList<>();
 
 	public List<ActionInformation> getAcFrequencysList() {
 		return acFrequencysList;
 	}
+
 	public void setAcFrequencysList(List<ActionInformation> acFrequencysList) {
 		this.acFrequencysList = acFrequencysList;
 	}
 
+	List<KeyWordsCandidates> consoleCacheKeyWords = new ArrayList<>();
+	List<KeyWordsCandidates> problemCacheKeyWords = new ArrayList<>();
+	List<KeyWordsCandidates> classmodelKeyWords = new ArrayList<>();
+	// List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
+	// List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
+	List<KeyWordsCandidates> codeKeyWords = new ArrayList<>();
+	List<KeyWordsCandidates> relatedExplorerKeyWords = new ArrayList<>();
 
-	List<KeyWordsCandidates> consoleCacheKeyWords=new ArrayList<>();
-	List<KeyWordsCandidates> problemCacheKeyWords=new ArrayList<>();
-	List<KeyWordsCandidates> classmodelKeyWords=new ArrayList<>();
-//	List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
-//	List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
-	List<KeyWordsCandidates> codeKeyWords=new ArrayList<>();
-	List<KeyWordsCandidates> relatedExplorerKeyWords=new ArrayList<>();
-
-
-	
-	
-	
 	public List<KeyWordsCandidates> getConsoleCacheKeyWords() {
 		return consoleCacheKeyWords;
 	}
+
 	public void setConsoleCacheKeyWords(
 			List<KeyWordsCandidates> consoleCacheKeyWords) {
 		this.consoleCacheKeyWords = consoleCacheKeyWords;
 	}
+
 	public List<KeyWordsCandidates> getProblemCacheKeyWords() {
 		return problemCacheKeyWords;
 	}
+
 	public void setProblemCacheKeyWords(
 			List<KeyWordsCandidates> problemCacheKeyWords) {
 		this.problemCacheKeyWords = problemCacheKeyWords;
 	}
+
 	public List<KeyWordsCandidates> getClassmodelKeyWords() {
 		return classmodelKeyWords;
 	}
-	public void setClassmodelKeyWords(List<KeyWordsCandidates> classmodelKeyWords) {
+
+	public void setClassmodelKeyWords(
+			List<KeyWordsCandidates> classmodelKeyWords) {
 		this.classmodelKeyWords = classmodelKeyWords;
 	}
+
 	public List<KeyWordsCandidates> getCodeKeyWords() {
 		return codeKeyWords;
 	}
+
 	public void setCodeKeyWords(List<KeyWordsCandidates> codeKeyWords) {
 		this.codeKeyWords = codeKeyWords;
 	}
+
 	public List<KeyWordsCandidates> getRelatedExplorerKeyWords() {
 		return relatedExplorerKeyWords;
 	}
+
 	public void setRelatedExplorerKeyWords(
 			List<KeyWordsCandidates> relatedExplorerKeyWords) {
 		this.relatedExplorerKeyWords = relatedExplorerKeyWords;
 	}
+
 	private void addKeywordsExplorerInfoToRelatedExplorerKeyWords(
 			ExplorerInfo explorerInfo) {
-		
-		KeyWordsCandidates  explorerInfoCodeCandidates=new KeyWordsCandidates();
 
-		List<KeyWord> tempKeyWords=new ArrayList<>();
+		KeyWordsCandidates explorerInfoCodeCandidates = new KeyWordsCandidates();
 
-		if (explorerInfo!=null)
-		{
-			if (explorerInfo.getSelectObjectNameList()!=null|| explorerInfo.getSelectObjectNameList().size()>0) {
+		List<KeyWord> tempKeyWords = new ArrayList<>();
 
+		if (explorerInfo != null) {
+			if (explorerInfo.getSelectObjectNameList() != null
+					|| explorerInfo.getSelectObjectNameList().size() > 0) {
 
 				// 取消息
-				for (String str : explorerInfo.getSelectObjectNameList()) 
-				{
-					if ((str==null) ||str.equals("")) {
+				for (String str : explorerInfo.getSelectObjectNameList()) {
+					if ((str == null) || str.equals("")) {
 						break;
 					}
-					KeyWord kw=new KeyWord();
+					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
 					kw.setWeightOne(1);
-					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 					kw.setTagName("Other");
 					tempKeyWords.add(kw);
 				}
 			}
 
-			explorerInfoCodeCandidates.setActionID(currentID); //不跟随动作删除
-			explorerInfoCodeCandidates.setLevel(Basic.KeyWordsLevel.Level_Seven);
+			explorerInfoCodeCandidates.setActionID(currentID); // 不跟随动作删除
+			explorerInfoCodeCandidates
+					.setLevel(Basic.KeyWordsLevel.Level_Seven);
 			explorerInfoCodeCandidates.setOldStep(3);
 			explorerInfoCodeCandidates.setKeyWords(tempKeyWords);
 			relatedExplorerKeyWords.add(explorerInfoCodeCandidates);
-			
+
 		}
-		
+
 	}
-	
-	
+
 	private void addKeywordsEditorInfoToRelatedExplorerKeywords(
 			EditorInfo editorInfo) {
-		
-		KeyWordsCandidates  editorInfoCodeCandidates=new KeyWordsCandidates();
 
-		List<KeyWord> tempKeyWords=new ArrayList<>();
+		KeyWordsCandidates editorInfoCodeCandidates = new KeyWordsCandidates();
 
-		if (editorInfo!=null)
-		{
-			if (editorInfo.getClassQualifiedNameList()!=null|| editorInfo.getClassQualifiedNameList().size()>0) {
+		List<KeyWord> tempKeyWords = new ArrayList<>();
+
+		if (editorInfo != null) {
+			if (editorInfo.getClassQualifiedNameList() != null
+					|| editorInfo.getClassQualifiedNameList().size() > 0) {
 				// 取消息
-				for (String str : editorInfo.getClassQualifiedNameList()) 
-				{
-					if ((str==null) ||str.equals("")) {
+				for (String str : editorInfo.getClassQualifiedNameList()) {
+					if ((str == null) || str.equals("")) {
 						break;
 					}
-					KeyWord kw=new KeyWord();
+					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
 					kw.setWeightOne(1);
-					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
+					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 					kw.setTagName("Other");
 					tempKeyWords.add(kw);
 				}
 			}
 
-			editorInfoCodeCandidates.setActionID(currentID); //不跟随动作删除
+			editorInfoCodeCandidates.setActionID(currentID); // 不跟随动作删除
 			editorInfoCodeCandidates.setLevel(Basic.KeyWordsLevel.Level_Seven);
 			editorInfoCodeCandidates.setOldStep(3);
 			editorInfoCodeCandidates.setKeyWords(tempKeyWords);
 			relatedExplorerKeyWords.add(editorInfoCodeCandidates);
-			
+
 		}
-		
+
 	}
-	
-	
-	
+
 	private void addEditCodeKeywordsToCodeKeyWords(EditCode editCode) {
 
-		KeyWordsCandidates  editCodeCandidates=new KeyWordsCandidates();
+		KeyWordsCandidates editCodeCandidates = new KeyWordsCandidates();
 
-		List<KeyWord> tempKeyWords=new ArrayList<>();
+		List<KeyWord> tempKeyWords = new ArrayList<>();
 
-		if (editCode!=null && editCode.getSyntacticBlock()!=null)
-		{
+		if (editCode != null && editCode.getSyntacticBlock() != null) {
 			// 取代码等信息
-			//代码需要过滤停用词
-			String codeString=editCode.getSyntacticBlock().getCode();
-			
-			codeString=CommUtil.removeStopWordsAsString(codeString);
-			
-if (codeString==null) {
-	return;
-}
-			String exceptionalString=editCode.getSyntacticBlock().getExceptionName();
-			String rString=codeString+";"+exceptionalString;
+			// 代码需要过滤停用词
 
-			for (String str : (rString.split(Basic.SPLIT_STRING))) 
-			{
-				KeyWord kw=new KeyWord();
+			String codeString = editCode.getSyntacticBlock().getCode();
+
+			codeString = CommUtil.removeStopWordsAsString(codeString);
+
+			if (codeString == null) {
+				return;
+			}
+			String exceptionalString = editCode.getSyntacticBlock()
+					.getExceptionName();
+			String rString = codeString + ";" + exceptionalString;
+			rString = CommUtil.removeDuplicateWords(CommUtil
+					.stringToList(rString));
+
+	
+
+			String[][] apinameMap = getVarialToAPImap(editCode.getClassModel());
+
+			for (String str : (rString.split("[;]"))) {
+				boolean flag = false;
+				if (apinameMap!=null) {
+					
+				
+				for (int i = 0; i < apinameMap.length; i++) {
+
+					String keyvalue = apinameMap[i][0];
+					String value = apinameMap[i][1];
+					// System.out.println(keyvalue+":"+value+":"+str);
+					if (keyvalue.toLowerCase().equals(str.toLowerCase())) {
+						str = value;
+						flag = true;
+						break;
+					}
+
+				}
+
+			     }
+				KeyWord kw = new KeyWord();
 				kw.setKeywordName(str.trim());
 				kw.setWeightOne(2);
 				kw.setTagName("Other");
 
 				for (String jestr : Basic.javaExceptionalNameList) {
-					if (str.equals(jestr)) {
-						kw.setWeightTwo(2);
+
+					if (str.toLowerCase().contains("Exception".toLowerCase())) {
+						kw.setWeightOne(4);
 						kw.setTagName("Exception");
+						flag = true;
+						break;
+					}
+
+					if (str.equals(jestr)) {
+						kw.setWeightOne(4);
+						kw.setTagName("Exception");
+						flag = true;
 						break;
 					}
 				}
-				kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-				tempKeyWords.add(kw);
+				if (flag) {
+					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+					tempKeyWords.add(kw);
+
+				}
 
 			}
-			
-			editCodeCandidates.setActionID(currentID); //不跟随动作删除
+
+			editCodeCandidates.setActionID(currentID); // 不跟随动作删除
 			editCodeCandidates.setLevel(Basic.KeyWordsLevel.Level_Six);
 			editCodeCandidates.setOldStep(5);
 			editCodeCandidates.setKeyWords(tempKeyWords);
 			codeKeyWords.add(editCodeCandidates);
-			
+
 		}
 
-		
 	}
 
+	public String removeChacter(String para) {
+		String result = para.trim();
+		if (result.charAt(0) == 'L' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
+
+		if (result.charAt(0) == 'T' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
+
+		if (result.charAt(0) == 'Q' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
+
+		if (result.charAt(0) == 'T' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
+
+		result.replace(';', ' ');
+
+		return result;
+	}
+
+	public String combileMethodQurifyname(String returnname, String name,
+			String[] paraType) {
+if (returnname==null) returnname="";
+
+String paratypes = "";
+if (paraType!=null) {
 	
+
+
+if (paraType.length>0 )
+{	
+	
+
+		for (int i = 0; i < paraType.length; i++) {
+			String para = paraType[i];
+			String mypara = removeChacter(para);
+
+			if (paratypes.equals("")) {
+				paratypes = mypara;
+			} else {
+				paratypes = paratypes + "," + mypara;
+			}
+
+		}
+}
+}
+		if (returnname.equals("void")) {
+			returnname = "";
+		}
+		if (returnname.equals("String")) {
+			returnname = "";
+		}
+		if (returnname.equals("int")) {
+			returnname = "";
+		}
+		if (returnname.equals("float")) {
+			returnname = "";
+		}
+		if (returnname.equals("Integer")) {
+			returnname = "";
+		}
+		if (returnname.equals("double")) {
+			returnname = "";
+		}
+		if (returnname.equals("boolean")) {
+			returnname = "";
+		}
+		if (returnname.equals("byte")) {
+			returnname = "";
+		}
+		if (returnname.equals("char")) {
+			returnname = "";
+		}
+		if (returnname.equals("object")) {
+			returnname = "";
+		}
+		if (returnname.equals("char")) {
+			returnname = "";
+		}
+		if (returnname.equals("V")) {
+			returnname = "";
+		}
+		if (returnname.equals("Z")) {
+			returnname = "";
+		}
+		if (returnname.equals("I")) {
+			returnname = "";
+		}
+		if (returnname.equals("K")) {
+			returnname = "";
+		}
+
+		return returnname + " " + name + "(" + paratypes + ")";
+
+	}
+
+	public String[][] getVarialToAPImap(ClassModel classModel) {
+
+		if (classModel == null) {
+			return null;
+		}
+
+		Set<String> apiName = classModel.getCalleeInfo().keySet();
+
+		String[][] result = new String[apiName.size()][2];
+		int i = 0;
+
+		for (String str : apiName) {
+			String[] key = str.split("[.]");
+			int index = key.length;
+			String keyword = key[index - 1];
+
+			String paratypes = "";
+			for (int j = 0; j < classModel.getCalleeInfo().get(str)
+					.getParaTypes().length; j++) {
+				String para = paratypes
+						+ classModel.getCalleeInfo().get(str).getParaTypes()[j];
+
+				para = removeChacter(para);
+
+				if (paratypes.equals("")) {
+					paratypes = para.toString();
+				} else {
+					paratypes = paratypes + "," + para;
+				}
+
+			}
+			String returntype = classModel.getCalleeInfo().get(str)
+					.getReturnType();
+
+			if (returntype.equals("void")) {
+				returntype = "";
+			}
+			if (returntype.equals("String")) {
+				returntype = "";
+			}
+			if (returntype.equals("int")) {
+				returntype = "";
+			}
+			if (returntype.equals("float")) {
+				returntype = "";
+			}
+			if (returntype.equals("Integer")) {
+				returntype = "";
+			}
+			if (returntype.equals("double")) {
+				returntype = "";
+			}
+			if (returntype.equals("boolean")) {
+				returntype = "";
+			}
+			if (returntype.equals("byte")) {
+				returntype = "";
+			}
+			if (returntype.equals("char")) {
+				returntype = "";
+			}
+			if (returntype.equals("object")) {
+				returntype = "";
+			}
+			if (returntype.equals("char")) {
+				returntype = "";
+			}
+			if (returntype.equals("V")) {
+				returntype = "";
+			}
+			if (returntype.equals("Z")) {
+				returntype = "";
+			}
+			if (returntype.equals("I")) {
+				returntype = "";
+			}
+			if (returntype.equals("K")) {
+				returntype = "";
+			}
+
+			result[i][0] = keyword;
+			result[i][1] = returntype + " " + str + "(" + returntype + ")";
+			i = i + 1;
+
+		}
+		return result;
+
+	}
+
 	private void addDebugCodeKeywordsToCodeKeyWords(DebugCode debugCode) {
 
-		KeyWordsCandidates  debugCodeCandidates=new KeyWordsCandidates();
-	    
-		List<KeyWord> tempKeyWords=new ArrayList<>();
+		KeyWordsCandidates debugCodeCandidates = new KeyWordsCandidates();
 
-		if (debugCode!=null && debugCode.getSyntacticBlock()!=null)
-		{
+		List<KeyWord> tempKeyWords = new ArrayList<>();
+
+		if (debugCode != null && debugCode.getSyntacticBlock() != null) {
 			// 取代码等信息
-			//代码需要过滤停用词
-			
-			String codeString=debugCode.getSyntacticBlock().getCode();
-			
-			if (codeString!=null&& !codeString.equals("")) {
-				codeString=CommUtil.removeStopWordsAsString(codeString);
+			// 代码需要过滤停用词
 
-				String exceptionalString=debugCode.getSyntacticBlock().getExceptionName();
-				String rString=codeString+";"+exceptionalString;
+			String codeString = debugCode.getSyntacticBlock().getCode();
 
-				for (String str : (rString.split(Basic.SPLIT_STRING))) 
-				{
-					KeyWord kw=new KeyWord();
+			if (codeString != null && !codeString.equals("")) {
+				codeString = CommUtil.removeStopWordsAsString(codeString);
+
+				if (codeString == null || codeString.equals("")) {
+					return;
+				}
+
+				String exceptionalString = debugCode.getSyntacticBlock()
+						.getExceptionName();
+				String rString = codeString + ";" + exceptionalString;
+
+				rString = CommUtil.removeDuplicateWords(CommUtil
+						.stringToList(rString));
+
+				String[][] apinameMap = getVarialToAPImap(debugCode
+						.getClassModel());
+
+				for (String str : (rString.split("[;]"))) {
+					boolean flag = false;
+                if (apinameMap!=null) {
+					
+				
+					for (int i = 0; i < apinameMap.length; i++) {
+
+						String keyvalue = apinameMap[i][0];
+						String value = apinameMap[i][1];
+						// System.out.println(keyvalue+":"+value+":"+str);
+						if (keyvalue.toLowerCase().contains(str.toLowerCase())) {
+							str = value;
+							flag = true;
+							break;
+						}
+
+					}
+                }
+
+					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
 					kw.setWeightOne(2);
 					kw.setTagName("Other");
 
 					for (String jestr : Basic.javaExceptionalNameList) {
-						if (str.equals(jestr)) {
-							kw.setWeightTwo(2);
+
+						if (str.toLowerCase().contains(
+								"Exception".toLowerCase())) {
+							kw.setWeightOne(4);
 							kw.setTagName("Exception");
+							flag = true;
+							break;
+						}
+
+						if (str.equals(jestr)) {
+							kw.setWeightOne(4);
+							kw.setTagName("Exception");
+							flag = true;
 							break;
 						}
 					}
-					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-					tempKeyWords.add(kw);
+
+					if (flag) {
+						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						tempKeyWords.add(kw);
+
+					}
 
 				}
-				
-				debugCodeCandidates.setActionID(currentID); //不跟随动作删除
+
+				debugCodeCandidates.setActionID(currentID); // 不跟随动作删除
 				debugCodeCandidates.setLevel(Basic.KeyWordsLevel.Level_Six);
 				debugCodeCandidates.setOldStep(5);
 				debugCodeCandidates.setKeyWords(tempKeyWords);
 				codeKeyWords.add(debugCodeCandidates);
-				
+
 			}
-			
-			
+
 		}
 
-		
 	}
-	
-	
 
 	private void addCurrentClassModelKeywordsToClassmodelKeyWords(int mode) {
 
-		//从classmodel中获得调用的API信息
-		//	  目前先只关注 当前代码调用的API以及其下一个类
+		// 从classmodel中获得调用的API信息
+		// 目前先只关注 当前代码调用的API以及其下一个类
 
-		KeyWordsCandidates  classModelCandidates=new KeyWordsCandidates();
-		
-		List<KeyWord> tempKeyWords=new ArrayList<>();
+		KeyWordsCandidates classModelCandidates = new KeyWordsCandidates();
 
-		if (getCurrentClassModel()!=null)
-		{
-			// 取消息  mode=1; // 意思是暂时取callee 和 belowclass
+		List<KeyWord> tempKeyWords = new ArrayList<>();
 
-//			String  caller=CommUtil.ListToString(getCurrentClassModel().getInternalCaller());
-			String  callee=CommUtil.ListToString(getCurrentClassModel().getInternalCallee());
-//			String upclass=CommUtil.ListToString(getCurrentClassModel().getUpClass());
-			String belowclass=CommUtil.ListToString(getCurrentClassModel().getBelowClass());
+		if (lastClassModelID < currentClassModelID) {
 
-			if (mode==1) 
-			{
+			if (getCurrentClassModel() != null) {
+				// 取消息 mode=1; // 意思是暂时取callee 和 belowclass
 
-				//方法的qualified name 中，intercallee中包含自己的类名信息需要去除
-				String finalcalleestr="";
+				// String
+				// caller=CommUtil.ListToString(getCurrentClassModel().getInternalCaller());
+				List<String> callee = getCurrentClassModel()
+						.getInternalCallee();
+				// String
+				// upclass=CommUtil.ListToString(getCurrentClassModel().getUpClass());
+				List<String> belowclass = getCurrentClassModel()
+						.getBelowClass();
 
-				if (callee!=null && !callee.equals("")) {
+				if (mode == 1) {
 
+					// 方法的qualified name 中，intercallee中包含自己的类名信息需要去除
+					String finalcalleestr = "";
 
-					String[] calleearray=callee.split("[;]");
-					if (calleearray.length>0) {
-						for (String calleestr :calleearray ) {
-							String[] methodnamestr=calleestr.split(Basic.SPLIT_STRING);
-							int lastindex=methodnamestr.length;
-							for (int i =lastindex-1; i >0; i--) {
-								String laststr=methodnamestr[i];
-								if (!laststr.trim().equals("")) {
-									finalcalleestr=finalcalleestr.trim()+laststr+";";
-									break;
-								}
+					if (callee != null && callee.size() > 0) {
+
+						for (String calleestr : callee) {
+							String[] methodnamestr = calleestr
+									.split(Basic.SPLIT_STRING);
+
+							MethodInfo mif = getCurrentClassModel().calleeInfo
+									.get(calleestr);
+							
+							String calleequrifyname="";
+							if (mif!=null) {
+								calleequrifyname = combileMethodQurifyname(
+									mif.getReturnType(), calleestr,
+									mif.getParaTypes());
+							}
+
+							
+
+							if (finalcalleestr.equals("")) {
+								finalcalleestr = calleequrifyname;
+							} else {
+								finalcalleestr = finalcalleestr + ";"
+										+ calleequrifyname;
 							}
 
 						}
 					}
-				}
 
-				String result1=finalcalleestr;
+					String result1 = finalcalleestr;
 
-				if (belowclass!=null && !belowclass.equals("")) {
-					result1=result1+belowclass;
-				}
-				
-
-
-
-				for (String str : CommUtil.arrayToList(result1.split("[;]"))) 
-				{
-					KeyWord kw=new KeyWord();
-					kw.setKeywordName(str.trim());
-					kw.setWeightOne(6);
-					for (String jestr : Basic.javaExceptionalNameList)
-					{
-						if (str.equals(jestr))
-						{
-							kw.setWeightTwo(2);
-							break;
+					if (belowclass != null && belowclass.size() > 0) {
+						for (int i = 0; i < belowclass.size(); i++) {
+							result1 = result1 + ";" + belowclass.get(0);
 						}
+
 					}
-					kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-					kw.setTagName("API");
+
+					result1 = CommUtil.removeDuplicateWords(CommUtil
+							.stringToList(result1, "[;]"));
+
+					for (String str : CommUtil
+							.arrayToList(result1.split("[;]"))) {
+						KeyWord kw = new KeyWord();
+						kw.setKeywordName(str.trim());
+						kw.setWeightOne(2);
+						for (String jestr : Basic.javaExceptionalNameList) {
+							if (str.equals(jestr)) {
+								kw.setWeightOne(4);
+								break;
+							}
+						}
+						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						kw.setTagName("API");
+						tempKeyWords.add(kw);
+					}
+
+					classModelCandidates.setActionID(currentID);
+					classModelCandidates
+							.setLevel(Basic.KeyWordsLevel.Level_Three);
+					classModelCandidates.setOldStep(8);
+					classModelCandidates.setKeyWords(tempKeyWords);
+
+					classmodelKeyWords.add(classModelCandidates);
+
+				}
+			}
+		}
+
+	}
+
+	private void adjustProblemsKeywords() {
+		// problem消息的权重其次，第一个error权重最高7，其次是warning 6
+
+		if (problems == null) {
+			return;
+		}
+
+		if (!compareProblemsAndCopy()) {
+
+			return;
+
+		}
+		if (oldProblemsCopy == null) {
+			return;
+		}
+
+		KeyWordsCandidates problemCandidates = new KeyWordsCandidates();
+
+		List<KeyWord> tempKeyWords = new ArrayList<>();
+
+		ArrayList<ProblemInformation> errorList = oldProblemsCopy
+				.getErrorList();
+		ArrayList<ProblemInformation> warningList = oldProblemsCopy
+				.getWarningList();
+
+		if (errorList != null && errorList.size() > 0) {
+
+			for (ProblemInformation pif : errorList) {
+
+				String des = pif.getDescription();
+				if (des != null && !des.trim().equals("")) {
+					// 取消息
+					for (String str : des.split(Basic.SPLIT_STRING)) {
+						if (str.trim().equals("")) {
+							continue;
+						}
+						KeyWord kw = new KeyWord();
+						kw.setKeywordName(str.trim());
+						kw.setWeightOne(4);
+						kw.setWeightTwo(1);
+						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						kw.setTagName("Error");
+						tempKeyWords.add(kw);
+					}
+				}
+			}
+
+		}
+
+		if (warningList != null && warningList.size() > 0) {
+			for (ProblemInformation pif : warningList) {
+
+				String des = pif.getDescription();
+				if (des != null && !des.trim().equals("")) {
+					// 取消息
+					for (String str : des.split(Basic.SPLIT_STRING)) {
+						if (str.trim().equals("")) {
+							continue;
+						}
+						KeyWord kw = new KeyWord();
+						kw.setKeywordName(str.trim());
+						kw.setWeightOne(4);
+						kw.setWeightTwo(1);
+						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						kw.setTagName("Other");
+						tempKeyWords.add(kw);
+					}
+				}
+			}
+		}
+
+		problemCandidates.setActionID(currentID); // 不跟随动作删除
+		problemCandidates.setLevel(Basic.KeyWordsLevel.Level_Two);
+		problemCandidates.setOldStep(5);
+		problemCandidates.setKeyWords(tempKeyWords);
+
+		problemCandidates.setFrequency(findyoufrequency(currentID));
+
+		problemCacheKeyWords.add(problemCandidates);
+
+	}
+
+	public int findyoufrequency(int currentid) {
+		int result = 1;
+		boolean flag = false;
+		for (int i = 0; i < acFrequencysList.size(); i++) {
+			List<Integer> actionIn = acFrequencysList.get(i).getActionIDList();
+			for (int j = 0; j < actionIn.size(); j++) {
+				if (currentid == actionIn.get(j)) {
+					flag = true;
+					break;
+				}
+			}
+			if (flag) {
+				result = acFrequencysList.get(i).getFrequency();
+			}
+
+		}
+		return result;
+	}
+
+	static String lastsearchwords = "";
+	List<KeyWordsCandidates> historysearchlist=new ArrayList<KeyWordsCandidates>();
+	
+
+	public List<KeyWordsCandidates> getHistorysearchlist() {
+		return historysearchlist;
+	}
+
+	public void setHistorysearchlist(List<KeyWordsCandidates> historysearchlist) {
+		this.historysearchlist = historysearchlist;
+	}
+
+	public static String getLastsearchwords() {
+		return lastsearchwords;
+	}
+
+	public static void setLastsearchwords(String lastsearchwords) {
+		Cache.lastsearchwords = lastsearchwords;
+	}
+
+	private void adjustConsolesKeywords() {
+		// console消息的exceptional权重最高7 (8)
+		if (consoles == null) {
+			return;
+		}
+		// false 表示有新行加入
+		if (!compareConsolesAndCopy()) {
+			return;
+		}
+
+		if (oldConsolesCopy == null) {
+			return;
+		}
+
+		KeyWordsCandidates consoleCandidates = new KeyWordsCandidates();
+
+		List<KeyWord> tempKeyWords = new ArrayList<>();
+
+		// setConsolesSize(consoles.getExceptionList().size());
+
+		for (ConsoleInformationListCopy kwc : oldConsolesCopy) {
+			String exceptionName = kwc.getExceptionName();
+
+			exceptionName = CommUtil.removeStopWordsAsString(exceptionName);
+
+			if (exceptionName == null) {
+				break;
+			}
+
+			exceptionName = CommUtil.removeDuplicateWords(CommUtil
+					.stringToList(exceptionName));
+
+			for (String str : exceptionName.split("[;]")) {
+				if (str.trim().equals("")) {
+					continue;
+				}
+
+				if (!str.trim().equals("")) {
+					KeyWord kw = new KeyWord();
+					kw.setKeywordName(str.trim());
+					kw.setWeightOne(4);
+
+					// for (String jestr : Basic.javaExceptionalNameList) {
+					// if (str.trim().equals(jestr)) {
+					// kw.setWeightTwo(3);
+					// break;
+					// }
+					// }
+
+					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+					kw.setTagName("Exception");
 					tempKeyWords.add(kw);
 				}
 
-				classModelCandidates.setActionID(currentID); 
-				classModelCandidates.setLevel(Basic.KeyWordsLevel.Level_Three);
-				classModelCandidates.setOldStep(8);
-				classModelCandidates.setKeyWords(tempKeyWords);
-				
-				
-	          
-				classmodelKeyWords.add(classModelCandidates);
-				
+			}
+
+			String description = kwc.getDescription();
+
+			if (description != null && !description.trim().equals("")) {
+				// 替换为直接的异常消息文本串
+				KeyWord kw2 = new KeyWord();
+
+				String filteredterms = doTermFilter(description);
+				filteredterms = CommUtil.removeStopWordsAsString(filteredterms);
+
+				if (filteredterms == null) {
+					continue;
+				}
+
+				filteredterms = CommUtil.removeDuplicateWords(CommUtil
+						.stringToList(filteredterms));
+
+				kw2.setKeywordName(filteredterms);
+				kw2.setWeightOne(4);
+				kw2.setWeightTwo(1);
+				kw2.setScore(kw2.getWeightOne() * kw2.getWeightTwo());
+				kw2.setTagName("Exception");
+				tempKeyWords.add(kw2);
 
 			}
+
 		}
-		
-		
+
+		consoleCandidates.setActionID(currentID); // 不跟随动作删除
+		consoleCandidates.setLevel(Basic.KeyWordsLevel.Level_One);
+		consoleCandidates.setOldStep(3);
+		consoleCandidates.setKeyWords(tempKeyWords);
+		consoleCacheKeyWords.add(consoleCandidates);
+
 	}
-	
-	private void adjustProblemsKeywords() {
-		//problem消息的权重其次，第一个error权重最高7，其次是warning 6
-		
-		if (problems==null) {
-			return;
-		}
-		
-		if (!compareProblemsAndCopy()) {
-			
-		return;
-			
-		}
-		if (oldProblemsCopy==null) {
-			return;
-		}
-		
-		KeyWordsCandidates  problemCandidates=new KeyWordsCandidates();
-		
-		List<KeyWord> tempKeyWords=new ArrayList<>();
-		
-		ArrayList<ProblemInformation> errorList=oldProblemsCopy.getErrorList();
-		ArrayList<ProblemInformation> warningList=oldProblemsCopy.getWarningList();
-		
-				if (errorList!=null && errorList.size()>0) {
 
-					for (ProblemInformation pif : errorList) {
-						
-					String des=pif.getDescription();
-					if (des!=null && !des.trim().equals(""))
-					{
-						// 取消息
-						for (String str : des.split(Basic.SPLIT_STRING)) 
-						{
-							if (str.trim().equals("")) {
-								continue;
-							}
-							KeyWord kw=new KeyWord();
-							kw.setKeywordName(str.trim());
-							kw.setWeightOne(7);
-							kw.setWeightTwo(2);
-							kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-							kw.setTagName("Error");
-							tempKeyWords.add(kw);
-						}
-					}
-					}
-
-					
-				}
-				
-			if (warningList!=null && warningList.size()>0) {
-				for (ProblemInformation pif : warningList) {
-					
-				
-						
-						String des=pif.getDescription();
-						if (des!=null && !des.trim().equals(""))
-						{
-							// 取消息
-							for (String str : des.split(Basic.SPLIT_STRING)) 
-							{
-								if (str.trim().equals("")) {
-									continue;
-								}
-								KeyWord kw=new KeyWord();
-								kw.setKeywordName(str.trim());
-								kw.setWeightOne(6);
-								kw.setWeightTwo(1);
-								kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-								kw.setTagName("Other");
-								tempKeyWords.add(kw);
-							}
-						}
-				}
-					}
-			
-			problemCandidates.setActionID(-1); //不跟随动作删除
-			problemCandidates.setLevel(Basic.KeyWordsLevel.Level_Two);
-			problemCandidates.setOldStep(5);
-			problemCandidates.setKeyWords(tempKeyWords);
-			
-			problemCacheKeyWords.add(problemCandidates);
-
-		
-	}
-	
-	
-	
-	
-	
-	private void adjustConsolesKeywords() {
-		//console消息的exceptional权重最高7 (8)
-	if (consoles==null) {
-			return ;
-		}
-	//false 表示有新行加入
-		if (!compareConsolesAndCopy()) {
-			return;
-			}
-			
-		if (oldConsolesCopy==null) {
-			return;
-		}
-			
-	KeyWordsCandidates  consoleCandidates=new KeyWordsCandidates();
-    
-	List<KeyWord> tempKeyWords=new ArrayList<>();
-	
-//	setConsolesSize(consoles.getExceptionList().size());
-			
-			for ( ConsoleInformationListCopy kwc : oldConsolesCopy) {
-				String exceptionName=kwc.getExceptionName();
-				
-				for (String str : exceptionName.split(Basic.SPLIT_STRING)) 
-				{
-					if (str.trim().equals("")) {
-						continue;
-					}
-				
-				if (!str.trim().equals("")) {
-					KeyWord kw=new KeyWord();
-					kw.setKeywordName(str.trim());
-					kw.setWeightOne(8);
-					
-					for (String jestr : Basic.javaExceptionalNameList) {
-						if (str.trim().equals(jestr)) {
-							kw.setWeightTwo(3);
-					     break;		
-						}
-					}
-
-						kw.setScore(kw.getWeightOne()*kw.getWeightTwo());
-						kw.setTagName("Exception");
-						tempKeyWords.add(kw);
-					}
-				
-				
-				}
-				
-				String description=kwc.getDescription();
-
-				if (description!=null && !description.trim().equals(""))
-				{
-      				//替换为直接的异常消息文本串
-					KeyWord kw2=new KeyWord();
-					
-					String filteredterms=doTermFilter(description);
-					
-					kw2.setKeywordName(filteredterms);
-					kw2.setWeightOne(7);
-					kw2.setWeightTwo(2);
-					kw2.setScore(kw2.getWeightOne()*kw2.getWeightTwo());
-					kw2.setTagName("Exception");
-					tempKeyWords.add(kw2);
-				}
-			
-		}
-		
-            consoleCandidates.setActionID(-1); //不跟随动作删除
-			consoleCandidates.setLevel(Basic.KeyWordsLevel.Level_One);
-			consoleCandidates.setOldStep(3);
-			consoleCandidates.setKeyWords(tempKeyWords);
-			consoleCacheKeyWords.add(consoleCandidates);
-			
-			
-			
-		}
-
-
-	
-
-	
 	private String doTermFilter(String description) {
-		
+
 		String des;
-		
-		List<String> mydesList=CommUtil.arrayToList(description.split("[ ]"));
-		//查路径 //check file path string  3 "\" or 3 "/"
-		for (int i=0; i<mydesList.size();i++) {
-			String[] checkslahoneList=mydesList.get(i).split("\\\\");
-			if (checkslahoneList.length>2) {
+
+		List<String> mydesList = CommUtil.arrayToList(description.split("[ ]"));
+		// 查路径 //check file path string 3 "\" or 3 "/"
+		for (int i = 0; i < mydesList.size(); i++) {
+			String[] checkslahoneList = mydesList.get(i).split("\\\\");
+			if (checkslahoneList.length > 2) {
 				mydesList.remove(i);
-				
+
 			}
-		//查包名
-			
+			// 查包名
+
 		}
-		//TODO  今后去掉更多的异常格式数据
-		
-		
-		des=CommUtil.ListToString(mydesList);
-		
-	
-		
+		// TODO 今后去掉更多的异常格式数据
+
+		des = CommUtil.ListToString(mydesList);
+
 		return des;
 	}
-	
-	
-	
+
 	public void setConsoles(ConsoleInformationList consoles) {
 		this.consoles = consoles;
 	}
@@ -1372,6 +1736,19 @@ if (codeString==null) {
 
 	public void setProblemsSize(int problemsSize) {
 		this.problemsSize = problemsSize;
+	}
+
+	public int findyouDistance(int actionID) {
+		int index = actions.actionList.size();
+		int distance = index;
+
+		for (int i = 0; i < index; i++) {
+			if (actions.actionList.get(i).getActionID() == actionID) {
+				distance = actions.actionList.get(i).getDistence();
+			}
+		}
+
+		return distance;
 	}
 
 }

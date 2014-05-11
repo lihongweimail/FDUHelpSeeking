@@ -26,6 +26,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ActivityContextManager;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ExtensionPointReader;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.IMonitoredWindow;
@@ -54,6 +55,8 @@ import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WorkbenchListener;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WorkbenchUserActivityMonitor;
 import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
+import cn.edu.fudan.se.helpseeking.util.INIHelper;
+import cn.edu.fudan.se.helpseeking.util.Resource;
 
 /**
  * The activator class controls the plug-in life cycle
@@ -170,6 +173,15 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 			String dbURL=ps.getString(PreferenceConstants.URL_KEY);
 			String dbname=ps.getString(PreferenceConstants.USERNAME_KEY);
 			String dbpwd=ps.getString(PreferenceConstants.PASSWORD_KEY);
+			
+			INIHelper mycseini=new INIHelper("/cse.ini",true);
+			
+			List<CxKeyPair> myCxKeyPairs=mycseini.getCxKeyPairs();
+			ps.setValue(PreferenceConstants.CSE_CX, myCxKeyPairs.get(0).getCx());
+			ps.setValue(PreferenceConstants.CSE_KEY, myCxKeyPairs.get(0).getKey());
+			
+			
+			
 		
 			int connection=	DatabaseUtil.initDB(dbURL,dbname,dbpwd);
 			

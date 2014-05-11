@@ -43,17 +43,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
-					e.setActionName("AddBreakpoint");
+					
 					if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Add a method breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("AddBreakpoint Method");
 					} else if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Add a breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("AddBreakpoint Line");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
@@ -111,16 +113,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
+					e.setActionName("DeleteBreakpoint");
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Delete a breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("DeleteBreakpoint Line");
 					} else if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Delete a method breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("DeleteBreakpoint Method");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
@@ -180,16 +185,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
+					e.setActionName("ChangeBreakpoint");
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Change a breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("ChangeBreakpoint Line");
 					} else if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Change a method breakpoint at line "
 								+ bp.getLineNumber());
+						e.setActionName("ChangeBreakpoint Method");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);

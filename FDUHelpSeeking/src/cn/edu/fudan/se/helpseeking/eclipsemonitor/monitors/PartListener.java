@@ -159,12 +159,14 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		Information info=new Information();
 		Action ac=new Action();
 		ac.setByuser(event.isByuser());
-		ac.setActionKind(event.getKind());
-		ac.setActionName("Part Activated");
+		//selection
+		ac.setActionKind(Kind.SELECTION);
+		ac.setActionName("PartActivated");
 		ac.setDescription(part.getTitle());
 		info.setAction(ac);
 		ExplorerRelated er=new ExplorerRelated();
 		EditorInfo edi=new EditorInfo();
+		er.setExplorerInfo(null);
 	
 		
 		if (part instanceof CompilationUnitEditor) {
@@ -173,8 +175,11 @@ public class PartListener extends AbstractUserActivityMonitor implements
 			er.setEditorInfo(edi);
 			}
 
-		
+		info.setType("selectionPart");
 		info.setExplorerRelated(er);
+		info.setDebugCode(null);
+		info.setEditCode(null);
+		info.setIdeOutput(null);
 			
 		//需要先写入数据库，才能得到ID
 		int actionid1=DatabaseUtil.addInformationToDatabase(info);
@@ -201,7 +206,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 								e.setKind(Kind.EDIT);
 								e.setOriginId("Content Assist Selected: "
 										+ proposal.getDisplayString());
-								e.setActionName("UseAssist");
+								e.setActionName("ContentAssistSelected");
 								
 								Information info = new Information();
 								info.setType("Assist");
@@ -212,6 +217,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 								action.setDescription(e.getOriginId());
 								action.setTime(new Timestamp(System.currentTimeMillis()));
 								info.setAction(action);
+								
 								
 								//需要先写入数据库，才能得到ID
 								int actionid=DatabaseUtil.addInformationToDatabase(info);
@@ -414,6 +420,7 @@ public class PartListener extends AbstractUserActivityMonitor implements
 			return;
 		}	
 		
+		
 		DatabaseUtil.addInteractionEventToDatabase(event);
 		//注销关闭编辑器后，比较内容。
 //		if (part instanceof CompilationUnitEditor) {
@@ -450,10 +457,12 @@ public class PartListener extends AbstractUserActivityMonitor implements
 		//add hongwei for exploerrelated 14-04-15
 		Information info=new Information();
 		Action ac=new Action();
+		info.setType("selection");
 		ac.setByuser(event.isByuser());
-		ac.setActionKind(event.getKind());
-		ac.setActionName("Part Activated");
+		ac.setActionKind(Kind.SELECTION);
+		ac.setActionName("PartOpen");
 		ac.setDescription(part.getTitle());
+		ac.setTime(new Timestamp(System.currentTimeMillis()));
 		info.setAction(ac);
 		ExplorerRelated er=new ExplorerRelated();
 		EditorInfo edi=new EditorInfo();

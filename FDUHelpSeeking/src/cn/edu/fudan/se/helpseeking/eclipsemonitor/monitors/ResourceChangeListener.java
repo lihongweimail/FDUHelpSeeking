@@ -17,7 +17,10 @@ public class ResourceChangeListener extends AbstractUserActivityMonitor
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		try {
-			event.getDelta().accept(this);
+			if (event.getDelta()!=null) {
+				event.getDelta().accept(this);
+			}
+			
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

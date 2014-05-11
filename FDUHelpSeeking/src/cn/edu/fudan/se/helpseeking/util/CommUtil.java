@@ -4,11 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic;
+import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 
 public class CommUtil 
 {
@@ -38,6 +40,29 @@ public class CommUtil
 		  }  
 		 }  
 		        return listTemp;
+		}
+
+	
+	public static String removeDuplicateWords(List<String> list) {
+		Collections.sort(list);
+		List<String> listTemp= new ArrayList<String>();  
+		 Iterator<String> it=list.iterator();  
+		 while(it.hasNext()){  
+		  String a=it.next();  
+		  if(listTemp.contains(a)){  
+		   it.remove();  
+		  }  
+		  else{  
+		   listTemp.add(a);  
+		  }  
+		 }  
+		 String result="";
+		 for (int i = 0; i < listTemp.size(); i++) {
+			result=result+listTemp.get(i)+";";
+		}
+		 
+		 
+		        return result;
 		}
 
 	
@@ -289,6 +314,29 @@ if (tokens==null ||tokens.equals("")) {
 
 	
 
+	public static boolean compareString(String searchwords, String lastsearchwords) {
+		boolean result=true;
+		
+		List<String> last=CommUtil.stringToList(lastsearchwords, "[ ]");
+		List<String> now=CommUtil.stringToList(searchwords, "[ ]");
+		
+		Collections.sort(last);
+		Collections.sort(now);
+		if (last.size()!=now.size()) {
+			result=false;
+			
+		}else{
+		
+		for (int i = 0; i < last.size(); i++) {
+				if (!last.get(i).equals(now.get(i))) {
+					result=false;
+				}
+		}		
+	}	
+	
+		return result;
+		
+}
 	
 
 	

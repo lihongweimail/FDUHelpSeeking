@@ -3,6 +3,7 @@ package cn.edu.fudan.se.helpseeking.bean;
 public class ActionCache {
 	int actionID;
 	Action action;
+	int distence=1;
    public int getActionID() {
 		return actionID;
 	}
@@ -11,6 +12,12 @@ public class ActionCache {
 	}
 
 
+	public int getDistence() {
+		return distence;
+	}
+	public void setDistence(int distence) {
+		this.distence = distence;
+	}
 	public Action getAction() {
 		return action;
 	}

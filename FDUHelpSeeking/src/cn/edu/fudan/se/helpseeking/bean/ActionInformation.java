@@ -11,7 +11,7 @@ public class ActionInformation {
 	Kind actionKind;                //kind
 	String actionName = null;   //actionname (来源于 :originId 的第一部分（有冒号时，前面部分）)
     int count=0;
-    float frequency=0;
+    int frequency=0;
     
     
     
@@ -64,10 +64,10 @@ public void setActionID(int actionID) {
 	public void setCount(int count) {
 		this.count = count;
 	}
-	public float getFrequency() {
+	public int getFrequency() {
 		return frequency;
 	}
-	public void setFrequency(float frequency) {
+	public void setFrequency(int frequency) {
 		this.frequency = frequency;
 	}
 	public Kind getActionKind() {

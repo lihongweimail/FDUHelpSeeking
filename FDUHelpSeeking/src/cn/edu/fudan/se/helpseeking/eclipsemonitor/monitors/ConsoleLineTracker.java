@@ -1,6 +1,8 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import org.eclipse.debug.ui.console.IConsole;
 import org.eclipse.debug.ui.console.IConsoleLineTracker;
@@ -8,8 +10,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
 
+import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformation;
 import cn.edu.fudan.se.helpseeking.bean.ConsoleInformationList;
+import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
+import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 
 public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 		IConsoleLineTracker {
@@ -83,7 +91,6 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 			
 			//ConsoleInformationList.getInstance().prettyPrint();
 			
-			
 //			//如果更新了，且是Exception信息
 //			InteractionEvent e=new InteractionEvent();
 //			e.setByuser(false);
@@ -112,7 +119,8 @@ public class ConsoleLineTracker extends AbstractUserActivityMonitor implements
 //							
 //				Cache.getInstance().addInformationToCache(info,actionid);
 //				
-//			DatabaseUtil.addInteractionEventToDatabase(e);	
+//			DatabaseUtil.addInteractionEventToDatabase(e);		
+
 			
 			
 

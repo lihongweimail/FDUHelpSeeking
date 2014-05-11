@@ -1,6 +1,5 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
-import java.security.cert.CertPathValidatorException.BasicReason;
 import java.util.ArrayList;
 import java.util.List;
 

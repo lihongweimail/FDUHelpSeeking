@@ -5,16 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.util.INIHelper;
+import cn.edu.fudan.se.helpseeking.util.Resource;
 
 public class ExpirmentTest {
 
@@ -22,7 +20,16 @@ public class ExpirmentTest {
 
 	
 	public static void main(String[] args) {
-//		Resource re=new Resource();
+		
+		String good="we.are.the live";
+		int indexs=good.lastIndexOf('.');
+		String result=good.substring(0, indexs);
+		System.out.println(result);
+	
+//		INIHelper ini=new INIHelper("/cse.ini",false);
+//		ini.getCxKeyPairs();
+		
+
 //		System.out.println(re.getResource("/stopresource/userstoplist.txt"));
 
 		
@@ -92,30 +99,37 @@ public class ExpirmentTest {
 //         }  
 //    
 		
-         Display display = new Display();
- 		Shell shell = new Shell(display);
- 		Link link = new Link(shell, SWT.BORDER);
- 		link.setText("This a very simple <A>link</A> widget.");
- 		Rectangle clientArea = shell.getClientArea();
- 		link.setBounds(clientArea.x, clientArea.y, 140, 40);
- 		link.addListener (SWT.Selection, new Listener () {
-			@Override
-			public void handleEvent(Event event) {
-				System.out.println("Selection: " + event.text);
-			}
-		});
- 		
- 
- 		
- 		shell.pack ();
- 		shell.open();
- 		while (!shell.isDisposed()) {
- 			if (!display.readAndDispatch())
- 				display.sleep();
- 		}
- 		display.dispose();	
+//         Display display = new Display();
+// 		Shell shell = new Shell(display);
+// 		Link link = new Link(shell, SWT.BORDER);
+// 		link.setText("This a very simple <A>link</A> widget.");
+// 		Rectangle clientArea = shell.getClientArea();
+// 		link.setBounds(clientArea.x, clientArea.y, 140, 40);
+// 		link.addListener (SWT.Selection, new Listener () {
+//			@Override
+//			public void handleEvent(Event event) {
+//				System.out.println("Selection: " + event.text);
+//			}
+//		});
+// 		
+// 
+// 		
+// 		shell.pack ();
+// 		shell.open();
+// 		while (!shell.isDisposed()) {
+// 			if (!display.readAndDispatch())
+// 				display.sleep();
+// 		}
+// 		display.dispose();	
 		
 		
+	}
+
+	public static void campareString() {
+		List<String> last=CommUtil.stringToList("ambient probramming good ", "[ ]");
+		List<String> now=CommUtil.stringToList("probramming good  ambient", "[ ]");
+		
+
 	}
 	
 	public static List<String> removeDuplicateWithOrder(List<String> list) {

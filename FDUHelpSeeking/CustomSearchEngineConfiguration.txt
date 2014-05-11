@@ -1,21 +1,49 @@
-stackoverflow
+lihongweimail gmail account
 
+project setup link:
+https://console.developers.google.com/project
+
+custom search engine link:
+https://www.google.com/cse/all
+
+=================************============
+
+stackoverflow
 
 search engin
 FDUHelpseekingOnStackoverflow
 cx=005635559766885752621:ly8_ifzrwps
 
-application 
+(application)  google project  
 FDUHelpseekingOnStackoverflow
+project id=oval-crawler-574
 key=AIzaSyAoB0pBvZ6veuzDQbR21auME8HJUwmCaos
 
-
+=================================
 helpseeking
 
 search engin
-FDUHelpseeking
+helpseeking
 cx=005635559766885752621:va1etsiak-a
 
-application 
+(application) google project
 FDUHelpseeking
+project id=cnedufdusehelpseeking
 key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM
+
+
+=========
+helpseeking
+
+search engin
+FDUHelpseeking1
+cx=005635559766885752621:q0yjnkh3lgi
+
+(application) google project 
+FDUHelpseeking1
+project id=vital-chiller-575
+
+key=AIzaSyCDvxfQpMizImxGbx3yQv6z4bfrvSjHJTY
+
+====================
+

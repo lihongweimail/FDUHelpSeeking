@@ -639,7 +639,7 @@ public class Basic {
 	}
 
 
-	public static final String SPLIT_STRING =  "[\\[\\]&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
+	public static final String SPLIT_STRING =  "[\\[\\]&#$_.()@|{}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 	
 //	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 
@@ -659,7 +659,7 @@ public class Basic {
 	//爆出到数据库中最大的候选检索词保留数量
 	public final static int MAX_CANDIDATE_KEYWORDS=100;
 	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
-	public final static int SLIDE_WINDOW_SIZE=20;
+	public final static int SLIDE_WINDOW_SIZE=30;
 	
 	//权重  距离   老化   频率
 	
@@ -667,6 +667,20 @@ public class Basic {
 	public final static double OLD_RATIO=0.1;
 	public final static double FREQUENCY_RATIO=0.01;
 	public final static int WAIT_GOOGLE_TIME=20000;
+
+	public static final int CountWindowSize = 10;
+
+	public static final long MINI_Action_Time = 5000;
+
+	public static final int Mini_Actions = 5;
+
+	public static final long Auto_Search_Timer = 3*60*1000;
+
+	public static final int History_SearchList_Size = 5;
+
+	public static final int MAX_DEEP_PACKAGE_COUNT = 10;
+
+	public static final int Auto_Search_Try = 3;
 	
 	
 	

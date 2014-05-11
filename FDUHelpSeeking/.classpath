@@ -15,5 +15,6 @@
 	<classpathentry kind="lib" path="lib/dom4j-1.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/sqlitejdbc-v056.jar"/>
+	<classpathentry kind="lib" path="lib/javax.servlet-5.1.11.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

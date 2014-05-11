@@ -1,5 +1,7 @@
 package cn.edu.fudan.se.helpseeking.preferences;
 
+import java.util.LinkedList;
+
 public class PreferenceConstants {
 	
 	//DB PREFERENCEPAGE VALUE
@@ -32,6 +34,8 @@ public class PreferenceConstants {
 	
 	public static final String CSE_KEY_DEFAULT="AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM";
 	public static final String CSE_CX_DEFAULT="017576662512468239146:omuauf_lfve";
+	
+	
 	
 	
 

@@ -14,6 +14,7 @@ public class ClassModel {
 	// ??　Line / field / statementblock / method / class
 
 	// ?? type 是否使用 ??code是否使用
+	
 	String type;
 	String code;
 	String returnType;
@@ -29,6 +30,18 @@ public class ClassModel {
 	List<String> belowClass;
 	
 	HashMap<String, MethodInfo> calleeInfo;
+	
+	int currentClassModelID=0;//累加只在新加入代码时累加 在classmodel内部保留设置值
+	
+	
+
+	public int getCurrentClassModelID() {
+		return currentClassModelID;
+	}
+
+	public void setCurrentClassModelID(int currentClassModelID) {
+		this.currentClassModelID = currentClassModelID;
+	}
 
 	public String getType() {
 		return type;

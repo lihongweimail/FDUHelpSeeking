@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -109,18 +110,18 @@ public class HelpSeekingSearchView extends ViewPart {
 	Label canlabel;
 	Composite fatherComposite;
 	//TODO ...
-	String mySearch="DefaultHandler SAXParser javax.xml.parsers.SAXParser.parse";
+//	String mySearch="DefaultHandler SAXParser javax.xml.parsers.SAXParser.parse";
 
-	public String getMySearch() {
-		return mySearch;
-	}
-
-
-
-	public void setMySearch(String mySearch) {
-		this.mySearch = mySearch;
-	}
-
+//	public String getMySearch() {
+//		return mySearch;
+//	}
+//
+//
+//
+//	public void setMySearch(String mySearch) {
+//		this.mySearch = mySearch;
+//	}
+//
 
 
 	@Override
@@ -589,16 +590,16 @@ public class HelpSeekingSearchView extends ViewPart {
 						contentitem.setChecked(false);
 						contentitem.setExpanded(true);
 
-						if (sNodes.get(j).getJavaExceptionNames() != null) {
-							TreeItem javaExcptionitem = new TreeItem(item,
-									SWT.CHECK);
-							javaExcptionitem.setText(sNodes.get(j)
-									.getJavaExceptionNames());
-							javaExcptionitem.setChecked(false);
-							javaExcptionitem.setExpanded(true);
-							javaExcptionitem.setForeground(Display.getDefault()
-									.getSystemColor(SWT.COLOR_RED));
-						}
+//						if (sNodes.get(j).getJavaExceptionNames() != null) {
+//							TreeItem javaExcptionitem = new TreeItem(item,
+//									SWT.CHECK);
+//							javaExcptionitem.setText(sNodes.get(j)
+//									.getJavaExceptionNames());
+//							javaExcptionitem.setChecked(false);
+//							javaExcptionitem.setExpanded(true);
+//							javaExcptionitem.setForeground(Display.getDefault()
+//									.getSystemColor(SWT.COLOR_RED));
+//						}
 
 						item.setExpanded(true);
 
@@ -693,18 +694,18 @@ public class HelpSeekingSearchView extends ViewPart {
 						contentitem.setText(sNodes.get(j).getContents());
 						contentitem.setChecked(false);
 						contentitem.setExpanded(true);
-
-						if (sNodes.get(j).getJavaExceptionNames() != null) {
-							TreeItem javaExcptionitem = new TreeItem(item,
-									SWT.CHECK);
-							javaExcptionitem.setText(sNodes.get(j)
-									.getJavaExceptionNames());
-							javaExcptionitem.setChecked(false);
-							javaExcptionitem.setExpanded(true);
-							javaExcptionitem.setForeground(Display.getDefault()
-									.getSystemColor(SWT.COLOR_RED));
-
-						}
+//
+//						if (sNodes.get(j).getJavaExceptionNames() != null) {
+//							TreeItem javaExcptionitem = new TreeItem(item,
+//									SWT.CHECK);
+//							javaExcptionitem.setText(sNodes.get(j)
+//									.getJavaExceptionNames());
+//							javaExcptionitem.setChecked(false);
+//							javaExcptionitem.setExpanded(true);
+//							javaExcptionitem.setForeground(Display.getDefault()
+//									.getSystemColor(SWT.COLOR_RED));
+//
+//						}
 
 						item.setExpanded(true);
 					}
@@ -1359,6 +1360,37 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	}
 
+	
+	public void timerAutoSearch(String searchtext, List<KeyWord>mywords) {
+
+		System.out.println("say begin auto timer search web! starting ...");
+
+		Query query=new Query();
+			String searchID = "A" + String.valueOf(0)
+					+ "timerSearch" + getCurrentActionID();
+			String search= searchtext.trim();
+			query.setSearchID(searchID);
+			query.setQueryKeyWords(mywords);
+			query.setIsbyuser(false);
+			query.setInforID(getCurrentActionID());
+			query.setMode(2);
+			setCurrentSearchID(searchID);
+
+			if (search == null || search.equals("")) {
+				return;
+			}
+
+			try {
+				dosearch(query, searchID, search);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
+
+	}
+
+	
 	public void searchQueryList() {
 
 		System.out.println("say begin auto query web! starting ...");
@@ -1376,20 +1408,16 @@ public class HelpSeekingSearchView extends ViewPart {
 				search += keyWord.getKeywordName() + " ";
 			}
 			search = search.trim();
+			query.setInforID(getCurrentActionID());
 			query.setSearchID(searchID);
 			query.setIsbyuser(false);
+			query.setMode(1);
 			setCurrentSearchID(searchID);
 
-			// if (currentSearchID.equals("")|| currentSearchID==null) {
-			// currentSearchID=searchID;
-			// }else {
-			// currentSearchID=currentSearchID+searchID;
-			// }
-
+	
 			if (search == null || search.equals("")) {
 				continue;
 			}
-			// txtCandidateSearch.setText(search);
 
 			try {
 				dosearch(query, searchID, search);
@@ -1404,7 +1432,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	}
 
-	private static void dosearch(Query query, String searchID, String search) throws InterruptedException {
+	public static void dosearch(Query query, String searchID, String search) throws InterruptedException {
 		Timestamp starttime;
 		String searchResultOutput = "\n============\n";
 		SearchResults sResults = new SearchResults();
@@ -1416,6 +1444,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 		sResults.setSearchID(searchID);
 		tempSearchResults.setSearchID(searchID);
+		
 		query.setTime(starttime);
 		query.setIsbyuser(false);
 		query.setUseKeywords(search);
@@ -1471,8 +1500,10 @@ public class HelpSeekingSearchView extends ViewPart {
 						+ webResult.toString();
 
 				TreeItem item = new TreeItem(searchResultsTree, SWT.NULL);
-				String resultTitle = xml.length() > 50 ? xml.substring(0,
-						47) + "..." : xml;
+//				String resultTitle = xml.length() > 50 ? xml.substring(0,
+//						47) + "..." : xml;
+				String resultTitle =xml;
+				
 				item.setText(resultTitle);
 				item.setForeground(Display.getDefault().getSystemColor(
 						SWT.COLOR_BLUE));
@@ -1519,9 +1550,11 @@ public class HelpSeekingSearchView extends ViewPart {
 
 					if (!content.equals("")) {
 						TreeItem contentItem = new TreeItem(item, SWT.NULL);
-						String resultContent = content.length() > 50 ? content
-								.substring(0, 47) + "..."
-								: content;
+//						String resultContent = content.length() > 50 ? content
+//								.substring(0, 47) + "..."
+//								: content;
+						String resultContent = content;
+
 						contentItem.setText(resultContent);
 						// contentItem.setData(webResult.getUrl());
 						sNode.setContents(resultContent);
@@ -1542,7 +1575,7 @@ public class HelpSeekingSearchView extends ViewPart {
 								.split(Basic.SPLIT_STRING));
 
 				Set<String> boldWords = new HashSet<String>();
-				;
+				
 				// tempContent.retainAll(Basic.javaExceptionalNameList);
 				// for(Iterator it = tempContent.iterator();it.hasNext();){
 				// if (boldWords.equals(""))
@@ -1551,39 +1584,39 @@ public class HelpSeekingSearchView extends ViewPart {
 				// boldWords=boldWords+";"+(String)it.next();
 				// }
 
-				if (Basic.javaExceptionalNameList != null) {
-					for (String str : tempContent)
-
-					{
-
-						for (String jestr : Basic.javaExceptionalNameList) {
-							if (str.equals(jestr)) {
-								boldWords.add(jestr);
-								break;
-							}
-						}
-					}
-				}
-
-				if (!boldWords.isEmpty()) {
-					String myExceptioinName = "";
-
-					for (String exceptionName : boldWords) {
-						if (myExceptioinName.equals(""))
-							myExceptioinName = exceptionName;
-						else
-							myExceptioinName = myExceptioinName + " ; "
-									+ exceptionName;
-					}
-
-					TreeItem subitem = new TreeItem(item, SWT.NULL);
-					subitem.setForeground(Display.getDefault()
-							.getSystemColor(SWT.COLOR_RED));
-					subitem.setText(myExceptioinName);
-					sNode.setJavaExceptionNames(myExceptioinName);
-					tempsSearchNode.setJavaExceptionNames(myExceptioinName);
-					item.setExpanded(true);
-				}
+//				if (Basic.javaExceptionalNameList != null) {
+//					for (String str : tempContent)
+//
+//					{
+//
+//						for (String jestr : Basic.javaExceptionalNameList) {
+//							if (str.equals(jestr)) {
+//								boldWords.add(jestr);
+//								break;
+//							}
+//						}
+//					}
+//				}
+//
+//				if (!boldWords.isEmpty()) {
+//					String myExceptioinName = "";
+//
+//					for (String exceptionName : boldWords) {
+//						if (myExceptioinName.equals(""))
+//							myExceptioinName = exceptionName;
+//						else
+//							myExceptioinName = myExceptioinName + " ; "
+//									+ exceptionName;
+//					}
+//
+//					TreeItem subitem = new TreeItem(item, SWT.NULL);
+//					subitem.setForeground(Display.getDefault()
+//							.getSystemColor(SWT.COLOR_RED));
+//					subitem.setText(myExceptioinName);
+//					sNode.setJavaExceptionNames(myExceptioinName);
+//					tempsSearchNode.setJavaExceptionNames(myExceptioinName);
+//					item.setExpanded(true);
+//				}
 
 				sNode.setQueryWords(search);
 				tempsSearchNode.setQueryWords(search);
@@ -1621,9 +1654,13 @@ public class HelpSeekingSearchView extends ViewPart {
 					+ "\n============\n";
 			FileHelper
 			.appendContentToFile("result.txt", searchResultOutput);
+			
+			Cache.getInstance().setTimerAutoSearchmode(0);
+			Cache.getInstance().setLastAutoSearchTime(new Timestamp(System.currentTimeMillis()));
 
 		}else {
 			System.out.println("No return results!");
+			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Search google faild! ", "Sorry connection wrong or no results! Please search agin wait for a while!" );
 		}
 
 
@@ -1710,35 +1747,35 @@ public class HelpSeekingSearchView extends ViewPart {
 			// List<String>
 			// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
 			// content=content+search;
-			List<String> tempContent = CommUtil.arrayToList(content
-					.split(Basic.SPLIT_STRING));
-
-			String boldWords = "";
-
-			for (String str : tempContent)
-
-			{
-				for (String jestr : Basic.javaExceptionalNameList) {
-					if (str.equals(jestr)) {
-						if (boldWords.equals("")) {
-							boldWords = jestr;
-						} else {
-
-							boldWords = boldWords + ";" + jestr;
-						}
-					}
-				}
-			}
-
-			if (!boldWords.equals("")) {
-				TreeItem subitem = new TreeItem(item, SWT.NONE);
-				subitem.setForeground(Display.getDefault().getSystemColor(
-						SWT.COLOR_RED));
-				subitem.setText(boldWords);
-				subitem.setData(item.getData());
-				item.setExpanded(true);
-
-			}
+//			List<String> tempContent = CommUtil.arrayToList(content
+//					.split(Basic.SPLIT_STRING));
+//
+//			String boldWords = "";
+//
+//			for (String str : tempContent)
+//
+//			{
+//				for (String jestr : Basic.javaExceptionalNameList) {
+//					if (str.equals(jestr)) {
+//						if (boldWords.equals("")) {
+//							boldWords = jestr;
+//						} else {
+//
+//							boldWords = boldWords + ";" + jestr;
+//						}
+//					}
+//				}
+//			}
+//
+//			if (!boldWords.equals("")) {
+//				TreeItem subitem = new TreeItem(item, SWT.NONE);
+//				subitem.setForeground(Display.getDefault().getSystemColor(
+//						SWT.COLOR_RED));
+//				subitem.setText(boldWords);
+//				subitem.setData(item.getData());
+//				item.setExpanded(true);
+//
+//			}
 
 		}
 

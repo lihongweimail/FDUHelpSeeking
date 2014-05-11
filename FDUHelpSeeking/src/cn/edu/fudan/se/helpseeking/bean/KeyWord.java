@@ -19,9 +19,17 @@ public class KeyWord {
 	
 	Timestamp times;
 	
+	int frequency=0;
 	
 	
 	
+	
+	public int getFrequency() {
+		return frequency;
+	}
+	public void setFrequency(int frequency) {
+		this.frequency = frequency;
+	}
 	public Timestamp getTimes() {
 		return times;
 	}

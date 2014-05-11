@@ -152,6 +152,7 @@ public class LoopGoogleAPICall extends Thread{
 
 
 	public volatile boolean stop=false;
+	
 	public LoopGoogleAPICall(String search) {
 
 		setSearch(search);
@@ -292,7 +293,7 @@ if (items.size()>0) {
 				temp.setPublisher(null);
 				temp.setSignedRedirectUrl(null);
 				temp.setTitle(items.get(m).getTitle());
-				temp.setTitleNoFormatting(items.get(m).getHtmlTitle());
+				temp.setTitleNoFormatting(items.get(m).getTitle());
 				temp.setUnescapedUrl(items.get(m).getFormattedUrl());
 				temp.setUrl(items.get(m).getLink());
 
@@ -334,7 +335,7 @@ if (items.size()>0) {
 
 
 
-	public void run()
+	public void run() 
 	{
 
 
@@ -350,7 +351,7 @@ if (items.size()>0) {
 
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
