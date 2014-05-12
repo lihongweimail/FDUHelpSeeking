@@ -594,8 +594,40 @@ public class HelpSeekingSolutionView extends ViewPart {
 					
 					TreeItem item = new TreeItem(tree, SWT.NONE);
 					
+					String resultTitle =xml;
+					
+					String[] tempsearchlist=search.split("[ ]");
+					String importantword="";
+					for (int i = 0; i < tempsearchlist.length; i++) {
+						if (resultTitle.contains(tempsearchlist[i].trim())) {
+							importantword=importantword+" "+tempsearchlist[i];
+						}
+					}
+					
+						if (!importantword.trim().equals("")) {
+					
+					if (resultTitle.length()>60) {
+						resultTitle=resultTitle.substring(60);
+						
+					}else {
+						String templatespace="";
+						for (int i = resultTitle.length(); i < 60; i++) {
+							templatespace=templatespace+" ";
+						}
+						resultTitle=resultTitle+templatespace;
+					}
+					
+				
+						
+				
+					resultTitle=resultTitle+" ["+importantword+"]";
+						}
+					
+					
+					
+					
 //					item.setText(xml.length()>50?xml.substring(0,47)+"...":xml);
-					item.setText(xml);
+					item.setText(resultTitle);
 
 					item.setData(webResult.getUrl());
 					item.setForeground(Display.getDefault()
@@ -605,7 +637,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 				
 					
 					SearchNode sNode=new SearchNode();
-					sNode.setTitle(xml);
+					sNode.setTitle(resultTitle);
 					sNode.setLink(webResult.getUrl());
 					
 					sNode.setSearchID(searchID);

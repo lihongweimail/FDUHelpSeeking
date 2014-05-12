@@ -24,6 +24,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 import cn.edu.fudan.se.helpseeking.util.INIHelper;
+import org.eclipse.swt.layout.GridLayout;
 
 public class SearchEngineSetPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
@@ -96,23 +97,31 @@ public class SearchEngineSetPreferencePage extends FieldEditorPreferencePage
 		mygroup.setLayout(new FillLayout(SWT.VERTICAL));
 		mygroup.setText("Candidate cx and key:");
 		
+		Composite scrollComposite=new Composite(mygroup, SWT.NONE);//SWT.H_SCROLL | SWT.V_SCROLL);
+		scrollComposite.setLayout(new GridLayout(2, true));
+		
 		
 		for (int i = 0; i < myCxKeyPairs.size(); i++) {
 			
-			new Label(mygroup, SWT.None).setText("[Custom Search engine:  "+myCxKeyPairs.get(i).getCseName().toString()+"]");
-					
-			new Label(mygroup, SWT.None).setText("[Public API access key:]");;
-			Text temptext=new Text(mygroup, SWT.RADIO|SWT.LEFT);
+			new Label(scrollComposite, SWT.None).setText("NO."+i+" [Custom Search engine: "+myCxKeyPairs.get(i).getCseName().toString()+"]");
+			new Label(scrollComposite, SWT.NONE).setText(" ");
+			
+			new Label(scrollComposite, SWT.None).setText("[Public API access key:]");
+			
+			Text temptext=new Text(scrollComposite, SWT.RADIO|SWT.LEFT);
 			temptext.setEditable(false);
 			temptext.setText(myCxKeyPairs.get(i).getKey());
 			temptext.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLUE));
 
-			new Label(mygroup, SWT.None).setText("[google custom search engine ID:]");
-			Text temptext2=new Text(mygroup, SWT.RADIO|SWT.LEFT);
+			new Label(scrollComposite, SWT.None).setText("[google custom search engine ID:]");
+			Text temptext2=new Text(scrollComposite, SWT.RADIO|SWT.LEFT);
 			temptext2.setEditable(false);
 			temptext2.setText(myCxKeyPairs.get(i).getCx());
 			temptext2.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
 			new Label(mygroup, SWT.NONE).setText(" ");
+			
+			new Label(scrollComposite, SWT.None).setText("------------------------------------------------------------------");
+			new Label(scrollComposite, SWT.None).setText("----------------------------------------");
 			
 		
 		}

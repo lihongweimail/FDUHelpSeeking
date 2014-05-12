@@ -676,7 +676,7 @@ public enum QueryLevel {
 	
 //	private static final String SPLIT_STRING =  "[&#$_.(){}!*%+-=><\\:;,?/\"\'\t\b\r\n\0 ]";
 
-	public static final long Auto_Search_Timer = 3*60*1000;
+	public static final long Auto_Search_Timer = 2*60*1000;
 	public static final int Auto_Search_Try = 10;
 	public static final int CountWindowSize = 20;
 
@@ -707,7 +707,7 @@ public enum QueryLevel {
 	public final static double OLD_RATIO=0.1;
 
 	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
-	public final static int SLIDE_WINDOW_SIZE=120;
+	public final static int SLIDE_WINDOW_SIZE=40;
 
 
 	//从候选检索词中取词数量

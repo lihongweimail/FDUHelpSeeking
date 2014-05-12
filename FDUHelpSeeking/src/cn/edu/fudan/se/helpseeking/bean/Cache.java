@@ -510,6 +510,8 @@ public class Cache {
 	
 		if (informations.size() > 0) {
 			
+
+			
 			int size=informations.size()<Basic.Mini_Actions?informations.size():Basic.Mini_Actions;
 
 			// 如果历史上在5秒内有相同的动作和描述业禁止出现;倒数的5个动作中有相同的 则不计入

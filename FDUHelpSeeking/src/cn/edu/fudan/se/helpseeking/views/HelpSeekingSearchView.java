@@ -31,6 +31,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.bean.AutoSearchWordsStruct;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
@@ -1321,14 +1322,20 @@ public class HelpSeekingSearchView extends ViewPart {
 	}
 
 	
-	public void timerAutoSearch(String searchtext, List<KeyWord>mywords) {
+	public void timerAutoSearch(List<KeyWord>mywords, AutoSearchWordsStruct asws) {
 
+		if (asws.getFirstPart().equals("")) {
+			return;
+		}
+		
 		System.out.println("say begin auto timer search web! starting ...");
 
 		Query query=new Query();
 			String searchID = "A" + String.valueOf(0)
 					+ "timerSearch" + getCurrentActionID();
-			String search= searchtext.trim();
+			
+			
+			String search=asws.getFirstPart() +" "+asws.getSecondPart()+" "+asws.getAddinPart();
 			query.setSearchID(searchID);
 			query.setQueryKeyWords(mywords);
 			query.setIsbyuser(false);
@@ -1444,13 +1451,37 @@ public class HelpSeekingSearchView extends ViewPart {
 //						47) + "..." : xml;
 				String resultTitle =xml;
 				
+				String[] tempsearchlist=search.split("[ ]");
+				String importantword="";
+				for (int i = 0; i < tempsearchlist.length; i++) {
+					if (resultTitle.contains(tempsearchlist[i].trim())) {
+						importantword=importantword+" "+tempsearchlist[i];
+					}
+				}
+				
+			if (!importantword.trim().equals("")) {
+				
+				if (resultTitle.length()>60) {
+					resultTitle=resultTitle.substring(60);
+					
+				}else {
+					String templatespace="";
+					for (int i = resultTitle.length(); i < 60; i++) {
+						templatespace=templatespace+" ";
+					}
+					resultTitle=resultTitle+templatespace;
+				}
+			
+				resultTitle=resultTitle+" ["+importantword+"]";
+				}
+				
 				item.setText(resultTitle);
 				item.setForeground(Display.getDefault().getSystemColor(
 						SWT.COLOR_BLUE));
 
 				item.setData(webResult.getUrl());
 
-				String compareContent = xml + " " + webResult.getContent();
+//				String compareContent = xml + " " + webResult.getContent();
 
 				SearchNode sNode = new SearchNode();
 				sNode.setTitle(resultTitle);
@@ -1461,7 +1492,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 				// TODO: 为了备份用作历史检索
 				SearchNode tempsSearchNode = new SearchNode();
-				tempsSearchNode.setTitle(xml);
+				tempsSearchNode.setTitle(resultTitle);
 				tempsSearchNode.setLink(webResult.getUrl());
 				tempsSearchNode.setSearchID(searchID);
 				tempsSearchNode.setPositionInResultslist(indexsearchresultlist);
@@ -1509,12 +1540,12 @@ public class HelpSeekingSearchView extends ViewPart {
 				// 后续在这里适当过滤一下 如果有异常名字则显示出来 或者 是
 				// List<String>
 				// tempContent=CommUtil.arrayToList(search.split(Basic.SPLIT_STRING));
-				compareContent = compareContent + " " + search;
-				List<String> tempContent = CommUtil
-						.arrayToList(compareContent
-								.split(Basic.SPLIT_STRING));
-
-				Set<String> boldWords = new HashSet<String>();
+//				compareContent = compareContent + " " + search;
+//				List<String> tempContent = CommUtil
+//						.arrayToList(compareContent
+//								.split(Basic.SPLIT_STRING));
+//
+//				Set<String> boldWords = new HashSet<String>();
 				
 				// tempContent.retainAll(Basic.javaExceptionalNameList);
 				// for(Iterator it = tempContent.iterator();it.hasNext();){

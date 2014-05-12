@@ -14,6 +14,7 @@ import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.ActionCache;
 import cn.edu.fudan.se.helpseeking.bean.ActionInformation;
+import cn.edu.fudan.se.helpseeking.bean.AutoSearchWordsStruct;
 import cn.edu.fudan.se.helpseeking.bean.AutoTimerSearchString;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Basic.CompileInfoType;
@@ -1177,7 +1178,7 @@ public class CacheProcessing extends Thread  {
 			currentCache.getHistorysearchlist().add(kCandidates);
             resethistorysearchlist(Basic.History_SearchList_Size);
 				
-            
+            AutoSearchWordsStruct asws=new AutoSearchWordsStruct();
             int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。      3新增定时检索
             if (currentCache.getTimerAutoSearchmode()==1) {
 				if (currentCache.getCountAutoTry()<Basic.Auto_Search_Try) {
@@ -1185,7 +1186,8 @@ public class CacheProcessing extends Thread  {
            	    int count =currentCache.getCountAutoTry();
            	    count=count+1;
            	    currentCache.setCountAutoTry(count);
-             	searchText=getTimerAutoSearchText();
+           	    asws=getTimerAutoSearchText();
+           	 	searchText=asws.getOriginWords();
 		        mode=3;
 //           	notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 				
@@ -1253,11 +1255,12 @@ public class CacheProcessing extends Thread  {
 	
 
 				System.out.println("say tactic mode = " +mode );
-				//TODO  受控实验开关 为编译无自动提示功能版本而注释 掉如下代码
+				
 
 
 				if (mode==2)
 					{
+					//TODO  受控实验 开快关 为编译无自动提示功能版本而注释掉自动赋值 代码
 					v.searchQueryList();
 					
 					}
@@ -1269,7 +1272,8 @@ public class CacheProcessing extends Thread  {
 					
 //					String searchtext=getTimerAutoSearchText();
 					if (searchText!=null && !searchText.equals("")) {
-							v.timerAutoSearch(searchText,keyWordsforQuery);
+						//TODO  受控实验开关 为编译无自动提示功能版本而注释 掉如下代码
+							v.timerAutoSearch(keyWordsforQuery,asws);
 					}
 				
 					
@@ -1302,10 +1306,17 @@ public class CacheProcessing extends Thread  {
 	}
 
 
-	private String getTimerAutoSearchText() {
+	private AutoSearchWordsStruct getTimerAutoSearchText() {
 		String result="";
 		List<KeyWordsCandidates> tempLasstsearchList=currentCache.getHistorysearchlist();
 		List<FindTimerAutoSearchText> ftastAll=new ArrayList<FindTimerAutoSearchText>();
+		
+		String originWords="";
+		String firstPart="";
+		String secondPart="";
+		String addinPart="";
+		
+		
 		if (tempLasstsearchList.size()>=Basic.History_SearchList_Size) {
 		
 			for (int i = tempLasstsearchList.size()-1; i> tempLasstsearchList.size()-Basic.History_SearchList_Size; i--) {
@@ -1374,35 +1385,74 @@ public class CacheProcessing extends Thread  {
 		
 		String[] cans;
 		boolean flag=false;
+		
+		
+		
 	if (compareList.size()>0) {
 		
 		
 		
 		for (int i = 0; i <compareList.size(); i++) {
 			
-			cans=compareList.get(i).split("[.]");
+			originWords=compareList.get(i);
+			
+			int indexleft=compareList.get(i).indexOf('(');
+			int indexright=compareList.get(i).lastIndexOf(')');
+			
+			if (indexleft!=-1 && indexright!=-1) {
+				result=compareList.get(i).substring(indexleft);
+				if (result.lastIndexOf('.')>0) {
+					firstPart=result.substring(result.lastIndexOf('.'));
+					secondPart=result.substring(result.lastIndexOf('.'),result.length()-1);
+					result=result.substring(result.lastIndexOf('.'));
+					
+				}else{
+				
+				firstPart=result;
+				secondPart="";
+				}
+				flag=true;
+				break;
+			}else		
+			
+			{
+				cans=compareList.get(i).split("[.]");
 			int indexs=compareList.get(i).lastIndexOf('.');
+			firstPart=compareList.get(i);
+			secondPart="";
 			
 			if (cans.length>1) {
 					
 				result=compareList.get(i).substring(0, indexs);
+				firstPart=result;
 				
 				result=result+" "+ cans[cans.length-1];
+				secondPart=cans[cans.length-1];
+				
 				flag=true;
 				break;
 						
 			}
+			}
 		}
 		
 		result=result+" api example";
+		addinPart="api example";
+		
 		
 		if (!flag) {
 			
 			if (compareList.get(0).toLowerCase().contains("exception")) {
 				result=compareList.get(0)+" exception";
+				firstPart=result;
+				addinPart=" exception";
 			}
 			else {
 				result=compareList.get(0)+" api example";
+				firstPart=result;
+				addinPart="api example";
+				
+				
 			}
 			
 		}
@@ -1414,12 +1464,17 @@ public class CacheProcessing extends Thread  {
 				
 				String tempString=ftastAll.get(0).getName();
 				TokenExtractor tek=new TokenExtractor();
-				
+				originWords=tempString;
+				firstPart=tempString;
+				secondPart="";
 				tempString=CommUtil.tokenListToString(tek.getIdentifierOccurenceOfString(tempString));
 				if (tempString.toLowerCase().contains("exception")) {
 					result=tempString+" exception";
+					addinPart="exception";
 				}
 				else {
+								
+					addinPart="api example";
 					result=tempString+" api example";
 				}
 				
@@ -1429,7 +1484,14 @@ public class CacheProcessing extends Thread  {
 	
 
 		}
-		return result;
+		
+		AutoSearchWordsStruct asws=new AutoSearchWordsStruct();
+		asws.setOriginWords(originWords);
+		asws.setFirstPart(firstPart);
+		asws.setSecondPart(secondPart);
+		asws.setAddinPart(addinPart);
+		
+		return asws;
 	}
 	
 
