@@ -75,7 +75,17 @@ public class Cache {
 	//每隔一段时间将历史查询词汇汇总 自动检索一次的信号  间隔2分钟  
 	int timerAutoSearchmode=0;  //值为0 正常态， 值为1需要检索， 值为2刚做过人工检索
 	Timestamp lastAutoSearchTime=new Timestamp(System.currentTimeMillis());
+	String lastAutoSearchWords="";
 	
+	
+
+	public String getLastAutoSearchWords() {
+		return lastAutoSearchWords;
+	}
+
+	public void setLastAutoSearchWords(String lastAutoSearchWords) {
+		this.lastAutoSearchWords = lastAutoSearchWords;
+	}
 
 	public int getTimerAutoSearchmode() {
 		return timerAutoSearchmode;
@@ -520,7 +530,7 @@ public class Cache {
 				Action testAction = informations.get(i).getInformation().getAction();
 				if (newEnterAction.getActionKind().equals(testAction.getActionKind())
 						&& newEnterAction.getActionName().toLowerCase().trim().equals(testAction.getActionName().toLowerCase().trim())) {
-					    result=true;
+//					    result=true;
 					    
             if (newEnterAction.getDescription().toLowerCase().trim().equals(testAction.getDescription().toLowerCase().trim())) {
 	                                      result=true;

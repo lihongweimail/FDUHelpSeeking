@@ -87,8 +87,8 @@ public class CacheProcessing extends Thread  {
 			IWorkbenchPage page = PlatformUI.getWorkbench()
 					.getActiveWorkbenchWindow().getActivePage();
 			try {
-				part=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
-				partSolutionView=page.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+				part=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+				partSolutionView=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 
 
 			} catch (Exception e) {
@@ -564,7 +564,7 @@ public class CacheProcessing extends Thread  {
 				for (int j = 0; j <deDupilcateTotallKeyWords.size(); j++) {
 					KeyWord newWord=deDupilcateTotallKeyWords.get(j);
 
-					if (newWord.getKeywordName().equals(oldWord.getKeywordName())) {
+					if (newWord.getKeywordName().toLowerCase().equals(oldWord.getKeywordName().toLowerCase())) {
 						flage1=true;
 
 						if (newWord.getScore()<oldWord.getScore()) {
@@ -572,6 +572,8 @@ public class CacheProcessing extends Thread  {
 							newWord.setWeightOne(oldWord.getWeightOne());
 							newWord.setWeightTwo(oldWord.getWeightTwo());
 						}
+						
+						
 					}
 
 				}
@@ -1141,15 +1143,16 @@ public class CacheProcessing extends Thread  {
 			List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
 
 			int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
+			int countj=0;
 			for (int i = 0; i <candidateKeywordNum; i++) {
-
-				if (i==Basic.TEMP_K_KEYWORDS) {
-					break;
-				}
+				
+			
 				if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
 					continue;
 				}
-
+				if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("exception"))
+				{	continue;  }
+					
 				KeyWord kw=currentCache.getCurrentKeywordsList().get(i);
 				keyWordsforQuery.add(kw);
 
@@ -1160,7 +1163,16 @@ public class CacheProcessing extends Thread  {
 				{
 					searchText=searchText+" "+kw.getKeywordName();
 				}
+				
+				countj=countj+1;
 
+				
+
+				if (countj==Basic.TEMP_K_KEYWORDS) {
+					break;
+				}
+				
+				
 
 			}
 
@@ -1178,16 +1190,58 @@ public class CacheProcessing extends Thread  {
 			currentCache.getHistorysearchlist().add(kCandidates);
             resethistorysearchlist(Basic.History_SearchList_Size);
 				
-            AutoSearchWordsStruct asws=new AutoSearchWordsStruct();
+//            AutoSearchWordsStruct asws=new AutoSearchWordsStruct();
+            String searchText2=searchText;
             int mode=1;//1对query改写 表示是动作生成的查询 并不立即查询      2 为新增的查询，准备自动查询，值为2时触发自动查询。      3新增定时检索
+            
+            
+            
             if (currentCache.getTimerAutoSearchmode()==1) {
 				if (currentCache.getCountAutoTry()<Basic.Auto_Search_Try) {
 //           	 Find new search key word
            	    int count =currentCache.getCountAutoTry();
            	    count=count+1;
            	    currentCache.setCountAutoTry(count);
-           	    asws=getTimerAutoSearchText();
-           	 	searchText=asws.getOriginWords();
+           	    
+//           	    5-12去除产生畸形词汇的地方
+//           	    asws=getTimerAutoSearchText();
+//           	 	searchText=asws.getOriginWords();
+//           	    这里简要地先处理为   含exception的 和 普通的 API 
+//           	       分别取权重最高的分析     
+           	        searchText2=searchText2.trim();
+           	        String[] tempText=searchText2.split("[ ]");
+           	        
+           	        boolean flag=true;
+           	        for (int j = 0; j < tempText.length; j++) {
+   						 if (!tempText[j].equals("")) {
+   					
+   							 if (tempText[j].trim().toLowerCase().equals("exception"))
+   								 continue;
+   							 
+						 if (tempText[j].toLowerCase().contains("exception")&& tempText[j].indexOf('.')==-1) {
+                             searchText2=tempText[j];
+                             flag=false;
+                           	break;
+							}
+							 
+							if (tempText[j].indexOf('.')!=-1 || tempText[j].indexOf('(')!=-1) {
+	                             searchText2=tempText[j]+" api example";
+	                             flag=false;
+								break;
+							}
+         				}
+						 
+					}
+           	        
+           	        if (flag) {
+           	        	if (tempText.length>1) {
+							searchText2=(tempText[0].trim()+" "+tempText[1].trim()).trim();
+						}else {
+							searchText2=tempText[0].trim();
+						}
+					}
+           	       
+           	 	
 		        mode=3;
 //           	notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
 				
@@ -1199,23 +1253,36 @@ public class CacheProcessing extends Thread  {
 
             if (!searchText.equals("")) {
 
-            	String termpSearh="";
+            	String tpsea="";
             	String[] tempString=searchText.split("[ ]");
 
-
-            	for (int j = 0; j < tempString.length; j++) {
-            		if (tempString[j].subSequence(0,1).equals("(")) {
+              if (tempString.length>0) {
+				
+			
+            	for (int kj = 0; kj < tempString.length; kj++) {
+            		
+            		if (tempString[kj].length()>3) {
+						
+					
+            		if (tempString[kj].subSequence(0,1).equals("(")) {
             			
-            			tempString[j]=tempString[j].substring(1);
+            			tempString[kj]=tempString[kj].substring(1);
 					}
-            		if (tempString[j].subSequence(0,1).equals(".")){
+            		if (tempString[kj].subSequence(0,1).equals(".")){
             			
-            			tempString[j]=tempString[j].substring(1);
+            			tempString[kj]=tempString[kj].substring(1);
             		}
-            		termpSearh=termpSearh+" "+tempString[j];        
+            			
+            		tpsea=tpsea+" "+tempString[kj]; 
+            		} 
+            		
+            		  
+            	
+            		
             	}			
 
-            	searchText=termpSearh.trim();
+            	searchText=tpsea.trim();
+            	}
             } 
 
  
@@ -1268,12 +1335,12 @@ public class CacheProcessing extends Thread  {
 
                 
 				if ( currentCache.getTimerAutoSearchmode()==1) {
-					System.out.println("say tatic mode :  timer auto \n use keywords : "+searchText);
+					System.out.println("say tatic mode :  timer auto \n use keywords : "+searchText2);
 					
 //					String searchtext=getTimerAutoSearchText();
-					if (searchText!=null && !searchText.equals("")) {
+					if (searchText2!=null && !searchText2.equals("")) {
 						//TODO  受控实验开关 为编译无自动提示功能版本而注释 掉如下代码
-							v.timerAutoSearch(keyWordsforQuery,asws);
+							v.timerAutoSearch(keyWordsforQuery,searchText2);
 					}
 				
 					

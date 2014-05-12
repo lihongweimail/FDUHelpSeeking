@@ -1322,9 +1322,9 @@ public class HelpSeekingSearchView extends ViewPart {
 	}
 
 	
-	public void timerAutoSearch(List<KeyWord>mywords, AutoSearchWordsStruct asws) {
-
-		if (asws.getFirstPart().equals("")) {
+	public void timerAutoSearch(List<KeyWord>mywords, String search) {
+		
+		if (search==null || search.trim().equals("")) {
 			return;
 		}
 		
@@ -1334,8 +1334,8 @@ public class HelpSeekingSearchView extends ViewPart {
 			String searchID = "A" + String.valueOf(0)
 					+ "timerSearch" + getCurrentActionID();
 			
-			
-			String search=asws.getFirstPart() +" "+asws.getSecondPart()+" "+asws.getAddinPart();
+			 
+	        query.setUseKeywords(search);
 			query.setSearchID(searchID);
 			query.setQueryKeyWords(mywords);
 			query.setIsbyuser(false);

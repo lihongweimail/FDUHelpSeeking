@@ -700,9 +700,9 @@ public enum QueryLevel {
 	public final static int MAX_CANDIDATE_KEYWORDS=100;
 	public static final int MAX_DEEP_PACKAGE_COUNT = 10;
 
-	public static final long MINI_Action_Time = 5000;
+	public static final long MINI_Action_Time = 3000;
 
-	public static final int Mini_Actions = 10;
+	public static final int Mini_Actions = 5;
 
 	public final static double OLD_RATIO=0.1;
 
