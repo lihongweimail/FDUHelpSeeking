@@ -1150,8 +1150,7 @@ public class CacheProcessing extends Thread  {
 				if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
 					continue;
 				}
-				if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("exception"))
-				{	continue;  }
+			
 					
 				KeyWord kw=currentCache.getCurrentKeywordsList().get(i);
 				keyWordsforQuery.add(kw);
@@ -1213,16 +1212,22 @@ public class CacheProcessing extends Thread  {
            	        
            	        boolean flag=true;
            	        for (int j = 0; j < tempText.length; j++) {
+           	        	searchText2=tempText[j];
+           	        	
    						 if (!tempText[j].equals("")) {
-   					
-   							 if (tempText[j].trim().toLowerCase().equals("exception"))
-   								 continue;
    							 
-						 if (tempText[j].toLowerCase().contains("exception")&& tempText[j].indexOf('.')==-1) {
+   							 
+   							 
+   					 if (tempText[j].toLowerCase().contains("exception")&& tempText[j].indexOf('.')!=-1) {
                              searchText2=tempText[j];
                              flag=false;
                            	break;
 							}
+   							 
+   							 if (tempText[j].trim().toLowerCase().equals("exception"))
+   								 continue;
+   							 
+						
 							 
 							if (tempText[j].indexOf('.')!=-1 || tempText[j].indexOf('(')!=-1) {
 	                             searchText2=tempText[j]+" api example";
