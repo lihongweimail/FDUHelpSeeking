@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.xwork.ObjectUtils.Null;
 import org.eclipse.jdt.core.Flags;
 
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;

@@ -53,7 +53,7 @@ import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
-import cn.edu.fudan.se.helpseeking.web.SimpleBrower;
+import cn.edu.fudan.se.helpseeking.web.SimpleBrowser;
 
 public class HelpSeekingSolutionView extends ViewPart {
 	public HelpSeekingSolutionView() {
@@ -454,13 +454,16 @@ public class HelpSeekingSolutionView extends ViewPart {
 				Composite tabComposite = new Composite(tabFolder, SWT.NONE);
 				tabComposite.setLayoutData(BorderLayout.NORTH);
 				tabComposite.setLayout(new GridLayout(2, false));
-				SimpleBrower myBrower = new SimpleBrower();
+				SimpleBrowser myBrower = new SimpleBrowser();
+				myBrower.setDisplay(tabFolder.getDisplay());
+				
 				myBrower.setMyComposite(tabComposite);
 				myBrower.createShow();
 				myBrower.refreshBrowser();
 				myBrower.setDisableButton(true);
 
 				myBrower.setNewUrl(urr.getUrl());
+				
 				tab.setControl(tabComposite);
 
 //				tabFolder.setSelection(tab);	
