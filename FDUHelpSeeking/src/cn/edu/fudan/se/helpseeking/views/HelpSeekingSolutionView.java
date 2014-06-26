@@ -455,9 +455,10 @@ public class HelpSeekingSolutionView extends ViewPart {
 				tabComposite.setLayoutData(BorderLayout.NORTH);
 				tabComposite.setLayout(new GridLayout(2, false));
 				SimpleBrowser myBrower = new SimpleBrowser();
-				myBrower.setDisplay(tabFolder.getDisplay());
+				
 				
 				myBrower.setMyComposite(tabComposite);
+				myBrower.setDisplay(tabComposite.getDisplay());
 				myBrower.createShow();
 				myBrower.refreshBrowser();
 				myBrower.setDisableButton(true);

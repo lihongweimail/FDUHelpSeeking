@@ -244,7 +244,7 @@ public class SimpleBrowser implements ControlListener {
 	public void setNewUrl(String Url) {
 		resetResized();
 		browser.setUrl(Url);
-		System.out.println("the new url: "+ browser.getText());
+//		System.out.println("the new url: "+ browser.getText());
 	}
 	
 	public void resetResized(){
@@ -402,7 +402,7 @@ public class SimpleBrowser implements ControlListener {
 				// myComposite.setBounds(x, y, width, height);
 				myComposite.setSize(width, height);
 				myComposite.redraw();
-				browser.setBounds(x, y, width, height);
+				browser.setBounds(x, y, width-15, height);
 
 				// myComposite.pack();
 			}
