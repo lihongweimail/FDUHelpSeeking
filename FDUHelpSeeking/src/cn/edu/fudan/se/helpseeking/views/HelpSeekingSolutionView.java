@@ -15,8 +15,6 @@ import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -53,7 +51,7 @@ import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
-import cn.edu.fudan.se.helpseeking.web.SimpleBrowser;
+import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingSolutionView extends ViewPart {
 	public HelpSeekingSolutionView() {
@@ -305,7 +303,9 @@ public class HelpSeekingSolutionView extends ViewPart {
 			
 			@Override
 			public void keyPressed(KeyEvent e) {
-				
+				if (e.character == SWT.LF || e.character == SWT.CR) {
+					manualSearch();
+				}
 				
 			}
 		});
@@ -323,35 +323,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				
-				System.out.println("Say start manual search ...");
-				
-				String queryText = txtSearch.getText().trim();
-				
-				if (!queryText.equals("")) {
-					
-				
-				Query query = new Query();
-				// query.setInforID(getCurrentActionID());
-				Timestamp starttime = new Timestamp(System.currentTimeMillis());
-				query.setTime(starttime);
-				query.setIsbyuser(true);
-				query.setQueryLevel(QueryLevel.Middle);
-				query.setInforID(getCurrentActionID());
-				query.setUseKeywords(queryText);
-				query.makeCandidateKeywords(Cache.getInstance()
-						.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
-				String searchID = "P" + query.getInforID();
-				query.setSearchID(searchID);
-				setCurrentSearchID(searchID);
-				query.setIsbyuser(true);
-
-				try {
-					dosearch(query, searchID, queryText);
-				} catch (InterruptedException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				}
+				manualSearch();
 				
 				
 			}
@@ -437,7 +409,39 @@ public class HelpSeekingSolutionView extends ViewPart {
 	}
 	
 	
-//	type:   auto   manual 
+private void manualSearch() {
+		System.out.println("Say start manual search ...");
+		
+		String queryText = txtSearch.getText().trim();
+		
+		if (!queryText.equals("")) {
+			
+		
+		Query query = new Query();
+		// query.setInforID(getCurrentActionID());
+		Timestamp starttime = new Timestamp(System.currentTimeMillis());
+		query.setTime(starttime);
+		query.setIsbyuser(true);
+		query.setQueryLevel(QueryLevel.Middle);
+		query.setInforID(getCurrentActionID());
+		query.setUseKeywords(queryText);
+		query.makeCandidateKeywords(Cache.getInstance()
+				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
+		String searchID = "P" + query.getInforID();
+		query.setSearchID(searchID);
+		setCurrentSearchID(searchID);
+		query.setIsbyuser(true);
+
+		try {
+			dosearch(query, searchID, queryText);
+		} catch (InterruptedException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		}
+	}
+
+	//	type:   auto   manual 
 	public static void openNewTabByURL(UseResultsRecord urr) {
 		
 		
@@ -454,7 +458,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 				Composite tabComposite = new Composite(tabFolder, SWT.NONE);
 				tabComposite.setLayoutData(BorderLayout.NORTH);
 				tabComposite.setLayout(new GridLayout(2, false));
-				SimpleBrowser myBrower = new SimpleBrowser();
+				AmAssitBrowser myBrower = new AmAssitBrowser();
 				
 				
 				myBrower.setMyComposite(tabComposite);
@@ -464,6 +468,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 				myBrower.setDisableButton(true);
 
 				myBrower.setNewUrl(urr.getUrl());
+				myBrower.getMyComposite().pack();
 				
 				tab.setControl(tabComposite);
 
