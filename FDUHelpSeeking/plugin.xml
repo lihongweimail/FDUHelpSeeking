@@ -71,12 +71,7 @@
        class="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
        id="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"> 
        </page>
-   <page
-         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
-         class="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
-         id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
-         name="DBPreferencePage">
-   </page>
+ 
    <page
          category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
          class="cn.edu.fudan.se.helpseeking.preferences.SearchEngineSetPreferencePage"

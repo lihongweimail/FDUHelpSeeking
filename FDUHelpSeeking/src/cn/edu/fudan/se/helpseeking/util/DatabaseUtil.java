@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.helpseeking.util;
 
 import java.sql.Connection;
+import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,18 +60,23 @@ public class DatabaseUtil {
 	private static Connection con = null;
 	private static  Statement	stmt=null;
 	//	for mysql jdbc link
-	public static final String DRIVER = "com.mysql.jdbc.Driver";
+	//public static final String DRIVER = "com.mysql.jdbc.Driver";
+	
+	public static final String DRIVER ="org.sqlite.JDBC";
+	
 	private static InteractionEvent lastEvent = null;
 	private static Information lastInformation=null;
 
 
-	public static  String PWD =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.PASSWORD_KEY);//"root";
+	//public static  String PWD =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.PASSWORD_KEY);//"root";
+	public static String PWD="root";
 	private static ResultSet rs = null;
 	public static DataSource source = null;
-    public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
+    //public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
+	public static  String URL ="jdbc:sqlite://Users/Grand/temp/test.db";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
-	public static  String USER =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.USERNAME_KEY);//"root";
-
+	//public static  String USER =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.USERNAME_KEY);//"root";
+	public static  String USER ="root";
 	
 		
 	
@@ -139,11 +145,11 @@ public class DatabaseUtil {
 
 	private static int addActionTODataBase(Action action) {
 		int result = 0;
-
+	
 		if (action == null) {
 			return -1;
 		}
-
+	
 		PreparedStatement ps = null;
 		// if (debugCode.equals(lastdebugCode)) {
 		// return 0;
@@ -156,9 +162,9 @@ public class DatabaseUtil {
 			// String sql =
 			// "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 			// //in oracle db the first field with sql process code
-
+	
 			ps = con.prepareStatement(sql);
-
+	
 			ps.setTimestamp(1, (Timestamp)action.getTime());
 			ps.setTimestamp(2, (Timestamp)action.getEndtime());
 			ps.setString(3, action.getActionKind().toString());
@@ -166,10 +172,10 @@ public class DatabaseUtil {
 			ps.setString(5, action.getDescription());
 			ps.setBoolean(6, action.isByuser());
 			ps.setString(7, action.getUser());
-
+	
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
-
+	
 			result = ps.executeUpdate();
 			// if (result == 1) {
 			// lastdebugCode= debugCode;
@@ -193,11 +199,9 @@ public class DatabaseUtil {
 					e.printStackTrace();
 				}
 		}
-
+	
 		return result;
 	}
-
-
 
 	private static int addBreakpointTODataBase(Breakpoint breakpoint, int breakpointID) {
 		int result = 0;
@@ -1730,16 +1734,35 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 static int dbError=0;
 
+	@SuppressWarnings("unchecked")
 	public static Connection getCon() {
 		dbError=0;
+
+
 		try {
-			Class.forName(DRIVER);
+			
+		 Class.forName(DRIVER);
+			
+	
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
-			con = DriverManager.getConnection(URL, USER, PWD);
+			
+			if(DRIVER.contains("mysql"))
+			{
+				con = DriverManager.getConnection(URL, USER, PWD);	
+			}
+			else
+			{
+				con = DriverManager.getConnection(URL );		
+			}
+			con.setAutoCommit(false);
+		
+			
+//			con = DriverManager.getConnection();
+			
 			stmt=con.createStatement();
 			
 			if (con!=null) {
