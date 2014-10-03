@@ -11,7 +11,7 @@ public class PreferenceConstants {
 	public static final String PASSWORD_KEY = "$PASSWORD_KEY";  
 	public static final String DATABASE_KEY="$DATABASE_KEY";
 	//为文本框值定义三个默认值      
-	public static final String URL_DEFAULT = "jdbc:sqlite://Users/Grand/temp/test.db";
+	public static final String URL_DEFAULT = "jdbc:sqlite:helpseeking.db";
 			//"jdbc:mysql://localhost:3306/";     
 	public static final String USERNAME_DEFAULT = "root";     
 	public static final String PASSWORD_DEFAULT = "root";

@@ -73,7 +73,7 @@ public class DatabaseUtil {
 	private static ResultSet rs = null;
 	public static DataSource source = null;
     //public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
-	public static  String URL ="jdbc:sqlite://Users/Grand/temp/test.db";
+	public static  String URL ="jdbc:sqlite:helpseeking.db";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
 	//public static  String USER =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.USERNAME_KEY);//"root";
 	public static  String USER ="root";
@@ -109,13 +109,15 @@ public class DatabaseUtil {
 	public static void initialDB()
 	{		
 		Resource mydbsqlResource=new Resource();
-		String Sql=mydbsqlResource.getResource("/NewHelpseekingSchema.sql",true);
+		String Sql=mydbsqlResource.getResource("/NewHelpseekingSchemaforSqlite.sql",true);
 		List<String> mysql=CommUtil.arrayToList(Sql.split(";"));
+		
 	for (String sqlstatement : mysql) {
 		
 		try
 		{
-			stmt.executeUpdate(sqlstatement);
+			// for sqlite need ";"  for mysql do not need ";"  at the end of statement
+			stmt.executeUpdate(sqlstatement );
 		}
 		catch (SQLException e)
 		{			
