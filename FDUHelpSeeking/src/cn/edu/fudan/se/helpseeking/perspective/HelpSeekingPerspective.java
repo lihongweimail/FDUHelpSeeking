@@ -12,6 +12,9 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		// TODO Auto-generated method stub
 		String editorArea = layout.getEditorArea();
 		layout.addView(IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.LEFT, 0.15f, editorArea);
+		IFolderLayout leftbottom = layout.createFolder("leftbottom", IPageLayout.BOTTOM, 0.60f, IPageLayout.ID_PROJECT_EXPLORER);
+		leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
+		
 		IFolderLayout right=layout.createFolder("right", IPageLayout.RIGHT, 0.60f, editorArea);
 //		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView", IPageLayout.RIGHT, 0.7f, editorArea);
 //		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView", IPageLayout.RIGHT, 0.7f, editorArea);
@@ -20,6 +23,7 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 //		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
 		right.addView(IPageLayout.ID_PROBLEM_VIEW);
+		
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);
 		

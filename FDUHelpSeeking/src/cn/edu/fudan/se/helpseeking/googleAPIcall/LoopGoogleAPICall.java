@@ -13,6 +13,8 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.fudan.se.helpseeking.util.FileHelper;
+
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -120,14 +122,43 @@ public class LoopGoogleAPICall extends Thread{
 
 	public static void main(String[] args) throws IOException {
 
-		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("getResource IllegalArgumentException");
-		System.out.println("start search...");
-		//		apiCall.searchWebCSE("DefaultHandler SAXParser SAXParserException");
-		//		apiCall.commSearch();
-		apiCall.commCSESearch("getResource IllegalArgumentException");
+//		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("getResource IllegalArgumentException");
+//		System.out.println("start search...");
+//		//		apiCall.searchWebCSE("DefaultHandler SAXParser SAXParserException");
+//		//		apiCall.commSearch();
+//		apiCall.commCSESearch("getResource IllegalArgumentException");
+//
+//		//		apiCall.testURL();
+//		System.out.println("End search.");
+		
+		
+		System.out.println("do cse search ..");
+		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("AIzaSyCXTStjSSEk4WH2ravVosalWS6EtGN5s9Q","005635559766885752621:ys-az1pvb2o","getResource IllegalArgumentException");
+		
+		List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
+         apiCall.CSESearch(apiCall.getCse_key(), apiCall.getCse_cx(), apiCall.getSearch());
 
-		//		apiCall.testURL();
-		System.out.println("End search.");
+		googlesearchList = apiCall.getCurrentResults();
+		
+		int count =(googlesearchList.size()<100)? googlesearchList.size():100;
+		
+		FileHelper.createFile("googlecontentforzhaoxuejiao.txt");
+		for(int i=0; i<count;i++)
+		{
+			System.out.println("item: "+i);
+			System.out.println("URL: "+googlesearchList.get(i).getUrl().toString());
+			System.out.println("title: "+googlesearchList.get(i).getTitle().toString());
+			System.out.println("content: "+googlesearchList.get(i).getContent().toString());
+			
+			
+			FileHelper.appendContentToFile("googlecontentforzhaoxuejiao.txt", "\n\nITEM "+ i);
+			FileHelper.appendContentToFile("googlecontentforzhaoxuejiao.txt", "\nURL:\n"+googlesearchList.get(i).getUrl().toString());
+			FileHelper.appendContentToFile("googlecontentforzhaoxuejiao.txt", "\nTitle:\n"+googlesearchList.get(i).getTitle().toString());
+			FileHelper.appendContentToFile("googlecontentforzhaoxuejiao.txt", "\nContent:\n"+googlesearchList.get(i).getContent().toString());
+			
+			
+		}
+
 	}
 
 
@@ -261,7 +292,7 @@ public class LoopGoogleAPICall extends Thread{
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
 		//String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
-		String address="https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&lr=lang_en&num=10&q=";
+		String address="https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&lr=lang_en&num=100&q=";
 
 		String charset = "UTF-8";
 		URL url = new URL(address + URLEncoder.encode(query, charset));

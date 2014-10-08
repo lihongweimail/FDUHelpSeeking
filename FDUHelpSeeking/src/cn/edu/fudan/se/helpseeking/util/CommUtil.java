@@ -4,13 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
+
 import cn.edu.fudan.se.helpseeking.bean.Basic;
-import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 
 public class CommUtil 
 {
@@ -210,6 +210,16 @@ if (tokens==null ||tokens.equals("")) {
 		System.out.println(getProjectNameFromProjectPath("Buddi"));
 	}
 
+	
+	//TODO PATH BUG
+	public static String getPluginCurrentPath()
+	{
+		String result="";
+		result=Platform.getInstanceLocation().getURL().getPath();
+		
+		return result;
+		
+	}
 	
 	public static String getCurrentProjectPath()
 	{	

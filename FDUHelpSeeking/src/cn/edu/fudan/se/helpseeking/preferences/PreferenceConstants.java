@@ -2,6 +2,12 @@ package cn.edu.fudan.se.helpseeking.preferences;
 
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+
 public class PreferenceConstants {
 	
 	//DB PREFERENCEPAGE VALUE
@@ -10,8 +16,11 @@ public class PreferenceConstants {
 	public static final String USERNAME_KEY = "$USERNAME_KEY";    
 	public static final String PASSWORD_KEY = "$PASSWORD_KEY";  
 	public static final String DATABASE_KEY="$DATABASE_KEY";
+	
+	private static String databasePath=CommUtil.getPluginCurrentPath();
+	
 	//为文本框值定义三个默认值      
-	public static final String URL_DEFAULT = "jdbc:sqlite:helpseeking.db";
+	public static final String URL_DEFAULT = "jdbc:sqlite:"+databasePath+"/helpseeking.db";
 			//"jdbc:mysql://localhost:3306/";     
 	public static final String USERNAME_DEFAULT = "root";     
 	public static final String PASSWORD_DEFAULT = "root";

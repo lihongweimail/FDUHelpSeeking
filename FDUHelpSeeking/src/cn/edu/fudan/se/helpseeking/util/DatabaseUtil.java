@@ -73,13 +73,21 @@ public class DatabaseUtil {
 	private static ResultSet rs = null;
 	public static DataSource source = null;
     //public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
-	public static  String URL ="jdbc:sqlite:helpseeking.db";
+	
+	private static String databasePath=CommUtil.getPluginCurrentPath();
+	public static  String URL ="jdbc:sqlite:"+databasePath+"/helpseeking.db";
+			//"jdbc:sqlite:helpseeking.db";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"
 	//public static  String USER =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.USERNAME_KEY);//"root";
 	public static  String USER ="root";
 	
 		
 	
+	
+	public static void setCon(Connection con) {
+		DatabaseUtil.con = con;
+	}
+
 	public static String getPWD() {
 		return PWD;
 	}
@@ -117,7 +125,7 @@ public class DatabaseUtil {
 		try
 		{
 			// for sqlite need ";"  for mysql do not need ";"  at the end of statement
-			stmt.executeUpdate(sqlstatement );
+			stmt.executeUpdate(sqlstatement +";" );
 		}
 		catch (SQLException e)
 		{			
@@ -157,7 +165,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.action(time,endtime,actionKind,actionName,description,byuser,user)  values(?,?,?,?,?,?,?)";
+			String sql = "insert into action(id,time,endtime,actionKind,actionName,description,byuser,user)  values(?,?,?,?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -167,13 +175,14 @@ public class DatabaseUtil {
 	
 			ps = con.prepareStatement(sql);
 	
-			ps.setTimestamp(1, (Timestamp)action.getTime());
-			ps.setTimestamp(2, (Timestamp)action.getEndtime());
-			ps.setString(3, action.getActionKind().toString());
-			ps.setString(4, action.getActionName());
-			ps.setString(5, action.getDescription());
-			ps.setBoolean(6, action.isByuser());
-			ps.setString(7, action.getUser());
+			//ps.setint(1,null)  for auto increment of id
+			ps.setTimestamp(2, (Timestamp)action.getTime());
+			ps.setTimestamp(3, (Timestamp)action.getEndtime());
+			ps.setString(4, action.getActionKind().toString());
+			ps.setString(5, action.getActionName());
+			ps.setString(6, action.getDescription());
+			ps.setBoolean(7, action.isByuser());
+			ps.setString(8, action.getUser());
 	
 			// id field is an auto increment field , it need null value to let
 			// dbms increase ....
@@ -217,7 +226,7 @@ public class DatabaseUtil {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.breakpoint(id,type,MethodQualifiedName,lineNo)  values(?,?,?,?)";
+			String sql = "insert into breakpoint(id,type,MethodQualifiedName,lineNo)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -275,7 +284,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.classmodel(id,type,code,internalCaller,internalCallee,upClass,belowClass)  values(?,?,?,?,?,?,?)";
+			String sql = "insert into classmodel(id,type,code,internalCaller,internalCallee,upClass,belowClass)  values(?,?,?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -346,7 +355,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.compileinformation(id,type,content,relatedCode)  values(?,?,?,?)";
+			String sql = "insert into compileinformation(id,type,content,relatedCode)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -409,7 +418,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.cursor(id,lineNo,lineFrom,lineTo,MethodQualifiedName)  values(?,?,?,?,?)";
+			String sql = "insert into cursor(id,lineNo,lineFrom,lineTo,MethodQualifiedName)  values(?,?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -492,7 +501,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.debugcode(id,SyntacticBlockID,ClassModelID,BreakpointID)  values(?,?,?,?)"; 
+			String sql = "insert into debugcode(id,SyntacticBlockID,ClassModelID,BreakpointID)  values(?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
@@ -567,7 +576,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.editcode(id,SyntacticBlockID,ClassModelID,CursorID)  values(?,?,?,?)"; 
+			String sql = "insert into editcode(id,SyntacticBlockID,ClassModelID,CursorID)  values(?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
@@ -619,7 +628,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.editorinfo(id,size,classQualifiedNameList)  values(?,?,?)";
+			String sql = "insert into editorinfo(id,size,classQualifiedNameList)  values(?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
@@ -672,7 +681,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.explorerinfo(id,size,selectObjectNameList)  values(?,?,?)";
+			String sql = "insert into explorerinfo(id,size,selectObjectNameList)  values(?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
@@ -738,7 +747,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.explorerrelated(id,editorInfoID,explorerInfoID)  values(?,?,?)"; 
+			String sql = "insert into explorerrelated(id,editorInfoID,explorerInfoID)  values(?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
@@ -802,7 +811,7 @@ private static int addClassModelTODataBase(ClassModel classModel, int classModel
 		//		}
 
 		try {
-			String sql = "insert into helpseeking.ideoutput(id,CompileInformationID,RuntimeInformationID)  values(?,?,?)"; 
+			String sql = "insert into ideoutput(id,CompileInformationID,RuntimeInformationID)  values(?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
@@ -903,7 +912,7 @@ int informationID=-1;
 		PreparedStatement ps = null;
 
 		try {
-			String sql = "insert into helpseeking.information(id,DebugCodeID,EditCodeID,IDEOutputID,ExplorerRelatedID,ActionID, type)  values(?,?,?,?,?,?,?)"; 
+			String sql = "insert into information(id,DebugCodeID,EditCodeID,IDEOutputID,ExplorerRelatedID,ActionID, type)  values(?,?,?,?,?,?,?)"; 
 			//for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 
@@ -958,45 +967,46 @@ int informationID=-1;
 //	System.out.println("DatabaseUtil: addinteractionEventToDatabase\n"+" action kind :"+event.getKind()+"\n action name "+event.getActionName()+"\n action original:"+event.getOriginId());
 		
 		try {
-			String sql = "insert into helpseeking.event(user,time,endtime,kind,lineno,method,type,file,package,project,originid,isbyuser,structurekind,structurehandle,delta)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
+			String sql = "insert into event(id,user,time,endtime,kind,lineno,method,type,file,package,project,originid,isbyuser,structurekind,structurehandle,delta)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //for mysql the first field set as auto increment filed , you can neglect assignment value or use 'null' value, it can auto increment 
 			//			String sql = "insert into \"helpseeking\".\"event\" values(id_seq.nextval,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"; //in oracle db the first field with sql process code 
 			String username = System.getProperties().getProperty("user.name");
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, username);
-			ps.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
+		//	ps.setInt(1, null);
+			ps.setString(2, username);
 			ps.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-			ps.setString(4, event.getKind().toString());
-			ps.setString(5, event.getLineno() == null ? ContextUtil.getLineno()
+			ps.setTimestamp(4, new Timestamp(System.currentTimeMillis()));
+			ps.setString(5, event.getKind().toString());
+			ps.setString(6, event.getLineno() == null ? ContextUtil.getLineno()
 					: event.getLineno());
-			ps.setString(6, event.getMethod() == null ? ContextUtil.getMethod()
+			ps.setString(7, event.getMethod() == null ? ContextUtil.getMethod()
 					: event.getMethod());
 //			String tempString =ContextUtil.getMethod();
-			ps.setString(7, event.getType() == null ? ContextUtil.getType()
+			ps.setString(8, event.getType() == null ? ContextUtil.getType()
 					: event.getType());
-			ps.setString(8, event.getFile() == null ? ContextUtil.getFile()
+			ps.setString(9, event.getFile() == null ? ContextUtil.getFile()
 					: event.getFile());
-			ps.setString(9,
+			ps.setString(10,
 					event.getPackages() == null ? ContextUtil.getPackages()
 							: event.getPackages());
-			ps.setString(10,
+			ps.setString(11,
 					event.getProject() == null ? ContextUtil.getProject()
 							: event.getProject());
 //			if (event.getOriginId() != null
 //					&& event.getOriginId().length() > 200) {
 //				event.setOriginId(event.getOriginId().substring(0, 199));
 //			}
-			ps.setString(11, event.getOriginId());
-			ps.setBoolean(12, event.isByuser());
+			ps.setString(12, event.getOriginId());
+			ps.setBoolean(13, event.isByuser());
 			ps.setString(
-					13,
+					14,
 					event.getStructureKind() == null ? "java" : event
 							.getStructureHandle());
 			ps.setString(
-					14,
+					15,
 					event.getStructureHandle() == null ? ContextUtil
 							.getHandleIdentifier() : event.getStructureHandle());
-			ps.setString(15, event.getDelta());
+			ps.setString(16, event.getDelta());
 
 			//id field is an auto increment field , it need null value to let dbms increase ....
 
@@ -1038,17 +1048,18 @@ int informationID=-1;
 		PreparedStatement ps = null;
 	
 		try {
-			String sql = "insert into helpseeking.keywords(inforID,candidateKeyWords,userKeyWords,time,costtime,searchID,isbyuser)  values(?,?,?,?,?,?,?)";
+			String sql = "insert into keywords(id,inforID,candidateKeyWords,userKeyWords,time,costtime,searchID,isbyuser)  values(?,?,?,?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setInt(1, query.getInforID());
-			ps.setString(2, query.getCandidateKeywords());
-			ps.setString(3, query.getUseKeywords());
-			ps.setTimestamp(4, (Timestamp)query.getTime());
-			ps.setLong(5, query.getCosttime());
-			ps.setString(6, query.getSearchID());
-			ps.setString(7, query.isIsbyuser()==true?"yes":"no");
+			//ps.setint(1,null) for auto increment id
+			ps.setInt(2, query.getInforID());
+			ps.setString(3, query.getCandidateKeywords());
+			ps.setString(4, query.getUseKeywords());
+			ps.setTimestamp(5, (Timestamp)query.getTime());
+			ps.setLong(6, query.getCosttime());
+			ps.setString(7, query.getSearchID());
+			ps.setString(8, query.isIsbyuser()==true?"yes":"no");
 		
 
 			result = ps.executeUpdate();
@@ -1091,7 +1102,7 @@ int informationID=-1;
 		PreparedStatement ps = null;
 	
 		try {
-			String sql = "insert into helpseeking.usebrowserinformation(tabName,urlRecord,searchResultsListPostion,totallistnumber,useTimes,reOpenIndex,titleRecord,totalTime,starTimestamp,endTimestamp,solutionID,searchID,searchType,contentRecord)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+			String sql = "insert into usebrowserinformation(id,tabName,urlRecord,searchResultsListPostion,totallistnumber,useTimes,reOpenIndex,titleRecord,totalTime,starTimestamp,endTimestamp,solutionID,searchID,searchType,contentRecord)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
@@ -1106,20 +1117,21 @@ int informationID=-1;
 				}
 			}
 			
-			ps.setString(1, tabRecord.getTabName());
-			ps.setString(2, tabRecord.getUrlRecord());
-			ps.setInt(3, tabRecord.getSearchResultsListPostion());
-			ps.setInt(4, tabRecord.getTotallistnumber());
-			ps.setInt(5, usetimes);
-			ps.setInt(6, tabRecord.getReOpenIndex());	
-			ps.setString(7, tabRecord.getTitleRecord());
-			ps.setLong(8, totaltime);
-			ps.setTimestamp(9, tabRecord.getStarTimestamp());	
-			ps.setTimestamp(10, tabRecord.getEndTimestamp());
-			ps.setString(11, tabRecord.getSolutionID());
-			ps.setString(12, tabRecord.getSearchID());
-			ps.setString(13, tabRecord.getSearchType());
-			ps.setString(14, tabRecord.getContentRecord());
+			//ps.setint(1,null) for auto increment
+			ps.setString(2, tabRecord.getTabName());
+			ps.setString(3, tabRecord.getUrlRecord());
+			ps.setInt(4, tabRecord.getSearchResultsListPostion());
+			ps.setInt(5, tabRecord.getTotallistnumber());
+			ps.setInt(6, usetimes);
+			ps.setInt(7, tabRecord.getReOpenIndex());	
+			ps.setString(8, tabRecord.getTitleRecord());
+			ps.setLong(9, totaltime);
+			ps.setTimestamp(10, tabRecord.getStarTimestamp());	
+			ps.setTimestamp(11, tabRecord.getEndTimestamp());
+			ps.setString(12, tabRecord.getSolutionID());
+			ps.setString(13, tabRecord.getSearchID());
+			ps.setString(14, tabRecord.getSearchType());
+			ps.setString(15, tabRecord.getContentRecord());
 			
 			result = ps.executeUpdate();
 	
@@ -1168,17 +1180,18 @@ for (int i = 0; i < currentSearchWords.size(); i++) {
 		PreparedStatement ps = null;
 	
 		try {
-			String sql = "insert into helpseeking.usekeywords(keywordname,searchid,positioninrecommandlist,positioninusestring,lastsearchid,isrecommand,times)  values(?,?,?,?,?,?,?)";
+			String sql = "insert into usekeywords(id,keywordname,searchid,positioninrecommandlist,positioninusestring,lastsearchid,isrecommand,times)  values(?,?,?,?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, currentSearchWords.get(i).getKeywordName());
-			ps.setString(2, currentSearchWords.get(i).getSearchID());
-			ps.setInt(3, currentSearchWords.get(i).getPositionInRecommandlist());
-			ps.setInt(4, currentSearchWords.get(i).getPositionInUseString());
-			ps.setString(5, currentSearchWords.get(i).getLastSearchID());
-			ps.setString(6, currentSearchWords.get(i).isRecommand()?"recommand":"userInput");	
-			ps.setTimestamp(7, currentSearchWords.get(i).getTimes());		
+			//ps.setint(1,null) for auto increment
+			ps.setString(2, currentSearchWords.get(i).getKeywordName());
+			ps.setString(3, currentSearchWords.get(i).getSearchID());
+			ps.setInt(4, currentSearchWords.get(i).getPositionInRecommandlist());
+			ps.setInt(5, currentSearchWords.get(i).getPositionInUseString());
+			ps.setString(6, currentSearchWords.get(i).getLastSearchID());
+			ps.setString(7, currentSearchWords.get(i).isRecommand()?"recommand":"userInput");	
+			ps.setTimestamp(8, currentSearchWords.get(i).getTimes());		
 
 			result = ps.executeUpdate();
 	
@@ -1221,19 +1234,20 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 	PreparedStatement ps = null;
 
 	try {
-		String sql = "insert into helpseeking.useresultsrecord(searchID,solutionID,title,url,content,totallist,position,type,time)  values(?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into useresultsrecord(id,searchID,solutionID,title,url,content,totallist,position,type,time)  values(?,?,?,?,?,?,?,?,?,?)";
 
 		ps = con.prepareStatement(sql);
 
-		ps.setString(1, urr.getSearchID());
-		ps.setString(2, urr.getSolutionID());
-		ps.setString(3, urr.getTitle());
-		ps.setString(4, urr.getUrl());
-		ps.setString(5, urr.getContent());
-		ps.setInt(6, urr.getTotallist());
-		ps.setInt(7, urr.getPosition());	
-		ps.setString(8, urr.getType());	
-		ps.setTimestamp(9, urr.getTime());		
+		//ps.setint(1,null) for auto increment
+		ps.setString(2, urr.getSearchID());
+		ps.setString(3, urr.getSolutionID());
+		ps.setString(4, urr.getTitle());
+		ps.setString(5, urr.getUrl());
+		ps.setString(6, urr.getContent());
+		ps.setInt(7, urr.getTotallist());
+		ps.setInt(8, urr.getPosition());	
+		ps.setString(9, urr.getType());	
+		ps.setTimestamp(10, urr.getTime());		
 
 		result = ps.executeUpdate();
 
@@ -1274,7 +1288,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 		init();
 		try {
 			StringBuffer sqlBuffer = new StringBuffer();
-			sqlBuffer.append("select * from helpseeking.taskdecription");
+			sqlBuffer.append("select * from taskdecription");
 			ps = con.prepareStatement(sqlBuffer.toString());
 			rs = ps.executeQuery();
 
@@ -1332,13 +1346,14 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 	
 		try {
-			String sql = "insert into helpseeking.taskdecription(taskID,taskName,content)  values(?,?,?)";
+			String sql = "insert into taskdecription(id,taskID,taskName,content)  values(?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, taskDescription.getTaskID());
-			ps.setString(2, taskDescription.getTaskName());
-			ps.setString(3, taskDescription.getContent());
+			//ps.setint(1,null) for auto increment
+			ps.setString(2, taskDescription.getTaskID());
+			ps.setString(3, taskDescription.getTaskName());
+			ps.setString(4, taskDescription.getContent());
 			
 
 			result = ps.executeUpdate();
@@ -1382,7 +1397,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.runtimeinformation(id,type,content,relatedCode)  values(?,?,?,?)";
+			String sql = "insert into runtimeinformation(id,type,content,relatedCode)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -1444,15 +1459,17 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 //		  `link` text,
 	
 		try {
-			String sql = "insert into helpseeking.searchresults(searhID,title,link,contents,javaExceptionNames)  values(?,?,?,?,?)";
+			String sql = "insert into searchresults(id,searhID,title,link,contents,javaExceptionNames)  values(?,?,?,?,?,?)";
 
 			ps = con.prepareStatement(sql);
 
-			ps.setString(1, searchID);
-			ps.setString(2, sNode.getTitle());
-			ps.setString(3, sNode.getLink());
-			ps.setString(4, sNode.getContents());
-			ps.setString(5, sNode.getJavaExceptionNames());
+			//ps.setint(1,null) for auto increment
+			
+			ps.setString(2, searchID);
+			ps.setString(3, sNode.getTitle());
+			ps.setString(4, sNode.getLink());
+			ps.setString(5, sNode.getContents());
+			ps.setString(6, sNode.getJavaExceptionNames());
 			
 
 			result = ps.executeUpdate();
@@ -1495,7 +1512,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 		// return 0;
 		// }
 		try {
-			String sql = "insert into helpseeking.syntacticblock(id,type,code,exceptionName)  values(?,?,?,?)";
+			String sql = "insert into syntacticblock(id,type,code,exceptionName)  values(?,?,?,?)";
 			// for mysql the first field set as auto increment filed , you can
 			// neglect assignment value or use 'null' value, it can auto
 			// increment
@@ -1582,7 +1599,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 	private static int findlastActionID() {
 		int ActionID=-1;
-		ActionID=findlastID("select max(id) from helpseeking.action ");
+		ActionID=findlastID("select max(id) from action ");
 		return ActionID;
 
 	}
@@ -1594,13 +1611,13 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 	private static int findlastBreakpointID() {
 
 		int BreakpointID=-1;
-		BreakpointID=findlastID("select max(id) from helpseeking.breakpoint ");
+		BreakpointID=findlastID("select max(id) from breakpoint ");
 		return BreakpointID;
 	}
 
 	private static int findlastClassModelID() {
 		int ClassModelID=-1;
-		ClassModelID=findlastID("select max(id) from helpseeking.classmodel ");
+		ClassModelID=findlastID("select max(id) from classmodel ");
 		return ClassModelID;
 	}
 
@@ -1608,7 +1625,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 	private static int findlastCompileInformationID() {
 		int compileInformationID=-1;
-		compileInformationID=findlastID("select max(id) from helpseeking.compileinformation ");
+		compileInformationID=findlastID("select max(id) from compileinformation ");
 		return compileInformationID;
 
 
@@ -1616,7 +1633,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 	private static int findlastCursorID() {
 		int cursorID=-1;
-		cursorID=findlastID("select max(id) from helpseeking.cursor ");
+		cursorID=findlastID("select max(id) from cursor ");
 		return cursorID;
 
 	}
@@ -1624,21 +1641,21 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 	private static int findlastDebugCodeID() {
 		int DebugCodeID=-1;
-		DebugCodeID=findlastID("select max(id) from helpseeking.debugcode ");
+		DebugCodeID=findlastID("select max(id) from debugcode ");
 		return DebugCodeID;
 
 	}
 
 	private static int findlastEditCodeID() {
 		int EditCodeID=-1;
-		EditCodeID=findlastID("select max(id) from helpseeking.editcode ");
+		EditCodeID=findlastID("select max(id) from editcode ");
 		return EditCodeID;
 	}
 
 
 	private static int findlastEditorInfoID() {
 		int editorInfoID=-1;
-		editorInfoID=findlastID("select max(id) from helpseeking.editorinfo ");
+		editorInfoID=findlastID("select max(id) from editorinfo ");
 		return editorInfoID;
 	}
 
@@ -1646,14 +1663,14 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 
 		int explorerInfoID=-1;
-		explorerInfoID=findlastID("select max(id) from helpseeking.explorerinfo ");
+		explorerInfoID=findlastID("select max(id) from explorerinfo ");
 		return explorerInfoID;
 	}
 
 	private static int findlastExplorerRelatedID() {
 
 		int explorerRelatedID=-1;
-		explorerRelatedID=findlastID("select max(id) from helpseeking.explorerrelated ");
+		explorerRelatedID=findlastID("select max(id) from explorerrelated ");
 		return explorerRelatedID;
 
 	}
@@ -1710,7 +1727,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 
 		int ideOutputID=-1;
-		ideOutputID=findlastID("select max(id) from helpseeking.ideoutput ");
+		ideOutputID=findlastID("select max(id) from ideoutput ");
 		return ideOutputID;
 	}
 
@@ -1718,7 +1735,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 
 		int runtimeInformationID=-1;
-		runtimeInformationID=findlastID("select max(id) from helpseeking.runtimeinformation ");
+		runtimeInformationID=findlastID("select max(id) from runtimeinformation ");
 		return runtimeInformationID;
 	}
 
@@ -1730,7 +1747,7 @@ public static int addUseResultsRecord(UseResultsRecord urr) {
 
 
 		int SyntacticBlockID=-1;
-		SyntacticBlockID=findlastID("select max(id) from helpseeking.syntacticblock ");
+		SyntacticBlockID=findlastID("select max(id) from syntacticblock ");
 		return SyntacticBlockID;
 	}
 
@@ -1760,7 +1777,7 @@ static int dbError=0;
 			{
 				con = DriverManager.getConnection(URL );		
 			}
-			con.setAutoCommit(false);
+			//con.setAutoCommit(false);
 		
 			
 //			con = DriverManager.getConnection();
@@ -1794,7 +1811,7 @@ static int dbError=0;
 		init();
 		try {
 			StringBuffer sqlBuffer = new StringBuffer();
-			sqlBuffer.append("select * from helpseeking.event");
+			sqlBuffer.append("select * from event");
 			if (isbyuser.equals("1")) {
 				sqlBuffer.append(" where event.isbyuser='1'");
 			}

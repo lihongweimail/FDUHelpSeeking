@@ -12,9 +12,12 @@
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.jar"/>
 	<classpathentry kind="lib" path="lib/javax.servlet-5.1.11.jar"/>
 	<classpathentry kind="lib" path="lib/swing2swt.jar"/>
-	<classpathentry kind="lib" path="lib/jsoup-1.7.3.jar"/>
 	<classpathentry kind="lib" path="lib/swt4.4M5.jar"/>
-	<classpathentry kind="lib" path="lib/swt4.4M5src.zip"/>
 	<classpathentry kind="lib" path="lib/forms-3.0m8.jar"/>
+	<classpathentry kind="lib" path="lib/cue.language.jar"/>
+	<classpathentry kind="lib" path="lib/WordCram.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/jsoup-1.7.3.jar"/>
+	<classpathentry kind="lib" path="lib/core.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
