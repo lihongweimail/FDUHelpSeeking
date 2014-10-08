@@ -8,6 +8,7 @@ Bundle-Vendor: SE Lab of Fudan University
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.jdt.core;bundle-version="3.8.2",
+ org.eclipse.ltk.core.refactoring;bundle-version="3.6.100",
  org.eclipse.jface.text;bundle-version="3.8.1",
  org.eclipse.team.cvs.core;bundle-version="3.3.500",
  org.tigris.subversion.subclipse.core;bundle-version="1.8.22",
@@ -18,13 +19,11 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui;bundle-version="3.8.1",
  org.eclipse.jdt.debug;bundle-version="3.7.101",
  org.eclipse.ui.ide;bundle-version="3.8.1",
- org.eclipse.ltk.core.refactoring;bundle-version="3.6.100",
  org.junit;bundle-version="4.11.0",
  org.eclipse.swt
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,
- lib/mysql-connector-java-5.1.27-bin.jar,
  lib/swing2swt.jar,
  lib/gson-2.2.4.jar,
  lib/args4j-2.0.6.jar,
@@ -33,4 +32,8 @@ Bundle-ClassPath: .,
  lib/xwork-core-2.1.4-jdk14.jar,
  lib/dom4j-1.6.jar,
  lib/commons-collections-3.2.jar,
- lib/jsoup-1.7.3.jar
+ lib/jsoup-1.7.3.jar,
+ lib/sqlite-jdbc-3.7.2.jar,
+ lib/core.jar,
+ lib/cue.language.jar,
+ lib/WordCram.jar
