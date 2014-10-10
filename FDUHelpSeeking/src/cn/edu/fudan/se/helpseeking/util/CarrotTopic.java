@@ -14,9 +14,22 @@ import org.carrot2.core.ProcessingResult;
 
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 
+/**
+ * Topic Clustering by Carrot2
+ * @author LingFeng
+ *
+ */
 public class CarrotTopic {
+	
 	public final static int DESIRED_CLUSTER_COUNT = 30;
 	
+	/**
+	 * Cluster: 
+	 * 		-label
+	 * 		-document list
+	 * @param results
+	 * @return List<Cluster>
+	 */
 	public static List<Cluster> fromWebResults(List<WEBResult> results)
 	{
 		List<Document> docs = toCarrotDocument(results);
