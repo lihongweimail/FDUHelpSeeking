@@ -98,7 +98,36 @@ public class FileHelper
 		}		
 	}
 	
+	public static void writeNewFile(String fileName, String content)
+	{
+		
+		File file = new File(fileName);
+		try {
+			if (file.exists()) {
+				file.delete();
+			}
+			file.createNewFile();
+			
+			try
+			{			
+				FileWriter fw = new FileWriter(fileName, true);
+				fw.append(content);
+				fw.close();
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			MicroLog.log(Level.INFO, "create file error");
+		}
+		
+	
+	}
 
+	
 //	public static void createFileWithTokenize(String fileName, String content)
 //	{
 //		TokenExtractor extractor = new TokenExtractor();

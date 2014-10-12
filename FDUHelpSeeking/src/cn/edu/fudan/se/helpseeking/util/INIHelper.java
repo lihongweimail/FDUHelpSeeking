@@ -1,15 +1,13 @@
 package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.io.File;
-
-import org.eclipse.jface.operation.ModalContext;
 
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 
@@ -24,8 +22,6 @@ public class INIHelper
 	private String FileName; // 操作的文件名
 	private LinkedList<String> FileStringList = new LinkedList<String>(); // 存放配置文件内容
 	private int SectionStarNo = -1, SectionEndNo = -1, IdentNo = -1; // 存放该段落的起始位置
-	
-	
 	
 	
 	/**
@@ -65,6 +61,7 @@ public class INIHelper
 		// pluginmode 表示是否为插件资源包内读取 true    和    false则使用基本的读取方式，绝对路径定位到应用程序所在路径读取
 		if (pluginmode) {
 			FileStringList=myResource.getResourcetoLinkedList(filename);
+			
 		}
 		else {
 			normalInihelper(filename);

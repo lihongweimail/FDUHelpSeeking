@@ -38,7 +38,7 @@ public class AmAssitBrowser implements ControlListener {
 	// 定义浏览器的标题
 	public static final String APP_TITLE = "Simple SWT Browser";
 	// 定义主页的url
-	public static final String HOME_URL = "http://about:blank";
+	public static final String HOME_URL = "about:blank";
 
 	public Browser getBrowser() {
 		return browser;
@@ -209,9 +209,10 @@ public class AmAssitBrowser implements ControlListener {
 	}
 
 	public void refreshBrowser() {
-		getMyComposite().pack();
+		
 		browser.refresh();
-
+		
+      //getMyComposite().pack();
 	}
 
 	public static void main(String[] args) {
@@ -369,9 +370,9 @@ public class AmAssitBrowser implements ControlListener {
 				.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(
 							SelectionEvent e) {
-
-						getMyComposite().pack();
-						browser.refresh();// 重新载入
+                         browser.refresh();// 重新载入
+						//getMyComposite().pack();
+						
 					}
 				});
 
@@ -453,5 +454,11 @@ public class AmAssitBrowser implements ControlListener {
 
 		refreshButton.setVisible(state);// 刷新按钮
 
+	}
+	
+	public void setRefreshOnly(boolean state)
+	{
+		setDisableButton(false);
+		refreshButton.setVisible(true);
 	}
 }

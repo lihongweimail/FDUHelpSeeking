@@ -1,6 +1,8 @@
 package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.File;
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -8,8 +10,14 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.Platform;
 
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 
 public class CommUtil 
@@ -216,6 +224,36 @@ if (tokens==null ||tokens.equals("")) {
 	{
 		String result="";
 		result=Platform.getInstanceLocation().getURL().getPath();
+
+		return result;
+		
+	}
+	
+	public static String getMyPluginCurrentPathbyFilename(String filename)
+	{
+		String result="";
+		 	
+//		URL url = Activator.getDefault().getBundle().getResource(filename); 	//  "META-INF/MANIFEST.MF"
+//		 	
+//		result=FileLocator.toFileURL(url);   	
+//		
+		
+	
+		return result;
+		
+	}
+	
+	public static String getFDUPluginCurrentPath()
+	{
+		String result="";
+		Platform.getInstanceLocation().getURL().getPath();
+		try {
+			result=FileLocator.resolve(FDUHelpSeekingPlugin.getDefault().getBundle().getEntry("/")).getFile();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 		return result;
 		
