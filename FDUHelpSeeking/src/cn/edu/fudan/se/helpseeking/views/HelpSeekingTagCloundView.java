@@ -49,6 +49,15 @@ public class HelpSeekingTagCloundView extends ViewPart {
 		myBrower.refreshBrowser();
 		myBrower.setDisableButton(true);
 		
+		  String userpath=CommUtil.getFDUPluginCurrentPath()+"foamtree/foamtreetest.html";
+			
+			
+		myBrower.setNewUrl(userpath);
+		myBrower.setDisableButton(false);
+		myBrower.setRefreshOnly(true);
+		myBrower.getMyComposite().pack();
+
+		
 
 //		Resource foamtreeJsResource=new Resource();
 //		String foamtreejscontent;
@@ -82,19 +91,12 @@ public class HelpSeekingTagCloundView extends ViewPart {
 
 		
 		  
-//		  Resource foamtreehtml=new Resource();
-//		  String foamtreehtmlcontent=foamtreehtml.getResource("/foamtree/foamtreetest.html",true);
-//		  File htmlFile=new File(CommUtil.getPluginCurrentPath()+"/foamtreetest.html");
-//		  FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/foamtreetest.html", foamtreehtmlcontent);
-//		  String userpath=htmlFile.getAbsolutePath();
+		  Resource foamtreehtml=new Resource();
+		  String foamtreehtmlcontent=foamtreehtml.getResource("/foamtree/foamtreetest.html",true);
+		  File htmlFile=new File(CommUtil.getPluginCurrentPath()+"/foamtreetest.html");
+		  FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/foamtreetest.html", foamtreehtmlcontent);
+		 // String userpath=htmlFile.getAbsolutePath();
 		  
-		  String userpath=CommUtil.getFDUPluginCurrentPath()+"foamtree/foamtreetest.html";
-		
-		
-		myBrower.setNewUrl(userpath);
-		myBrower.setDisableButton(false);
-		myBrower.setRefreshOnly(true);
-		myBrower.getMyComposite().pack();
 
 
 	}

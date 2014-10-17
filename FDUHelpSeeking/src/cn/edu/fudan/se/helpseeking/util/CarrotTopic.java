@@ -74,7 +74,7 @@ public class CarrotTopic {
 	    	 Cluster c = clusters.get(i);
 	    	 for(int k=0; k<level; k++)
 	    	 {
-	    		 System.out.print("-");
+	    		 System.out.print("+");
 	    	 }
 	    	 
 	    	 System.out.println(c.getLabel());
@@ -83,7 +83,11 @@ public class CarrotTopic {
 	    	 for(int j=0; j<c.getAllDocuments().size(); j++)
 	    	 {		
 	    		 Document doc = c.getAllDocuments().get(j);
-	    		 System.out.println("------"+doc.getTitle());
+	    		 System.out.println("No. "+j);
+	    		 System.out.println("  --title  :"+doc.getTitle());
+	    		 System.out.println("  --url    :"+doc.getContentUrl());
+	    		 System.out.println("  --summary:"+doc.getSummary());
+	    		 
 	    		 
 	    	 }
 	    	 

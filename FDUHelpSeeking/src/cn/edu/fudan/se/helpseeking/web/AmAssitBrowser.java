@@ -1,6 +1,9 @@
 package cn.edu.fudan.se.helpseeking.web;
 
 //import java.awt.Composite;
+import java.io.File;
+
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
@@ -33,12 +36,28 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import cn.edu.fudan.se.helpseeking.test.testSQLite;
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+
 public class AmAssitBrowser implements ControlListener {
 
 	// 定义浏览器的标题
 	public static final String APP_TITLE = "Simple SWT Browser";
 	// 定义主页的url
 	public static final String HOME_URL = "about:blank";
+	
+	
+	// test for js
+	public String testforinteractewithhtmljs="this is test for js from html";
+	public void setTestforinteractewithhtmljs(String testforinteractewithhtmljs) {
+		this.testforinteractewithhtmljs = testforinteractewithhtmljs;
+	}
+	public String getTestforinteractewithhtmljs() {
+		return testforinteractewithhtmljs;
+	}	
+	//end of test for js
+	
+
 
 	public Browser getBrowser() {
 		return browser;
@@ -223,7 +242,13 @@ public class AmAssitBrowser implements ControlListener {
 	      shell.setLayout(new FillLayout());  
 		Composite composite = new Composite(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.NO_MERGE_PAINTS | SWT.NO_REDRAW_RESIZE | SWT.NO_RADIO_GROUP | SWT.EMBEDDED);
 		AmAssitBrowser thisClass = new AmAssitBrowser(composite);
-		thisClass.createShow();
+		//正常浏览器
+		//thisClass.createShow();
+		//精简浏览器
+		thisClass.createSimpleShow();
+		
+		thisClass.getBrowser().setUrl("file:///Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/foamtree/foamtreetest.html");
+		
 		thisClass.setDisplay(display);
 		thisClass.myComposite.pack();
 
@@ -234,6 +259,95 @@ public class AmAssitBrowser implements ControlListener {
 				display.sleep();
 		}
 		display.dispose();
+	}
+
+	
+	// 初始化浏览器
+		private void createSimpleBrowser(Composite composite) {
+			
+			// 创建浏览器对象
+			browser = new Browser(composite, SWT.BORDER);
+
+			
+			
+			// 为浏览器注册标题改变事件
+			browser.addTitleListener(new TitleListener() {
+				public void changed(TitleEvent e) {
+					// sShell.setText(APP_TITLE + " - " + e.title);
+
+				}
+			});
+			// 为浏览器注册地址改变事件
+			browser.addLocationListener(new LocationListener() {
+				public void changing(LocationEvent e) {
+//					locationText.setText(e.location);
+				}
+
+				public void changed(LocationEvent e) {
+					
+				}
+			});
+			// 为浏览器注册装载网页事件
+			browser.addProgressListener(new ProgressListener() {
+				// 当装载时，设置装载的进度，并且设置停止按钮可用
+				public void changed(ProgressEvent e) {
+					
+				}
+
+				// 装载完成后设置停止按钮，后退按钮，前进按钮和进度条的状态
+				public void completed(ProgressEvent e) {
+					
+				}
+			});
+			// 注册浏览器状态改变事件
+			browser.addStatusTextListener(new StatusTextListener() {
+				public void changed(StatusTextEvent e) {
+									}
+			});
+
+			// 为浏览器中点击链接打开新URL
+			browser.addOpenWindowListener(new OpenWindowListener() {
+				
+				@Override
+				public void open(WindowEvent event) {
+					 
+		               System.out.println("window open func: "+getBrowser().getUrl());
+		                event.browser = getBrowser();
+		               
+		               
+							
+				}
+			});
+			
+
+		}
+
+	// 创建简单窗 只有浏览器
+	public void createSimpleShow() {
+		// sShell = new Shell();
+		
+	
+		int x = myComposite.getParent().getBounds().x;
+		int y = myComposite.getParent().getBounds().y;
+
+		myComposite.setSize(new Point(0, 0));
+		
+			createSimpleBrowser(myComposite);
+		// createBrowser();
+		
+	
+		myComposite.addControlListener(new ControlListener() {
+
+			@Override
+			public void controlResized(ControlEvent e) {
+			}
+
+			@Override
+			public void controlMoved(ControlEvent e) {
+				myComposite.pack();
+			}
+		});
+
 	}
 
 	// 创建窗口和窗口的控件

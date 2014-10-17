@@ -292,8 +292,12 @@ public class LoopGoogleAPICall extends Thread{
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
 		//String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
-		String address="https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&lr=lang_en&num=100&q=";
+		String address="https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&lr=lang_en&num=100&start=0&q=";
+//		"type": "application/json",
+//		  "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&cref={cref?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
 
+       // http://developers.google.com/apis-explorer/#p/customsearch/v1/search.cse.list?q=hello+world&cr=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146%253Aomuauf_lfve&lr=lang_en&num=100&start=0&_h=1&
+		
 		String charset = "UTF-8";
 		URL url = new URL(address + URLEncoder.encode(query, charset));
 		Reader reader = new InputStreamReader(url.openStream(), charset);
