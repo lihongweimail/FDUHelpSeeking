@@ -1,0 +1,5 @@
+keystore "file:tagcloud.store","JKS";
+grantsignedBy "tagcloud"
+{
+permission java.io.FilePermission "<<ALLFILES>>", "read";
+};

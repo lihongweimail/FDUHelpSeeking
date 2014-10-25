@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FoamTree Quick Start</title>
+    <meta charset="utf-8" />
+  </head>
+
+  <body>
+
+    <div id="visualization" style="width: 400px; height: 300px"></div>
+
+<script src="carrotsearch.foamtree.js"></script>
+
+
+
+    <script language="javascript">
+    
+	
+
+    
+    window.addEventListener("load", function() {
+    	
+    	
+   
+    
+ var foamtree = new CarrotSearchFoamTree({
+          id: "visualization",
+          dataObject: {
+            groups: [
+              { label: "Your", weight: 1.0 },
+              { label: "First", weight: 3.0 },
+              { label: "FoamTree", weight: 2.0 },
+            ]
+          }
+ ,  onGroupClick: function (event) {
+	  
+	  alert("hello");
+	  
+	  
+   if (event.group.unselectable) {
+     event.preventDefault();
+     
+   }
+ },
+
+        });
+ 
+ 
+      });	  
+    
+    
+    foamtree.set({
+    	  dataObject: { groups: [
+    	    { label: "Selectable" },
+    	    { label: "Selectable" },
+    	    { label: "Selectable" },
+    	    { label: "Unselectable", unselectable: true },
+    	    { label: "Unselectable", unselectable: true }
+    	  ]},
+    	  onGroupClick: function (event) {
+    		  
+    		  alert("hello");
+    		  
+    		  
+    	    if (event.group.unselectable) {
+    	      event.preventDefault();
+    	      
+    	    }
+    	  },
+    	  groupColorDecorator: function (opts, props, vars) {
+    	    vars.groupColor = props.group.unselectable ? "#aaa" : "#77ff00";
+    	    vars.labelColor = props.group.unselectable ? "#888" : "auto";
+    	  }
+    	});
+
+    document.write(location.pathname);
+
+
+ 
+   /*  function read(file) { 
+    	if(typeof window.ActiveXObject != 'undefined') { 
+    	var content = ""; 
+    	try { 
+    	var fso = new ActiveXObject("Scripting.FileSystemObject"); 
+    	var reader = fso.openTextFile(file, 1); 
+    	while(!reader.AtEndofStream) { 
+    	content += reader.readline(); 
+    	content += "\n"; 
+    	} 
+    	// close the reader 
+    	reader.close(); 
+    	} 
+    	catch (e) { 
+    	alert("Internet Explore read local file error: \n" + e); 
+    	} 
+    	// VeryHuo.Com
+    	return content; 
+    	} 
+    	else if(document.implementation && document.implementation.createDocument) { 
+    	var content = "" 
+    	try { 
+    	netscape.security.PrivilegeManager.enablePrivilege('UniversalXPConnect'); 
+    	var lf = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
+    	lf.initWithPath(file); 
+    	if (lf.exists() == false) { 
+    	alert("File does not exist"); 
+    	} 
+
+    	var fis = Components.classes["@mozilla.org/network/file-input-stream;1"].createInstance(Components.interfaces.nsIFileInputStream); 
+    	fis.init(lf, 0x01, 00004, null); 
+    	var sis = Components.classes["@mozilla.org/scriptableinputstream;1"].createInstance(Components.interfaces.nsIScriptableInputStream);
+    	sis.init(fis); 
+    	var converter = Components.classes["@mozilla.org/intl/scriptableunicodeconverter"].createInstance(Components.interfaces.nsIScriptableUnicodeConverter);
+    	converter.charset = "UTF-8"; 
+    	content = converter.ConvertToUnicode(sis.read(sis.available())); 
+    	} 
+    	catch (e) { 
+    	alert("Mozilla Firefox read local file error: \n" + e); 
+    	} 
+
+    	return content; 
+    	} 
+    	} 
+
+ 
+var inventoryJSONText = "{\"Date\":\"2000-01-01\",\"Item\":[{\"Product\":\"ProductOne\",\"Quantity\":\"10\",\"Price\":\"10\",\"Type\":\"InventoryItem\"},{\"Product\":\"ProductTwo\",\"Quantity\":\"100\",\"Price\":\"20\",\"Type\":\"InventoryItem\"}],\"Type\":\"Inventory\"}";
+
+  //将JSON文本转换为对象，并将一般类的实例改成伪类的实例。
+  var inventoryObject = JSON.parse(inventoryJSONText, function(key, value) {
+     var type;
+     if (value && typeof value === 'object') {
+        type = value.Type;
+        if (typeof type === 'string' && typeof window[type] === 'function') {
+           return new (window[type])(value);
+        }
+     }
+     return value;
+  });
+
+  //输出转换后对象的信息。
+  var output = "Product\t\tQuantity\tPrice\tTotal\n";
+  for (var key in inventoryObject.Item) {
+     var item = inventoryObject.Item[key];
+     output += item.Product + "\t" + item.Quantity + "\t\t" + item.Price + "\t" + item.Type + "\n";
+  }
+  
+  alert(output);
+
+  //再将inventoryObject对象转换成JSON文本。
+  var inventoryJSONTextAgain = JSON.stringify(inventoryObject, null, 3);
+  alert(inventoryJSONTextAgain);
+
+  
+  var content=read("/Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/testjson.txt");
+  alert(content);
+ */   
+   
+ 
+  
+         /* var fs = require('fs');
+    	  fs.readFile('/Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/testjson.txt',function(err,data){
+    	      if(err) throw err;
+
+    	      var jsonObj = JSON.parse(data);
+    	      var space = ' ';
+    	      var newLine = '\n';
+    	      var chunks = [];    
+    	      var length = 0;
+
+    	      for(var i=0,size=jsonObj.length;i<size;i++){
+    	          var one = jsonObj[i];
+    	          //what value you want 
+    	          var value1 = one['value1'];
+    	          var value2 = one['value2'];
+    	          ....
+    	          var value = value1 +space+value2+space+.....+newLine;
+    	          var buffer = new Buffer(value);
+    	          chunks.push(buffer);
+    	          length += buffer.length;
+    	      }
+    	      
+    	      var resultBuffer = new Buffer(length);
+    	      for(var i=0,size=chunks.length,pos=0;i<size;i++){
+    	          chunks[i].copy(resultBuffer,pos);
+    	          pos += chunks[i].length;
+    	      }
+    	      
+    	      fs.writeFile('./resut.text',resultBuffer,function(err){
+    	          if(err) throw err;
+    	          console.log('has finished');
+    	      });
+    	      
+    	  }); */
+    	  
+   /*  	  var fso, f1, ts, s;
+
+    	  var ForReading = 1;
+
+    	  fso = new ActiveXObject("Scripting.FileSystemObject");
+ */
+    	 /*  // 创建文件
+    	  f1 = fso.CreateTextFile("c://testfile.txt", true);
+    	  // 填写一行数据
+    	  f1.WriteLine("Hello World");
+    	  f1.WriteBlankLines(1);
+    	  // 关闭文件
+    	  f1.Close(); */
+    	  
+    	  // 打开文件
+    	/*   ts = fso.OpenTextFile("/Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/testjson.txt", ForReading);
+    	  // 读取文件一行内容到字符串
+    	  s = ts.ReadAll();
+    	  // 显示字符串信息
+    	  alert("File contents = ‘" + s + "‘");
+    	  // 关闭文件
+    	  ts.Close(); */
+
+    	  
+/*     	  var fso=new ActiveXObject("Scripting.FileSystemObject"); 
+    	// 打开文件 
+    	var ts = fso.OpenTextFile(/Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/testjson.txt", 1);  //1表示只读
+    	//遍历读取
+    	while (!ts.AtEndOfStream)
+    	 {
+    	      s = ts.Readline();
+    	      alert(s);
+    	} 
+    	ts.Close(); */
+    	
+    	 
+ /*    	var forReading=1;
+     var fso = new ActiveXObject("Scripting.FileSystemObject");     
+              var f = fso.OpenTextFile("/Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/testjson.txt",forReading);     
+              var s = "";     
+                while (!f.AtEndOfStream){
+                     s += f.ReadLine()+"\n";
+                }     
+             
+              f.Close();     
+  */              
+  
+    </script>
+  </body>
+</html>

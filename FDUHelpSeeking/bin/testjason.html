@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+
+</head>
+<body>
+ <div id="visualization" style="width: 400px; height: 300px"></div>
+
+<script src="carrotsearch.foamtree.js"></script>
+<script src="carrotsearch.foamtree.util.treemodel.js"></script>
+<script src="carrotsearch.foamtree.util.loading.js"></script>
+<script src="carrotsearch.foamtree.asserts.js"></script>
+<script src="carrotsearch.foamtree.util.loading.js"></script>
+<script src="carrotsearch.foamtree.util.relaxationprogress.js"></script>
+
+
+
+ 
+  <div id="myDiv">原数据</div>
+<input type="button" value="更新数据" onclick="getData()" />
+
+
+<script> 
+window.addEventListener("load", function() {
+	var foamtree = new CarrotSearchFoamTree({
+	    id: "visualization",
+	    dataObject: {
+	      groups: [
+	        { label: "Your", weight: 1.0 },
+	        { label: "First", weight: 3.0 },
+	        { label: "FoamTree", weight: 2.0 },
+	        { label: "Visualization", weight: 4.0 }
+	      ]
+	    }
+	  });
+	}
+
+
+
+
+
+function createXMLHttpRequest() 
+{  if(window.XMLHttpRequest) 
+	{//适用IE7、IE8、FireFox等主流浏览器   
+		var xmlhttp = new XMLHttpRequest();
+		
+		if(xmlhttp.overrideMimeType) 
+		{
+			 xmlhttp.overrideMimeType("text/xml");
+			//使浏览器支持返回xml格式数据   
+			} 
+         return xmlhttp; 
+ 
+         } else 
+         {
+        //适用IE6以下版本的IE。 
+       // 注意，如果把MSXML2.XMLHTTP和Microsoft.XMLHTTP放到后面，那么可能会在服务器响应文本中包含中文时出现乱码   
+        var activeName = ["MSXML2.XMLHTTP", "Microsoft.XMLHTTP" , "MSXML2.XMLHTTP.6.0", "MSXML2.XMLHTTP.5.0", "MSXML2.XMLHTTP.4.0", "MSXML2.XMLHTTP.3.0"];   
+        for(var i = 0; i < activeName.length; i++) 
+        {    
+        	try {     
+             return new ActiveXObject(activeName[i]);
+         } catch(e) { } 
+        } 
+       } 
+ alert("当前浏览器不支持XMLHttpRequest对象，请更新浏览器！"); 
+} 
+
+function callback() 
+{   
+	if(xmlhttp.readyState == 4) 
+	{ 
+	   if(xmlhttp.status == 200) 
+	{     
+		var text = xmlhttp.responseText;//获取服务器的响应文本 
+		alert(text);
+    }  
+    else
+    	{alert("no text");} 
+    }  
+    else
+    	{
+    	alert("not ready");
+    	}
+ }
+   
+
+
+var xmlhttp=createXMLHttpRequest();
+
+xmlhttp.onreadystatechange = callback();
+xmlhttp.open("POST", ??, true); //（自己的Servlet处理类）
+xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded"); 
+request.send("foamtreetest.html");
+// (name + "=" + value + "&argName=" + name); 
+
+
+
+</script>
+
+</body>
+</html>
