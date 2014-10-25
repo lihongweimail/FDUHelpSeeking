@@ -7,7 +7,16 @@ public class CxKeyPair {
 	String cseName;
 	String projectID;
 	
+	public CxKeyPair()
+	{
+		super();
+	}
 	
+	public CxKeyPair(String keystr, String cxstr)
+	{
+		setKey(keystr);
+		setCx(cxstr);
+	}
 	
 	public String getCseName() {
 		return cseName;

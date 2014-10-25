@@ -3,6 +3,9 @@ package cn.edu.fudan.se.helpseeking.perspective;
 import org.eclipse.ui.IFolderLayout;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.console.IConsoleConstants;
+
+import cn.edu.fudan.se.helpseeking.util.ConsoleFactory;
 
 public class HelpSeekingPerspective implements IPerspectiveFactory{
 
@@ -13,35 +16,33 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		String editorArea = layout.getEditorArea();
 		layout.addView(IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.LEFT, 0.15f, editorArea);
 		IFolderLayout leftbottom = layout.createFolder("leftbottom", IPageLayout.BOTTOM, 0.60f, IPageLayout.ID_PROJECT_EXPLORER);
-		leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
+		//leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
 		
 		IFolderLayout right=layout.createFolder("right", IPageLayout.RIGHT, 0.60f, editorArea);
-//		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView", IPageLayout.RIGHT, 0.7f, editorArea);
-//		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView", IPageLayout.RIGHT, 0.7f, editorArea);
-//		layout.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView",  IPageLayout.BOTTOM, 0.7f, "cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-		
-		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-//		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingCommentsView");
-		right.addView(IPageLayout.ID_PROBLEM_VIEW);
-		
+
+		right.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
+	
 		
 		IFolderLayout bottom = layout.createFolder("bottom", IPageLayout.BOTTOM, 0.6f, editorArea);
 		
 		
 //		bottom.addView(IPageLayout.ID_PROP_SHEET);
 //		bottom.addView(IPageLayout.ID_TASK_LIST);
+
 		
-		
-		bottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
-//		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
-		
-//		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.TaskTrackView");
-//		bottom.addView("cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView");
-		
+		bottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+
+		bottom.addView(IPageLayout.ID_PROBLEM_VIEW);
+//		 ConsoleFactory consoleFactory = new ConsoleFactory();  
+//		    consoleFactory.openConsole(); 
+		bottom.addView(IConsoleConstants.ID_CONSOLE_VIEW);	
+	
 		
 	
 		
+		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
 		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
+		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
 		layout.addPerspectiveShortcut(ID);
 	
 		

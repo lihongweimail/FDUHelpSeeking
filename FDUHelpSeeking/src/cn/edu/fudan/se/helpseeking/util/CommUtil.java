@@ -2,13 +2,15 @@ package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+
+
+
 
 
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -19,6 +21,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
+import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 
 public class CommUtil 
 {
@@ -30,6 +33,11 @@ public class CommUtil
 	}
 	
 	
+	public static int  randomInt(int scope, int base) {
+		// 为获得 10<=  temp <= 15   则为： scope 5  base 10
+		int Temp = (int) Math.round(Math.random() * scope + base);
+		return Temp;
+	}
 	
 	
 	private static int minLength =2;
@@ -433,5 +441,48 @@ if (tokens==null ||tokens.equals("")) {
 				result.add(str);			
 		}
 		return result;
+	}
+
+
+	public static List<CxKeyPair> getKeyCxList() {
+		
+		List <CxKeyPair> allCxKeyPair= new ArrayList<CxKeyPair>();
+		 
+		CxKeyPair ckp1=new CxKeyPair("AIzaSyAoB0pBvZ6veuzDQbR21auME8HJUwmCaos","005635559766885752621:ly8_ifzrwps");
+		CxKeyPair ckp2=new CxKeyPair("AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM","005635559766885752621:va1etsiak-a");
+		CxKeyPair ckp3=new CxKeyPair("AIzaSyCDvxfQpMizImxGbx3yQv6z4bfrvSjHJTY","005635559766885752621:q0yjnkh3lgi");
+		CxKeyPair ckp4=new CxKeyPair("AIzaSyCXTStjSSEk4WH2ravVosalWS6EtGN5s9Q","005635559766885752621:ys-az1pvb2o");
+		CxKeyPair ckp5=new CxKeyPair("AIzaSyAIjU5Hmz0KFKo6m466Gxg1f6CpXE-ILhM","005635559766885752621:7lpnvltcihi");
+		CxKeyPair ckp6=new CxKeyPair("AIzaSyBaCiuRptGo8d091SDza2MjUv9Ls0iuB5E","005635559766885752621:ktb_q5howhq");
+		CxKeyPair ckp7=new CxKeyPair("AIzaSyAC54SHQwECRqHGFg8k3n6OEA9FkM6280E","005635559766885752621:k6dpbo7ovf8");
+		CxKeyPair ckp8=new CxKeyPair("AIzaSyCqstdHwuC2BcFhqdLDUSu_suWQHBhPulE","005635559766885752621:kn50cjge5t4");
+		CxKeyPair ckp9=new CxKeyPair("AIzaSyCbO9ltRiZm8gvmjcphzi2Lmts9y9VlDfE","005635559766885752621:rapzyt3z6f4");
+		CxKeyPair ckp10=new CxKeyPair("AIzaSyDHgWn_MeUvBp0ha41XIXUGsT0LQuaylSs","005635559766885752621:nnlxix8wrxo");
+		CxKeyPair ckp11=new CxKeyPair("AIzaSyCEw3qtyVRYJ9QlhKgQN2FMwRa4N6zxt78","005635559766885752621:fqacawephkk");
+		CxKeyPair ckp12=new CxKeyPair("AIzaSyARXdH3_gBhG3zg3mmCp6NH-RLCqs9w_h8","005635559766885752621:rjqlrd92ema");
+		CxKeyPair ckp13=new CxKeyPair("AIzaSyA2aCykyQf1nZP2ZlA54Nrswliy0kThJ5w","005635559766885752621:mkhzdvvqmdc");
+		CxKeyPair ckp14=new CxKeyPair("AIzaSyAlOeQI4kAlSHvxGpCA7oj9r4ZCzCAsXho","005635559766885752621:qurwj2b9mrw");
+	    allCxKeyPair.add(ckp1);
+	    allCxKeyPair.add(ckp2);
+	    allCxKeyPair.add(ckp3);
+	    allCxKeyPair.add(ckp4);
+	    allCxKeyPair.add(ckp5);
+	    allCxKeyPair.add(ckp6);
+	    allCxKeyPair.add(ckp7);
+	    allCxKeyPair.add(ckp8);
+	    allCxKeyPair.add(ckp9);
+	    allCxKeyPair.add(ckp10);
+	    allCxKeyPair.add(ckp11);
+	    allCxKeyPair.add(ckp12);
+	    allCxKeyPair.add(ckp13);
+	    allCxKeyPair.add(ckp14);
+		return allCxKeyPair;
+	}
+
+
+	public static boolean compareHistoryString(String searchText,
+			String lastsearchwords, int historyquerywindowcount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

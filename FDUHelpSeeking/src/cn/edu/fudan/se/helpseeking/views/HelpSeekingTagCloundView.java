@@ -33,52 +33,99 @@ public class HelpSeekingTagCloundView extends ViewPart {
 	}
 
 	static IViewPart part;
-
+	AmAssitBrowser myBrowser;
 	
+	
+	public AmAssitBrowser getMyBrowser() {
+		return myBrowser;
+	}
+
+	public void setMyBrowser(AmAssitBrowser myBrowser) {
+		this.myBrowser = myBrowser;
+	}
+
 	@Override
 	public void createPartControl(Composite arg0) {
 		// TODO Auto-generated method stub
 		
+
+		Resource foamtreeJsResource=new Resource();
+		String foamtreejscontent;
+		 
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.asserts.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.asserts.js", foamtreejscontent);
+        
+		System.out.println("tagcloud view getplugincurrentpath() path: "+CommUtil.getPluginCurrentPath());
 		
-		AmAssitBrowser myBrower = new AmAssitBrowser();
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.js", foamtreejscontent);
+
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.hints.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.hints.js", foamtreejscontent);
+
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.loading.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.loading.js", foamtreejscontent);
+
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.relaxationprogress.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.relaxationprogress.js", foamtreejscontent);
+
+		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.treemodel.js",true);
+		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
+
+		  Resource foamtreehtml=new Resource();
+		  String foamtreehtmlcontent=foamtreehtml.getResource("/foamtree/foamtreetest.html",true);
+		  File htmlFile=new File(CommUtil.getPluginCurrentPath()+"/foamtreetest.html");
+		  foamtreehtmlcontent="<!DOCTYPE html>"
+		  		+ "<html>"
+		  		+ "<head>"
+		  		+ "<title>Generating FoamTree</title>"
+		  		+ "<meta charset=\"utf-8\" />"
+		  		+ "</head>"
+		  		+ "<body>"
+		  		+ "<div id=\"visualization\" style=\"width: 200px; height: 200px\"></div>"
+		  		+ "<script src=\"carrotsearch.foamtree.js\"></script>"
+		  		+ "<script language=\"javascript\">"
+		  		+ " window.addEventListener(\"load\", function() {"
+		  		+ "var foamtree = new CarrotSearchFoamTree({"
+		  		+ "id: \"visualization\","
+		  		+ "dataObject: {"
+		  		+ "groups: ["
+		  		+ "  { label: \"getResource\", weight: 2.0 },"
+		  				+ " { label: \"illegalArgumentException\", weight: 3.0 },"
+		  				+ "{ label: \"foamtree\", weight: 2.0 },"
+		  				+ "{ label: \"null\", weight: 1.0 }"
+		  				+ "]"
+		  				+ "}"
+		  				+ "});"
+		  				+ "});"
+		  				+ "document.write(location.pathname);"
+		  				+ "</script>"
+		  				+ "</body>"
+		  				+ "</html>";
+		  
+		  
+		  FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"foamtreetestTag.html", foamtreehtmlcontent);
+
+		 myBrowser = new AmAssitBrowser();
 		
 		
-		myBrower.setMyComposite(arg0);
-		myBrower.setDisplay(arg0.getDisplay());
-		myBrower.createShow();
-		myBrower.refreshBrowser();
-		myBrower.setDisableButton(true);
+		myBrowser.setMyComposite(arg0);
+		myBrowser.setDisplay(arg0.getDisplay());
+		myBrowser.createShow();
+		//myBrowser.refreshBrowser();
+		myBrowser.setDisableButton(true);
 		
-		  String userpath=CommUtil.getFDUPluginCurrentPath()+"foamtree/foamtreetest.html";
+		  String userpath=CommUtil.getPluginCurrentPath()+"foamtreetestTag.html";//"http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 			
 			
-		myBrower.setNewUrl(userpath);
-		myBrower.setDisableButton(false);
-		myBrower.setRefreshOnly(true);
-		myBrower.getMyComposite().pack();
+		myBrowser.setNewUrl(userpath);
+		//myBrowser.setDisableButton(false);
+		//myBrowser.setRefreshOnly(true);
+		myBrowser.getMyComposite().pack();
 
 		
+		
 
-//		Resource foamtreeJsResource=new Resource();
-//		String foamtreejscontent;
-//		 
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.asserts.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.asserts.js", foamtreejscontent);
-//
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.js", foamtreejscontent);
-//
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.hints.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.hints.js", foamtreejscontent);
-//
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.loading.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.loading.js", foamtreejscontent);
-//
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.relaxationprogress.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.relaxationprogress.js", foamtreejscontent);
-//
-//		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.treemodel.js",true);
-//		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
 
 		  
 //		carrotsearch.foamtree.asserts.js
@@ -91,10 +138,6 @@ public class HelpSeekingTagCloundView extends ViewPart {
 
 		
 		  
-		  Resource foamtreehtml=new Resource();
-		  String foamtreehtmlcontent=foamtreehtml.getResource("/foamtree/foamtreetest.html",true);
-		  File htmlFile=new File(CommUtil.getPluginCurrentPath()+"/foamtreetest.html");
-		  FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/foamtreetest.html", foamtreehtmlcontent);
 		 // String userpath=htmlFile.getAbsolutePath();
 		  
 

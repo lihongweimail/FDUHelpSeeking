@@ -208,10 +208,10 @@ public class LoopGoogleAPICall extends Thread{
 
 
 
-	public LoopGoogleAPICall(String cse_key,String cse_cx,String search){
+	public LoopGoogleAPICall(String cse_key,String cse_cx,String querytext){
 		setCse_key(cse_key);
 		setCse_cx(cse_cx);
-		setSearch(search);
+		setSearch(querytext);
 		setSearchmode(1);
 
 
@@ -223,7 +223,7 @@ public class LoopGoogleAPICall extends Thread{
 
 	}
 
-	public void commCSESearch(String query) throws MalformedURLException,
+	public void commCSESearch(String querytext) throws MalformedURLException,
 	UnsupportedEncodingException, IOException {
 		int j = 0; // count for the results
 
@@ -232,7 +232,7 @@ public class LoopGoogleAPICall extends Thread{
 		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
 
 		String charset = "UTF-8";
-		URL url = new URL(address + URLEncoder.encode(query, charset));
+		URL url = new URL(address + URLEncoder.encode(querytext, charset));
 		Reader reader = new InputStreamReader(url.openStream(), charset);
 
 		System.out.println(url.getContent());

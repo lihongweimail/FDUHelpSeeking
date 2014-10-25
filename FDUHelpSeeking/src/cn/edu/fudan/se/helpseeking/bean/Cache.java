@@ -60,6 +60,17 @@ public class Cache {
 	List<SearchResults> cacheAutoSearchResults = new ArrayList<>();
 	int cacheAutoSearchResultsIndex = 0;
 	
+	 String currentBrowserTitle="HelloHongwei";
+	 
+	
+	public String getCurrentBrowserTitle() {
+		return currentBrowserTitle;
+	}
+
+	public void setCurrentBrowserTitle(String currentBrowserTitle) {
+		this.currentBrowserTitle = currentBrowserTitle;
+	}
+
 	//记录最近的N个检索词
 	int countAutoTry=0;//自动检索词窗口太小使用的词重复时被拒绝检索次数 3次 则打开普通检索
 	

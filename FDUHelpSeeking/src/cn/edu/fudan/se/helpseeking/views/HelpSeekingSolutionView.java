@@ -9,8 +9,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils.Null;
 import org.carrot2.core.Cluster;
 import org.carrot2.core.Document;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
@@ -36,6 +38,7 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -62,6 +65,9 @@ import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.widgets.Label;
+
 public class HelpSeekingSolutionView extends ViewPart {
 	public HelpSeekingSolutionView() {
 	}
@@ -81,6 +87,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 	//2014.10 新加
 	private static Tree topictree;
 	private static AmAssitBrowser myBrower ;
+	private static Tree urlTree;
 	//2014.10 end.
 	
 	private Text txtSearch;
@@ -91,6 +98,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 	
 	private static int currentActionID=0;
 	private static String currentSearchID="0";
+	private static IViewPart browserpart;
+	private static IViewPart tagcloudpart;
 	
 
 	public void setTxtSeachText(List<KeyWord> selectedKeyWords)
@@ -150,6 +159,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite arg0) {
+		
 		arg0.setLayout(new FillLayout());
 
 		
@@ -339,7 +349,7 @@ public class HelpSeekingSolutionView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				
 				manualSearch();
-				//测试  停用 manualsearch
+				
 				genTopicTree();
 			}
 		});
@@ -348,9 +358,12 @@ public class HelpSeekingSolutionView extends ViewPart {
 		//在调用lingfeng给的 topic API后，生成这个topictree树（第一级为topic title，第二级为 url的title ），
 		//当点击某个topic时，更新后面的tree，调用雪娇的 LDA API 得到一组词汇，生成HTML文件，然后调用和刷新浏览器对象。
 		
+		SashForm topicComposite = new SashForm(SearchComposite, SWT.VERTICAL);
+		topicComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+				
 	//topic list	
-		topictree = new Tree(SearchComposite, SWT.BORDER);
-		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+		topictree = new Tree(topicComposite, SWT.BORDER|SWT.CENTER);
+		//topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		topictree.addSelectionListener(new SelectionListener() {
 			
@@ -358,6 +371,102 @@ public class HelpSeekingSolutionView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 				System.out.println("click:"+item.getData().toString());
+				
+				if (item.getData()=="TOPIC") 
+				{
+				tagcloudpart = FDUHelpSeekingPlugin
+						.getDefault()
+						.getWorkbench()
+						.getActiveWorkbenchWindow()
+						.getActivePage()
+						.findView(
+								"cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
+			
+				if ((tagcloudpart instanceof HelpSeekingTagCloundView)) {
+					
+		String content= "<!DOCTYPE html> <html>  "
+				+ "<head> "
+				+ "<title> Test interact word </title>"
+				+ " </head>"
+				+ "<body>"
+				+ " <p>  "+ item.getText().toString() + " </p>"
+			    + " </body>"
+			    + "</html>";
+		
+					String fileurl=CommUtil.getPluginCurrentPath()+"Tag.html";
+					FileHelper.createFile(fileurl, content);
+					
+					HelpSeekingTagCloundView tcv = (HelpSeekingTagCloundView) tagcloudpart;
+					tcv.getMyBrowser().setNewUrl(fileurl);
+					//bv.getMyBrowser().getMyComposite().pack();
+				}
+		
+				}
+				
+				
+				//TODO 选择一个topic  给出一组list  得到 2014.10
+				
+				urlTree.removeAll();
+				if (item.getData()=="TOPIC") 
+				{
+					
+				for (int i = 0; i < item.getItemCount(); i++) {
+					TreeItem urlTreeItem= new TreeItem(urlTree, SWT.NONE);
+					urlTreeItem.setData(item.getItem(i).getItem(1).getText());
+					urlTreeItem.setText(item.getItem(i).getItem(0).getText());
+					urlTreeItem.setForeground(Display.getDefault()
+							.getSystemColor(SWT.COLOR_RED));
+					
+					
+					TreeItem urlTreeItemofItemtitle =new TreeItem(urlTreeItem, SWT.NONE);
+					urlTreeItemofItemtitle.setData(item.getItem(i).getItem(1).getText());
+					urlTreeItemofItemtitle.setText(item.getItem(i).getItem(1).getText());
+					
+					TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
+					urlTreeItemofItemsummary.setData(item.getItem(i).getItem(1).getText());
+					urlTreeItemofItemsummary.setText(item.getItem(i).getItem(2).getText());
+					
+					urlTreeItem.setExpanded(true);
+				}
+				
+				}
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
+		//URL list	
+		urlTree = new Tree(topicComposite, SWT.BORDER|SWT.CENTER);
+		//urlTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 2, 1));
+		urlTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		topicComposite.setWeights(new int[] {214, 105});
+		new Label(SearchComposite, SWT.NONE);
+		new Label(SearchComposite, SWT.NONE);
+		urlTree.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem item = (TreeItem) e.item;
+				System.out.println("click:"+item.getData().toString());
+				
+				browserpart = FDUHelpSeekingPlugin
+						.getDefault()
+						.getWorkbench()
+						.getActiveWorkbenchWindow()
+						.getActivePage()
+						.findView(
+								"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+			
+				if ((browserpart instanceof HelpSeekingBrowserView)
+				&& item.getData() != null) {
+					HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+					bv.getMyBrowser().setNewUrl(item.getData().toString());
+					//bv.getMyBrowser().getMyComposite().pack();
+				}
 				
 				//TODO 选择一个topic  给出一组list  得到 2014.10
 			}
@@ -368,6 +477,8 @@ public class HelpSeekingSolutionView extends ViewPart {
 				
 			}
 		});
+		
+		
 		
 	//topic list 	
 		
@@ -628,9 +739,14 @@ private void manualSearch() {
 			query.makeCandidateKeywords(Cache.getInstance().getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
 
-			IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-			String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
-			String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+//			IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+//			String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+//			String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+
+			//在此处从14个定制引擎中随机选择一个
+			int temp=CommUtil.randomInt(CommUtil.getKeyCxList().size()-1, 0);
+			String cse_key=CommUtil.getKeyCxList().get(temp).getKey();
+			String cse_cx=CommUtil.getKeyCxList().get(temp).getCx();
 
 			LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,cse_cx,search);
 			 
@@ -807,13 +923,22 @@ private void manualSearch() {
 
 		
 		List<Cluster> clusters = CarrotTopic.fromWebResults(Collections.unmodifiableList(resultsForTopicList));
-		//测试试用句子
-//		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
-//		List<Cluster> clusters = CarrotTopic.fromWebResults(results);
+		
+		//测试试用句子 记得删除！！！
+		
+		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
+        if (clusters.isEmpty()) 
+        {
+           clusters = CarrotTopic.fromWebResults(results);
+           System.out.println("clusters is null");
+        }
+        
 //		
 		// 生成topic tree
 		// 只考虑第一层， level=0时 topic的数量  每个topic下面的子topic暂时不给出； cluster中已有，需要时可以去取
 		topictree.removeAll();
+		urlTree.removeAll();
+		
 
 		for(int i=0; i<clusters.size(); i++)
 		 {
@@ -849,7 +974,7 @@ private void manualSearch() {
 				 
 			 }
 			 
-		     topicitem.setExpanded(true);
+		    // topicitem.setExpanded(true);
 		     
 	 }
 	}

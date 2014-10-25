@@ -39,6 +39,7 @@ import org.eclipse.swt.custom.CTabItem;
 
 
 
+
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.AutoSearchWordsStruct;
@@ -1658,9 +1659,16 @@ public class HelpSeekingSearchView extends ViewPart {
 		query.makeCandidateKeywords(Cache.getInstance()
 				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
-		IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-		String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
-		String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+//		IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+//		String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+//		String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+	
+		//在此处从14个定制引擎中随机选择一个
+		int temp=CommUtil.randomInt(CommUtil.getKeyCxList().size()-1, 0);
+		String cse_key=CommUtil.getKeyCxList().get(temp).getKey();
+		String cse_cx=CommUtil.getKeyCxList().get(temp).getCx();
+
+		
 
 		LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,cse_cx,search);
 

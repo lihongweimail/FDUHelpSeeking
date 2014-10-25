@@ -43,6 +43,7 @@ import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.WindowTotalKeyWords;
 import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView;
 
@@ -61,6 +62,7 @@ public class CacheProcessing extends Thread  {
 
 	IViewPart part ;
 	IViewPart partSolutionView;
+	IViewPart partInteractiveView;
 
 	public CacheProcessing()
 	{
@@ -89,7 +91,7 @@ public class CacheProcessing extends Thread  {
 			try {
 				part=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 				partSolutionView=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-
+                partInteractiveView=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -104,12 +106,144 @@ public class CacheProcessing extends Thread  {
 			newTacticProcessing();
 
 			//放置在searchView
-			simpleTacticQuery();
+			//simpleTacticQuery();
+			
+			
+			//14.10.25  将上下文 信息 传到 interactive view 的formtree中去
+			interactiveTacticQuery();
 
 
 		}
 	}
 
+
+
+
+	private void interactiveTacticQuery() {
+			//
+			
+			if(partInteractiveView instanceof HelpSeekingInteractiveView){
+				HelpSeekingInteractiveView v = (HelpSeekingInteractiveView)partInteractiveView;
+				String searchText="";
+				List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
+
+				int candidateKeywordNum=currentCache.getCurrentKeywordsList().size();
+				int countj=0;
+				for (int i = 0; i <candidateKeywordNum; i++) {
+					
+				
+					if (currentCache.getCurrentKeywordsList().get(i).getKeywordName().trim().equals("")) {
+						continue;
+					}
+				
+						
+					KeyWord kw=currentCache.getCurrentKeywordsList().get(i);
+					keyWordsforQuery.add(kw);
+
+					if (i==0) {
+						searchText=kw.getKeywordName();
+					}
+					else
+					{
+						searchText=searchText+" "+kw.getKeywordName();
+					}
+					
+					countj=countj+1;
+
+					
+
+					if (countj==Basic.TEMP_K_KEYWORDS) {
+						break;
+					}
+					
+					
+
+				}
+
+				
+				
+				//
+				//定时器开启检索  
+				
+				KeyWordsCandidates kCandidates=new KeyWordsCandidates();
+				kCandidates.setKeyWords(keyWordsforQuery);
+				kCandidates.setActionID(currentCache.getCurrentID());
+				kCandidates.setDistance(1);
+				kCandidates.setFrequency(1);
+				
+				currentCache.getHistorysearchlist().add(kCandidates);
+	            resethistorysearchlist(Basic.History_SearchList_Size);
+					
+
+	            //从 kCandidates中保存了历史上动作生成的所有每个动作后，可得到的前K个用于检索的词
+	            // 其中kCandidates的keyWords中保存了一组词以及器权重
+	            //试着将每个动作产生的词 都传递 到foamtree （以后增加策略）
+	            
+
+
+	            int mode=1;
+	            //1 改写 foamtree 关键词 表示是动作生成的查询 并不立即查询      
+	            // 2 为新增的查询，准备自动查询，值为2时触发自动查询。      
+	            // 3新增定时检索 (考虑暂时不给出)
+	            
+
+	 
+	            //历史上使用过这组关键词，历史窗口 3
+	           
+//				if (!CommUtil.compareHistoryString(searchText, Cache.getLastsearchwords(), Basic.historyQueryWindowCount) )
+	
+				if (!CommUtil.compareString(searchText, Cache.getLastsearchwords()) )
+					{
+					v.setCurrentActionID(currentCache.getCurrentID());
+					
+					// 在 problem view 更新 时  Attention动作类型  动作名称"Problem View Changed"
+					ActionCache ac=currentCache.getActions().getActionCachewithActionID(currentCache.getCurrentID());
+					if (ac.getAction().getActionKind()==Kind.ATTENTION 
+							&& ac.getAction().getActionName().equals("Problem View Changed")) {
+						mode=2;
+						notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
+					} else				
+						if (ac.getAction().getActionKind()==Kind.ATTENTION 
+							&& ac.getAction().getActionName().equals("Console View Changed")) 
+					   {
+						mode=2;
+						notifiyQueryList(keyWordsforQuery,QueryLevel.High,mode);
+					   }
+					else
+					{
+						if (mode==1) {
+						
+							notifiyQueryList(keyWordsforQuery,QueryLevel.Middle,mode); 
+
+						}
+						
+						
+					}
+						//TODO  受控实验 开快关 为编译无自动提示功能版本而注释掉自动赋值 代码
+//						v.setCandidateSearchWords(searchText,keyWordsforQuery);
+					if(!keyWordsforQuery.isEmpty())
+					{
+						v.setNewWordsAndMode(keyWordsforQuery,mode);
+						v.setCurrentActionID(currentCache.getCurrentID());
+						
+					}
+					
+					System.out.println("say tactic mode = " +mode );
+	               if (!searchText.equals("")) {
+					Cache.setLastsearchwords(searchText);
+				}
+				}
+				else {
+					System.out.println("the same searchwords!");
+				}
+
+
+			}
+
+
+	
+		
+	}
 
 
 
@@ -1126,6 +1260,8 @@ public class CacheProcessing extends Thread  {
 	//	一个动作就有其对应的一组资源； 这些资源可能相同，可能不同；目前系统实现采用一个动作actionid，其相关的资源的ID都相同	
 	//  获得一个动作使用的资源数量	
 
+	
+	
 
 	@SuppressWarnings("static-access")
 	public void simpleTacticQuery() {
@@ -1137,6 +1273,9 @@ public class CacheProcessing extends Thread  {
 			v2.setCurrentActionID(currentCache.getCurrentID());
 		}
 
+
+		//
+		
 		if(part instanceof HelpSeekingSearchView){
 			HelpSeekingSearchView v = (HelpSeekingSearchView)part;
 			String searchText="";

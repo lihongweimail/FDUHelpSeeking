@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -135,9 +136,16 @@ public class AmAssitBrowser implements ControlListener {
 		browser.addTitleListener(new TitleListener() {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
+				System.out.println(e.title);
+
+                //监听到后，处理HTML生成问题，判断title，最好title用一个全局变量保存，新HTMLtitle要相应变更
+				  //另外，browser 中设置一个属性，用来判断浏览器是否专用于foamtree展示，从而以触发特定的HTML生成事件
+				
 
 			}
 		});
+		
+		
 		// 为浏览器注册地址改变事件
 		browser.addLocationListener(new LocationListener() {
 			public void changing(LocationEvent e) {
@@ -264,62 +272,19 @@ public class AmAssitBrowser implements ControlListener {
 	
 	// 初始化浏览器
 		private void createSimpleBrowser(Composite composite) {
-			
 			// 创建浏览器对象
 			browser = new Browser(composite, SWT.BORDER);
 
 			
-			
-			// 为浏览器注册标题改变事件
 			browser.addTitleListener(new TitleListener() {
 				public void changed(TitleEvent e) {
 					// sShell.setText(APP_TITLE + " - " + e.title);
-
-				}
-			});
-			// 为浏览器注册地址改变事件
-			browser.addLocationListener(new LocationListener() {
-				public void changing(LocationEvent e) {
-//					locationText.setText(e.location);
-				}
-
-				public void changed(LocationEvent e) {
-					
-				}
-			});
-			// 为浏览器注册装载网页事件
-			browser.addProgressListener(new ProgressListener() {
-				// 当装载时，设置装载的进度，并且设置停止按钮可用
-				public void changed(ProgressEvent e) {
-					
-				}
-
-				// 装载完成后设置停止按钮，后退按钮，前进按钮和进度条的状态
-				public void completed(ProgressEvent e) {
-					
-				}
-			});
-			// 注册浏览器状态改变事件
-			browser.addStatusTextListener(new StatusTextListener() {
-				public void changed(StatusTextEvent e) {
-									}
-			});
-
-			// 为浏览器中点击链接打开新URL
-			browser.addOpenWindowListener(new OpenWindowListener() {
-				
-				@Override
-				public void open(WindowEvent event) {
-					 
-		               System.out.println("window open func: "+getBrowser().getUrl());
-		                event.browser = getBrowser();
-		               
-		               
-							
+                System.out.println("select group label is : "+ e.title);
 				}
 			});
 			
-
+			
+			
 		}
 
 	// 创建简单窗 只有浏览器
@@ -333,7 +298,6 @@ public class AmAssitBrowser implements ControlListener {
 		myComposite.setSize(new Point(0, 0));
 		
 			createSimpleBrowser(myComposite);
-		// createBrowser();
 		
 	
 		myComposite.addControlListener(new ControlListener() {
@@ -568,6 +532,8 @@ public class AmAssitBrowser implements ControlListener {
 
 		refreshButton.setVisible(state);// 刷新按钮
 
+		statusText.setVisible(state);
+		progressBar.setVisible(false);
 	}
 	
 	public void setRefreshOnly(boolean state)

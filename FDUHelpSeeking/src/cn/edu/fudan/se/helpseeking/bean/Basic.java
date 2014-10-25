@@ -1,9 +1,13 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.util.INIHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
+import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
+
 
 public class Basic {
 
@@ -707,19 +711,18 @@ public enum QueryLevel {
 	public final static double OLD_RATIO=0.1;
 
 	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
-	public final static int SLIDE_WINDOW_SIZE=40;
+	public final static int SLIDE_WINDOW_SIZE=20;
 
 
 	//从候选检索词中取词数量
-	public final static int TEMP_K_KEYWORDS =5;
+	public final static int TEMP_K_KEYWORDS =10;
 	
 	
-	
-	
-	
-	public final static int WAIT_GOOGLE_TIME=20000;
+	public final static int WAIT_GOOGLE_TIME=10000;
 
-	  
-
+	public static INIHelper mycseini=new INIHelper("/cse.ini",true);
+	public final static List<CxKeyPair> ALL_CX_KEY_PAIRS = mycseini.getCxKeyPairs();
+	                                                     //CommUtil.getKeyCx();
+	public static final int historyQueryWindowCount = 3;
 	
 }
