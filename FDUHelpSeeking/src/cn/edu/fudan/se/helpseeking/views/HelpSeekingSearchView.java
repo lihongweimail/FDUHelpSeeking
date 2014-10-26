@@ -9,9 +9,6 @@ import java.util.Set;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -31,14 +28,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Listener;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
-
-
-
-
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -52,7 +41,6 @@ import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
-import cn.edu.fudan.se.helpseeking.bean.TabRecord;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
@@ -60,7 +48,6 @@ import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
-import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingSearchView extends ViewPart {
 
@@ -91,7 +78,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 	String username = System.getProperties().getProperty("user.name");
 
-	private static int currentActionID;
+	private int currentActionID;
 	private static String currentSearchID = "";
 	Composite SearchComposite;
 	Composite tagComposite;
@@ -697,254 +684,132 @@ public class HelpSeekingSearchView extends ViewPart {
 		gd_autoResultsNext.heightHint = 16;
 		autoResultsNext.setLayoutData(gd_autoResultsNext);
 
-		
-		
-		
-		//2014.10.17 加入 Tab  browser
-		tabFolder = new CTabFolder(arg0, SWT.NONE);
-		//记录对TAB的选择事件
-		tabFolder.addSelectionListener(new SelectionAdapter() {
-		
+		searchResultsTree = new Tree(arg0, SWT.BORDER | SWT.FULL_SELECTION);
+
+		// searchResultsTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
+		// true, true, 24, 1));
+		searchResultsTree.setLayoutData(BorderLayout.CENTER);
+		searchResultsTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		searchResultsTree.addSelectionListener(new SelectionListener() {
 			@Override
-			 public void widgetSelected(final SelectionEvent e)
-			{
-//				if (tabFolder.getSelectionIndex()==0) {
-//					System.out.println(tabFolder.getItem(0).getText());
-//				}
-//				
-//				System.out.println("selectTabID"+selectTabID+"\nwidget selected:\n"+tabFolder.getSelectionIndex()+"\n"+e.toString()+"\n"+e.getClass());
-//				
-				System.out.println("before select tab id"+selectTabID);
-				
-	     if (selectTabID>=tabFolder.getItemCount()) {
-			selectTabID=tabFolder.getSelectionIndex();
-		}
-	     System.out.println("if the last id the change to :"+selectTabID);
-				
-				Timestamp selectTabTime=new Timestamp(System.currentTimeMillis());
-					
-					myTabRecords.get(selectTabID).getUseTimeList().add(selectTabTime.getTime()-startTabTime.getTime());
-					
-			
-				
-				startTabTime=selectTabTime;	
-				selectTabID=tabFolder.getSelectionIndex();
-						
-				
+			public void widgetSelected(SelectionEvent e) {
+
+				TreeItem item = (TreeItem) e.item;
+
+				if (item.getData() == null) {
+					return;
+				}
+
+				// 判断
+				if (item.getData() != null) {
+					if (!(item.getData() instanceof String)) {
+						if ((boolean) item.getData() == false) {
+							return;
+						}
+					}
+
+				}
+
+				// /////////////////////////////////////////////////////////////
+
+				if (PlatformUI.getWorkbench() == null) {
+					return;
+				}
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null) {
+					return;
+				}
+				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+						.getActivePage() == null) {
+					return;
+				}
+
+				IWorkbenchPage page = PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getActivePage();
+				try {
+					part = page
+							.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
+
+				} catch (Exception ple) {
+					ple.printStackTrace();
+					return;
+				}
+
+				// 记录选择的检索结果
+				int selectindex = 0;
+				if (myAutoSearchResultsSelectFlag) {
+					selectindex = -1;
+				}
+				// SearchNode
+				// recordNode=mycacheAutoSearchResults.get(searchResultsTree.getSelectionCount()+selectindex);
+
+
+
+
+
+				if ((part instanceof HelpSeekingSolutionView)
+						&& item.getData() != null) {
+					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
+
+
+					String content="";
+					String compData1=item.getText();
+					String compData2=(String)item.getData();
+
+					int currentindex=0;
+					List <SearchNode> searchNode=mycacheAutoSearchResults.get(currentautosearcresultsindex).getSearchNode();
+					int totalresults=searchNode.size();
+
+
+					for (int i = 0; i < searchNode.size(); i++) {
+
+						if (compData1.equals(searchNode.get(i).getTitle())) {
+
+							if (compData2.equals(searchNode.get(i).getLink())) {
+
+								currentindex=searchNode.get(i).getPositionInResultslist();
+								content=searchNode.get(i).getContents();
+								compData1=searchNode.get(i).getTitle();
+							}
+
+
+						}
+
+
+					}
+
+					UseResultsRecord urr=new UseResultsRecord();
+					urr.setContent(content);
+					urr.setPosition(currentindex);
+					urr.setSearchID(currentSearchID);
+					urr.setSolutionID("0-0");
+					urr.setTitle(compData1);
+					urr.setTotallist(totalresults);
+					urr.setType("Auto");
+					urr.setUrl(compData2);
+					urr.setTime(new Timestamp(System.currentTimeMillis()));
+
+					HelpSeekingSolutionView.openNewTabByURL(urr);
+
+
+
+					String xcontent = "\n---------\n[user:]\t\t\t\t"
+							+ username
+							+ "\n[at time:]\t\t\t"
+							+ (new Timestamp(System.currentTimeMillis()))
+							.toString() + "\n[Current searchID:]\t"
+							+ getCurrentSearchID() + "\n[Selected Item:]\n"
+							+ item.getText() + "\n" + (String) item.getData()
+							+ "\n---------\n";
+					FileHelper.appendContentToFile("result.txt", xcontent);
+				}
+
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {
 			}
 		});
-		
-		//记录对TAB的关闭，打开等事件
-		tabFolder.addCTabFolder2Listener(new CTabFolder2Listener() {
-			
-			@Override
-			public void showList(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void restore(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void minimize(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void maximize(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void close(CTabFolderEvent event) {
-				// TODO Auto-generated method stub
-//				System.out.println("close:\n" +event.toString()+"\n"+event.getClass()+"\n 选择的是"+ tabFolder.getSelectionIndex());
-				
-				System.out.println("close current tabid:"+selectTabID);
-				Timestamp disposeTime=new Timestamp(System.currentTimeMillis());
-				
-					selectTabID=tabFolder.getSelectionIndex();	
-					
-					System.out.println("close select tabid "+selectTabID);
-					
-					myTabRecords.get(selectTabID).getUseTimeList().add(disposeTime.getTime()-startTabTime.getTime());
-					myTabRecords.get(selectTabID).setEndTimestamp(disposeTime);
-						DatabaseUtil.addBrowserUseToDataBase(myTabRecords.get(selectTabID));
-						myTabRecords.remove(selectTabID);
-			
-				startTabTime=disposeTime;		
-				
-			
-				
-				
-				
-			}
-		});
-		
-		tabFolder.addDisposeListener(new DisposeListener() {
-			
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				// TODO Auto-generated method stub
-				System.out.println("dispose:\n" +e.toString()+"\n"+e.getClass());
-				
-				Timestamp disposeTime=new Timestamp(System.currentTimeMillis());
-				
-				
-				startTabTime=disposeTime;
-				
-				if (myTabRecords.size()>0) {
-					
-				
-				for (int i = 1; i < myTabRecords.size(); i++) {
-					myTabRecords.get(i).setEndTimestamp(disposeTime);
-					myTabRecords.get(i).getUseTimeList().add(disposeTime.getTime()-startTabTime.getTime());
-					
-					DatabaseUtil.addBrowserUseToDataBase(myTabRecords.get(i));
-				}
-			
-				for (int i = 1; i < myTabRecords.size(); i++) {
-					myTabRecords.remove(i);
-				}
-				}
-				selectTabID=tabFolder.getSelectionIndex();
-				
-				
-			}
-		});
-			
-// 20141017 no searchresultstree , just tabfolder for browser
-//		searchResultsTree = new Tree(arg0, SWT.BORDER | SWT.FULL_SELECTION);
-//
-//		// searchResultsTree.setLayoutData(new GridData(SWT.FILL, SWT.FILL,
-//		// true, true, 24, 1));
-//		searchResultsTree.setLayoutData(BorderLayout.CENTER);
-//		searchResultsTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-//		searchResultsTree.addSelectionListener(new SelectionListener() {
-//			@Override
-//			public void widgetSelected(SelectionEvent e) {
-//
-//				TreeItem item = (TreeItem) e.item;
-//
-//				if (item.getData() == null) {
-//					return;
-//				}
-//
-//				// 判断
-//				if (item.getData() != null) {
-//					if (!(item.getData() instanceof String)) {
-//						if ((boolean) item.getData() == false) {
-//							return;
-//						}
-//					}
-//
-//				}
-//
-//				// /////////////////////////////////////////////////////////////
-//
-//				if (PlatformUI.getWorkbench() == null) {
-//					return;
-//				}
-//				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow() == null) {
-//					return;
-//				}
-//				if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-//						.getActivePage() == null) {
-//					return;
-//				}
-//
-//				IWorkbenchPage page = PlatformUI.getWorkbench()
-//						.getActiveWorkbenchWindow().getActivePage();
-//				try {
-//					part = page
-//							.showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
-//
-//				} catch (Exception ple) {
-//					ple.printStackTrace();
-//					return;
-//				}
-//
-//				// 记录选择的检索结果
-//				int selectindex = 0;
-//				if (myAutoSearchResultsSelectFlag) {
-//					selectindex = -1;
-//				}
-//				// SearchNode
-//				// recordNode=mycacheAutoSearchResults.get(searchResultsTree.getSelectionCount()+selectindex);
-//
-//
-//
-//
-//
-//				if ((part instanceof HelpSeekingSolutionView)
-//						&& item.getData() != null) {
-//					HelpSeekingSolutionView v = (HelpSeekingSolutionView) part;
-//
-//
-//					String content="";
-//					String compData1=item.getText();
-//					String compData2=(String)item.getData();
-//
-//					int currentindex=0;
-//					List <SearchNode> searchNode=mycacheAutoSearchResults.get(currentautosearcresultsindex).getSearchNode();
-//					int totalresults=searchNode.size();
-//
-//
-//					for (int i = 0; i < searchNode.size(); i++) {
-//
-//						if (compData1.equals(searchNode.get(i).getTitle())) {
-//
-//							if (compData2.equals(searchNode.get(i).getLink())) {
-//
-//								currentindex=searchNode.get(i).getPositionInResultslist();
-//								content=searchNode.get(i).getContents();
-//								compData1=searchNode.get(i).getTitle();
-//							}
-//
-//
-//						}
-//
-//
-//					}
-//
-//					UseResultsRecord urr=new UseResultsRecord();
-//					urr.setContent(content);
-//					urr.setPosition(currentindex);
-//					urr.setSearchID(currentSearchID);
-//					urr.setSolutionID("0-0");
-//					urr.setTitle(compData1);
-//					urr.setTotallist(totalresults);
-//					urr.setType("Auto");
-//					urr.setUrl(compData2);
-//					urr.setTime(new Timestamp(System.currentTimeMillis()));
-//
-//					HelpSeekingSolutionView.openNewTabByURL(urr);
-//
-//
-//
-//					String xcontent = "\n---------\n[user:]\t\t\t\t"
-//							+ username
-//							+ "\n[at time:]\t\t\t"
-//							+ (new Timestamp(System.currentTimeMillis()))
-//							.toString() + "\n[Current searchID:]\t"
-//							+ getCurrentSearchID() + "\n[Selected Item:]\n"
-//							+ item.getText() + "\n" + (String) item.getData()
-//							+ "\n---------\n";
-//					FileHelper.appendContentToFile("result.txt", xcontent);
-//				}
-//
-//			}
-//
-//			@Override
-//			public void widgetDefaultSelected(SelectionEvent e) {
-//			}
-//		});
-//===============no searchresult tree
+
 		// keywordsTree= new Tree(arg0, SWT.BORDER | SWT.FULL_SELECTION);
 		//
 		// keywordsTree.setLayoutData(BorderLayout.SOUTH);
@@ -1045,113 +910,7 @@ public class HelpSeekingSearchView extends ViewPart {
 		//
 
 	}
-	
-	private static CTabFolder tabFolder;
-	private static CTabItem tabItem;
-	static List<TabRecord> myTabRecords=new ArrayList<>();
-	
-	
-	static Timestamp startTabTime;
-	static Timestamp lostFocusTime;
-	static int selectTabID=0;
 
-	public static CTabFolder getTabFolder() {
-		return tabFolder;
-	}
-
-	public static void setTabFolder(CTabFolder tabFolder) {
-		HelpSeekingSearchView.tabFolder = tabFolder;
-	}
-	
-	
-	//	type:   auto   manual 
-	public static void openNewTabByURL(UseResultsRecord urr) {
-		
-		
-			if (urr.getUrl()!=null) {
-			if (!urr.getUrl().equals("")) {
-
-				final CTabItem tab = new CTabItem(tabFolder, SWT.CLOSE);
-				tab.setText(urr.getTitle());
-				
-				String maxsolutionID=String.valueOf(currentActionID)+urr.getType()+urr.getSearchID()+"-"+String.valueOf(urr.getPosition());
-//				tab.setData(maxsolutionID);// 唯一编号 actionid + SERCHTYPE+SEARCHID+POSTION
-
-				Timestamp firstOpenTime=new Timestamp(System.currentTimeMillis());
-				Composite tabComposite = new Composite(tabFolder, SWT.NONE);
-				tabComposite.setLayoutData(BorderLayout.NORTH);
-				tabComposite.setLayout(new GridLayout(2, false));
-				AmAssitBrowser myBrower = new AmAssitBrowser();
-				
-				
-				myBrower.setMyComposite(tabComposite);
-				myBrower.setDisplay(tabComposite.getDisplay());
-				myBrower.createShow();
-				myBrower.refreshBrowser();
-				myBrower.setDisableButton(true);
-
-				myBrower.setNewUrl(urr.getUrl());
-				myBrower.getMyComposite().pack();
-				
-				tab.setControl(tabComposite);
-
-//				tabFolder.setSelection(tab);	
-				
-				
-				
-				
-			
-				TabRecord mytabR=new TabRecord();
-				
-				int reopenindex=0;
-				mytabR.setStarTimestamp(firstOpenTime);
-				mytabR.setContentRecord(urr.getContent());
-				mytabR.setCurrentActionID(currentActionID);
-				mytabR.setSearchID(currentSearchID);
-				mytabR.setSearchResultsListPostion(urr.getPosition());
-				mytabR.setTotallistnumber(urr.getTotallist());
-				mytabR.setSolutionID(maxsolutionID);// 唯一编号 actionid + SERCHTYPE+SEARCHID+POSTION
-				mytabR.setTabName(urr.getTitle());
-				mytabR.setTitleRecord(urr.getTitle());
-				mytabR.setUrlRecord(urr.getUrl());
-				mytabR.setReOpenIndex(reopenindex);
-				mytabR.setSearchType(urr.getType());
-				
-				
-					for (int i = 0; i < myTabRecords.size(); i++) {
-					
-						if (myTabRecords.get(i).getUrlRecord()!=null) {
-						
-					if (myTabRecords.get(i).getUrlRecord().equals(urr.getUrl())) {
-						reopenindex=myTabRecords.get(i).getReOpenIndex();
-						mytabR.setReOpenIndex(reopenindex+1);
-					}
-					
-					}
-					
-				}	
-				
-				startTabTime=firstOpenTime;
-				
-				urr.setSolutionID(maxsolutionID);
-								
-				myTabRecords.add(mytabR);
-				tab.setData(mytabR);
-				
-		
-				
-				
-				DatabaseUtil.addUseResultsRecord(urr);
-				
-				
-
-			}
-
-			}
-
-
-		
-	}
 
 
 	public void domysearch() throws InterruptedException
@@ -1659,16 +1418,9 @@ public class HelpSeekingSearchView extends ViewPart {
 		query.makeCandidateKeywords(Cache.getInstance()
 				.getCurrentKeywordsList(), Basic.MAX_CANDIDATE_KEYWORDS);
 		
-//		IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-//		String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
-//		String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
-	
-		//在此处从14个定制引擎中随机选择一个
-		int temp=CommUtil.randomInt(CommUtil.getKeyCxList().size()-1, 0);
-		String cse_key=CommUtil.getKeyCxList().get(temp).getKey();
-		String cse_cx=CommUtil.getKeyCxList().get(temp).getCx();
-
-		
+		IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+		String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+		String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
 
 		LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,cse_cx,search);
 
