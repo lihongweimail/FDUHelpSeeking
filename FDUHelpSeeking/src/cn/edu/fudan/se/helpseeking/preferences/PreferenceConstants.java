@@ -17,7 +17,7 @@ public class PreferenceConstants {
 	public static final String PASSWORD_KEY = "$PASSWORD_KEY";  
 	public static final String DATABASE_KEY="$DATABASE_KEY";
 	
-	private static String databasePath=CommUtil.getPluginCurrentPath();
+	private static String databasePath=CommUtil.getFDUPluginWorkingPath();
 	
 	//为文本框值定义三个默认值      
 	public static final String URL_DEFAULT = "jdbc:sqlite:"+databasePath+"/helpseeking.db";

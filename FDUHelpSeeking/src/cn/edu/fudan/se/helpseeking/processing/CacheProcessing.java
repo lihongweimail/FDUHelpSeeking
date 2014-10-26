@@ -400,6 +400,7 @@ public class CacheProcessing extends Thread {
 
 			// 取前k个单词作为查询词
 			currentCache.setCurrentKeywordsList(deDupilcateTotallKeyWords);
+			System.out.println("newTacticProcessing function\n deDupilcateTotallKeyWords: "+deDupilcateTotallKeyWords.toString());
 		}
 
 	}
@@ -518,7 +519,8 @@ public class CacheProcessing extends Thread {
 					//
 					// //频率加权
 					// double frequency=doKeyWords.get(j1).getFrequency();
-					System.out.println(score);
+					System.out.println("doOldStep fuction \n score: "+score);
+					System.out.println("dokeyWords: "+doKeyWords.get(i).getKeyWords().toString());
 
 					doKeyWords.get(j1).getKeyWords().get(i).setScore(score);
 					doKeyWords.get(j1).getKeyWords().get(i).setFrequency(freq);

@@ -115,8 +115,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	private SashForm sashComposite;
 	private Browser browser;
 	Composite foamtreeComposite;
-	String foamTreeFileNamePath = CommUtil.getPluginCurrentPath()
-			+ "foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
+	String foamTreeFileNamePath = CommUtil.getFDUPluginWorkingPath()
+			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -130,7 +130,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
-		initFoamTreeEnv(CommUtil.getPluginCurrentPath());
+		initFoamTreeEnv(CommUtil.getFDUPluginWorkingPath());
 
 		// foamTreeFileNamePath=CommUtil.getPluginCurrentPath()+"foamtreetest.html";//"http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 
@@ -322,13 +322,17 @@ if(!e.title.equals("HelloHongwei"))
 			String foamTreeContent, String title) {
 
 		if (foamTreeContent.equals(""))
-			foamTreeContent = "dataObject: {" + "groups: ["
-					+ "{ label: \"Welcome\", weight: 2.0 },"
-					+ "{ label: \"HelpSeeking\", weight: 4.0 },"
-					+ "{ label: \"To\", weight: 1.0},"
-					+ "{ label: \"Plugin\", weight: 2.0 },"
-					+ "{ label: \"tool\", weight: 1.0 }" + "]" + "}";
+		{
+		foamTreeContent = "dataObject: {" + "groups: ["
+		+ "{ label: \"Welcome\", weight: 2.0 },"
+		+ "{ label: \"HelpSeeking\", weight: 4.0 },"
+		+ "{ label: \"To\", weight: 0.5},"
+		+ "{ label: \"Plugin\", weight: 3.0 },"
+		+ "{ label: \"tool\", weight: 1.0 }" + "]" + "}";
 
+		title="HelloHongwei";
+		}
+		
 		//File htmlFile = new File(foamtreeFileNamePath); // CommUtil.getPluginCurrentPath()+"/foamtreetest.html"
 		String foamtreehtmlcontent = "<!DOCTYPE html>" + "<html>" + "<head>"
 				+ "<title>"
@@ -370,39 +374,39 @@ if(!e.title.equals("HelloHongwei"))
 				+ foamtreeFilesPath);
 		System.out
 				.println("path getplugincurrentpath()  in initfoamtreeEnv(): "
-						+ CommUtil.getPluginCurrentPath());
+						+ CommUtil.getFDUPluginWorkingPath());
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.asserts.js", true);
 		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "carrotsearch.foamtree.asserts.js", foamtreejscontent);
+				+ "/carrotsearch.foamtree.asserts.js", foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.js", true);
-		FileHelper.writeNewFile(foamtreeFilesPath + "carrotsearch.foamtree.js",
+		FileHelper.writeNewFile(foamtreeFilesPath + "/carrotsearch.foamtree.js",
 				foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.util.hints.js", true);
 		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "carrotsearch.foamtree.util.hints.js", foamtreejscontent);
+				+ "/carrotsearch.foamtree.util.hints.js", foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.util.loading.js", true);
 		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "carrotsearch.foamtree.util.loading.js", foamtreejscontent);
+				+ "/carrotsearch.foamtree.util.loading.js", foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.util.relaxationprogress.js",
 				true);
 		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "carrotsearch.foamtree.util.relaxationprogress.js",
+				+ "/carrotsearch.foamtree.util.relaxationprogress.js",
 				foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.util.treemodel.js", true);
 		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
+				+ "/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
 	}
 
 	@Override

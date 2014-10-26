@@ -32,6 +32,16 @@ public class ExceptionalPartAndView {
 		IViewPart recommendationViewPart = currentActiveIWorkbenchPage
 				.findView(
 						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.RecommendationView");
+		IViewPart browserViewPart = currentActiveIWorkbenchPage
+				.findView(
+						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.HelpSeekingBrowserView");
+		IViewPart interactiveViewPart = currentActiveIWorkbenchPage
+				.findView(
+						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.HelpSeekingInteractiveView");
+		IViewPart tagCloundViewPart = currentActiveIWorkbenchPage
+				.findView(
+						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.HelpSeekingTagCloundView");
+
 		
 		if (part.equals(helpseekingSearchViewPart)) {
 			checkResult=true;
@@ -48,6 +58,16 @@ public class ExceptionalPartAndView {
 		if (part.equals(recommendationViewPart)) {
 			checkResult=true;
 		}
+		if (part.equals(browserViewPart)) {
+			checkResult=true;
+		}
+		if (part.equals(interactiveViewPart)) {
+			checkResult=true;
+		}
+		if (part.equals(tagCloundViewPart)) {
+			checkResult=true;
+		}
+		
 	
 //		System.out.println("view check result: "+ checkResult);
 		return checkResult;

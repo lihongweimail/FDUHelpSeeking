@@ -74,7 +74,7 @@ public class DatabaseUtil {
 	public static DataSource source = null;
     //public static  String URL =FDUHelpSeekingPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.URL_KEY);//"jdbc:mysql://localhost:3306/";
 	
-	private static String databasePath=CommUtil.getPluginCurrentPath();
+	private static String databasePath=CommUtil.getFDUPluginWorkingPath();
 	public static  String URL ="jdbc:sqlite:"+databasePath+"/helpseeking.db";
 			//"jdbc:sqlite:helpseeking.db";
 	// for network DB SERVER URL : 	"jdbc:mysql://10.131.252.224:3309/helpseeking"

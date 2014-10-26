@@ -1,6 +1,8 @@
 package cn.edu.fudan.se.helpseeking.test;
 import java.io.File;
 
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+
 
 public class FilePathTest {
 	
@@ -16,6 +18,11 @@ public class FilePathTest {
 	  System.out.println(new File("/").getAbsolutePath());        
 	  System.out.println(System.getProperty("user.dir"));    
 	  System.out.println(ClassLoader.getSystemResource("")+"foamtreetest.html");
+	  
+	  System.out.println(System.getProperties().getProperty("os.name"));
+	  System.out.println(System.getProperties().getProperty("user.home"));
+	  System.out.println(CommUtil.getFDUPluginWorkingPath());
+	  
 	 }
 	}
 

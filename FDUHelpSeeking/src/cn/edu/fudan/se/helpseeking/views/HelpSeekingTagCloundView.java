@@ -53,32 +53,32 @@ public class HelpSeekingTagCloundView extends ViewPart {
 		String foamtreejscontent;
 		 
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.asserts.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.asserts.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.asserts.js", foamtreejscontent);
         
-		System.out.println("tagcloud view getplugincurrentpath() path: "+CommUtil.getPluginCurrentPath());
+		System.out.println("tagcloud view getplugincurrentpath() path: "+CommUtil.getFDUPluginWorkingPath());
 		
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.js", foamtreejscontent);
 
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.hints.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.hints.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.util.hints.js", foamtreejscontent);
 
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.loading.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.loading.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.util.loading.js", foamtreejscontent);
 
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.relaxationprogress.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.relaxationprogress.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.util.relaxationprogress.js", foamtreejscontent);
 
 		foamtreejscontent=foamtreeJsResource.getResource("/foamtree/carrotsearch.foamtree.util.treemodel.js",true);
-		FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
+		FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
 
 		  Resource foamtreehtml=new Resource();
 		  String foamtreehtmlcontent=foamtreehtml.getResource("/foamtree/foamtreetest.html",true);
-		  File htmlFile=new File(CommUtil.getPluginCurrentPath()+"/foamtreetest.html");
+		  File htmlFile=new File(CommUtil.getFDUPluginWorkingPath()+"/foamtreetest.html");
 		  foamtreehtmlcontent="<!DOCTYPE html>"
 		  		+ "<html>"
 		  		+ "<head>"
-		  		+ "<title>Generating FoamTree</title>"
+		  		+ "<title>HelloHongwei</title>"
 		  		+ "<meta charset=\"utf-8\" />"
 		  		+ "</head>"
 		  		+ "<body>"
@@ -104,7 +104,7 @@ public class HelpSeekingTagCloundView extends ViewPart {
 		  				+ "</html>";
 		  
 		  
-		  FileHelper.writeNewFile(CommUtil.getPluginCurrentPath()+"foamtreetestTag.html", foamtreehtmlcontent);
+		  FileHelper.writeNewFile(CommUtil.getFDUPluginWorkingPath()+"/foamtreetestTag.html", foamtreehtmlcontent);
 
 		 myBrowser = new AmAssitBrowser();
 		
@@ -115,7 +115,7 @@ public class HelpSeekingTagCloundView extends ViewPart {
 		//myBrowser.refreshBrowser();
 		myBrowser.setDisableButton(true);
 		
-		  String userpath=CommUtil.getPluginCurrentPath()+"foamtreetestTag.html";//"http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
+		  String userpath=CommUtil.getFDUPluginWorkingPath()+"/foamtreetestTag.html";//"http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 			
 			
 		myBrowser.setNewUrl(userpath);

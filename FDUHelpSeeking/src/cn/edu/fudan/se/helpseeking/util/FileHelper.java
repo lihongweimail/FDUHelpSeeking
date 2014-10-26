@@ -62,7 +62,31 @@ public class FileHelper
 		
 	}
 	
+	public static void createDirectory(String dir) {
 
+		File directory = new File(dir);
+
+		//director.mkdir()方法只能创建一级目录，其父级目录必须存在，否则会有异常
+		if (directory.mkdir()) {
+
+		System.out.println("Success using alternative 1");
+
+		} 
+		else {
+
+		//使用mkdirs()方法可以创建多层级目录
+		if (directory.mkdirs()) {
+
+		System.out.println("Success using alternative 2");
+
+		}
+		else {
+
+		System.out.println("Failed using both alternative 1 and alternative 2");
+
+		}
+		}
+		}
 
 	public static void createFile(String fileName) {
 		File file = new File(fileName);
