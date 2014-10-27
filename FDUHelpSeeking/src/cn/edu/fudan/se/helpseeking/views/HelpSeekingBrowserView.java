@@ -122,8 +122,8 @@ public class HelpSeekingBrowserView extends ViewPart {
 		  topicContentText = new Text(urllistComposite, SWT.BORDER | SWT.WRAP
 					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
 					| SWT.MULTI);
-		  GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, false,5, 1);
-			gd_txtSearch.heightHint = 20;
+		  GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, true,5, 1);
+			gd_txtSearch.heightHint = -1;
 			gd_txtSearch.widthHint = -1;
 			topicContentText.setLayoutData(gd_txtSearch);
 			topicContentText.setForeground(SWTResourceManager.getColor(255, 0, 0));
@@ -174,7 +174,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 			 TreeItem toI=new TreeItem(urlTree, SWT.NONE);
 			 toI.setText("to");
 			 TreeItem helpseekingI=new TreeItem(urlTree, SWT.NONE);
-			 helpseekingI.setText("Helpseeking");
+			 helpseekingI.setText("HelpSeeking");
 			 TreeItem pluginI=new TreeItem(urlTree, SWT.NONE);
 			 pluginI.setText("Plugin");
 			 TreeItem toolI=new TreeItem(urlTree, SWT.NONE);

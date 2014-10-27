@@ -14,6 +14,8 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -185,19 +187,36 @@ if(!e.title.equals("HelloHongwei"))
 
 		// ============
 
+		
+		SashForm topicSashForm=new SashForm(sashComposite, SWT.VERTICAL);
+		
 		// sashComposit 水平分割处
-		Composite SearchComposite = new Composite(sashComposite, SWT.NONE);
+		Composite SearchComposite = new Composite(topicSashForm, SWT.NONE);
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
 		SearchComposite.setLayout(new GridLayout(2, false));
 
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
 				| SWT.MULTI);
-		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, false,
+		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, true,
 				1, 1);
-		gd_txtSearch.heightHint = 40;
+		gd_txtSearch.heightHint = -1;
 		gd_txtSearch.widthHint = -1;
 		txtSearch.setLayoutData(gd_txtSearch);
+		txtSearch.addControlListener(new ControlListener() {
+			
+			@Override
+			public void controlResized(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void controlMoved(ControlEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
 		txtSearch.addKeyListener(new KeyListener() {
 
@@ -237,12 +256,22 @@ if(!e.title.equals("HelloHongwei"))
 		// SWT.VERTICAL);
 		// topicComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true, 2, 1));
+		
+		
+		
+Composite  topicCom = new Composite(topicSashForm, SWT.NONE);
+topicCom.setLayout(new GridLayout(2, false));
 
 		// topic list
-		topictree = new Tree(SearchComposite, SWT.BORDER | SWT.CENTER);
+		topictree = new Tree(topicCom,  SWT.BORDER | SWT.CENTER);
+		
+		
 		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
+		topicSashForm.setWeights(new int[] {100, 300});
+		
+		
 		topictree.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -314,7 +343,7 @@ if(!e.title.equals("HelloHongwei"))
 
 			}
 		});
-		sashComposite.setWeights(new int[] { 180, 400 });
+		sashComposite.setWeights(new int[] { 200, 400 });
 
 	}
 

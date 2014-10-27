@@ -405,7 +405,7 @@ public class CacheProcessing extends Thread {
 
 	}
 
-	private List<KeyWord> docontextweightforWords(int countwindowsize) {
+	private List<KeyWord> docontextweightforWords(int countwindowsizeLimited) {
 		List<KeyWord> result = new ArrayList<KeyWord>();
 
 		// 在最近的窗中出现的次数
@@ -413,12 +413,13 @@ public class CacheProcessing extends Thread {
 
 		// 放到若干个列中
 		int size = currentCache.getHistoryKeyWords().size();
+		System.out.println("fuction docontextweightforwords:\n current window size: " +countwindowsizeLimited +"\n working window size: "+size);
 
 		int totalwords = 0;
 
-		if (countwindowsize < size) {
+		if (countwindowsizeLimited < size) {
 
-			for (int i = size - 1; i >= size - countwindowsize; i--) {
+			for (int i = size - 1; i >= size - countwindowsizeLimited; i--) {
 
 				List<KeyWord> tempKeyWords = currentCache.getHistoryKeyWords()
 						.get(i).getTotallKeyWords();
@@ -450,7 +451,7 @@ public class CacheProcessing extends Thread {
 
 			for (int i = 0; i < hws.size(); i++) {
 
-				for (int j = size - 1; j >= size - countwindowsize; j--) {
+				for (int j = size - 1; j >= size - countwindowsizeLimited; j--) {
 
 					List<KeyWord> tempKeyWords = currentCache
 							.getHistoryKeyWords().get(j).getTotallKeyWords();
