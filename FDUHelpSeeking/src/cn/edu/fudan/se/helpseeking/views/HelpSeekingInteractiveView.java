@@ -283,8 +283,33 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
 
-				//新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree， 展示
 				if (item.getData()=="TOPIC") {
+					
+//					//老处理模式，点击topic 后在browser view处 显示该topic下的URL.
+//					if (item.getData() == "TOPIC") {
+//						// 将topic的所有数据传到browser窗口
+
+						TreeItem[] sendoutURLlist = item.getItems();
+
+						browserpart = FDUHelpSeekingPlugin
+								.getDefault()
+								.getWorkbench()
+								.getActiveWorkbenchWindow()
+								.getActivePage()
+								.findView(
+										"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+
+						if ((browserpart instanceof HelpSeekingBrowserView)) {
+							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+							bv.getTopicContentText().setText(item.getText());
+							bv.genUrlTree(sendoutURLlist);
+						}
+
+
+					
+						//新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree， 展示
+									
+					
 					//获得URLlist
 					ArrayList<String> urlList=new ArrayList<String>();
 					TreeItem[] treeItemSet=item.getItems();
@@ -308,30 +333,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					}
 					
 					
+
 				}
-				
-				
-				//老处理模式，点击topic 后在browser view处 显示该topic下的URL.
-//				if (item.getData() == "TOPIC") {
-//					// 将topic的所有数据传到browser窗口
-//
-//					TreeItem[] sendoutURLlist = item.getItems();
-//
-//					browserpart = FDUHelpSeekingPlugin
-//							.getDefault()
-//							.getWorkbench()
-//							.getActiveWorkbenchWindow()
-//							.getActivePage()
-//							.findView(
-//									"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-//
-//					if ((browserpart instanceof HelpSeekingBrowserView)) {
-//						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-//						bv.getTopicContentText().setText(item.getText());
-//						bv.genUrlTree(sendoutURLlist);
-//					}
-//
-//				}
 			}
 
 			@Override
