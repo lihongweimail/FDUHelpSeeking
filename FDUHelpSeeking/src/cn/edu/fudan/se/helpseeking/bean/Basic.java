@@ -682,7 +682,6 @@ public enum QueryLevel {
 
 	public static final long Auto_Search_Timer = 2*60*1000;//自动检索间隔时间
 	public static final int Auto_Search_Try = 10;//自动检索次数
-	public static final int CountWindowSize = 20;
 
 	public final static double DISTANCE_RATIO=0.01;
 	
@@ -711,14 +710,15 @@ public enum QueryLevel {
 	public final static double OLD_RATIO=0.1; //老化比率
 
 	//动作的滑动窗口大小： 经验上 15分钟的动作在300个左右
-	public final static int SLIDE_WINDOW_SIZE=30;  //滑动窗口数量 
+	public final static int SLIDE_WINDOW_SIZE=30;  //保留的最大数量的历史窗口数量，工具在这个窗口内可以使用countwindow作为焦点框住的内容进行分析
+	public static final int CountWindowSize = 10;//处置窗口的范围； 要小于SLID_WINDOW_SIZE  编译受控版本时 设置这个值就好了。
 
 
 	//从候选检索词中取词数量
 	public final static int TEMP_K_KEYWORDS =10;
 	
 	
-	public final static int WAIT_GOOGLE_TIME=10000;
+	public final static int WAIT_GOOGLE_TIME=6000;
 
 	public static INIHelper mycseini=new INIHelper("/cse.ini",true);
 	public final static List<CxKeyPair> ALL_CX_KEY_PAIRS = mycseini.getCxKeyPairs();

@@ -1,10 +1,14 @@
 package cn.edu.fudan.se.helpseeking.views;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import liuyang.nlp.lda.main.FudanTopicWithWordsListBean;
+import liuyang.nlp.lda.main.LdaGibbsSampling;
 
 import org.carrot2.core.Cluster;
 import org.carrot2.core.Document;
@@ -35,6 +39,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.htmlparser.util.ParserException;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
@@ -116,10 +121,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	private SashForm sashComposite;
 	private Browser browser;
+	private Browser topicFilterBrowser;
 	Composite foamtreeComposite;
+	boolean titleaddflag=true;
+	
 	String foamTreeFileNamePath = CommUtil.getFDUPluginWorkingPath()
 			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
+	String foamTreeTopicFilterFileNamePath=CommUtil.getFDUPluginWorkingPath()+"/topicfilter.html";
 
+	
 	@Override
 	public void createPartControl(Composite arg0) {
 
@@ -127,65 +137,57 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		sashComposite = new SashForm(arg0, SWT.VERTICAL);
 
-		
-		
-		
-		
-//		foamtreeComposite=new Composite(sashComposite, SWT.NONE);
-//		foamtreeComposite.setLayout(new FillLayout());
+		// foamtreeComposite=new Composite(sashComposite, SWT.NONE);
+		// foamtreeComposite.setLayout(new FillLayout());
 
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
 		initFoamTreeEnv(CommUtil.getFDUPluginWorkingPath());
 
-
 		browser = new Browser(sashComposite, SWT.BORDER);
-		
-       
-		String foamTreeContent = ""; // 使用工具生成foamtree的内容
-		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,"HelloHongwei");
 
-		
+		String foamTreeContent = ""; // 使用工具生成foamtree的内容
+		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,
+				"HelloHongwei");
 
 		browser.addTitleListener(new TitleListener() {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
 				System.out.println("select group label is : " + e.title);
 				String searchtext = txtSearch.getText();
-if(!e.title.equals("HelloHongwei"))
-{ if (!CommUtil.compareString(Cache.getInstance()
-						.getCurrentBrowserTitle(), e.title)) {
+				if (!e.title.toLowerCase().equals("HelloHongwei".toLowerCase())) {
+//					if (!CommUtil.compareString(Cache.getInstance()
+//							.getCurrentBrowserTitle(), e.title)) {
 
-	
-					String candidateWord = (e.title).replace(" ", ".");
-					String temp2 = "";
-					boolean flag = true;
-					for (String str : searchtext.split("[ ]")) {
-						if (!str.equals(candidateWord)) {
-							if (temp2.equals("")) {
-								temp2 = str;
+						String candidateWord = (e.title).replace(" ", ".");
+						String temp2 = "";
+						//???? titleaddflag = true;
+						for (String str : searchtext.split("[ ]")) {
+							if (!str.toLowerCase().equals(candidateWord.toLowerCase())) {
+								if (temp2.equals("")) {
+									temp2 = str;
+								} else {
+									temp2 = temp2 + " " + str;
+								}
 							} else {
-								temp2 = temp2 + " " + str;
+								titleaddflag = false;
 							}
-						} else {
-							flag = false;
+
 						}
 
-					}
+						if (titleaddflag) {
+							if (temp2.equals("")) {
+								temp2 = candidateWord;
 
-					if (flag) {
-						if (temp2.equals("")) {
-							temp2 = candidateWord;
-
-						} else {
-							temp2 = temp2 + " " + candidateWord;
+							} else {
+								temp2 = temp2 + " " + candidateWord;
+							}
 						}
-					}
 
-					txtSearch.setText(temp2);
+						txtSearch.setText(temp2);
 
+//					}
 				}
-			}
 			}
 		});
 
@@ -194,9 +196,8 @@ if(!e.title.equals("HelloHongwei"))
 
 		// ============
 
-		
-		SashForm topicSashForm=new SashForm(sashComposite, SWT.VERTICAL);
-		
+		SashForm topicSashForm = new SashForm(sashComposite, SWT.VERTICAL);
+
 		// sashComposit 水平分割处
 		Composite SearchComposite = new Composite(topicSashForm, SWT.NONE);
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
@@ -205,23 +206,23 @@ if(!e.title.equals("HelloHongwei"))
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
 				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
 				| SWT.MULTI);
-		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1);
+		GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, true, 1,
+				1);
 		gd_txtSearch.heightHint = -1;
 		gd_txtSearch.widthHint = -1;
 		txtSearch.setLayoutData(gd_txtSearch);
 		txtSearch.addControlListener(new ControlListener() {
-			
+
 			@Override
 			public void controlResized(ControlEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void controlMoved(ControlEvent arg0) {
 				// TODO Auto-generated method stub
-				
+
 			}
 		});
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
@@ -255,7 +256,7 @@ if(!e.title.equals("HelloHongwei"))
 			public void widgetSelected(SelectionEvent e) {
 
 				manualSearch();
-				//在这里放雪娇的  LDA的处理。 （）
+				// 在这里放雪娇的 LDA的处理。 （）
 
 			}
 		});
@@ -264,85 +265,73 @@ if(!e.title.equals("HelloHongwei"))
 		// SWT.VERTICAL);
 		// topicComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true, 2, 1));
-		
-		
-		
-Composite  topicCom = new Composite(topicSashForm, SWT.NONE);
-topicCom.setLayout(new GridLayout(2, false));
+
+		Composite topicCom = new Composite(topicSashForm, SWT.NONE);
+		topicCom.setLayout(new GridLayout(2, false));
 
 		// topic list
-		topictree = new Tree(topicCom,  SWT.BORDER | SWT.CENTER);
-		
-		
+		topictree = new Tree(topicCom, SWT.BORDER | SWT.CENTER);
+
 		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		topicSashForm.setWeights(new int[] {100, 300});
 		
-		
+
 		topictree.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				TreeItem item = (TreeItem) e.item;
-				System.out.println("click:" + item.getData().toString());
 
-				// if (item.getData()=="TOPIC")
-				// {
-				// tagcloudpart = FDUHelpSeekingPlugin
-				// .getDefault()
-				// .getWorkbench()
-				// .getActiveWorkbenchWindow()
-				// .getActivePage()
-				// .findView(
-				// "cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
-				//
-				// if ((tagcloudpart instanceof HelpSeekingTagCloundView)) {
-				//
-				// String content= "<!DOCTYPE html> <html>  "
-				// + "<head> "
-				// + "<title> Test interact word </title>"
-				// + " </head>"
-				// + "<body>"
-				// + " <p>  "+ item.getText().toString() + " </p>"
-				// + " </body>"
-				// + "</html>";
-				//
-				// String fileurl=CommUtil.getPluginCurrentPath()+"Tag.html";
-				// FileHelper.createFile(fileurl, content);
-				//
-				// HelpSeekingTagCloundView tcv = (HelpSeekingTagCloundView)
-				// tagcloudpart;
-				// tcv.getMyBrowser().setNewUrl(fileurl);
-				// //bv.getMyBrowser().getMyComposite().pack();
-				// }
-				//
-				// }
-
-				// TODO 选择一个topic 给出一组list 得到 2014.10
-
-				// urlTree.removeAll();
-
-				if (item.getData() == "TOPIC") {
-					// 将topic的所有数据传到browser窗口
-
-					TreeItem[] sendoutURLlist = item.getItems();
-
-					browserpart = FDUHelpSeekingPlugin
-							.getDefault()
-							.getWorkbench()
-							.getActiveWorkbenchWindow()
-							.getActivePage()
-							.findView(
-									"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-
-					if ((browserpart instanceof HelpSeekingBrowserView)) {
-						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-						bv.getTopicContentText().setText(item.getText());
-						bv.genUrlTree(sendoutURLlist);
+				//新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree， 展示
+				if (item.getData()=="TOPIC") {
+					//获得URLlist
+					ArrayList<String> urlList=new ArrayList<String>();
+					TreeItem[] treeItemSet=item.getItems();
+					for (int i = 0; i < treeItemSet.length; i++) {
+						urlList.add(treeItemSet[i].getData().toString());
+						
 					}
-
+					
+					if (!urlList.isEmpty()) {
+						//调用LDA
+						try {
+							List<FudanTopicWithWordsListBean>  myfudanTopicWords= LdaGibbsSampling.fduTopicURLfilter(urlList);
+						//传给foamtree 并显示
+							genTopicWordsFoamTree(myfudanTopicWords);
+						    	
+						
+						} catch (ParserException | IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+					}
+					
+					
 				}
+				
+				
+				//老处理模式，点击topic 后在browser view处 显示该topic下的URL.
+//				if (item.getData() == "TOPIC") {
+//					// 将topic的所有数据传到browser窗口
+//
+//					TreeItem[] sendoutURLlist = item.getItems();
+//
+//					browserpart = FDUHelpSeekingPlugin
+//							.getDefault()
+//							.getWorkbench()
+//							.getActiveWorkbenchWindow()
+//							.getActivePage()
+//							.findView(
+//									"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+//
+//					if ((browserpart instanceof HelpSeekingBrowserView)) {
+//						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+//						bv.getTopicContentText().setText(item.getText());
+//						bv.genUrlTree(sendoutURLlist);
+//					}
+//
+//				}
 			}
 
 			@Override
@@ -351,26 +340,99 @@ topicCom.setLayout(new GridLayout(2, false));
 
 			}
 		});
+		
+		
+		
+		topicFilterBrowser = new Browser(topicSashForm, SWT.BORDER);
+		
+		topicSashForm.setWeights(new int[] { 100, 300, 300 });
+
+		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
+		genFoamTree(200, 200, foamTreeTopicFilterFileNamePath, foamTreeTopicFilterContent,
+				"HelloHongwei");
+
+		topicFilterBrowser.addTitleListener(new TitleListener() {
+			public void changed(TitleEvent e) {
+				// sShell.setText(APP_TITLE + " - " + e.title);
+				System.out.println("select topic filter label is : " + e.title);
+				
+				
+				if (!e.title.equals("HelloHongwei")) {
+					 System.out.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
+					
+					}
+				}
+			
+		});
+
+		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
+		topicFilterBrowser.refresh();
+		
+		
 		sashComposite.setWeights(new int[] { 200, 400 });
 
+	}
+
+	protected void genTopicWordsFoamTree(
+			List<FudanTopicWithWordsListBean> myfudanTopicWords) {
+
+		
+		
+		
+		// dataObject: {
+		// groups: [
+		// { label:"Group 1", groups: [
+		// { label:"Group 1.1" },
+		// { label:"Group 1.2" },
+		// { label:"Group 1.3" }
+		// ]},
+		// { label:"Group 2", groups: [
+		// { label:"Group 2.1" },
+		// { label:"Group 2.2" }
+		// ]},
+		// { label:"Group 3" }
+		// ]
+		// }
+		
+		String labelWeight="";
+		for (int i = 0; i < myfudanTopicWords.size(); i++) {
+			if (labelWeight.equals("")) {
+				labelWeight=myfudanTopicWords.get(i).genFoamTreeGroupString();
+			}
+			else {
+				labelWeight=labelWeight+", "+myfudanTopicWords.get(i).genFoamTreeGroupString();
+
+			}
+			
+		}
+		
+		String foamTreeContent="";
+		foamTreeContent = "dataObject: {" + "groups: [" + labelWeight
+				+ "]" + "}";
+		int width = topicFilterBrowser.getBounds().width;
+		int height = topicFilterBrowser.getBounds().height;
+		genFoamTree(width, height, foamTreeTopicFilterFileNamePath, foamTreeContent, "HelloHongwei");
+		
+		// 装载网页
+		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
 	}
 
 	public void genFoamTree(int width, int height, String foamtreeFileNamePath,
 			String foamTreeContent, String title) {
 
-		if (foamTreeContent.equals(""))
-		{
-		foamTreeContent = "dataObject: {" + "groups: ["
-		+ "{ label: \"Welcome\", weight: 2.0 },"
-		+ "{ label: \"HelpSeeking\", weight: 4.0 },"
-		+ "{ label: \"To\", weight: 0.5},"
-		+ "{ label: \"Plugin\", weight: 3.0 },"
-		+ "{ label: \"tool\", weight: 1.0 }" + "]" + "}";
+		if (foamTreeContent.equals("")) {
+			foamTreeContent = "dataObject: {" + "groups: ["
+					+ "{ label: \"Welcome\", weight: 2.0 },"
+					+ "{ label: \"HelpSeeking\", weight: 4.0 },"
+					+ "{ label: \"To\", weight: 0.5},"
+					+ "{ label: \"Plugin\", weight: 3.0 },"
+					+ "{ label: \"tool\", weight: 1.0 }" + "]" + "}";
 
-		title="HelloHongwei";
+			title = "HelloHongwei";
 		}
-		
-		//File htmlFile = new File(foamtreeFileNamePath); // CommUtil.getPluginCurrentPath()+"/foamtreetest.html"
+
+		// File htmlFile = new File(foamtreeFileNamePath); //
+		// CommUtil.getPluginCurrentPath()+"/foamtreetest.html"
 		String foamtreehtmlcontent = "<!DOCTYPE html>" + "<html>" + "<head>"
 				+ "<title>"
 				+ title
@@ -379,9 +441,9 @@ topicCom.setLayout(new GridLayout(2, false));
 				+ "</head>"
 				+ "<body>"
 				+ "<div id=\"visualization\" style=\"width: "
-				+ String.valueOf(width<100?200:width)
+				+ String.valueOf(width < 100 ? 200 : width)
 				+ "px; height: "
-				+ String.valueOf(height<100?200:height)
+				+ String.valueOf(height < 100 ? 200 : height)
 				+ "px\"></div>"
 				+ "<script src=\"carrotsearch.foamtree.js\"></script>"
 				+ "<script language=\"javascript\">"
@@ -407,11 +469,6 @@ topicCom.setLayout(new GridLayout(2, false));
 	public void initFoamTreeEnv(String foamtreeFilesPath) {
 		Resource foamtreeJsResource = new Resource();
 		String foamtreejscontent;
-		System.out.println("path getfducurrentpath()  in initfoamtreeEnv(): "
-				+ foamtreeFilesPath);
-		System.out
-				.println("path getplugincurrentpath()  in initfoamtreeEnv(): "
-						+ CommUtil.getFDUPluginWorkingPath());
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.asserts.js", true);
@@ -420,7 +477,8 @@ topicCom.setLayout(new GridLayout(2, false));
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.js", true);
-		FileHelper.writeNewFile(foamtreeFilesPath + "/carrotsearch.foamtree.js",
+		FileHelper.writeNewFile(
+				foamtreeFilesPath + "/carrotsearch.foamtree.js",
 				foamtreejscontent);
 
 		foamtreejscontent = foamtreeJsResource.getResource(
@@ -442,8 +500,10 @@ topicCom.setLayout(new GridLayout(2, false));
 
 		foamtreejscontent = foamtreeJsResource.getResource(
 				"/foamtree/carrotsearch.foamtree.util.treemodel.js", true);
-		FileHelper.writeNewFile(foamtreeFilesPath
-				+ "/carrotsearch.foamtree.util.treemodel.js", foamtreejscontent);
+		FileHelper
+				.writeNewFile(foamtreeFilesPath
+						+ "/carrotsearch.foamtree.util.treemodel.js",
+						foamtreejscontent);
 	}
 
 	@Override
@@ -575,11 +635,17 @@ topicCom.setLayout(new GridLayout(2, false));
 		topictree.removeAll();
 		// urlTree.removeAll();
 
+		TreeItem topicsumm=new TreeItem(topictree, SWT.NONE);
+		topicsumm.setData("TOPIC_SUMMARY");
+		
+		int totalurlnum=0;
+		
 		for (int i = 0; i < clusters.size(); i++) {
 			Cluster c = clusters.get(i);
+			totalurlnum=totalurlnum+c.size();
 
-			TreeItem topicitem = new TreeItem(topictree, SWT.NONE);
-			topicitem.setText(c.getLabel());
+			TreeItem topicitem = new TreeItem(topicsumm, SWT.NONE);
+			topicitem.setText(c.getLabel()+" ("+c.size()+")");
 			topicitem.setData("TOPIC");
 			// 只有点击topic后，以该topic为单位，生成URL list 调用雪娇给出的LDA处理
 			// 实现代码见 topictree的选择事件
@@ -607,6 +673,9 @@ topicCom.setLayout(new GridLayout(2, false));
 			}
 
 			// topicitem.setExpanded(true);
+			topicsumm.setText("All topics ("+totalurlnum+")");
+			topicsumm.setExpanded(true);
+
 
 		}
 	}
@@ -661,9 +730,6 @@ topicCom.setLayout(new GridLayout(2, false));
 				new Timestamp(System.currentTimeMillis()));
 	}
 
-	
-	
-	
 	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
 		// 生成foamtree的候选词和权重字符串
 		// + "{ label: \"Welcome\", weight: 2.0 },"
@@ -671,40 +737,40 @@ topicCom.setLayout(new GridLayout(2, false));
 		// + "{ label: \"To\", weight: 1.0},"
 		// + "{ label: \"Plugin\", weight: 2.0 },"
 		// + "{ label: \"tool\", weight: 1.0 }"
-		
-		
 
 		String searchwords = "";
 		// String currentWord="";
 		String labelWeight = "";
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
-			
-			String labels=keyWordsforQuery.get(i).getKeywordName().replace(".", " ");
-			
+
+			String labels = keyWordsforQuery.get(i).getKeywordName()
+					.replace(".", " ");
+
 			labelWeight = labelWeight + "{ label: \""
-					//+ keyWordsforQuery.get(i).getKeywordName() + "\", weight: "
-					+ labels+ "\", weight: "
+					// + keyWordsforQuery.get(i).getKeywordName() +
+					// "\", weight: "
+					+ labels + "\", weight: "
 					+ keyWordsforQuery.get(i).getScore() + " },";
 			searchwords = searchwords + " "
 					+ keyWordsforQuery.get(i).getKeywordName();
-			System.out.println("candidate keyword No."+i+" : "+keyWordsforQuery.get(i).getKeywordName());
+			System.out.println("candidate keyword No." + i + " : "
+					+ keyWordsforQuery.get(i).getKeywordName());
 
 		}
 
 		String foamTreeContent = "dataObject: {" + "groups: [" + labelWeight
 				+ "]" + "}";
 
-        int width=browser.getBounds().width;
-        int height=browser.getBounds().height;
-        System.out.println("width & height:"+width+":"+height);
+		int width = browser.getBounds().width;
+		int height = browser.getBounds().height;
+		System.out.println("width & height:" + width + ":" + height);
 
-		
-         //生成网页
-		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent,Cache.getInstance().getCurrentBrowserTitle());
-		
-		//装载网页
+		// 生成网页
+		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent, Cache
+				.getInstance().getCurrentBrowserTitle());
+
+		// 装载网页
 		browser.setUrl(foamTreeFileNamePath);
-		
 
 		// mode=1时，不自动查询， mode=2时自动查询
 

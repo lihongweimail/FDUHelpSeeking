@@ -105,17 +105,11 @@ public class Resource {
 
 				if (mode) {
 					buffer.append(line);
+					buffer.append("\r\n");
 				}else{
-					buffer.append("\t" + line);
+				buffer.append("\r\n" + line);
 				buffer.append("\n");
 				}
-				
-
-				
-				
-
-							
-
 			}
 
 			content = buffer.toString();

@@ -277,10 +277,10 @@ public class HelpSeekingBrowserView extends ViewPart {
 			urlTreeItemofItemtitle.setData(urr);
 			urlTreeItemofItemtitle.setText(sendoutURLlist[i].getItem(1).getText());
 			
-			TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
-			urlTreeItemofItemsummary.setData(urr);
-			urlTreeItemofItemsummary.setText(sendoutURLlist[i].getItem(2).getText());
-			
+//			TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
+//			urlTreeItemofItemsummary.setData(urr);
+//			urlTreeItemofItemsummary.setText(sendoutURLlist[i].getItem(2).getText());
+//			
 			urlTreeItem.setExpanded(true);
 		}
 		

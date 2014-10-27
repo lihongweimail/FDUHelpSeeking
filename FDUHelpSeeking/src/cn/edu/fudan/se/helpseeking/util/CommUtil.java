@@ -9,6 +9,8 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
+import liuyang.nlp.lda.main.LdaGibbsSampling;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
@@ -249,28 +251,69 @@ public class CommUtil {
 
 	public static String getFDUPluginWorkingPath() {
 		String workingPath = System.getProperties().getProperty("user.home");
+		
+		String ldaDataPath="/data/";
+		String ldaDocsPath = "/data/LdaOriginalDocs/";
+		
+		String LdaResultsPath = "/data/LdaResults/";
+		String LdaParameterPath = "/data/LdaParameter/";
 
 		String osName = System.getProperties().getProperty("os.name");
 		if (osName.contains("Windows")) {
 
 			
 			workingPath = workingPath + "\\HelpSeekingData";
-
+			
+			ldaDataPath=workingPath+"\\data";
+			ldaDocsPath=workingPath+"\\data\\LdaOriginalDocs";
+			LdaResultsPath=workingPath+"\\data\\LdaResults";
+			LdaParameterPath = workingPath+"\\data\\LdaParameter";
+			ldaDataPath=workingPath+"\\data";
 
 		} else
 		
 		if (osName.contains("Mac")) {
 			workingPath = workingPath + "/HelpSeekingData";
+			ldaDataPath=workingPath+"/data";
+			ldaDocsPath = workingPath+"/data/LdaOriginalDocs";
+			LdaResultsPath =workingPath+ "/data/LdaResults";
+			LdaParameterPath = workingPath+"/data/LdaParameter";
+			
+			
 
 		}else {
 			//有待设置处理不同的操作系统
 			workingPath = workingPath + "/HelpSeekingData";
+			
+			ldaDataPath=workingPath+"/data";
+		    ldaDocsPath = workingPath+"/data/LdaOriginalDocs";
+			LdaResultsPath =workingPath+ "/data/LdaResults";
+			LdaParameterPath = workingPath+"/data/LdaParameter";
+
+
 		}
 		
 		
 		File file = new File(workingPath);
 		if (!file.exists())
 			FileHelper.createDirectory(workingPath);
+		
+		File fileldaDataPath = new File(ldaDataPath);
+		if (!fileldaDataPath.exists())
+			FileHelper.createDirectory(ldaDataPath);
+
+		
+		File fileldaDocsPath = new File(ldaDocsPath);
+		if (!fileldaDocsPath.exists())
+			FileHelper.createDirectory(ldaDocsPath);
+
+		File fileLdaResultsPath = new File(LdaResultsPath);
+		if (!fileLdaResultsPath.exists())
+			FileHelper.createDirectory(LdaResultsPath);
+		File fileLdaParameterPath = new File(LdaParameterPath);
+		
+		if (!fileLdaParameterPath.exists())
+			FileHelper.createDirectory(LdaParameterPath);
 	
 
 		return workingPath;
