@@ -127,19 +127,25 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		sashComposite = new SashForm(arg0, SWT.VERTICAL);
 
-		// foamtreeComposite=new Composite(sashComposite, SWT.NONE);
-		// foamtreeComposite.setLayoutData();
+		
+		
+		
+		
+//		foamtreeComposite=new Composite(sashComposite, SWT.NONE);
+//		foamtreeComposite.setLayout(new FillLayout());
 
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
 		initFoamTreeEnv(CommUtil.getFDUPluginWorkingPath());
 
-		// foamTreeFileNamePath=CommUtil.getPluginCurrentPath()+"foamtreetest.html";//"http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
-
-		String foamTreeContent = ""; // 使用工具生成foamtree的内容
-		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,Cache.getInstance().getCurrentBrowserTitle());
 
 		browser = new Browser(sashComposite, SWT.BORDER);
+		
+       
+		String foamTreeContent = ""; // 使用工具生成foamtree的内容
+		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,"HelloHongwei");
+
+		
 
 		browser.addTitleListener(new TitleListener() {
 			public void changed(TitleEvent e) {
@@ -150,7 +156,8 @@ if(!e.title.equals("HelloHongwei"))
 { if (!CommUtil.compareString(Cache.getInstance()
 						.getCurrentBrowserTitle(), e.title)) {
 
-					String candidateWord = e.title;
+	
+					String candidateWord = (e.title).replace(" ", ".");
 					String temp2 = "";
 					boolean flag = true;
 					for (String str : searchtext.split("[ ]")) {
@@ -248,6 +255,7 @@ if(!e.title.equals("HelloHongwei"))
 			public void widgetSelected(SelectionEvent e) {
 
 				manualSearch();
+				//在这里放雪娇的  LDA的处理。 （）
 
 			}
 		});
@@ -371,9 +379,9 @@ topicCom.setLayout(new GridLayout(2, false));
 				+ "</head>"
 				+ "<body>"
 				+ "<div id=\"visualization\" style=\"width: "
-				+ String.valueOf(width)
+				+ String.valueOf(width<100?200:width)
 				+ "px; height: "
-				+ String.valueOf(height)
+				+ String.valueOf(height<100?200:height)
 				+ "px\"></div>"
 				+ "<script src=\"carrotsearch.foamtree.js\"></script>"
 				+ "<script language=\"javascript\">"
@@ -653,6 +661,9 @@ topicCom.setLayout(new GridLayout(2, false));
 				new Timestamp(System.currentTimeMillis()));
 	}
 
+	
+	
+	
 	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
 		// 生成foamtree的候选词和权重字符串
 		// + "{ label: \"Welcome\", weight: 2.0 },"
@@ -667,8 +678,12 @@ topicCom.setLayout(new GridLayout(2, false));
 		// String currentWord="";
 		String labelWeight = "";
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+			
+			String labels=keyWordsforQuery.get(i).getKeywordName().replace(".", " ");
+			
 			labelWeight = labelWeight + "{ label: \""
-					+ keyWordsforQuery.get(i).getKeywordName() + "\", weight: "
+					//+ keyWordsforQuery.get(i).getKeywordName() + "\", weight: "
+					+ labels+ "\", weight: "
 					+ keyWordsforQuery.get(i).getScore() + " },";
 			searchwords = searchwords + " "
 					+ keyWordsforQuery.get(i).getKeywordName();
@@ -679,9 +694,13 @@ topicCom.setLayout(new GridLayout(2, false));
 		String foamTreeContent = "dataObject: {" + "groups: [" + labelWeight
 				+ "]" + "}";
 
+        int width=browser.getBounds().width;
+        int height=browser.getBounds().height;
+        System.out.println("width & height:"+width+":"+height);
+
 		
          //生成网页
-		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,Cache.getInstance().getCurrentBrowserTitle());
+		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent,Cache.getInstance().getCurrentBrowserTitle());
 		
 		//装载网页
 		browser.setUrl(foamTreeFileNamePath);

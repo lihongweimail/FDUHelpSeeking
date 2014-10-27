@@ -2,6 +2,8 @@ package cn.edu.fudan.se.helpseeking.bean;
 
 import java.sql.Timestamp;
 
+import org.eclipse.debug.internal.ui.views.memory.SetPaddedStringPreferencePage;
+
 public class KeyWord {
 
 	String keywordName=null;
@@ -97,5 +99,22 @@ public class KeyWord {
 		this.weightOne = weightOne;
 	} 
 	
+	
+	public void clonedata(KeyWord kw)
+	{
+		setFrequency(kw.getFrequency());
+		setKeywordName(kw.getKeywordName());
+		setLastSearchID(kw.getLastSearchID());
+		setPositionInRecommandlist(kw.getPositionInRecommandlist());
+		setPositionInUseString(kw.getPositionInUseString());
+		
+		setScore(kw.getScore());
+		setSearchID(kw.getSearchID());
+		setTagName(kw.getTagName());
+		setTimes(kw.getTimes());
+		setWeightOne(kw.getWeightOne());
+		setWeightTwo(kw.getWeightTwo());
+		
+	}
 	
 }
