@@ -416,8 +416,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		int height = topicFilterBrowser.getBounds().height;
 		genFoamTree(width, height, foamTreeTopicFilterFileNamePath, foamTreeContent, "HelloHongwei");
 		
+		
 		// 装载网页
 		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
+		topicFilterBrowser.refresh();
+		
+		
 	}
 
 	public void genFoamTree(int width, int height, String foamtreeFileNamePath,
@@ -774,6 +778,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// 装载网页
 		browser.setUrl(foamTreeFileNamePath);
+		browser.refresh();
 
 		// mode=1时，不自动查询， mode=2时自动查询
 
