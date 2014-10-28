@@ -41,7 +41,7 @@ public class FudanTopicWithWordsListBean {
 					+ " },";
 		}
 		
-		String groupString = "{ label: \"" + getTopicName() + "\" , groups: ["
+		String groupString = "{ label: \"" + getTopicName().replace(".", " ") + "\" , groups: ["
 				+ labelWeight + "]" + "} ";
 
 		return groupString;

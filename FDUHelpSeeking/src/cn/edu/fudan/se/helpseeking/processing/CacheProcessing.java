@@ -507,6 +507,7 @@ public class CacheProcessing extends Thread {
 						.size();
 
 				for (int i = 0; i < doKeyWords.get(j1).getKeyWords().size(); i++) {
+					System.out.println("doOldStep function : j1 is "+j1+"  i is "+i );
 
 					double weight = doKeyWords.get(j1).getKeyWords().get(i)
 							.getWeightOne();

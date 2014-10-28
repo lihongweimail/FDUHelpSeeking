@@ -624,7 +624,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		List<Cluster> clusters = CarrotTopic.fromWebResults(Collections
 				.unmodifiableList(resultsForTopicList));
 
-		// 测试试用句子 记得删除！！！
+		//???? 测试试用句子 记得删除！！！
 
 		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
 		if (clusters.isEmpty()) {
