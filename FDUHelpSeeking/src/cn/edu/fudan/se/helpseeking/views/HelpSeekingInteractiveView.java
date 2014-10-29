@@ -1,5 +1,6 @@
 package cn.edu.fudan.se.helpseeking.views;
 
+import java.awt.RenderingHints.Key;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.htmlparser.util.ParserException;
@@ -122,12 +124,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	private SashForm sashComposite;
 	private Browser browser;
 	private Browser topicFilterBrowser;
+	private Browser urlBrowser;
+	
 	Composite foamtreeComposite;
-	boolean titleaddflag=true;
+	
 	
 	String foamTreeFileNamePath = CommUtil.getFDUPluginWorkingPath()
 			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 	String foamTreeTopicFilterFileNamePath=CommUtil.getFDUPluginWorkingPath()+"/topicfilter.html";
+	String searchHTMLPath= CommUtil.getFDUPluginWorkingPath()+"/search.html";
 
 	
 	@Override
@@ -153,6 +158,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		browser.addTitleListener(new TitleListener() {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
+				boolean titleaddflag=true;
+				
 				System.out.println("select group label is : " + e.title);
 				String searchtext = txtSearch.getText();
 				if (!e.title.toLowerCase().equals("HelloHongwei".toLowerCase())) {
@@ -179,14 +186,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 							if (temp2.equals("")) {
 								temp2 = candidateWord;
 
-							} else {
+							} else 
+							{
 								temp2 = temp2 + " " + candidateWord;
 							}
 						}
 
 						txtSearch.setText(temp2);
 
-//					}
+
 				}
 			}
 		});
@@ -255,11 +263,37 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				manualSearch();
+				//  manualSearch();
 				// 在这里放雪娇的 LDA的处理。 （）
+				 genSearchHTML(txtSearch.getText());
+				 urlBrowser.setUrl(searchHTMLPath);
+				 urlBrowser.refresh();
+				
+				
 
 			}
 		});
+		
+		urlBrowser=new Browser(SearchComposite, SWT.None);
+		urlBrowser.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false,2,1));
+		urlBrowser.setEnabled(false);
+		urlBrowser.setVisible(false);
+		
+		urlBrowser.addTitleListener(new TitleListener() {
+			
+			@Override
+			public void changed(TitleEvent event) {
+
+System.out.println("current search result:"+ event.title);
+			genURLlistforLingfengTopic(event.title);
+			
+			
+			
+		} 
+			
+				
+		});
+		
 
 		// SashForm topicComposite = new SashForm(SearchComposite,
 		// SWT.VERTICAL);
@@ -360,8 +394,16 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				System.out.println("select topic filter label is : " + e.title);
 				
 				
-				if (!e.title.equals("HelloHongwei")) {
+				if (!e.title.equals("HelloHongweiCustomSearchAPI")) {
 					 System.out.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
+					 
+					 MessageDialog
+						.openInformation(PlatformUI.getWorkbench()
+								.getActiveWorkbenchWindow().getShell(),
+								"Need word to URL data! ",
+								"when you click the word you second filter the information, then you will get some URL , and display on view of asAssist Browser");
+
+					 
 					
 					}
 				}
@@ -374,6 +416,134 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		
 		sashComposite.setWeights(new int[] { 200, 400 });
 
+	}
+
+	protected void genSearchHTML(String querystr) {
+		
+		// 在此处从14个定制引擎中随机选择一个
+				int temp = CommUtil.randomInt(CommUtil.getKeyCxList().size() - 1, 0);
+				String cse_key = CommUtil.getKeyCxList().get(temp).getKey();
+				String cse_cx = CommUtil.getKeyCxList().get(temp).getCx();
+   
+				
+				String searchhtmlcontent="<!DOCTYPE html> \n <html>\n"
+						+ "<head> \n"
+						+ "<title>HelloHongweiCustomSearchAPI</title> \n"
+						+ "</head> \n"
+						+ "<body> \n"
+						+ "<div id=\"content\"></div> \n"
+						+ "<script> \n"
+						+ "var s=\"\";\n"
+								+ " function hndlr(response) {\n"
+								+ " for (var i = 0; i < response.items.length; i++) {\n"
+								+ " var item = response.items[i];\n"
+								//+ " s +=\"item \"+i+\"<br>\"+item.htmlTitle+\"<br>\"+item.link+\"<br>\"+item.snippet+ \"<br>\" ;"
+								+"document.getElementById(\"content\").innerHTML+=\"###hongweiitemnumber###\"+item.htmlTitle+\"###hongweiitemnumber###\"+item.link+\"###hongweiitemnumber###\"+item.snippet ;\n"
+								
+								+ " s +=\"###hongweiitemnumber###\"+item.htmlTitle+\"###hongweiitemnumber###\"+item.link+\"###hongweiitemnumber###\"+item.snippet ;\n"
+								+ "}\n"
+						        + "window.document.title=s;\n"
+						        + " }\n"
+						 + "</script>\n"
+						 
+						     + "<script src=\"https://www.googleapis.com/customsearch/v1?key=" + cse_key 
+						     +"&amp;cx="+cse_cx
+						     +"&amp;q=" + querystr
+						     +"&amp;filter=1&amp;startIndex=0&amp;itemsPerPage=20&amp;callback=hndlr\">"
+						     +"</script>\n"
+					+ "</body>\n"
+				    + "</html>";
+		
+		
+		FileHelper.writeNewFile(searchHTMLPath, searchhtmlcontent);
+		
+		
+	}
+
+	protected void genURLlistforLingfengTopic(String title) {
+		// TODO Auto-generated method stub
+		// TODO BUG
+		
+		
+		genURLlist(title);
+		
+		if (googlesearchList.size()>0) {
+		
+		for (int i = resultsForTopicList.size() - 1; i >= 0; i--) {
+			resultsForTopicList.remove(i);
+		}
+		// end of 2014.10.15
+
+		int indexResultslist = 0;
+		for (WEBResult webResult : googlesearchList) {
+			String titleNoFormating = webResult.getTitle();
+			titleNoFormating = titleNoFormating.replaceAll("&quot;", "\"");
+			titleNoFormating.replaceAll("&#39;", "\'");
+			titleNoFormating.replaceAll("<b>", " ");
+			titleNoFormating.replaceAll("</", " ");
+			titleNoFormating.replaceAll("b>", " ");
+
+			
+
+			// 2014.10.15
+			webResult.setTitle(titleNoFormating);
+			WEBResult forTopicPrepareItem = new WEBResult();
+			forTopicPrepareItem.setContent(webResult.getContent());
+			forTopicPrepareItem.setUrl(webResult.getUrl());
+			forTopicPrepareItem.setTitle(webResult.getTitle());
+			resultsForTopicList.add(forTopicPrepareItem);
+
+			} 
+		
+		genTopicTree();
+		
+		}
+
+	} 
+	
+	
+
+	
+
+	private void genURLlist(String title) {
+
+		List<String> liString=CommUtil.stringToList(title, "[###hongweiitemnumber###]");
+		if (liString.size()>0) {
+			if (liString.size() % 3==0) {
+				
+				// TODO BUG
+				for (int i = googlesearchList.size() - 1; i >= 0; i--) {
+					googlesearchList.remove(i);
+				}
+
+				
+				for (int i = 0; i < liString.size(); ) {
+					WEBResult webResult=new WEBResult();
+					webResult.setTitle(liString.get(i).trim());
+					i=i+1;
+					webResult.setUrl(liString.get(i).trim());
+					i=i+1;
+					webResult.setContent(liString.get(i).trim());
+					i=i+1;
+					googlesearchList.add(webResult);
+					
+				}
+
+				
+				
+				
+			}else {
+				MessageDialog
+				.openInformation(PlatformUI.getWorkbench()
+						.getActiveWorkbenchWindow().getShell(),
+						"Search google get wrong data! ",
+						"Sorry search get wrong or no results! Please search agin wait for a while!");
+
+			}
+		}
+		
+	
+		
 	}
 
 	protected void genTopicWordsFoamTree(
@@ -440,35 +610,35 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// File htmlFile = new File(foamtreeFileNamePath); //
 		// CommUtil.getPluginCurrentPath()+"/foamtreetest.html"
-		String foamtreehtmlcontent = "<!DOCTYPE html>" + "<html>" + "<head>"
-				+ "<title>"
+		String foamtreehtmlcontent = "<!DOCTYPE html> \n" + "<html>\n" + "<head>\n"
+				+ "<title>\n"
 				+ title
-				+ "</title>"
-				+ "<meta charset=\"utf-8\" />"
-				+ "</head>"
-				+ "<body>"
+				+ "</title>\n"
+				+ "<meta charset=\"utf-8\" />\n"
+				+ "</head>\n"
+				+ "<body>\n"
 				+ "<div id=\"visualization\" style=\"width: "
 				+ String.valueOf(width < 100 ? 200 : width)
 				+ "px; height: "
 				+ String.valueOf(height < 100 ? 200 : height)
-				+ "px\"></div>"
-				+ "<script src=\"carrotsearch.foamtree.js\"></script>"
-				+ "<script language=\"javascript\">"
-				+ " window.addEventListener(\"load\", function() {"
-				+ "var foamtree = new CarrotSearchFoamTree({"
+				+ "px\"></div> \n"
+				+ "<script src=\"carrotsearch.foamtree.js\"></script>\n"
+				+ "<script language=\"javascript\">\n"
+				+ " window.addEventListener(\"load\", function() {\n"
+				+ "var foamtree = new CarrotSearchFoamTree({\n"
 				+ "id: \"visualization\""
-				+ ","
+				+ "\n,\n"
 				+ foamTreeContent
-				+ ","
-				+ "onGroupDoubleClick: function(event) { "
-				+ "window.document.title=event.group.label;"
-				+ "}"
-				+ ","
-				+ "onGroupClick: function (event) {"
-				+ "window.document.title=event.group.label;"
-				+ "}"
-				+ "});"
-				+ "});" + "</script>" + "</body>" + "</html>";
+				+ "\n,\n"
+				+ "onGroupDoubleClick: function(event) { \n"
+				+ "window.document.title=event.group.label;\n"
+				+ "}\n"
+				+ "\n,\n"
+				+ "onGroupClick: function (event) {\n"
+				+ "window.document.title=event.group.label;\n"
+				+ "}\n"
+				+ "});\n"
+				+ "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
 
 		FileHelper.writeNewFile(foamtreeFileNamePath, foamtreehtmlcontent);
 	}
@@ -513,11 +683,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						foamtreejscontent);
 	}
 
-	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
 
-	}
 
 	private void manualSearch() {
 		System.out.println("Say start manual search ...");
@@ -579,7 +745,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 			int indexResultslist = 0;
 			for (WEBResult webResult : googlesearchList) {
-				String titleNoFormating = webResult.getTitleNoFormatting();
+				String titleNoFormating = webResult.getTitle();
 				titleNoFormating = titleNoFormating.replaceAll("&quot;", "\"");
 				titleNoFormating.replaceAll("&#39;", "\'");
 				titleNoFormating.replaceAll("<b>", " ");
@@ -590,11 +756,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						+ webResult.toString();
 
 				// 2014.10.15
-				webResult.setTitleNoFormatting(titleNoFormating);
+				webResult.setTitle(titleNoFormating);
 				WEBResult forTopicPrepareItem = new WEBResult();
 				forTopicPrepareItem.setContent(webResult.getContent());
 				forTopicPrepareItem.setUrl(webResult.getUrl());
-				forTopicPrepareItem.setTitle(webResult.getTitleNoFormatting());
+				forTopicPrepareItem.setTitle(webResult.getTitle());
 				resultsForTopicList.add(forTopicPrepareItem);
 
 				// end of 2014.10.15
@@ -795,4 +961,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	}
 
+	@Override
+	public void setFocus() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
+

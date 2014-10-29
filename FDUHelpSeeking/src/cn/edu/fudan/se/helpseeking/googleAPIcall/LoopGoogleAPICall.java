@@ -13,6 +13,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 
 import com.google.gson.Gson;
@@ -132,7 +133,19 @@ public class LoopGoogleAPICall extends Thread{
 //		System.out.println("End search.");
 		
 		
-		System.out.println("do cse search ..");
+		
+		///////////////
+		System.out.println("start ...");
+		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("http 400 error");
+		apiCall.testURL();
+		
+		
+		///////////////
+		
+		
+		
+/*		
+		System.out.println("do cse search  ..");
 		LoopGoogleAPICall apiCall=new LoopGoogleAPICall("AIzaSyCXTStjSSEk4WH2ravVosalWS6EtGN5s9Q","005635559766885752621:ys-az1pvb2o","getResource IllegalArgumentException");
 		
 		List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
@@ -158,6 +171,9 @@ public class LoopGoogleAPICall extends Thread{
 			
 			
 		}
+		
+*/		
+		
 
 	}
 
@@ -229,7 +245,7 @@ public class LoopGoogleAPICall extends Thread{
 
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
-		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
+		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&start=0&q=";
 
 		String charset = "UTF-8";
 		URL url = new URL(address + URLEncoder.encode(querytext, charset));
@@ -287,19 +303,49 @@ public class LoopGoogleAPICall extends Thread{
 			currentResults.remove(i);
 		}
 
+		
+	/*	<script>
+		  (function() {
+		    var cx = '005635559766885752621:va1etsiak-a';
+		    var gcse = document.createElement('script');
+		    gcse.type = 'text/javascript';
+		    gcse.async = true;
+		    gcse.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') +
+		        '//www.google.com/cse/cse.js?cx=' + cx;
+		    var s = document.getElementsByTagName('script')[0];
+		    s.parentNode.insertBefore(gcse, s);
+		  })();
+		</script>
+		<gcse:search></gcse:search>
+*/		
+		
+		
+		//为了获得100个结果，使用10次
+		
 		int j = 0; // count for the results
 
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
 		//String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
-		String address="https://www.googleapis.com/customsearch/v1?key="+key+"&cx="+cx+"&lr=lang_en&num=100&start=0&q=";
 //		"type": "application/json",
 //		  "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&cref={cref?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
 
        // http://developers.google.com/apis-explorer/#p/customsearch/v1/search.cse.list?q=hello+world&cr=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146%253Aomuauf_lfve&lr=lang_en&num=100&start=0&_h=1&
+	
+		int strStart=-10;
+		
+		for (int countSearch=0;countSearch<Basic.GOOGLE_SEARCH_ROUND;countSearch++)
+		{
+			strStart=strStart+Basic.GOOGLE_RESULT_NUMBERS;
 		
 		String charset = "UTF-8";
-		URL url = new URL(address + URLEncoder.encode(query, charset));
+
+		String q=URLEncoder.encode(query, charset);
+		String address="https://www.googleapis.com/customsearch/v1?key=%key%&cx=%id%&num=%num%&start=%start%&q=%q%";
+		       address=address.replace("%key%", key).replace("%id%", cx).replace("%q%", q).replace("%start%", String.valueOf(strStart)).replace("%num%", String.valueOf(Basic.GOOGLE_RESULT_NUMBERS));
+		
+System.out.println("search String is : "+address);
+		URL url = new URL(address);
 		Reader reader = new InputStreamReader(url.openStream(), charset);
 
 		CSEAPICallResults results = new Gson().fromJson(reader,	CSEAPICallResults.class);
@@ -352,6 +398,9 @@ public class LoopGoogleAPICall extends Thread{
 
 			}
 		}
+		
+		}
+		
 		return searchResults;
 
 	}
@@ -477,12 +526,12 @@ public class LoopGoogleAPICall extends Thread{
 
 	public void testURL() {
 
-		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
+		String address="https://www.googleapis.com/customsearch/v1?q=ilegalargumentexception&cx=005635559766885752621%3Aly8_ifzrwps&key=AIzaSyAoB0pBvZ6veuzDQbR21auME8HJUwmCaos";//"https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&start=0&q=";
 		String query="getResource IllegalArgumentException";
 		String charset = "UTF-8";
 
 		try{
-			URL url=new URL(address+URLEncoder.encode(query, charset));
+			URL url=new URL(address);//+URLEncoder.encode(query, charset));
 
 			URLConnection connection=url.openConnection();
 
@@ -511,3 +560,39 @@ public class LoopGoogleAPICall extends Thread{
 
 
 }
+
+/*
+<html>
+<head>
+  <title>JSON/Atom Custom Search API Example</title>
+</head>
+<body>
+  <div id="content"></div>
+
+  <script>
+  var s="";
+  
+    function hndlr(response) {
+    
+    for (var i = 0; i < response.items.length; i++) {
+      var item = response.items[i];
+      // in production code, item.htmlTitle should have the HTML entities escaped.
+   //   document.getElementById("content").innerHTML += "<br>"+"item "+i+"<br>"+ item.htmlTitle+"<br>"+item.link+"<br>"+item.snippet;
+      s +="item "+i+"<br>"+item.htmlTitle+"<br>"+item.link+"<br>"+item.snippet+ "<br>" ;
+    }
+    
+    window.document.title=s;
+    
+    
+    document.getElementById("titleall").innerHTML+=window.document.title;
+  }
+  
+  </script>
+  <script src="https://www.googleapis.com/customsearch/v1?key=AIzaSyAoB0pBvZ6veuzDQbR21auME8HJUwmCaos&amp;cx=005635559766885752621:ly8_ifzrwps&amp;q=illegalargumentexception&amp;filter=1&amp;startIndex=0&amp;itemsPerPage=20&amp;callback=hndlr">
+  </script>
+
+
+
+</body>
+</html>
+*/
