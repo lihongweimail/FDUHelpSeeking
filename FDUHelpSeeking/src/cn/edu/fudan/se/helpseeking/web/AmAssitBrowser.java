@@ -249,7 +249,7 @@ public class AmAssitBrowser implements ControlListener {
 		//thisClass.createSimpleShow();
 		
 		thisClass.getBrowser().setUrl("http://stackoverflow.com/questions/17018857/how-to-call-jframe-from-another-java-class");
-		
+		thisClass.getBrowser().refresh();
 		thisClass.setDisplay(display);
 		thisClass.myComposite.pack();
 

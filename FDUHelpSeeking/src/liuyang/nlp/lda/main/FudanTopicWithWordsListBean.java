@@ -41,7 +41,13 @@ public class FudanTopicWithWordsListBean {
 					+ ",type: \"leaf\" },";
 		}
 		
-		String groupString = "{ label: \"" + getTopicName().replace(".", " ") + "\" , groups: ["
+//    two level group with topic name
+//		String groupString = "{ label: \"" + getTopicName().replace(".", " ") + "\" , groups: ["
+//				+ labelWeight + "]" + " ,type: \"node\"} ";
+
+
+//     two level group with no topic name
+		String groupString = "{ label: \"" + " " + "\" , groups: ["
 				+ labelWeight + "]" + " ,type: \"node\"} ";
 
 		return groupString;

@@ -715,7 +715,7 @@ public enum QueryLevel {
 
 
 	//从候选检索词中取词数量
-	public final static int TEMP_K_KEYWORDS =10;
+	public final static int TEMP_K_KEYWORDS =8;  //或者提供给第一个foamtree1 （右上）的词的个数，目前认为8比较合适
 	
 	
 	public final static int WAIT_GOOGLE_TIME=6000;
@@ -727,5 +727,8 @@ public enum QueryLevel {
 	public final static List<CxKeyPair> ALL_CX_KEY_PAIRS = mycseini.getCxKeyPairs();
 	                                                     //CommUtil.getKeyCx();
 	public static final int historyQueryWindowCount = 3;
+	
+	public final static int FOAMTREETOPICCOUNT=6; //提供给foamtree2 （右下）的topic的数量
+	public final static int FOAMTREETOPICWORDSLIMITIED=3; //每个topic 中提取出前六个词
 	
 }

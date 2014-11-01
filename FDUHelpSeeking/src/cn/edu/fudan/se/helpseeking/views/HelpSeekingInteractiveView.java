@@ -26,6 +26,7 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -51,6 +52,7 @@ import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
+import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.Images;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.test.SampleWebResults;
@@ -124,7 +126,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	private SashForm sashComposite;
 	private Browser browser;
 	private Browser topicFilterBrowser;
-	private Browser urlBrowser;
+	//private Browser urlBrowser;
 	
 	Composite foamtreeComposite;
 	
@@ -150,9 +152,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		initFoamTreeEnv(CommUtil.getFDUPluginWorkingPath());
 
 		browser = new Browser(sashComposite, SWT.BORDER);
+		browser.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
 
 		String foamTreeContent = ""; // 使用工具生成foamtree的内容
-		genFoamTree(200, 200, foamTreeFileNamePath, foamTreeContent,
+		genFoamTree(300, 200, foamTreeFileNamePath, foamTreeContent,
 				"HelloHongwei");
 
 		browser.addTitleListener(new TitleListener() {
@@ -246,6 +249,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			}
 		});
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
+		txtSearch.setToolTipText("Input keyworks for searching");
 		txtSearch.addKeyListener(new KeyListener() {
 
 			@Override
@@ -270,7 +274,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		btnSearchGoogle.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
-		btnSearchGoogle.setText("Search");
+		//btnSearchGoogle.setText("Search");
+		btnSearchGoogle.setToolTipText("Search");
+		btnSearchGoogle.setImage(Images.SEARCH2.createImage());
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -384,11 +390,13 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		
 		
 		topicFilterBrowser = new Browser(topicSashForm, SWT.BORDER);
+		topicFilterBrowser.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
+
 		
 		topicSashForm.setWeights(new int[] { 100, 300, 300 });
 
 		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
-		genFoamTree(200, 200, foamTreeTopicFilterFileNamePath, foamTreeTopicFilterContent,
+		genFoamTree(300, 200, foamTreeTopicFilterFileNamePath, foamTreeTopicFilterContent,
 				"HelloHongwei");
 
 		topicFilterBrowser.addTitleListener(new TitleListener() {
@@ -601,7 +609,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					+ "{ label: \"HelpSeeking\", weight: 4.0 ,type: \"node\" },"
 					+ "{ label: \"To\", weight: 0.5 ,type: \"node\"},"
 					+ "{ label: \"Plugin\", weight: 3.0 ,type: \"node\"},"
-					+ "{ label: \"tool\", weight: 1.0 ,type: \"node\"}" + "]" + "}";
+					+ "{ label: \"tool\", weight: 1.0 ,type: \"node\"},"
+					+ "{ label: \"Double Click Rollout\", weight: 4.0 ,type: \"node\"},"
+					+ "{ label: \"Shift + Double Click Pullback\", weight: 4.0 ,type: \"node\"}" + "]" + "}";
 
 			title = "HelloHongwei";
 		}
@@ -616,7 +626,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				+ "</head>\n"
 				+ "<body>\n"
 				+ "<div id=\"visualization\" style=\"width: "
-				+ String.valueOf(width < 100 ? 200 : width)
+				+ String.valueOf(width < 100 ? 300 : width)
 				+ "px; height: "
 				+ String.valueOf(height < 100 ? 200 : height)
 				+ "px\"></div> \n"

@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import liuyang.nlp.lda.com.FileUtil;
 import liuyang.nlp.lda.conf.ConstantConfig;
@@ -307,11 +308,12 @@ public class LdaModel {
 		List<FudanTopicWithWordsListBean> fudanTopicWithWordsList=new ArrayList<FudanTopicWithWordsListBean>();
 		//lda.twords phi[][] K*V   最后提取出来的关键字
 		writer = new BufferedWriter(new FileWriter(resPath + modelName + ".twords"));
-		int topNum = 10; //Find the top 20 topic words in each topic
+		int topNum = Basic.FOAMTREETOPICWORDSLIMITIED < docSet.indexToTermMap.size()? Basic.FOAMTREETOPICWORDSLIMITIED: docSet.indexToTermMap.size(); //从一个topic中只取部分词；Find the top 20 topic words in each topic
 		
 		
 		ArrayList<String> LdaOutcome = new ArrayList<String>();
-		for(int i = 0; i < K; i++){
+		int getTopicNumber=Basic.FOAMTREETOPICCOUNT < K ? Basic.FOAMTREETOPICCOUNT: K;  //只取部分topic 使用
+		for(int i = 0; i < getTopicNumber; i++){
 			List<Integer> tWordsIndexArray = new ArrayList<Integer>(); 
 			for(int j = 0; j < V; j++){
 				tWordsIndexArray.add(new Integer(j));

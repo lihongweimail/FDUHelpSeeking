@@ -61,6 +61,11 @@ public class Images {
 	public static final ImageDescriptor VOLATILE_CO = create("volatile.gif");
 	public static final ImageDescriptor PREVIOUS = create("previous.gif");
 	public static final ImageDescriptor NEXT = create("next.gif");
+	public static final ImageDescriptor SEARCH1 = create("search1.gif");
+	public static final ImageDescriptor SEARCH2 = create("search2.png");
+
+	
+	
 
 	private static ImageDescriptor create(String name) {
 		try {
