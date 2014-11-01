@@ -79,7 +79,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	// 2014.10 新加
 	private static Tree topictree;
-	public static AmAssitBrowser myBrowser;
+	//public static AmAssitBrowser myBrowser;
 	// private static Tree urlTree;
 	// 2014.10 end.
 
@@ -158,23 +158,26 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		browser.addTitleListener(new TitleListener() {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
-				boolean titleaddflag=true;
+				
 				
 				System.out.println("select group label is : " + e.title);
-				String searchtext = txtSearch.getText();
-				if (!e.title.toLowerCase().equals("HelloHongwei".toLowerCase())) {
+				
+				if (!e.title.trim().toLowerCase().equals("HelloHongwei".toLowerCase())) {
 //					if (!CommUtil.compareString(Cache.getInstance()
 //							.getCurrentBrowserTitle(), e.title)) {
+					
+					String searchtext = txtSearch.getText();
+					boolean titleaddflag=true;
 
-						String candidateWord = (e.title).replace(" ", ".");
+						String candidateWord = (e.title.trim()).replace(" ", ".");
 						String temp2 = "";
 						//???? titleaddflag = true;
 						for (String str : searchtext.split("[ ]")) {
-							if (!str.toLowerCase().equals(candidateWord.toLowerCase())) {
+							if (!str.trim().toLowerCase().equals(candidateWord.toLowerCase())) {
 								if (temp2.equals("")) {
-									temp2 = str;
+									temp2 = str.trim();
 								} else {
-									temp2 = temp2 + " " + str;
+									temp2 = temp2 + " " + str.trim();
 								}
 							} else {
 								titleaddflag = false;
@@ -200,7 +203,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		});
 
 		browser.setUrl(foamTreeFileNamePath);
-		browser.refresh();
+		//browser.refresh();
 
 		// ============
 
@@ -267,7 +270,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// 在这里放雪娇的 LDA的处理。 （）
 				 genSearchHTML(txtSearch.getText());
 				 urlBrowser.setUrl(searchHTMLPath);
-				 urlBrowser.refresh();
+				 //urlBrowser.refresh();
 				
 				
 
@@ -411,7 +414,7 @@ System.out.println("current search result:"+ event.title);
 		});
 
 		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
-		topicFilterBrowser.refresh();
+		//topicFilterBrowser.refresh();
 		
 		
 		sashComposite.setWeights(new int[] { 200, 400 });
@@ -438,9 +441,9 @@ System.out.println("current search result:"+ event.title);
 								+ " for (var i = 0; i < response.items.length; i++) {\n"
 								+ " var item = response.items[i];\n"
 								//+ " s +=\"item \"+i+\"<br>\"+item.htmlTitle+\"<br>\"+item.link+\"<br>\"+item.snippet+ \"<br>\" ;"
-								+"document.getElementById(\"content\").innerHTML+=\"###hongweiitemnumber###\"+item.htmlTitle+\"###hongweiitemnumber###\"+item.link+\"###hongweiitemnumber###\"+item.snippet ;\n"
+								+"document.getElementById(\"content\").innerHTML+=\"###hongwei###\"+item.htmlTitle+\"###hongwei###\"+item.link+\"###hongwei###\"+item.snippet ;\n"
 								
-								+ " s +=\"###hongweiitemnumber###\"+item.htmlTitle+\"###hongweiitemnumber###\"+item.link+\"###hongweiitemnumber###\"+item.snippet ;\n"
+								+ " s +=\"###hongwei###\"+item.htmlTitle+\"###hongwei###\"+item.link+\"###hongwei###\"+item.snippet ;\n"
 								+ "}\n"
 						        + "window.document.title=s;\n"
 						        + " }\n"
@@ -507,7 +510,7 @@ System.out.println("current search result:"+ event.title);
 
 	private void genURLlist(String title) {
 
-		List<String> liString=CommUtil.stringToList(title, "[###hongweiitemnumber###]");
+		List<String> liString=CommUtil.stringToList(title, "[###hongwei###]");
 		if (liString.size()>0) {
 			if (liString.size() % 3==0) {
 				
@@ -589,7 +592,7 @@ System.out.println("current search result:"+ event.title);
 		
 		// 装载网页
 		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
-		topicFilterBrowser.refresh();
+		//topicFilterBrowser.refresh();
 		
 		
 	}
@@ -599,11 +602,11 @@ System.out.println("current search result:"+ event.title);
 
 		if (foamTreeContent.equals("")) {
 			foamTreeContent = "dataObject: {" + "groups: ["
-					+ "{ label: \"Welcome\", weight: 2.0 },"
-					+ "{ label: \"HelpSeeking\", weight: 4.0 },"
-					+ "{ label: \"To\", weight: 0.5},"
-					+ "{ label: \"Plugin\", weight: 3.0 },"
-					+ "{ label: \"tool\", weight: 1.0 }" + "]" + "}";
+					+ "{ label: \"Welcome\", weight: 2.0 ,type: \"node\" },"
+					+ "{ label: \"HelpSeeking\", weight: 4.0 ,type: \"node\" },"
+					+ "{ label: \"To\", weight: 0.5 ,type: \"node\"},"
+					+ "{ label: \"Plugin\", weight: 3.0 ,type: \"node\"},"
+					+ "{ label: \"tool\", weight: 1.0 ,type: \"node\"}" + "]" + "}";
 
 			title = "HelloHongwei";
 		}
@@ -629,13 +632,14 @@ System.out.println("current search result:"+ event.title);
 				+ "id: \"visualization\""
 				+ "\n,\n"
 				+ foamTreeContent
-				+ "\n,\n"
-				+ "onGroupDoubleClick: function(event) { \n"
-				+ "window.document.title=event.group.label;\n"
-				+ "}\n"
+				//+ "\n,\n"
+				//+ "onGroupDoubleClick: function(event) { \n"
+				//+ "window.document.title=event.group.label;\n"
+				//+ "}\n"
 				+ "\n,\n"
 				+ "onGroupClick: function (event) {\n"
-				+ "window.document.title=event.group.label;\n"
+				+ "if (event.group.type==\"leaf\") {"
+				+ "window.document.title=event.group.label;}\n"
 				+ "}\n"
 				+ "});\n"
 				+ "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
@@ -923,7 +927,7 @@ System.out.println("current search result:"+ event.title);
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ keyWordsforQuery.get(i).getScore() + " },";
+					+ keyWordsforQuery.get(i).getScore() + " ,type: \"leaf\"},";
 			searchwords = searchwords + " "
 					+ keyWordsforQuery.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
@@ -939,16 +943,15 @@ System.out.println("current search result:"+ event.title);
 		System.out.println("width & height:" + width + ":" + height);
 
 		// 生成网页
-		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent, Cache
-				.getInstance().getCurrentBrowserTitle());
+		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent,"HelloHongwei"); // Cache.getInstance().getCurrentBrowserTitle();
 
 		// 装载网页
 		browser.setUrl(foamTreeFileNamePath);
-		browser.refresh();
+		//browser.refresh();
 
 		// mode=1时，不自动查询， mode=2时自动查询
 
-		txtSearch.setText(searchwords);
+		//txtSearch.setText(searchwords);
 
 		if (mode == 2) {
 			try {

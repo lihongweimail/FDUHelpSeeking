@@ -38,11 +38,11 @@ public class FudanTopicWithWordsListBean {
 					+ "\""
 					+", "
 				+" weight: " + wordsList.get(i).getWordWeight() 
-					+ " },";
+					+ ",type: \"leaf\" },";
 		}
 		
 		String groupString = "{ label: \"" + getTopicName().replace(".", " ") + "\" , groups: ["
-				+ labelWeight + "]" + "} ";
+				+ labelWeight + "]" + " ,type: \"node\"} ";
 
 		return groupString;
 
