@@ -1,9 +1,6 @@
 package cn.edu.fudan.se.helpseeking.web;
 
 //import java.awt.Composite;
-import java.io.File;
-
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.LocationEvent;
@@ -32,13 +29,9 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import cn.edu.fudan.se.helpseeking.test.testSQLite;
-import cn.edu.fudan.se.helpseeking.util.CommUtil;
 
 public class AmAssitBrowser implements ControlListener {
 
@@ -251,11 +244,11 @@ public class AmAssitBrowser implements ControlListener {
 		Composite composite = new Composite(shell, SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL | SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.NO_MERGE_PAINTS | SWT.NO_REDRAW_RESIZE | SWT.NO_RADIO_GROUP | SWT.EMBEDDED);
 		AmAssitBrowser thisClass = new AmAssitBrowser(composite);
 		//正常浏览器
-		//thisClass.createShow();
+		thisClass.createShow();
 		//精简浏览器
-		thisClass.createSimpleShow();
+		//thisClass.createSimpleShow();
 		
-		thisClass.getBrowser().setUrl("file:///Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/foamtree/foamtreetest.html");
+		thisClass.getBrowser().setUrl("http://stackoverflow.com/questions/17018857/how-to-call-jframe-from-another-java-class");
 		
 		thisClass.setDisplay(display);
 		thisClass.myComposite.pack();
@@ -279,7 +272,7 @@ public class AmAssitBrowser implements ControlListener {
 			browser.addTitleListener(new TitleListener() {
 				public void changed(TitleEvent e) {
 					// sShell.setText(APP_TITLE + " - " + e.title);
-                System.out.println("select group label is : "+ e.title);
+                System.out.println("select group label is in amAssistBrowser class : "+ e.title);
 				}
 			});
 			

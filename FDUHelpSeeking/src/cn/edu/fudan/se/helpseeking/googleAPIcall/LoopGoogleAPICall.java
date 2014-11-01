@@ -44,7 +44,7 @@ public class LoopGoogleAPICall extends Thread{
 		// https://developers.google.com/search-appliance/documentation/614/xml_reference
 		// for setting query limit web pages language for English
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
-		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&num=10&start=0&q=";
+		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&q=";
 		//			String address = "http://ajax.googleapis.com/ajax/services/search/web?v=1.0&lr=lang_en&start="
 		//					+ i + "&q=";
 		// "类型不匹配 程序不能结束 Java Mismatch Or Never Ending Program";
@@ -245,7 +245,7 @@ public class LoopGoogleAPICall extends Thread{
 
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
-		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&start=0&q=";
+		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&q=";
 
 		String charset = "UTF-8";
 		URL url = new URL(address + URLEncoder.encode(querytext, charset));
@@ -319,32 +319,32 @@ public class LoopGoogleAPICall extends Thread{
 		<gcse:search></gcse:search>
 */		
 		
-		
-		//为了获得100个结果，使用10次
-		
-		int j = 0; // count for the results
-
 		//		String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=005635559766885752621:va1etsiak-a&q=";
 		//		String address="https://www.google.com/cse/publicurl?cx=005635559766885752621:va1etsiak-a&lr=lang_en&num=10&start=0&q=";
 		//String address="https://www.googleapis.com/customsearch/v1?key=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146:omuauf_lfve&lr=lang_en&num=10&q=";
 //		"type": "application/json",
 //		  "template": "https://www.googleapis.com/customsearch/v1?q={searchTerms}&num={count?}&start={startIndex?}&lr={language?}&safe={safe?}&cx={cx?}&cref={cref?}&sort={sort?}&filter={filter?}&gl={gl?}&cr={cr?}&googlehost={googleHost?}&c2coff={disableCnTwTranslation?}&hq={hq?}&hl={hl?}&siteSearch={siteSearch?}&siteSearchFilter={siteSearchFilter?}&exactTerms={exactTerms?}&excludeTerms={excludeTerms?}&linkSite={linkSite?}&orTerms={orTerms?}&relatedSite={relatedSite?}&dateRestrict={dateRestrict?}&lowRange={lowRange?}&highRange={highRange?}&searchType={searchType}&fileType={fileType?}&rights={rights?}&imgSize={imgSize?}&imgType={imgType?}&imgColorType={imgColorType?}&imgDominantColor={imgDominantColor?}&alt=json"
-
-       // http://developers.google.com/apis-explorer/#p/customsearch/v1/search.cse.list?q=hello+world&cr=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146%253Aomuauf_lfve&lr=lang_en&num=100&start=0&_h=1&
-	
-		int strStart=-10;
+// http://developers.google.com/apis-explorer/#p/customsearch/v1/search.cse.list?q=hello+world&cr=AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM&cx=017576662512468239146%253Aomuauf_lfve&lr=lang_en&num=100&start=0&_h=1&
 		
-		for (int countSearch=0;countSearch<Basic.GOOGLE_SEARCH_ROUND;countSearch++)
+
+		
+		
+		//为了获得100个结果，使用10次
+				
+		int j = 0; // count for the results
+		int strStart=1;
+	//查询10个或多个设置：暂时关掉	
+		for (int countSearch=Basic.GOOGLE_SEARCH_ROUND;countSearch>0;countSearch--)
 		{
-			strStart=strStart+Basic.GOOGLE_RESULT_NUMBERS;
+			strStart=strStart+(Basic.GOOGLE_SEARCH_ROUND-countSearch)*10;
 		
 		String charset = "UTF-8";
 
 		String q=URLEncoder.encode(query, charset);
-		String address="https://www.googleapis.com/customsearch/v1?key=%key%&cx=%id%&num=%num%&start=%start%&q=%q%";
-		       address=address.replace("%key%", key).replace("%id%", cx).replace("%q%", q).replace("%start%", String.valueOf(strStart)).replace("%num%", String.valueOf(Basic.GOOGLE_RESULT_NUMBERS));
-		
-System.out.println("search String is : "+address);
+		String address="https://www.googleapis.com/customsearch/v1?key=%key%&cx=%id%&start=%start%&q=%q%";
+		     //  address=address.replace("%key%", key).replace("%id%", cx).replace("%q%", q).replace("%start%", String.valueOf(strStart)).replace("%num%", String.valueOf(Basic.GOOGLE_RESULT_NUMBERS));
+		  address=address.replace("%key%", key).replace("%id%", cx).replace("%q%", q).replace("%start%", String.valueOf(strStart));
+   System.out.println("search String is : "+address);
 		URL url = new URL(address);
 		Reader reader = new InputStreamReader(url.openStream(), charset);
 
@@ -399,7 +399,7 @@ System.out.println("search String is : "+address);
 			}
 		}
 		
-		}
+		} //查询10个或更多 循环处
 		
 		return searchResults;
 

@@ -10,10 +10,17 @@ import cn.edu.fudan.se.helpseeking.util.ConsoleFactory;
 public class HelpSeekingPerspective implements IPerspectiveFactory{
 
 	public static final String ID = "cn.edu.fudan.se.helpseeking.perspective.HelpSeekingPerspective"; //$NON-NLS-1$
+	
+	
+
+	
 	@Override
 	public void createInitialLayout(IPageLayout layout) {
 		// TODO Auto-generated method stub
 		String editorArea = layout.getEditorArea();
+		
+		//setEditorIPageLayout(layout);
+		
 		layout.addView(IPageLayout.ID_PROJECT_EXPLORER, IPageLayout.LEFT, 0.15f, editorArea);
 		IFolderLayout leftbottom = layout.createFolder("leftbottom", IPageLayout.BOTTOM, 0.60f, IPageLayout.ID_PROJECT_EXPLORER);
 		//leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");

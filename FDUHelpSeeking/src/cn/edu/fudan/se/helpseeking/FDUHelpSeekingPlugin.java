@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPerspectiveListener;
@@ -89,6 +90,19 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 	protected Set<IPerspectiveListener> perspectiveListeners = new HashSet<IPerspectiveListener>();
 	protected Set<ISelectionListener> postSelectionListeners = new HashSet<ISelectionListener>();
 	private IWorkbenchWindow launchingWorkbenchWindow = null;
+	
+	
+	
+	public IPageLayout editorIPageLayout;
+	public void setEditorIPageLayout(IPageLayout editorIPageLayout) {
+		this.editorIPageLayout = editorIPageLayout;
+	}
+
+	public IPageLayout getEditorIPageLayout()
+	{
+		return this.editorIPageLayout;
+	}
+	
 	
 	private IViewPart helpSearchViewPart;
 

@@ -154,7 +154,7 @@ public class LdaGibbsSampling {
 		String UrlContent = new String();
 		for(String CurrentUrl: UrlList){
 			System.out.println(CurrentUrl);
-			UrlContent += UrlWordExtract.getText(CurrentUrl);
+			UrlContent += " "+ UrlWordExtract.getText(CurrentUrl);
 		}
 		Documents docSet = new Documents();
 		docSet.readDocs(UrlContent);//读待采样数据	

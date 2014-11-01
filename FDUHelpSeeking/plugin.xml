@@ -42,7 +42,7 @@
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
             icon="icons/enum.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView"
-            name="amAssist Web Browser"
+            name="amAssist Solution"
             restorable="true">
       </view>
       <view

@@ -161,6 +161,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				
 				
 				System.out.println("select group label is : " + e.title);
+				if (e.title.trim().equals("foamtreetest.html")) {
+					return;
+					
+				}
+				
+				if (txtSearch.getText().trim().equals("foamtreetest.html")) {
+					txtSearch.setText("");
+					e.title="HelloHongwei";
+				}
 				
 				if (!e.title.trim().toLowerCase().equals("HelloHongwei".toLowerCase())) {
 //					if (!CommUtil.compareString(Cache.getInstance()
@@ -266,36 +275,27 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 
-				//  manualSearch();
-				// 在这里放雪娇的 LDA的处理。 （）
-				 genSearchHTML(txtSearch.getText());
-				 urlBrowser.setUrl(searchHTMLPath);
+				  manualSearch();
+				// 在这里放雪娇的 LDA的处理。使用JS脚本的技术 （目前放弃使用）
+				// genSearchHTML(txtSearch.getText());
+				 //urlBrowser.setUrl(searchHTMLPath);
 				 //urlBrowser.refresh();
-				
-				
-
 			}
 		});
 		
-		urlBrowser=new Browser(SearchComposite, SWT.None);
-		urlBrowser.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false,2,1));
-		urlBrowser.setEnabled(false);
-		urlBrowser.setVisible(false);
-		
-		urlBrowser.addTitleListener(new TitleListener() {
-			
-			@Override
-			public void changed(TitleEvent event) {
-
-System.out.println("current search result:"+ event.title);
-			genURLlistforLingfengTopic(event.title);
-			
-			
-			
-		} 
-			
-				
-		});
+//		urlBrowser=new Browser(SearchComposite, SWT.None);
+//		urlBrowser.setLayoutData(new GridData(SWT.CENTER,SWT.CENTER,false,false,2,1));
+//		urlBrowser.setEnabled(false);
+//		urlBrowser.setVisible(false);
+//		
+//		urlBrowser.addTitleListener(new TitleListener() {
+//			
+//			@Override
+//			public void changed(TitleEvent event) {
+//System.out.println("current search result:"+ event.title);
+//			genURLlistforLingfengTopic(event.title);			
+//		} 				
+//		});
 		
 
 		// SashForm topicComposite = new SashForm(SearchComposite,
@@ -397,15 +397,10 @@ System.out.println("current search result:"+ event.title);
 				System.out.println("select topic filter label is : " + e.title);
 				
 				
-				if (!e.title.equals("HelloHongweiCustomSearchAPI")) {
+				if (!e.title.equals("HelloHongwei")) {
 					 System.out.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
 					 
-					 MessageDialog
-						.openInformation(PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow().getShell(),
-								"Need word to URL data! ",
-								"when you click the word you second filter the information, then you will get some URL , and display on view of asAssist Browser");
-
+	
 					 
 					
 					}

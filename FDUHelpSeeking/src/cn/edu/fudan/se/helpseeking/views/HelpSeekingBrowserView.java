@@ -1,14 +1,12 @@
 package cn.edu.fudan.se.helpseeking.views;
 
-import java.sql.Timestamp;
+import java.net.MalformedURLException;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,22 +15,20 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.handlers.WizardHandler.New;
+
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
-import cn.edu.fudan.se.helpseeking.bean.TabRecord;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
-import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingBrowserView extends ViewPart {
@@ -192,7 +188,24 @@ public class HelpSeekingBrowserView extends ViewPart {
 						TreeItem item = (TreeItem) e.item;
 						UseResultsRecord urr=(UseResultsRecord) item.getData();
 						if(urr!=null)
-						openNewTabByURL(urr);					
+						{
+							//current compostie
+							openNewTabByURL(urr);
+							
+							//eclipse editor aero
+							
+							try {
+								openNewURlinBrower(urr);
+							} catch (PartInitException | MalformedURLException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+							
+							
+						}
+						
+						
 					}
 					
 					@Override
@@ -205,12 +218,22 @@ public class HelpSeekingBrowserView extends ViewPart {
 			
 			tabFolder=new CTabFolder(sashForm, SWT.BORDER);
 			
-		     sashForm.setWeights(new int[] {200, 200});
+		     sashForm.setWeights(new int[] {400, 100});
 
 
 	}
 
 	
+protected void openNewURlinBrower(UseResultsRecord urls) throws PartInitException, MalformedURLException {
+		
+//	IWorkbenchBrowserSupport support =
+//			  PlatformUI.getWorkbench().getBrowserSupport();
+//	IWebBrowser browser = support.createBrowser("someId");
+//	//browser.openURL(new URL("http://www.eclipse.org"));
+	
+
+  }
+
 //	type:   auto   manual 
 	public static void openNewTabByURL(UseResultsRecord urr) {		
 			if (urr.getUrl()!=null) {
@@ -229,10 +252,12 @@ public class HelpSeekingBrowserView extends ViewPart {
 				tabBrowser.setDisplay(tabComposite.getDisplay());
 				tabBrowser.createShow();				
 				tabBrowser.getBrowser().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,7, 1));				
-				tabBrowser.refreshBrowser();
+				//tabBrowser.refreshBrowser();
 //				  String userpath=CommUtil.getPluginCurrentPath()+"foamtreetest.html";
 //					System.out.println("browser view path:" + userpath);
 //				  //String userpath="about:blank";
+				
+				System.out.println("browser view: open url is : "+ urr.getUrl().toString());
 				tabBrowser.setNewUrl(urr.getUrl().toString()); //urr.geturl();
 				tabBrowser.getMyComposite().pack();
 
