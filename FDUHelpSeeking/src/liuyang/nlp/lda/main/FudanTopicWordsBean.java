@@ -16,4 +16,21 @@ public void setWordWeight(double wordWeight) {
 	this.wordWeight = wordWeight;
 }
 
+public String genFoamTreeObjectString ()
+{
+	String labelWeight = "";
+	
+
+		String labels = getWordName().replace(".", " ");
+
+		labelWeight = labelWeight + "{ label: \"" + labels 
+				+ "\""
+				+", "
+			+" weight: " + getWordWeight() 
+				+ ",type: \"leaf\" } ";
+	
+	
+return  labelWeight;
+}
+
 }
