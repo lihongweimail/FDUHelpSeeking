@@ -1,6 +1,7 @@
 package cn.edu.fudan.se.helpseeking.views;
 
 import java.net.MalformedURLException;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -21,13 +22,13 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
+import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
@@ -276,7 +277,7 @@ protected void openNewURlinBrower(UseResultsRecord urls) throws PartInitExceptio
 
 	}
 
-	public void genUrlTree(TreeItem[] sendoutURLlist) {
+	public void genUrlTree(List<WEBPageBean> list) {
 		
 		int R=CommUtil.randomInt(128, 0);
 		int Y=CommUtil.randomInt(255, 0);
@@ -286,13 +287,13 @@ protected void openNewURlinBrower(UseResultsRecord urls) throws PartInitExceptio
 		 urlTree.setForeground(SWTResourceManager.getColor(R, Y, B));
 		 
 		 
-		for (int i = 0; i < sendoutURLlist.length; i++) {
+		for (int i = 0; i < list.size(); i++) {
 			TreeItem urlTreeItem= new TreeItem(urlTree, SWT.NONE);
 			UseResultsRecord urr=new UseResultsRecord();
-			urr.setTitle(sendoutURLlist[i].getItem(0).getText());
-			urr.setUrl(sendoutURLlist[i].getItem(1).getText());
+			urr.setTitle(list.get(i).getTitle().trim());
+			urr.setUrl(list.get(i).getUrl().trim());
 			urlTreeItem.setData(urr);
-			urlTreeItem.setText(sendoutURLlist[i].getItem(0).getText());
+			urlTreeItem.setText(list.get(i).getTitle().trim());
 	
 			urlTreeItem.setForeground(Display.getDefault()
 					.getSystemColor(SWT.COLOR_RED));
@@ -300,7 +301,7 @@ protected void openNewURlinBrower(UseResultsRecord urls) throws PartInitExceptio
 			
 			TreeItem urlTreeItemofItemtitle =new TreeItem(urlTreeItem, SWT.NONE);
 			urlTreeItemofItemtitle.setData(urr);
-			urlTreeItemofItemtitle.setText(sendoutURLlist[i].getItem(1).getText());
+			urlTreeItemofItemtitle.setText(list.get(i).getUrl().trim());
 			
 //			TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
 //			urlTreeItemofItemsummary.setData(urr);

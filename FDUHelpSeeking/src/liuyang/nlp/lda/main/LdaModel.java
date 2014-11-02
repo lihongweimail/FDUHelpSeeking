@@ -14,6 +14,8 @@ import java.util.Comparator;
 import java.util.List;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic;
+import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
+import cn.edu.fudan.se.helpseeking.bean.FudanTopicWordsBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import liuyang.nlp.lda.com.FileUtil;
 import liuyang.nlp.lda.conf.ConstantConfig;

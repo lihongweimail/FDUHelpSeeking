@@ -1,4 +1,4 @@
-package liuyang.nlp.lda.main;
+package cn.edu.fudan.se.helpseeking.bean;
 
 import java.util.ArrayList;
 import java.util.List;

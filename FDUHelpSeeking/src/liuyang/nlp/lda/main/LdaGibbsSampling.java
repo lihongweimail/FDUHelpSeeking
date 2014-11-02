@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.htmlparser.util.ParserException;
 
+import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
+import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
+import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
@@ -121,13 +124,13 @@ public class LdaGibbsSampling {
 	}
 
 
-	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(ArrayList<String> UrlList) throws IOException, ParserException {
+	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(String topicName, List<TopicWEBPagesBean> allWebPages) throws IOException, ParserException {
 		//write LdaParameters file
 		
 		
 		
 		// TODO Auto-generated method stub
-		String originalDocsPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.ldaDocsPath;
+		//String originalDocsPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.ldaDocsPath;
 		String resultPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.LdaResultsPath;
 		String parameterFile= CommUtil.getFDUPluginWorkingPath()+"/"+ConstantConfig.LDAPARAMETERFILE;
 		//String Url1= UrlConfig.Url1;
@@ -150,12 +153,33 @@ public class LdaGibbsSampling {
 		
 		
 		
+		
+		
+		
 		//读待采样数据
 		String UrlContent = new String();
-		for(String CurrentUrl: UrlList){
-			System.out.println(CurrentUrl);
-			UrlContent += " "+ UrlWordExtract.getText(CurrentUrl);
+		int currentTopicindex=0;
+		//定位 topic
+		for (int i = 0; i < allWebPages.size(); i++) {
+			if (topicName.trim().equals(allWebPages.get(i).getTopicName().trim())) {
+				currentTopicindex=i;
+			}
 		}
+				
+		
+	for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {
+			WEBPageBean CurrentUrl=allWebPages.get(currentTopicindex).getPages().get(j);
+	
+			System.out.println(CurrentUrl.getUrl());
+			String pageContent=UrlWordExtract.getText(CurrentUrl.getUrl());
+			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
+			
+			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
+
+			
+			UrlContent += " "+pageContent;
+		}
+	
 		Documents docSet = new Documents();
 		docSet.readDocs(UrlContent);//读待采样数据	
 		
