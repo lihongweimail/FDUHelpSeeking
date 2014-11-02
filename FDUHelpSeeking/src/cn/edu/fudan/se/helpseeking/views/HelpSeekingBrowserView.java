@@ -1,6 +1,10 @@
 package cn.edu.fudan.se.helpseeking.views;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -22,11 +26,14 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.browser.IWebBrowser;
+import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -191,16 +198,15 @@ public class HelpSeekingBrowserView extends ViewPart {
 						if(urr!=null)
 						{
 							//current compostie
-							openNewTabByURL(urr);
+//							openNewTabByURL(urr);
 							
 							//eclipse editor aero
-							
-							try {
-								openNewURlinBrower(urr);
-							} catch (PartInitException | MalformedURLException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+							//获取4位时间整数
+							Calendar c = Calendar.getInstance();
+							  c.setTimeInMillis(new Date().getTime());
+							long currentBrowserID=c.getTimeInMillis();
+					          openNewURlinBrower(urr,currentBrowserID);
+						
 							
 							
 							
@@ -217,21 +223,36 @@ public class HelpSeekingBrowserView extends ViewPart {
 				});
 			
 			
-			tabFolder=new CTabFolder(sashForm, SWT.BORDER);
+//			tabFolder=new CTabFolder(sashForm, SWT.BORDER);
 			
-		     sashForm.setWeights(new int[] {400, 100});
+//		     sashForm.setWeights(new int[] {400, 100});
 
 
 	}
 
 	
-protected void openNewURlinBrower(UseResultsRecord urls) throws PartInitException, MalformedURLException {
+protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID) 
+{
 		
-//	IWorkbenchBrowserSupport support =
-//			  PlatformUI.getWorkbench().getBrowserSupport();
-//	IWebBrowser browser = support.createBrowser("someId");
-//	//browser.openURL(new URL("http://www.eclipse.org"));
-	
+	 try {
+         IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+         IWebBrowser browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
+         BrowserIDBean newbrowserid=new BrowserIDBean();
+         newbrowserid.setId(browser.getId());
+//         FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
+//		pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
+         
+         System.out.println("browser id: "+"OpenWebsite"+String.valueOf(currentBrowserID) );
+         browser.openURL(new URL((urls.getUrl())));
+        
+         //browser.getId()
+         
+     } catch (PartInitException p) {
+         p.printStackTrace();
+     } catch (MalformedURLException p) {
+         p.printStackTrace();
+     }
+
 
   }
 

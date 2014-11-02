@@ -41,8 +41,12 @@ public class ExceptionalPartAndView {
 		IViewPart tagCloundViewPart = currentActiveIWorkbenchPage
 				.findView(
 						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.HelpSeekingTagCloundView");
-
 		
+
+if (part.getClass().toString().trim().equals("class org.eclipse.ui.internal.browser.WebBrowserEditor")) {
+	checkResult=true;
+}
+				
 		if (part.equals(helpseekingSearchViewPart)) {
 			checkResult=true;
 		}

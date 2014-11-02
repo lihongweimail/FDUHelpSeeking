@@ -936,11 +936,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// ???? 测试试用句子 记得删除！！！
 
-		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
-		if (clusters.isEmpty()) {
-			clusters = CarrotTopic.fromWebResults(results);
-			System.out.println("clusters is null");
-		}
+//		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
+//		if (clusters.isEmpty()) {
+//			clusters = CarrotTopic.fromWebResults(results);
+//			System.out.println("clusters is null");
+//		}
 
 		//
 		// 生成topic tree
