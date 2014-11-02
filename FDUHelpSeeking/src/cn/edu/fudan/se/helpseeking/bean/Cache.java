@@ -1748,6 +1748,7 @@ if (paraType.length>0 )
 
 		des = CommUtil.ListToString(mydesList);
 
+		
 		return des;
 	}
 

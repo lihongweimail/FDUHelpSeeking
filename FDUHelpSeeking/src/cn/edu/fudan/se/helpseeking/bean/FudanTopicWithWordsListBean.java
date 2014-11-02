@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.lucene.analysis.util.WordlistLoader;
 
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+
 public class FudanTopicWithWordsListBean {
 	
 	
@@ -28,11 +30,17 @@ public class FudanTopicWithWordsListBean {
 		// { label:"Group 3" }
 		// ]
 		// }
+		
+		
+		
+		
 		String labelWeight = "";
 		for (int i = 0; i < wordsList.size(); i++) 
 		{
 
-			String labels = wordsList.get(i).getWordName().replace(".", " ");
+			//String labels = wordsList.get(i).getWordName().replace(".", " ");
+			//引入切词工具 处置
+			String labels = CommUtil.getSimpleWords(wordsList.get(i).getWordName().replace(".", " "));
 
 			labelWeight = labelWeight + "{ label: \"" + labels 
 					+ "\""
@@ -46,8 +54,8 @@ public class FudanTopicWithWordsListBean {
 //				+ labelWeight + "]" + " ,type: \"node\"} ";
 
 
-//     two level group with no topic name
-		String groupString = "{ label: \"" + "" + "\" , groups: ["
+//     two level group with no topic name  为了显示需要不遮住第二层，这里设置组的标签label为空格，或者使用1个词的topic
+		String groupString = "{ label: \" " + "" + "\" , groups: ["
 				+ labelWeight + "]" + " ,type: \"node\"} ";
 
 		return groupString;

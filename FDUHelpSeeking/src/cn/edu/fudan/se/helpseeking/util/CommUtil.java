@@ -20,6 +20,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
+import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 
 public class CommUtil {
 	private static final String SPLITE_STRING = "[; ]";
@@ -32,6 +33,99 @@ public class CommUtil {
 		// 为获得 10<= temp <= 15 则为： scope 5 base 10
 		int Temp = (int) Math.round(Math.random() * scope + base);
 		return Temp;
+	}
+	
+	public static String getTokensfromCodeStr(String name) {
+		String tempstr;
+		TokenExtractor mytoExtractor=new TokenExtractor();
+		List<String> mystrlist=mytoExtractor.analysis(name);
+		tempstr="";
+		for (int j = 0; j < mystrlist.size(); j++) {
+			if (tempstr.equals("")) {
+				tempstr=mystrlist.get(j).toString();
+			}else {
+				tempstr=tempstr+" "+mystrlist.get(j).toString();
+			}
+
+		}
+		return tempstr;
+	}
+	
+	
+	//给定一个字串，特别但是包结构带类名，或者是方法的全名带参数时，为了再foamtree上显示更明显，预处理一下，去除一些特殊字符，得到分词结果
+	public static String getSimpleWords(String tempstr) {
+		String resultstr="";
+		tempstr=tempstr.replace(';', ' ');
+    	if (tempstr.contains("(") && tempstr.contains(")")) {
+						
+			int firstpartlastIndex=tempstr.indexOf('(');
+			String firstPart=tempstr.substring(0, firstpartlastIndex);
+			System.out.println("firstpart: "+firstPart);
+			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
+			String name=namePart.get(namePart.size()-1);
+			
+			name = getTokensfromCodeStr(name);
+						
+			
+			int lastpartIndex=tempstr.lastIndexOf(')');
+			String secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
+			System.out.println("secondpart: "+ secondPart);
+			List<String> secondkeywordparts=new ArrayList<String>();
+			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
+			
+			String parameterList="";
+			
+			for (int i = 0; i < secondkeywordparts.size(); i++) {
+				if (secondkeywordparts.get(i).trim().equals("I")  ) {
+					continue;
+				}
+
+				if (secondkeywordparts.get(i).trim().equals("Z")  ) {
+					continue;
+				}
+
+				
+				if (secondkeywordparts.get(i).trim().contains(" ")) {
+					List<String> para=new ArrayList<String>();
+					para=CommUtil.stringToList(secondkeywordparts.get(i), "[ ]");
+					
+					if (parameterList.equals("")) {
+						parameterList=getTokensfromCodeStr(para.get(0));
+					}else
+					{parameterList=parameterList+" , "+getTokensfromCodeStr(para.get(0));}
+					
+					
+				}
+				else
+				{
+				List<String> para=new ArrayList<String>();
+				para=CommUtil.stringToList(secondkeywordparts.get(i), "[.]");
+
+				if (parameterList.equals("")) {
+					parameterList=getTokensfromCodeStr(para.get(para.size()-1));
+				}else
+				{
+					parameterList=parameterList+" , "+getTokensfromCodeStr(para.get(para.size()-1));}
+				}
+			}
+			
+			if (parameterList.equals("")) {
+				resultstr=name;
+			}else
+			resultstr=name +" ("+parameterList+")";
+ 
+			}
+			else 
+			{
+				List<String> packageClassName=new ArrayList<String>();
+				packageClassName=CommUtil.stringToList(tempstr, "[.]");
+					resultstr=getTokensfromCodeStr(packageClassName.get(packageClassName.size()-1));
+				
+				
+			}
+		
+     //   System.out.println("last formal: result" + resultstr);
+        return resultstr;
 	}
 
 	private static int minLength = 2;
@@ -79,10 +173,10 @@ public class CommUtil {
 		for (String token : tokens) {
 
 			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
-				token = token.toLowerCase();
+				String lowercasetoken =token.toLowerCase();
 				boolean flage = false;
 				for (String keyword : keyWords) {
-					if (token.trim().equals(keyword.trim())) {
+					if (lowercasetoken.trim().equals(keyword.trim().toLowerCase())) {
 						// System.out.println("not add keyword:"+ token);
 						flage = true;
 						break;
@@ -109,10 +203,11 @@ public class CommUtil {
 		for (String token : tokens.split(SPLIT_STRING)) {
 
 			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
-				token = token.toLowerCase();
+				String lowercasetoken;
+				lowercasetoken = token.toLowerCase();
 				boolean flage = false;
 				for (String keyword : keyWords) {
-					if (token.trim().equals(keyword.trim())) {
+					if (lowercasetoken.trim().equals(keyword.trim().toLowerCase())) {
 						// System.out.println("not add keyword:"+ token);
 						flage = true;
 						break;
@@ -142,10 +237,11 @@ public class CommUtil {
 		for (String token : tokens.split(Basic.SPLIT_STRING)) {
 
 			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
-				token = token.toLowerCase();
+				String lowercasetoken;
+				lowercasetoken = token.toLowerCase();
 				boolean flage = false;
 				for (String keyword : keyWords) {
-					if (token.trim().equals(keyword.trim())) {
+					if (lowercasetoken.trim().equals(keyword.trim().toLowerCase())) {
 						// System.out.println("not add keyword:"+ token);
 						flage = true;
 						break;

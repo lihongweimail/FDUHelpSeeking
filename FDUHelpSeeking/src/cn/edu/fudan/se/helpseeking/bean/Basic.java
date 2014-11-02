@@ -729,6 +729,7 @@ public enum QueryLevel {
 	public static final int historyQueryWindowCount = 3;
 	
 	public final static int FOAMTREETOPICCOUNT=6; //提供给foamtree2 （右下）的topic的数量
-	public final static int FOAMTREETOPICWORDSLIMITIED=3; //每个topic 中提取出前六个词
+	public final static int FOAMTREETOPICWORDSLIMITIED=6; //每个topic 中提取出前六个词
+	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	
 }

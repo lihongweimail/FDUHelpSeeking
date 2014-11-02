@@ -58,6 +58,7 @@ import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.Images;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
+import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 import cn.edu.fudan.se.helpseeking.test.SampleWebResults;
 import cn.edu.fudan.se.helpseeking.util.CarrotTopic;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -188,7 +189,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					String searchtext = txtSearch.getText();
 					boolean titleaddflag = true;
 
-					String candidateWord = (e.title.trim()).replace(" ", ".");
+					
+					//????因为需要显示足够大，已经将串处理，只保留了类名或方法名因此不需要“.”分割符了
+					//需要处理的是符号串中的空格。
+					//String candidateWord = (e.title.trim()).replace(" ", ".");
+					String candidateWord = (e.title.trim()).replace(" ", "");
+					
 					String temp2 = "";
 					// ???? titleaddflag = true;
 					for (String str : searchtext.split("[ ]")) {
@@ -324,7 +330,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-
+		
+		
+				
 		topictree.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -375,7 +383,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				{
 					if (item.getData() == "TOPIC") {
 						item.setData("TOPICX");
-						// 两个模式同时处理，以提高效率，一方面 可以 就topic有关的URL
+						item.setForeground(Display.getDefault().getSystemColor(
+								SWT.COLOR_GREEN));						// 两个模式同时处理，以提高效率，一方面 可以 就topic有关的URL
 						// 先给出；另一方面，用户也可以在二次过滤后的foamtree中选择URL。
 
 						// 新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree，
@@ -1055,74 +1064,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				new Timestamp(System.currentTimeMillis()));
 	}
 	
-	public static String getSimpleWords(String tempstr) {
-		String resultstr="";
-    	if (tempstr.contains("(")) {
-						
-			int firstpartlastIndex=tempstr.indexOf('(');
-			String firstPart=tempstr.substring(0, firstpartlastIndex);
-			System.out.println("firstpart: "+firstPart);
-			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
-			String name=namePart.get(namePart.size()-1);
-			
-			String secondPart=tempstr.substring(firstpartlastIndex+1,tempstr.length()-1);
-			System.out.println("secondpart: "+ secondPart);
-			List<String> secondkeywordparts=new ArrayList<String>();
-			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
-			
-			String parameterList="";
-			
-			for (int i = 0; i < secondkeywordparts.size(); i++) {
-				if (secondkeywordparts.get(i).trim().equals("I")  ) {
-					continue;
-				}
 
-				if (secondkeywordparts.get(i).trim().equals("Z")  ) {
-					continue;
-				}
 
-				
-				if (secondkeywordparts.get(i).trim().contains(" ")) {
-					List<String> para=new ArrayList<String>();
-					para=CommUtil.stringToList(secondkeywordparts.get(i), "[ ]");
-					
-					if (parameterList.equals("")) {
-						parameterList=para.get(0);
-					}else
-					{parameterList=parameterList+" , "+para.get(0);}
-					
-				}
-				else
-				{
-				List<String> para=new ArrayList<String>();
-				para=CommUtil.stringToList(secondkeywordparts.get(i), "[.]");
 
-				if (parameterList.equals("")) {
-					parameterList=para.get(para.size()-1);
-				}else
-				{
-					parameterList=parameterList+" , "+para.get(para.size()-1);}
-				}
-			}
-			
-			if (parameterList.equals("")) {
-				resultstr=name;
-			}else
-			resultstr=name +" ("+parameterList+")";
- 
-			}
-			else 
-			{
-				List<String> packageClassName=new ArrayList<String>();
-				packageClassName=CommUtil.stringToList(tempstr, "[.]");
-					resultstr=packageClassName.get(packageClassName.size()-1);
-				
-				
-			}
-		
-        System.out.println("last formal: result" + resultstr);
-        return resultstr;
-	}
 
 
 	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
@@ -1133,40 +1077,76 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// + "{ label: \"Plugin\", weight: 2.0 },"
 		// + "{ label: \"tool\", weight: 1.0 }"
 		
-
+		
+		//处理异常字符 如“；”等，并截短
+		
+			
 		//试着处理给出的词汇截短符号：
 		//java.io.xxx   java.io.xx.yy(zzz)
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+			
 			String tempstr=keyWordsforQuery.get(i).getKeywordName();
-			keyWordsforQuery.get(i).setKeywordName(getSimpleWords(tempstr));
+			
+			//处理异常字符，得到截短符号，切词
+			String simplestr=CommUtil.getSimpleWords(tempstr);
+			
+	
+			
+			//赋值返回
+			keyWordsforQuery.get(i).setKeywordName(simplestr);
 		}
+				
 		
+		//去除重复词
+		List<KeyWord> noDupkeyworksforquery=new ArrayList<KeyWord>();
 		
-		
-		
-		
-		
+		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+			
+			boolean samekeyworks=false;
+			int nodupkeyworksqueryindex=0;
+			for (int j = 0; j < noDupkeyworksforquery.size(); j++) {
+				if (keyWordsforQuery.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
+					samekeyworks=true;
+					nodupkeyworksqueryindex=j;
+					break;
+				}
+				
+			}
+			
+			if (samekeyworks) {
+				double score1=noDupkeyworksforquery.get(nodupkeyworksqueryindex).getScore();
+				double score2=keyWordsforQuery.get(i).getScore();
+				noDupkeyworksforquery.get(nodupkeyworksqueryindex).setScore(score1+score2);
+			}else 
+			{
+				noDupkeyworksforquery.add(keyWordsforQuery.get(i));
+			}
+			
+			
+		}
 		
 		
 
 		String searchwords = "";
 		// String currentWord="";
 		String labelWeight = "";
-		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+		for (int i = 0; i < noDupkeyworksforquery.size(); i++) {
 
-			String labels = keyWordsforQuery.get(i).getKeywordName()
-					.replace(".", " ");
+			
+			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
+			String labels = noDupkeyworksforquery.get(i).getKeywordName();
+					//.replace(".", " ");
 
 			labelWeight = labelWeight
 					+ "{ label: \""
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ keyWordsforQuery.get(i).getScore() + " ,type: \"leaf\"},";
+					+ noDupkeyworksforquery.get(i).getScore() + " ,type: \"leaf\"},";
 			searchwords = searchwords + " "
-					+ keyWordsforQuery.get(i).getKeywordName();
+					+ noDupkeyworksforquery.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
-					+ keyWordsforQuery.get(i).getKeywordName());
+					+ noDupkeyworksforquery.get(i).getKeywordName());
 
 		}
 

@@ -19,7 +19,7 @@ public class Stu {
     
     public static void main(String[] args) {
     	
-    	String tempstr="java.lang.String.replace(CharSequence.target, CharSequence.replacement)";
+    	String tempstr="java.io.string;java.lang.String.replace(CharSequence.target, CharSequence.replacement);";
     	//io.java.iostream
     	//java.util.Calendar.setTimeInMillis(long millis)
 //java.lang.String.replace(CharSequence target, CharSequence replacement)
@@ -58,6 +58,7 @@ public class Stu {
 
 	private static String getSimpleWords(String tempstr) {
 		String resultstr="";
+		tempstr=tempstr.replace(';', ' ');
     	if (tempstr.contains("(")) {
 						
 			int firstpartlastIndex=tempstr.indexOf('(');
@@ -66,7 +67,8 @@ public class Stu {
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
 			String name=namePart.get(namePart.size()-1);
 			
-			String secondPart=tempstr.substring(firstpartlastIndex+1,tempstr.length()-1);
+			int lastpartIndex=tempstr.lastIndexOf(')');
+			String secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
 			System.out.println("secondpart: "+ secondPart);
 			List<String> secondkeywordparts=new ArrayList<String>();
 			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");

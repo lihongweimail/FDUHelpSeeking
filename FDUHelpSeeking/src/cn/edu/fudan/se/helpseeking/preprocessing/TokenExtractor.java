@@ -23,6 +23,8 @@ public class TokenExtractor
 	boolean isAcceptAlphabet = true;
 	boolean isAcceptDigit = false;
 
+	
+	//给出一个串分析得到字符
 	public List<String>  analysis(String tokenString)
 	{
 		List<String> tokens=new ArrayList<String>();
@@ -179,5 +181,14 @@ public class TokenExtractor
 		writeToFile(tokenList, fileName);
 	}
 
+	
+	public static void main(String[] args) {
+		TokenExtractor mytoExtractor=new TokenExtractor();
+		List<String>mystr=mytoExtractor.getIdentifierOccurenceOfString("import;IOException;TasteException");
+		for (int i = 0; i < mystr.size();i++)
+		{
+			System.out.println(mystr.get(i));
+		}
+	}
 
 }

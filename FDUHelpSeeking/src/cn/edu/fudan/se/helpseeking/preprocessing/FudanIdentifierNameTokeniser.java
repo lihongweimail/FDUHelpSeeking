@@ -33,7 +33,7 @@ public class FudanIdentifierNameTokeniser
 	}
 
 	private IdentifierNameTokeniser identifierNametokeniser;
-	private boolean isIgnoreCase=true;
+	private boolean isIgnoreCase=false;
 	private List<String> keyWords=new ArrayList<String>();
 	private int minLength =2;
 	
@@ -48,7 +48,7 @@ public class FudanIdentifierNameTokeniser
 	{
 		identifierNametokeniser = tokeniser;
 		minLength = 1;	
-		isIgnoreCase = true;
+		isIgnoreCase = false;
 		constructDefaultFilterString(JAVA_STOP_LIST_FILENAME,USER_STOP_LIST_FILENAME);
 		
 

@@ -329,7 +329,7 @@ public class LdaModel {
 			FudanTopicWithWordsListBean ftwwlb=new FudanTopicWithWordsListBean();
 			ftwwlb.setTopicNO(i);
 			System.out.println("topic No."+ i);
-			int selectTopicWordCount=ConstantConfig.SELECTTOPICWORDNUMBER;
+			int selectTopicWordCount=Basic.SELECTTOPICWORDNUMBER;
 			String wordsasTopicTitle="";
 			
 			for(int t = 0; t < topNum; t++){
@@ -337,11 +337,21 @@ public class LdaModel {
 				writer.write(docSet.indexToTermMap.get(tWordsIndexArray.get(t)) + " " + phi[i][tWordsIndexArray.get(t)] + "\t");
 				//????  在这里将topic的词汇提出来  但是topic叫什么名字呢？取前两个前三个？例如前5五个标题，所有20个词汇作为下一组
 
+                //如果不是特殊的串或者空串
 				
+				String isnullstr=docSet.indexToTermMap.get(tWordsIndexArray.get(t)).trim();
+				
+				
+				if (!isnullstr.equals("")) {
+					String simpString=CommUtil.getSimpleWords(isnullstr);
+					if (!simpString.equals("")) {
+						
 				//一个词以及词权 并收集到 一个topic中去
 				FudanTopicWordsBean ftwbBean=new FudanTopicWordsBean();
 				ftwbBean.setWordName(docSet.indexToTermMap.get(tWordsIndexArray.get(t)));
 				ftwbBean.setWordWeight(phi[i][tWordsIndexArray.get(t)]);
+				
+				
 				
 				if (selectTopicWordCount>0) {
 					wordsasTopicTitle=wordsasTopicTitle+" "+docSet.indexToTermMap.get(tWordsIndexArray.get(t));
@@ -351,8 +361,9 @@ public class LdaModel {
 				
 				
 				ftwwlb.getWordsList().add(ftwbBean);
+				}
 				
-				
+			}
 				//LdaOutcome.add(word);
 			}
 			writer.write("\n");
