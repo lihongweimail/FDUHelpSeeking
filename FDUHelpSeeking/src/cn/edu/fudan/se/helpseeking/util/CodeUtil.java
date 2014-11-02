@@ -17,6 +17,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTNode;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.ASTVisitor;
+import org.eclipse.jdt.core.dom.Block;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -69,8 +70,27 @@ public class CodeUtil {
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
-		ec.setSyntacticBlock(sblock);
 
+		//find the not normal formal keywords 
+//		if (sblock.getCode().contains("L")) {
+//			
+//			System.out.println("codeutil-createeditcodebyjavaelement  code contains L :" );
+//
+//		}
+//		if (sblock.getType().contains("L")) {
+//			
+//			System.out.println("codeutil-createeditcodebyjavaelement  type define contains L :" );
+//
+//		}
+//		if (sblock.getExceptionName().contains("L")) {
+//			
+//			System.out.println("codeutil-createeditcodebyjavaelement  exception name contains L :" );
+//
+//		}
+		
+		
+		ec.setSyntacticBlock(sblock);
+		
 		final CompilationUnit cu = ASTUtil.parse(unit);
 		final ArrayList<ASTNode> nodes = new ArrayList<>();
 		final ArrayList<Integer> linenumbers = new ArrayList<>();

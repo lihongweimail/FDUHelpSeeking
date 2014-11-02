@@ -851,6 +851,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	private static void dosearch(String search) throws InterruptedException {
 
+		
+		
+		
 		Timestamp starttime;
 		String searchResultOutput = "\n============\n";
 		starttime = new Timestamp(System.currentTimeMillis());
@@ -1049,6 +1052,76 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		Cache.getInstance().setLastAutoSearchTime(
 				new Timestamp(System.currentTimeMillis()));
 	}
+	
+	public static String getSimpleWords(String tempstr) {
+		String resultstr="";
+    	if (tempstr.contains("(")) {
+						
+			int firstpartlastIndex=tempstr.indexOf('(');
+			String firstPart=tempstr.substring(0, firstpartlastIndex);
+			System.out.println("firstpart: "+firstPart);
+			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
+			String name=namePart.get(namePart.size()-1);
+			
+			String secondPart=tempstr.substring(firstpartlastIndex+1,tempstr.length()-1);
+			System.out.println("secondpart: "+ secondPart);
+			List<String> secondkeywordparts=new ArrayList<String>();
+			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
+			
+			String parameterList="";
+			
+			for (int i = 0; i < secondkeywordparts.size(); i++) {
+				if (secondkeywordparts.get(i).trim().equals("I")  ) {
+					continue;
+				}
+
+				if (secondkeywordparts.get(i).trim().equals("Z")  ) {
+					continue;
+				}
+
+				
+				if (secondkeywordparts.get(i).trim().contains(" ")) {
+					List<String> para=new ArrayList<String>();
+					para=CommUtil.stringToList(secondkeywordparts.get(i), "[ ]");
+					
+					if (parameterList.equals("")) {
+						parameterList=para.get(0);
+					}else
+					{parameterList=parameterList+" , "+para.get(0);}
+					
+				}
+				else
+				{
+				List<String> para=new ArrayList<String>();
+				para=CommUtil.stringToList(secondkeywordparts.get(i), "[.]");
+
+				if (parameterList.equals("")) {
+					parameterList=para.get(para.size()-1);
+				}else
+				{
+					parameterList=parameterList+" , "+para.get(para.size()-1);}
+				}
+			}
+			
+			if (parameterList.equals("")) {
+				resultstr=name;
+			}else
+			resultstr=name +" ("+parameterList+")";
+ 
+			}
+			else 
+			{
+				List<String> packageClassName=new ArrayList<String>();
+				packageClassName=CommUtil.stringToList(tempstr, "[.]");
+					resultstr=packageClassName.get(packageClassName.size()-1);
+				
+				
+			}
+		
+        System.out.println("last formal: result" + resultstr);
+        return resultstr;
+	}
+
 
 	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
 		// 生成foamtree的候选词和权重字符串
@@ -1057,6 +1130,22 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// + "{ label: \"To\", weight: 1.0},"
 		// + "{ label: \"Plugin\", weight: 2.0 },"
 		// + "{ label: \"tool\", weight: 1.0 }"
+		
+
+		//试着处理给出的词汇截短符号：
+		//java.io.xxx   java.io.xx.yy(zzz)
+		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+			String tempstr=keyWordsforQuery.get(i).getKeywordName();
+			keyWordsforQuery.get(i).setKeywordName(getSimpleWords(tempstr));
+		}
+		
+		
+		
+		
+		
+		
+		
+		
 
 		String searchwords = "";
 		// String currentWord="";

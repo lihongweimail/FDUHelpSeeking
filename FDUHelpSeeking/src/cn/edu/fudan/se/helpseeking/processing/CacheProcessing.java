@@ -131,6 +131,7 @@ public class CacheProcessing extends Thread {
 				}
 
 				KeyWord kw = currentCache.getCurrentKeywordsList().get(i);
+				
 				keyWordsforQuery.add(kw);
 
 				if (i == 0) {
@@ -506,7 +507,7 @@ public class CacheProcessing extends Thread {
 				int windowsize = currentCache.getActions().getActionList()
 						.size();
 
-				for (int i = 0; i < doKeyWords.get(j1).getKeyWords().size(); i++) {
+				for (int i = 0; i < (doKeyWords.size()>doKeyWords.get(j1).getKeyWords().size()?doKeyWords.get(j1).getKeyWords().size():doKeyWords.size()); i++) {
 					System.out.println("doOldStep function : j1 is "+j1+"  i is "+i );
 
 					double weight = doKeyWords.get(j1).getKeyWords().get(i)
@@ -1375,6 +1376,9 @@ public class CacheProcessing extends Thread {
 				}
 				
 				if (!keyWordsforQuery.isEmpty()) {
+					
+					
+					
 					viteractive.setNewWordsAndMode(keyWordsforQuery, mode);
 					viteractive.setCurrentActionID(currentCache.getCurrentID());
 				}
