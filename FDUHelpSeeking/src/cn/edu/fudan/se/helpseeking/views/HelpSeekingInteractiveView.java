@@ -701,70 +701,81 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// { label:"Group 3" }
 		// ]
 		// }
-
-		 //替换代码一
-		 //两层展示topic以及topic内的词
 		 String labelWeight="";
+		 
+//			if (Basic.DISPLAYTOPICFOAMTREEPLAN==1)
+//				{
+//		 labelWeight="";
+       //替换代码一
+	//两层展示topic以及topic内的词
 		 for (int i = 0; i < myfudanTopicWords.size(); i++) {
-		 if (labelWeight.equals("")) {
-		 labelWeight=myfudanTopicWords.get(i).genFoamTreeGroupString();
-		 }
-		 else {
-		 labelWeight=labelWeight+", "+myfudanTopicWords.get(i).genFoamTreeGroupString();
-		
-		 }
-		
-		 }
-		 //结束一
+				 if (labelWeight.equals("")) {
+				 labelWeight=myfudanTopicWords.get(i).genFoamTreeGroupString();
+				 }
+				 else {
+				 labelWeight=labelWeight+", "+myfudanTopicWords.get(i).genFoamTreeGroupString();
+				
+				 }
+				
+				 }
+				 //结束一
+//				}
+	 
+			
+			
 
-		// 替换代码二
-		// 一层展示 将topic 中所有的词 收集在一起，
-//		List<FudanTopicWordsBean> wordsList = new ArrayList<FudanTopicWordsBean>();
-//
-//		for (int i = 0; i < myfudanTopicWords.size(); i++) {
-//			for (int j = 0; j < myfudanTopicWords.get(i).getWordsList().size(); j++) {
-//				String candidateTerm = myfudanTopicWords.get(i).getWordsList()
-//						.get(j).toString().toLowerCase();
-//				boolean testexists = true;
-//				int indexSameWord = 0;
-//				for (int k = 0; k < wordsList.size(); k++) {
-//					if (candidateTerm.equals(wordsList.get(k).getWordName()
-//							.toLowerCase())) {
-//						testexists = false;
-//						indexSameWord = k;
-//					}
-//				}
-//
-//				if (testexists) {
-//					wordsList.add(myfudanTopicWords.get(i).getWordsList()
-//							.get(j));
-//				} else {
-//					double wordWeightpre = wordsList.get(indexSameWord)
-//							.getWordWeight();
-//					wordsList.get(indexSameWord).setWordWeight(
-//							wordWeightpre
-//									+ myfudanTopicWords.get(i).getWordsList()
-//											.get(j).getWordWeight());
-//				}
-//
-//			}
-//
-//		}
-//		// 生成一层展示的代码：
-//
-//		String labelWeight = "";
-//		for (int i = 0; i < wordsList.size(); i++) {
-//			if (labelWeight.equals("")) {
-//				labelWeight = wordsList.get(i).genFoamTreeObjectString();
-//			} else {
-//				labelWeight = labelWeight + ", "
-//						+ wordsList.get(i).genFoamTreeObjectString();
-//
-//			}
-//
-//		}
-//
-//		// 结束二
+	if (Basic.DISPLAYTOPICFOAMTREEPLAN==2) {
+		
+		labelWeight="";
+			// 替换代码二
+			// 一层展示 将topic 中所有的词 收集在一起，
+			List<FudanTopicWordsBean> wordsList = new ArrayList<FudanTopicWordsBean>();
+	
+			for (int i = 0; i < myfudanTopicWords.size(); i++) {
+				for (int j = 0; j < myfudanTopicWords.get(i).getWordsList().size(); j++) {
+					String candidateTerm = myfudanTopicWords.get(i).getWordsList()
+							.get(j).toString().toLowerCase();
+					boolean testexists = true;
+					int indexSameWord = 0;
+					for (int k = 0; k < wordsList.size(); k++) {
+						if (candidateTerm.equals(wordsList.get(k).getWordName()
+								.toLowerCase())) {
+							testexists = false;
+							indexSameWord = k;
+						}
+					}
+	
+					if (testexists) {
+						wordsList.add(myfudanTopicWords.get(i).getWordsList()
+								.get(j));
+					} else {
+						double wordWeightpre = wordsList.get(indexSameWord)
+								.getWordWeight();
+						wordsList.get(indexSameWord).setWordWeight(
+								wordWeightpre
+										+ myfudanTopicWords.get(i).getWordsList()
+												.get(j).getWordWeight());
+					}
+	
+				}
+	
+			}
+			// 生成一层展示的代码：
+	
+					for (int i = 0; i < wordsList.size(); i++) {
+				if (labelWeight.equals("")) {
+					labelWeight = wordsList.get(i).genFoamTreeObjectString();
+				} else {
+					labelWeight = labelWeight + ", "
+							+ wordsList.get(i).genFoamTreeObjectString();
+	
+				}
+	
+			}
+	
+			// 结束二
+	}
+		
 
 		String foamTreeContent = "";
 		foamTreeContent = "dataObject: {" + "groups: [" + labelWeight + "]"

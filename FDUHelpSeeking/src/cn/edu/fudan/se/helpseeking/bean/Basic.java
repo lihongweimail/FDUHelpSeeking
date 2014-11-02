@@ -730,6 +730,7 @@ public enum QueryLevel {
 	
 	public final static int FOAMTREETOPICCOUNT=6; //提供给foamtree2 （右下）的topic的数量
 	public final static int FOAMTREETOPICWORDSLIMITIED=6; //每个topic 中提取出前六个词
+	public static final int DISPLAYTOPICFOAMTREEPLAN = 2;  //值为1 或其他值 则为典型的两层显示，topic一层，topic的词一层；  值为2时，是将所有topic的词综合起来一层显示
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	
 }
