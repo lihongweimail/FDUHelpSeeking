@@ -124,7 +124,8 @@ public class LdaGibbsSampling {
 	}
 
 
-	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(String topicName, List<TopicWEBPagesBean> allWebPages) throws IOException, ParserException {
+	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(String topicName, List<TopicWEBPagesBean> allWebPages) 
+ {
 		//write LdaParameters file
 		
 		
@@ -171,7 +172,13 @@ public class LdaGibbsSampling {
 			WEBPageBean CurrentUrl=allWebPages.get(currentTopicindex).getPages().get(j);
 	
 			System.out.println(CurrentUrl.getUrl());
-			String pageContent=UrlWordExtract.getText(CurrentUrl.getUrl());
+			String pageContent="";
+			try {
+				pageContent = UrlWordExtract.getText(CurrentUrl.getUrl());
+			} catch (ParserException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
 			
 			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
@@ -192,14 +199,29 @@ public class LdaGibbsSampling {
 		model.initializeModel(docSet);
 		System.out.println("2 Learning and Saving the model ...");
 		boolean forFudan=true;
-		model.inferenceModel(docSet,forFudan);	
+		try {
+			model.inferenceModel(docSet,forFudan);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
 		System.out.println("3 Output the final model ...");
 		//model.saveIteratedModel(ldaparameters.iteration, docSet);
 		
 		System.out.println("Done!");
-		return model.saveIteratedModelforFudanTopic(ldaparameters.iteration,docSet);
 		
 		
+		 List<FudanTopicWithWordsListBean> resultBeans=new ArrayList<FudanTopicWithWordsListBean>();		
+		
+		
+		try {
+			resultBeans= model.saveIteratedModelforFudanTopic(ldaparameters.iteration,docSet);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return resultBeans;
 		
 	}
 

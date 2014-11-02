@@ -393,7 +393,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						// 获得URLlist
 						ArrayList<String> urlList = new ArrayList<String>();
 						List<WEBPageBean> currentWebPages = new ArrayList<WEBPageBean>();
-						TopicWEBPagesBean currentTopicWEBPages = new TopicWEBPagesBean();
+						TopicWEBPagesBean curTopicWEBPages = new TopicWEBPagesBean();
 
 						TreeItem[] treeItemSet = item.getItems();
 						for (int i = 0; i < treeItemSet.length; i++) {
@@ -409,9 +409,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 						}
 
-						currentTopicWEBPages
+						curTopicWEBPages
 								.setTopicName(item.getText().trim());
-						currentTopicWEBPages.setPages(currentWebPages);
+						curTopicWEBPages.setPages(currentWebPages);
 
 						currentTopicName = item.getText().trim();
 
@@ -429,27 +429,38 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 							bv.getTopicContentText().setText(currentTopicName);
-							bv.genUrlTree(currentTopicWEBPages.getPages());
+							bv.genUrlTree(curTopicWEBPages.getPages());
 						}
 
-						allWebPages.add(currentTopicWEBPages);
+						allWebPages.add(curTopicWEBPages);
 
-						if (!currentTopicWEBPages.getPages().isEmpty()) {
+						if (!curTopicWEBPages.getPages().isEmpty()) {
 							// 调用LDA
-							try {
-								List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
-										.fduTopicURLfilter(item.getText()
-												.trim(), allWebPages);
-								currentTopicWEBPages
-										.setMyfudanTopicWords(myfudanTopicWords);
+							setCurrentTopicItem(item);
+							setCurrrentTopicWEBPages(curTopicWEBPages);
+										
+							 
+							Display.getDefault().asyncExec(new Runnable() { 
+									public void run() { 
+										
+											List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
+													.fduTopicURLfilter(getCurrentTopicItem().getText()
+															.trim(), allWebPages);
+											getCurrrentTopicWEBPages()
+													.setMyfudanTopicWords(myfudanTopicWords);
 
-								// 传给foamtree 并显示
-								genTopicWordsFoamTree(myfudanTopicWords);
+											// 传给foamtree 并显示
+											genTopicWordsFoamTree(myfudanTopicWords);
 
-							} catch (ParserException | IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
+										
+
+									} 
+									}); 
+
+							
+							
+							
+							
 						}
 
 					}
@@ -532,6 +543,32 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		sashComposite.setWeights(new int[] { 200, 400 });
 
 	}
+	
+	
+	TopicWEBPagesBean currrentTopicWEBPages = new TopicWEBPagesBean();
+	TreeItem currentTopicItem;
+
+	
+	
+	public TopicWEBPagesBean getCurrrentTopicWEBPages() {
+		return currrentTopicWEBPages;
+	}
+
+	public void setCurrrentTopicWEBPages(TopicWEBPagesBean currrentTopicWEBPages) {
+		this.currrentTopicWEBPages = currrentTopicWEBPages;
+	}
+
+	public TreeItem getCurrentTopicItem() {
+		return currentTopicItem;
+	}
+
+	public void setCurrentTopicItem(TreeItem currentTopicItem) {
+		this.currentTopicItem = currentTopicItem;
+	}
+
+		
+	
+	
 
 	protected void genSearchHTML(String querystr) {
 
@@ -836,6 +873,18 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						foamtreejscontent);
 	}
 
+	public String currentQueryText="";
+	
+	
+	
+	public String getCurrentQueryText() {
+		return currentQueryText;
+	}
+
+	public void setCurrentQueryText(String currentQueryText) {
+		this.currentQueryText = currentQueryText;
+	}
+
 	private void manualSearch() {
 		System.out.println("Say start manual search ...");
 
@@ -846,13 +895,17 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			String searchID = "P" + getCurrentSearchID();
 
 			setCurrentSearchID(searchID);
+			
+           setCurrentQueryText(queryText);
+           
+			Display.getDefault().asyncExec(new Runnable() { 
+					public void run() { 
 
-			try {
-				dosearch(queryText);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+						dosearch(getCurrentQueryText());
+
+					} 
+					}); 
+							
 		}
 	}
 
@@ -860,7 +913,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 	static List<WEBResult> resultsForTopicList = new ArrayList<WEBResult>();
 
-	private static void dosearch(String search) throws InterruptedException {
+	private static void dosearch(String search)  {
 
 		
 		
@@ -883,7 +936,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				search);
 
 		apiCall.start();
-		apiCall.join();
+		try {
+			apiCall.join();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		googlesearchList = apiCall.getCurrentResults();
 
@@ -1170,12 +1228,27 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// txtSearch.setText(searchwords);
 
 		if (mode == 2) {
-			try {
-				dosearch(searchwords);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+				setCurrentQueryText(searchwords);
+				 
+				Display.getDefault().asyncExec(new Runnable() { 
+						public void run() { 
+
+
+							dosearch(getCurrentQueryText());
+
+
+						} 
+						}); 
+
+//				try {
+//				dosearch(searchwords);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+				
+				
 		}
 
 	}
