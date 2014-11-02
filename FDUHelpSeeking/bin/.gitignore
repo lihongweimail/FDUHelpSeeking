@@ -9,8 +9,11 @@
 /carrotsearch.foamtree.util.loading.js
 /carrotsearch.foamtree.util.relaxationprogress.js
 /carrotsearch.foamtree.util.treemodel.js
+/cn/
 /foamtreetest.html
 /json.js
+/liuyang/
+/org/
 /tagcloud.cer
 /tagcloud.cert
 /tagcloud.jar
@@ -18,5 +21,4 @@
 /tagcloud.store
 /testjason.html
 /testjson.json
-/cn/
-/liuyang/
+/urlWordExtract/

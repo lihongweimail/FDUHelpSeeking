@@ -47,7 +47,7 @@ public class FudanTopicWithWordsListBean {
 
 
 //     two level group with no topic name
-		String groupString = "{ label: \"" + " " + "\" , groups: ["
+		String groupString = "{ label: \"" + "" + "\" , groups: ["
 				+ labelWeight + "]" + " ,type: \"node\"} ";
 
 		return groupString;

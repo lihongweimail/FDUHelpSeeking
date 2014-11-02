@@ -27,7 +27,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ActivityContextManager;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ExtensionPointReader;
@@ -58,7 +57,6 @@ import cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors.WorkbenchUserActivity
 import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.INIHelper;
-import cn.edu.fudan.se.helpseeking.util.Resource;
 
 /**
  * The activator class controls the plug-in life cycle
