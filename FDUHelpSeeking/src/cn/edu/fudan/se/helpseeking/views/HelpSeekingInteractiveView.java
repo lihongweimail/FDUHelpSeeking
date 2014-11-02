@@ -468,7 +468,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
 				System.out.println("select topic filter label is : " + e.title);
-
+				if (e.title.trim().equals("topicfilter.html")) {
+					return;
+				}
+				
 				if (!e.title.equals("HelloHongwei")) {
 					System.out
 							.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
@@ -485,8 +488,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					// 将词汇去选择过滤URL
 					List<WEBPageBean> usefulWebpages = new ArrayList<WEBPageBean>();
 					List<WEBPageBean> usefulTopicWEBPages = new ArrayList<WEBPageBean>();
-					usefulTopicWEBPages = allWebPages.get(currentTopicindex)
-							.getPages();
+					usefulTopicWEBPages = (allWebPages.get(currentTopicindex)).getPages();
 					for (int j = 0; j < usefulTopicWEBPages.size(); j++) {
 						if (usefulTopicWEBPages.get(j).getContent()
 								.contains(e.title.trim())) {
