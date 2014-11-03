@@ -12,6 +12,11 @@ import liuyang.nlp.lda.main.LdaGibbsSampling;
 
 import org.carrot2.core.Cluster;
 import org.carrot2.core.Document;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -246,20 +251,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		gd_txtSearch.heightHint = -1;
 		gd_txtSearch.widthHint = -1;
 		txtSearch.setLayoutData(gd_txtSearch);
-		txtSearch.addControlListener(new ControlListener() {
-
-			@Override
-			public void controlResized(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-
-			@Override
-			public void controlMoved(ControlEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
+		
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
 		txtSearch.setToolTipText("Input keyworks for searching");
 		txtSearch.addKeyListener(new KeyListener() {
@@ -438,27 +430,45 @@ public class HelpSeekingInteractiveView extends ViewPart {
 							// 调用LDA
 							setCurrentTopicItem(item);
 							setCurrrentTopicWEBPages(curTopicWEBPages);
+							
+							final String currentTopicName=getCurrentTopicItem().getText().trim();
+							
 										
+							 Job job = new Job("ClawWEBAndLDA"){   
+								 protected IStatus run(IProgressMonitor monitor){   
+								    // 在此添加获取数据的代码   
+										List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
+												.fduTopicURLfilter(currentTopicName, allWebPages);
+										getCurrrentTopicWEBPages()
+												.setMyfudanTopicWords(myfudanTopicWords);
+
+									 final List<FudanTopicWithWordsListBean> usefulFTWLB=new ArrayList<FudanTopicWithWordsListBean>();
+									 for (int j = 0; j < myfudanTopicWords.size(); j++) {
+										usefulFTWLB.add(myfudanTopicWords.get(j));
+									}
+									 
+								    Display.getDefault().asyncExec(new Runnable(){   
+								        public void run(){   
+								        // 在此添加更新界面的代码   
+								    		// 传给foamtree 并显示
+											genTopicWordsFoamTree(usefulFTWLB);
+
+								                 
+								        }      
+								            
+								    });  
+								    
+								   return Status.OK_STATUS;      
+								 } 
+								 
+								 };   
+							             job.setRule(Schedule_RULE);
+								         job.schedule();  
 							 
-							Display.getDefault().asyncExec(new Runnable() { 
-									public void run() { 
-										
-											List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
-													.fduTopicURLfilter(getCurrentTopicItem().getText()
-															.trim(), allWebPages);
-											getCurrrentTopicWEBPages()
-													.setMyfudanTopicWords(myfudanTopicWords);
-
-											// 传给foamtree 并显示
-											genTopicWordsFoamTree(myfudanTopicWords);
-
-										
-
-									} 
-									}); 
-
-							
-							
+			
+			
+									
+			
 							
 							
 						}
@@ -472,6 +482,29 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// TODO Auto-generated method stub
 
 			}
+			
+			 private void perform(){   
+			 Job job = new Job("ClawWEBAndLDA"){   
+			 protected IStatus run(IProgressMonitor monitor){   
+			    // 在此添加获取数据的代码   
+			    Display.getDefault().asyncExec(new Runnable(){   
+			        public void run(){   
+			        // 在此添加更新界面的代码   
+			                 
+			        }      
+			            
+			    });  
+			    
+			   return Status.OK_STATUS;      
+			 } 
+			 
+			 };   
+		             job.setRule(Schedule_RULE);
+			         job.schedule();   
+			    }   
+			
+			
+			
 		});
 
 		topicFilterBrowser = new Browser(topicSashForm, SWT.BORDER);
@@ -909,106 +942,151 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			
            setCurrentQueryText(queryText);
            
-			Display.getDefault().asyncExec(new Runnable() { 
-					public void run() { 
-
+			
 						dosearch(getCurrentQueryText());
 
-					} 
-					}); 
-							
+											
 		}
 	}
 
 	static SearchResults sResults;
 	static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 	static List<WEBResult> resultsForTopicList = new ArrayList<WEBResult>();
+	
+//防止两个同类job同时执行  myjob1.setRule(Schedule_RULE);  myjob2.setRule(Schedule_RULE); 
+	private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {   
+		public boolean contains(ISchedulingRule rule) {   
+		return this.equals(rule);   
+		}   
+		public boolean isConflicting(ISchedulingRule rule) {   
+		return this.equals(rule);   
+		}   
+		}; 
 
-	private static void dosearch(String search)  {
-
+//		 private void perform(){   
+//			 Job job = new Job("jobname获取数据"){   
+//			 protected IStatus run(IProgressMonitor monitor){   
+//			    // 在此添加获取数据的代码   
+//			    Display.getDefault().asyncExec(new Runnable(){   
+//			        public void run(){   
+//			        // 在此添加更新界面的代码   
+//			                 }      
+//			             });
+//		            return Status.OK_STATUS;
+//			         }
+//			 };   
+//		             job.setRule(Schedule_RULE);
+//			         job.schedule();   
+//			    }   
 		
 		
-		
-		Timestamp starttime;
-		String searchResultOutput = "\n============\n";
-		starttime = new Timestamp(System.currentTimeMillis());
+		private static void dosearch(final String search)  {
+			
+			 Job job = new Job("GetDatafromGoogle"){   
+				 protected IStatus run(IProgressMonitor monitor){   
+				    // 在此添加获取数据的代码   
+						Timestamp starttime;
+						String searchResultOutput = "\n============\n";
+						starttime = new Timestamp(System.currentTimeMillis());
 
-		// IPreferenceStore
-		// ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-		// String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
-		// String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
+						// IPreferenceStore
+						// ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+						// String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+						// String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
 
-		// 在此处从14个定制引擎中随机选择一个
-		int temp = CommUtil.randomInt(CommUtil.getKeyCxList().size() - 1, 0);
-		String cse_key = CommUtil.getKeyCxList().get(temp).getKey();
-		String cse_cx = CommUtil.getKeyCxList().get(temp).getCx();
+						// 在此处从14个定制引擎中随机选择一个
+						int temp = CommUtil.randomInt(CommUtil.getKeyCxList().size() - 1, 0);
+						String cse_key = CommUtil.getKeyCxList().get(temp).getKey();
+						String cse_cx = CommUtil.getKeyCxList().get(temp).getCx();
 
-		LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key, cse_cx,
-				search);
+						LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key, cse_cx,
+								search);
 
-		apiCall.start();
-		try {
-			apiCall.join();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+						apiCall.start();
+						try {
+							apiCall.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 
-		googlesearchList = apiCall.getCurrentResults();
+						googlesearchList = apiCall.getCurrentResults();
 
-		if (googlesearchList.size() > 0) {
-			// 清除tree tree.removeAll();
-			// 2014.10.15
+						if (googlesearchList.size() > 0) {
+							// 清除tree tree.removeAll();
+							// 2014.10.15
 
-			// TODO BUG
-			for (int i = resultsForTopicList.size() - 1; i >= 0; i--) {
-				resultsForTopicList.remove(i);
-			}
-			// end of 2014.10.15
+							// TODO BUG
+							for (int i = resultsForTopicList.size() - 1; i >= 0; i--) {
+								resultsForTopicList.remove(i);
+							}
+							// end of 2014.10.15
 
-			int indexResultslist = 0;
-			for (WEBResult webResult : googlesearchList) {
-				String titleNoFormating = webResult.getTitle();
-				titleNoFormating = titleNoFormating.replaceAll("&quot;", "\"");
-				titleNoFormating.replaceAll("&#39;", "\'");
-				titleNoFormating.replaceAll("<b>", " ");
-				titleNoFormating.replaceAll("</", " ");
-				titleNoFormating.replaceAll("b>", " ");
+							int indexResultslist = 0;
+							for (WEBResult webResult : googlesearchList) {
+								String titleNoFormating = webResult.getTitle();
+								titleNoFormating = titleNoFormating.replaceAll("&quot;", "\"");
+								titleNoFormating.replaceAll("&#39;", "\'");
+								titleNoFormating.replaceAll("<b>", " ");
+								titleNoFormating.replaceAll("</", " ");
+								titleNoFormating.replaceAll("b>", " ");
 
-				searchResultOutput = searchResultOutput + "\n"
-						+ webResult.toString();
+								searchResultOutput = searchResultOutput + "\n"
+										+ webResult.toString();
 
-				// 2014.10.15
-				webResult.setTitle(titleNoFormating);
-				WEBResult forTopicPrepareItem = new WEBResult();
-				forTopicPrepareItem.setContent(webResult.getContent());
-				forTopicPrepareItem.setUrl(webResult.getUrl());
-				forTopicPrepareItem.setTitle(webResult.getTitle());
-				resultsForTopicList.add(forTopicPrepareItem);
+								// 2014.10.15
+								webResult.setTitle(titleNoFormating);
+								WEBResult forTopicPrepareItem = new WEBResult();
+								forTopicPrepareItem.setContent(webResult.getContent());
+								forTopicPrepareItem.setUrl(webResult.getUrl());
+								forTopicPrepareItem.setTitle(webResult.getTitle());
+								resultsForTopicList.add(forTopicPrepareItem);
 
-				// end of 2014.10.15
+								// end of 2014.10.15
 
-			} // end foreach googlesearchlist
+							} // end foreach googlesearchlist
 
-			Timestamp endtime = new Timestamp(System.currentTimeMillis());
+							Timestamp endtime = new Timestamp(System.currentTimeMillis());
 
-			// 生成选择和自己输入的关键词并记录数据库
+							// 生成选择和自己输入的关键词并记录数据库
 
-		} // if googlesearchlist.size > 0
-		else {
-			System.out.println("No return results!");
-			MessageDialog
-					.openInformation(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell(),
-							"Search google faild! ",
-							"Sorry connection wrong or no results! Please search agin wait for a while!");
-		}
-		// 2014.10.15
-		// 调用topic API 生成topictree
+						} // if googlesearchlist.size > 0
+						else {
+							System.out.println("No return results!");
+							MessageDialog
+									.openInformation(PlatformUI.getWorkbench()
+											.getActiveWorkbenchWindow().getShell(),
+											"Search google faild! ",
+											"Sorry connection wrong or no results! Please search agin wait for a while!");
+						}
 
-		genTopicTree();
+					 
+					 
+				    Display.getDefault().asyncExec(new Runnable(){   
+				        public void run()
+				        {   
+				        	// 在此添加更新界面的代码
+				        	// 2014.10.15
+				    		// 调用topic API 生成topictree
 
-		// end of 2014.10.15
+				    		genTopicTree();
+
+				    		// end of 2014.10.15
+				        // 在此添加更新界面的代码   
+				                 
+				        }      
+				             
+				    });   
+				    return Status.OK_STATUS;
+				 }
+
+				 };   
+				 
+				 job.setRule(Schedule_RULE);
+				         job.schedule();   
+			
+			
+	
 
 	} // end dosearch
 
@@ -1242,22 +1320,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			
 				setCurrentQueryText(searchwords);
 				 
-				Display.getDefault().asyncExec(new Runnable() { 
-						public void run() { 
-
+	
 
 							dosearch(getCurrentQueryText());
 
 
-						} 
-						}); 
-
-//				try {
-//				dosearch(searchwords);
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
 				
 				
 		}
