@@ -329,7 +329,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				TreeItem item = (TreeItem) e.item;
+				final TreeItem item = (TreeItem) e.item;
 
 				// 检查是否点击过这个topic
 				if (item.getData() == "TOPICX") { // 从 allpages 中读数据
@@ -374,9 +374,21 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 				{
 					if (item.getData() == "TOPIC") {
-						item.setData("TOPICX");
-						item.setForeground(Display.getDefault().getSystemColor(
-								SWT.COLOR_GREEN));						// 两个模式同时处理，以提高效率，一方面 可以 就topic有关的URL
+						//刷新
+						String foamTreeTopicFilterContent = "dataObject: {"
+								+ "groups: ["
+								+ "{ label: \"Waiting\", weight: 2.0 ,type: \"node\" },"
+								+ "{ label: \"Full Working\", weight: 5.0 ,type: \"node\"},"
+								+ "{ label: \"Friends\", weight: 4.0 ,type: \"node\" },"
+								+ "{ label: \"Moment\", weight: 2.0 ,type: \"node\"},"
+								+ "{ label: \"Double Click Rollout\", weight: 3.0 ,type: \"node\"},"
+								+ "{ label: \"Shift + Double Click Pullback\", weight: 3.0 ,type: \"node\"}"
+								+ "]" + "}"; // 使用工具生成foamtree的内容
+						genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
+								foamTreeTopicFilterContent, "HelloHongwei");
+						topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
+
+									// 两个模式同时处理，以提高效率，一方面 可以 就topic有关的URL
 						// 先给出；另一方面，用户也可以在二次过滤后的foamtree中选择URL。
 
 						// 新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree，
@@ -452,6 +464,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 								        // 在此添加更新界面的代码   
 								    		// 传给foamtree 并显示
 											genTopicWordsFoamTree(usefulFTWLB);
+											item.setData("TOPICX");
+											item.setForeground(Display.getDefault().getSystemColor(
+													SWT.COLOR_GREEN));
 
 								                 
 								        }      
@@ -483,27 +498,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 			}
 			
-			 private void perform(){   
-			 Job job = new Job("ClawWEBAndLDA"){   
-			 protected IStatus run(IProgressMonitor monitor){   
-			    // 在此添加获取数据的代码   
-			    Display.getDefault().asyncExec(new Runnable(){   
-			        public void run(){   
-			        // 在此添加更新界面的代码   
-			                 
-			        }      
-			            
-			    });  
-			    
-			   return Status.OK_STATUS;      
-			 } 
-			 
-			 };   
-		             job.setRule(Schedule_RULE);
-			         job.schedule();   
-			    }   
-			
-			
+
 			
 		});
 
