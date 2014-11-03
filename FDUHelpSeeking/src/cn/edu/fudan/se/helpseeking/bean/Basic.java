@@ -732,5 +732,8 @@ public enum QueryLevel {
 	public final static int FOAMTREETOPICWORDSLIMITIED=6; //每个topic 中提取出前六个词
 	public static final int DISPLAYTOPICFOAMTREEPLAN = 2;  //值为1 或其他值 则为典型的两层显示，topic一层，topic的词一层；  值为2时，是将所有topic的词综合起来一层显示
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
+	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
+	
+	public final static double  RATIOOFNEWSEARCHSTRING=0.6;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
 	
 }

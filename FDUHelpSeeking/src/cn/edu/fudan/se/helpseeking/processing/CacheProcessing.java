@@ -1318,7 +1318,11 @@ public class CacheProcessing extends Thread {
 				}
 			}
 
-			if (!CommUtil.compareString(searchText, Cache.getLastsearchwords())) {
+			
+			//比较如果新词汇是变化了60%以上的词汇时，则推荐新关键词 
+			
+			if (CommUtil.compareStringwitRatio(searchText, Cache.getLastsearchwords(),Basic.RATIOOFNEWSEARCHSTRING)) 
+			{
 				if (v != null)
 				v.setCurrentActionID(currentCache.getCurrentID());
 				
@@ -1377,8 +1381,7 @@ public class CacheProcessing extends Thread {
 				
 				if (!keyWordsforQuery.isEmpty()) {
 					
-					
-					
+	
 					viteractive.setNewWordsAndMode(keyWordsforQuery, mode);
 					viteractive.setCurrentActionID(currentCache.getCurrentID());
 				}

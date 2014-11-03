@@ -1294,6 +1294,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			
 			//赋值返回
 			keyWordsforQuery.get(i).setKeywordName(simplestr);
+			if (simplestr.trim().equals("")) {
+				keyWordsforQuery.remove(i);
+			}
 		}
 				
 		

@@ -310,7 +310,7 @@ public class LdaModel {
 		List<FudanTopicWithWordsListBean> fudanTopicWithWordsList=new ArrayList<FudanTopicWithWordsListBean>();
 		//lda.twords phi[][] K*V   最后提取出来的关键字
 		writer = new BufferedWriter(new FileWriter(resPath + modelName + ".twords"));
-		int topNum = Basic.FOAMTREETOPICWORDSLIMITIED < docSet.indexToTermMap.size()? Basic.FOAMTREETOPICWORDSLIMITIED: docSet.indexToTermMap.size(); //从一个topic中只取部分词；Find the top 20 topic words in each topic
+		int topNum = (Basic.FOAMTREETOPICWORDSLIMITIED < docSet.indexToTermMap.size()) ? Basic.FOAMTREETOPICWORDSLIMITIED: docSet.indexToTermMap.size(); //从一个topic中只取部分词；Find the top 20 topic words in each topic
 		
 		
 		ArrayList<String> LdaOutcome = new ArrayList<String>();
@@ -343,7 +343,18 @@ public class LdaModel {
 				
 				
 				if (!isnullstr.equals("")) {
-					String simpString=CommUtil.getSimpleWords(isnullstr);
+					//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
+					String simpString="";
+					if (Basic.isProcessingQuilifedName) {
+						simpString=CommUtil.getSimpleWords(isnullstr);
+					}
+					else {
+							 simpString=isnullstr;
+					}
+					
+				
+					
+					
 					if (!simpString.equals("")) {
 						
 				//一个词以及词权 并收集到 一个topic中去

@@ -2,10 +2,10 @@ package cn.edu.fudan.se.helpseeking.bean;
 
 public class WEBPageBean {
 	
-	String url;
-	String title;
-	String summary;
-	String content;
+	String url="";
+	String title="";
+	String summary="";
+	String content="";
 	
 	
 	

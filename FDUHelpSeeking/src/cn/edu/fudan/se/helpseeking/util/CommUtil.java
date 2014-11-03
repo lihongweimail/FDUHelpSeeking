@@ -537,6 +537,53 @@ public class CommUtil {
 
 	}
 
+	
+	public static boolean compareStringwitRatio(String searchwords,
+			String lastsearchwords,double ratio) 
+	{
+		boolean result = false;
+
+		List<String> last = CommUtil.stringToList(lastsearchwords, "[ ]");
+		List<String> now = CommUtil.stringToList(searchwords, "[ ]");
+
+		Collections.sort(last);
+		Collections.sort(now);
+		
+		double countDifferentWords=0.0;
+		
+		if (last.size()==0 ) {
+			return true;
+		}
+
+		for (int i = 0; i < last.size(); i++) {
+			boolean isdifferent=true;
+			for (int j = 0; j < now.size(); j++) {
+				if ((last.get(i).toLowerCase().trim()).equals(now.get(j).toLowerCase().trim())) {
+					isdifferent=false;
+					break;
+				}
+				
+			}
+			
+			if (isdifferent) {
+				countDifferentWords=countDifferentWords+1.0;
+			}
+			
+		}
+
+		
+		
+			
+		System.out.println("the set ratio: "+ratio+"count same words"+countDifferentWords+"the different ratio: "+((countDifferentWords)/last.size()));
+			if (((countDifferentWords)/last.size())>ratio) {
+				result = true;
+	      }
+			
+			
+		return result;
+
+	}
+	
 	public static String trimOnlySign(String fullMethodName) {
 		String trimMethodName = fullMethodName;
 		int indexP = fullMethodName.indexOf("(", 0);

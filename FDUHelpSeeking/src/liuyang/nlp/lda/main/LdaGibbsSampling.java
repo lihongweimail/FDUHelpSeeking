@@ -6,9 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.fnlp.nlp.cn.CNFactory;
 import org.fnlp.nlp.cn.ner.stringPreHandlingModule;
 import org.fnlp.util.exception.LoadModelException;
+import org.hamcrest.core.Is;
 import org.htmlparser.util.ParserException;
 
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
@@ -172,23 +174,73 @@ public class LdaGibbsSampling {
 				
 		
 	for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {
-			WEBPageBean CurrentUrl=allWebPages.get(currentTopicindex).getPages().get(j);
-	
-			System.out.println(CurrentUrl.getUrl());
-			String pageContent="";
 		
+//		 private void perform(){   
+//		 Job job = new Job("jobname获取数据"){   
+//		 protected IStatus run(IProgressMonitor monitor){   
+//		    // 在此添加获取数据的代码   
+//		    Display.getDefault().asyncExec(new Runnable(){   
+//		        public void run(){   
+//		        // 在此添加更新界面的代码   
+//		                 }      
+//		             });
+//	            return Status.OK_STATUS;
+//		         }
+//		 };   
+//	             job.setRule(Schedule_RULE);
+//		         job.schedule(); 
+//		}
+//
+		//防止两个同类job同时执行  myjob1.setRule(Schedule_RULE);  myjob2.setRule(Schedule_RULE); 
+//		private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {   
+//			public boolean contains(ISchedulingRule rule) {   
+//			return this.equals(rule);   
+//			}   
+//			public boolean isConflicting(ISchedulingRule rule) {   
+//			return this.equals(rule);   
+//			}   
+//			}; 
+		
+
+		
+		
+		
+			WEBPageBean CurrentUrl=new WEBPageBean();
+					CurrentUrl.setUrl(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setTitle(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setSummary(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+	
+			System.out.println("claw web page: "+CurrentUrl.getUrl());
+			String pageContent="";
+			
+		
+			//替换方案： 一 雪娇提供
+			
 			try {
+				
 				pageContent = UrlWordExtract.getText(CurrentUrl.getUrl());
+
 			} catch (ParserException e1) {
 								// TODO Auto-generated catch block
-				e1.printStackTrace();
+				pageContent="";
+			    System.out.println("why nullpointerexception");
+				//e1.printStackTrace();
 			}
 			
+//			//替换方案： 二 新加入
+//			
+//			pageContent = UrlWordExtract.getPlainText(CurrentUrl.getUrl());
 			
+			
+			
+
 			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
 
+			
 			//中文分词工具  复旦大学 nlp 
-			try {
+			if (!pageContent.trim().equals("")) {
+				
+					try {
 				CNFactory factory =CNFactory.getInstance(CommUtil.getFDUPluginWorkingPath()+"/models");
 				String[] words=factory.seg(pageContent);
 
@@ -211,18 +263,23 @@ public class LdaGibbsSampling {
 				e.printStackTrace();
 			}
 			
+			}
+
 			//完成切词
 			
 			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
 			
 
 			
-			UrlContent += " "+pageContent;
+			UrlContent += " \n"+pageContent;
+			
+			
+			
 		}
 	
 		Documents docSet = new Documents();
 		docSet.readDocs(UrlContent);//读待采样数据	
-		
+//		System.out.println("all webpages: \n"+UrlContent);
 		
 		//System.out.println(UrlWordExtract.getText(Url2) );		
 		System.out.println("wordMap size " + docSet.termToIndexMap.size());
@@ -240,8 +297,7 @@ public class LdaGibbsSampling {
 		}	
 		System.out.println("3 Output the final model ...");
 		//model.saveIteratedModel(ldaparameters.iteration, docSet);
-		
-		System.out.println("Done!");
+	
 		
 		
 		 List<FudanTopicWithWordsListBean> resultBeans=new ArrayList<FudanTopicWithWordsListBean>();		
@@ -253,6 +309,9 @@ public class LdaGibbsSampling {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		
+		System.out.println("Done!");
 		
 		return resultBeans;
 		
