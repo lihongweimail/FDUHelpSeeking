@@ -46,6 +46,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.fnlp.nlp.cn.CNFactory;
 import org.htmlparser.util.ParserException;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
@@ -377,13 +378,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						//刷新
 						String foamTreeTopicFilterContent = "dataObject: {"
 								+ "groups: ["
-								+ "{ label: \"Waiting\", weight: 2.0 ,type: \"node\" },"
-								+ "{ label: \"Full Working\", weight: 5.0 ,type: \"node\"},"
-								+ "{ label: \"Friends\", weight: 4.0 ,type: \"node\" },"
-								+ "{ label: \"Moment\", weight: 2.0 ,type: \"node\"},"
-								+ "{ label: \"Double Click Rollout\", weight: 3.0 ,type: \"node\"},"
-								+ "{ label: \"Shift + Double Click Pullback\", weight: 3.0 ,type: \"node\"}"
-								+ "]" + "}"; // 使用工具生成foamtree的内容
+								+ "{ label: \"Plase Waiting\", weight: 6.0 ,type: \"node\" },"
+								+ "{ label: \"Full Working\", weight: 3.0 ,type: \"node\"},"
+								+ "{ label: \"Friends\", weight: 2.0 ,type: \"node\" },"
+									+ "]" + "}"; // 使用工具生成foamtree的内容
 						genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
 								foamTreeTopicFilterContent, "HelloHongwei");
 						topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
@@ -451,8 +449,13 @@ public class HelpSeekingInteractiveView extends ViewPart {
 								    // 在此添加获取数据的代码   
 										List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
 												.fduTopicURLfilter(currentTopicName, allWebPages);
+									
+										
+										
 										getCurrrentTopicWEBPages()
-												.setMyfudanTopicWords(myfudanTopicWords);
+										.setMyfudanTopicWords(myfudanTopicWords);
+								
+										
 
 									 final List<FudanTopicWithWordsListBean> usefulFTWLB=new ArrayList<FudanTopicWithWordsListBean>();
 									 for (int j = 0; j < myfudanTopicWords.size(); j++) {
@@ -521,8 +524,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				}
 				
 				if (!e.title.equals("HelloHongwei")) {
-					System.out
-							.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
+//					System.out
+//							.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
 
 					int currentTopicindex = 0;
 					// 定位 topic
@@ -569,7 +572,58 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// topicFilterBrowser.refresh();
 
 		sashComposite.setWeights(new int[] { 200, 400 });
+		
+		
+		
+		//为中文切词准备数据：  
+		//
 
+		Resource models_arRes = new Resource();
+		models_arRes.getResource("/models/ar.m", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/ar.m");
+
+		Resource models_depRes = new Resource();
+		models_depRes.getResource("/models/dep.m", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/dep.m");
+
+		Resource models_dictambiguityRes = new Resource();
+		models_dictambiguityRes.getResource("/models/dict_ambiguity.txt", true,
+				CommUtil.getFDUPluginWorkingPath()
+						+ "/models/dict_ambiguity.txt");
+
+		Resource models_dicdepRes = new Resource();
+		models_dicdepRes.getResource("/models/dict_dep.txt", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/dict_dep.txt");
+
+		Resource models_dictRes = new Resource();
+		models_dictRes.getResource("/models/dict.txt", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/dict.txt");
+
+		Resource models_ExtractPatternRes = new Resource();
+		models_ExtractPatternRes.getResource("/models/ExtractPattern.txt",
+				true, CommUtil.getFDUPluginWorkingPath()
+						+ "/models/ExtractPattern.txt");
+
+		Resource models_posRes = new Resource();
+		models_posRes.getResource("/models/pos.m", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/pos.m");
+
+		Resource models_segRes = new Resource();
+		models_segRes.getResource("/models/seg.m", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/seg.m");
+
+		Resource models_stocktreeRes = new Resource();
+		models_stocktreeRes.getResource("/models/Stock-Tree.txt", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/Stock-Tree.txt");
+
+		Resource models_timeRes = new Resource();
+		models_timeRes.getResource("/models/time.m", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/time.m");
+
+		Resource models_wordgraphRes = new Resource();
+		models_wordgraphRes.getResource("/models/wordgraph.txt", true,
+				CommUtil.getFDUPluginWorkingPath() + "/models/wordgraph.txt");
+		
 	}
 	
 	
@@ -715,6 +769,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	protected void genTopicWordsFoamTree(
 			List<FudanTopicWithWordsListBean> myfudanTopicWords) {
 
+		int displaymode=Basic.DISPLAYTOPICFOAMTREEPLAN;
+		
+		
 		// dataObject: {
 		// groups: [
 		// { label:"Group 1", groups: [
@@ -752,7 +809,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			
 			
 
-	if (Basic.DISPLAYTOPICFOAMTREEPLAN==2) {
+	if (displaymode==2) {
 		
 		labelWeight="";
 			// 替换代码二
@@ -762,14 +819,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			for (int i = 0; i < myfudanTopicWords.size(); i++) {
 				for (int j = 0; j < myfudanTopicWords.get(i).getWordsList().size(); j++) {
 					String candidateTerm = myfudanTopicWords.get(i).getWordsList()
-							.get(j).toString().toLowerCase();
+							.get(j).toString().toLowerCase().trim();
 					boolean testexists = true;
 					int indexSameWord = 0;
 					for (int k = 0; k < wordsList.size(); k++) {
 						if (candidateTerm.equals(wordsList.get(k).getWordName()
-								.toLowerCase())) {
+								.toLowerCase().trim())) {
 							testexists = false;
 							indexSameWord = k;
+							break;
 						}
 					}
 	

@@ -372,6 +372,10 @@ public class LdaModel {
 			fudanTopicWithWordsList.add(ftwwlb);
 			
 		}
+		
+		
+		
+		
 		writer.close();
 		
 		return fudanTopicWithWordsList;

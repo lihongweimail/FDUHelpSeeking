@@ -2,9 +2,14 @@ package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -123,8 +128,60 @@ public class Resource {
 		return content;
 	    }
 
+	
+	//直接写入到文件中 
+	//mode 为false时，  resourcePath 和 filenamepath 为绝对路径   
+	//mode 为true ,    resourcepaht是JAR包种数据相对路径    filenamepath 为绝对路径
+	public   void  getResource(String resourcePath, boolean mode, String fileNamePath) {    
+		
+	
+		File file=new File(fileNamePath);
+		//已有文件不写了
+		if (file.exists()) {
+			return;
+		}
 
+		
+		InputStream is=null;
+		 
+		 
+		if (mode) {
+			is=this.getClass().getResourceAsStream(resourcePath);     //"/resource/res.txt"
+		}else {
+			try {
+				is=new FileInputStream(resourcePath);
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+        
+ 		
+		OutputStream os=null;
+		try{
+		os=new FileOutputStream(file);
+		byte buffer[]=new byte[4*1024];
+		int len = 0;
+		while((len = is.read(buffer)) != -1)
+		{
+		 os.write(buffer,0,len);
 
+		}
+		os.flush();
+		}
+		catch(Exception e){
+		e.printStackTrace();
+		}
+		finally{
+		try{
+		os.close();
+		}
+		catch(Exception e){
+		e.printStackTrace();
+		}
+		}
+		
+	}
 
 
 

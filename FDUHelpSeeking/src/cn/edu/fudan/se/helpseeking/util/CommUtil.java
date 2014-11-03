@@ -62,7 +62,7 @@ public class CommUtil {
 			String firstPart=tempstr.substring(0, firstpartlastIndex);
 			System.out.println("firstpart: "+firstPart);
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
-			String name=namePart.get(namePart.size()-1);
+			String name=namePart.get( (namePart.size()-1)>0?(namePart.size()-1):0);
 			
 			name = getTokensfromCodeStr(name);
 						
@@ -346,25 +346,28 @@ public class CommUtil {
 	}
 
 	public static String getFDUPluginWorkingPath() {
-		String workingPath = System.getProperties().getProperty("user.home");
 		
+		
+		String workingPath = System.getProperties().getProperty("user.home");	
+		//LDA 目录
 		String ldaDataPath="/data/";
-		String ldaDocsPath = "/data/LdaOriginalDocs/";
-		
+		String ldaDocsPath = "/data/LdaOriginalDocs/";	
 		String LdaResultsPath = "/data/LdaResults/";
 		String LdaParameterPath = "/data/LdaParameter/";
+		
+		//分词工具模型
+		String CNFactoryPath="/models/";
 
 		String osName = System.getProperties().getProperty("os.name");
 		if (osName.contains("Windows")) {
 
 			
-			workingPath = workingPath + "\\HelpSeekingData";
-			
+			workingPath = workingPath + "\\HelpSeekingData";		
 			ldaDataPath=workingPath+"\\data";
 			ldaDocsPath=workingPath+"\\data\\LdaOriginalDocs";
 			LdaResultsPath=workingPath+"\\data\\LdaResults";
-			LdaParameterPath = workingPath+"\\data\\LdaParameter";
-			ldaDataPath=workingPath+"\\data";
+			LdaParameterPath = workingPath+"\\data\\LdaParameter";	
+			CNFactoryPath=workingPath+"\\models";
 
 		} else
 		
@@ -374,18 +377,17 @@ public class CommUtil {
 			ldaDocsPath = workingPath+"/data/LdaOriginalDocs";
 			LdaResultsPath =workingPath+ "/data/LdaResults";
 			LdaParameterPath = workingPath+"/data/LdaParameter";
-			
+			CNFactoryPath=workingPath+"/models";
 			
 
 		}else {
 			//有待设置处理不同的操作系统
 			workingPath = workingPath + "/HelpSeekingData";
-			
 			ldaDataPath=workingPath+"/data";
 		    ldaDocsPath = workingPath+"/data/LdaOriginalDocs";
 			LdaResultsPath =workingPath+ "/data/LdaResults";
 			LdaParameterPath = workingPath+"/data/LdaParameter";
-
+			CNFactoryPath=workingPath+"/models";
 
 		}
 		
@@ -393,6 +395,13 @@ public class CommUtil {
 		File file = new File(workingPath);
 		if (!file.exists())
 			FileHelper.createDirectory(workingPath);
+		
+		File CNFactoryPathfile = new File(CNFactoryPath);
+		if (!CNFactoryPathfile.exists())
+			FileHelper.createDirectory(CNFactoryPath);
+		
+		
+		
 		
 		File fileldaDataPath = new File(ldaDataPath);
 		if (!fileldaDataPath.exists())

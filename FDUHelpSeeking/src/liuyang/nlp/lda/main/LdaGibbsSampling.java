@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.fnlp.nlp.cn.CNFactory;
+import org.fnlp.nlp.cn.ner.stringPreHandlingModule;
+import org.fnlp.util.exception.LoadModelException;
 import org.htmlparser.util.ParserException;
 
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
@@ -124,7 +127,7 @@ public class LdaGibbsSampling {
 	}
 
 
-	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(String topicName, List<TopicWEBPagesBean> allWebPages) 
+	public static List<FudanTopicWithWordsListBean> fduTopicURLfilter(String topicName, List<TopicWEBPagesBean> allWebPages)  
  {
 		//write LdaParameters file
 		
@@ -173,15 +176,45 @@ public class LdaGibbsSampling {
 	
 			System.out.println(CurrentUrl.getUrl());
 			String pageContent="";
+		
 			try {
 				pageContent = UrlWordExtract.getText(CurrentUrl.getUrl());
-			} catch (ParserException e) {
+			} catch (ParserException e1) {
+								// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
+			
+			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
+
+			//中文分词工具  复旦大学 nlp 
+			try {
+				CNFactory factory =CNFactory.getInstance(CommUtil.getFDUPluginWorkingPath()+"/models");
+				String[] words=factory.seg(pageContent);
+
+				String temp="";
+                for (int i = 0; i < words.length; i++) {
+                	if (temp.equals("")) {
+						temp=words[i].toString().trim();
+					}else {
+						temp=temp+" "+words[i].toString().trim();
+					}
+					
+				}
+				System.out.println("current Chinese words split: "+temp);
+				if (!temp.equals("")) {
+					pageContent=temp;
+				}
+				
+			} catch (LoadModelException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			//完成切词
+			
 			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
 			
-			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
 
 			
 			UrlContent += " "+pageContent;
