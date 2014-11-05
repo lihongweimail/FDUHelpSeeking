@@ -459,7 +459,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 									 final List<FudanTopicWithWordsListBean> usefulFTWLB=new ArrayList<FudanTopicWithWordsListBean>();
 									 for (int j = 0; j < myfudanTopicWords.size(); j++) {
+								
+										 
 										usefulFTWLB.add(myfudanTopicWords.get(j));
+										
 									}
 									 
 								    Display.getDefault().asyncExec(new Runnable(){   
@@ -788,10 +791,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// }
 		 String labelWeight="";
 		 
-//			if (Basic.DISPLAYTOPICFOAMTREEPLAN==1)
-//				{
-//		 labelWeight="";
+			if (displaymode==1)
+				{
+		 labelWeight="";
        //替换代码一
+		 
+		 
 	//两层展示topic以及topic内的词
 		 for (int i = 0; i < myfudanTopicWords.size(); i++) {
 				 if (labelWeight.equals("")) {
@@ -804,7 +809,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				
 				 }
 				 //结束一
-//				}
+				}
 	 
 			
 			
@@ -819,7 +824,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			for (int i = 0; i < myfudanTopicWords.size(); i++) {
 				for (int j = 0; j < myfudanTopicWords.get(i).getWordsList().size(); j++) {
 					String candidateTerm = myfudanTopicWords.get(i).getWordsList()
-							.get(j).toString().toLowerCase().trim();
+							.get(j).getWordName().toString().toLowerCase().trim();
 					boolean testexists = true;
 					int indexSameWord = 0;
 					for (int k = 0; k < wordsList.size(); k++) {

@@ -109,7 +109,12 @@ public class LdaGibbsSampling {
 		String UrlContent = new String();
 		for(String CurrentUrl: UrlList){
 			System.out.println(CurrentUrl);
-			UrlContent += UrlWordExtract.getText(CurrentUrl);
+			try {
+				UrlContent += UrlWordExtract.getText(CurrentUrl);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		Documents docSet = new Documents();
 		docSet.readDocs(UrlContent);//读待采样数据	
@@ -220,10 +225,10 @@ public class LdaGibbsSampling {
 				
 				pageContent = UrlWordExtract.getText(CurrentUrl.getUrl());
 
-			} catch (ParserException e1) {
+			} catch (Exception e1) {
 								// TODO Auto-generated catch block
-				pageContent="";
-			    System.out.println("why nullpointerexception");
+				pageContent=CurrentUrl.getSummary();
+			    System.out.println("claw web exception , use webpage summary!");
 				//e1.printStackTrace();
 			}
 			
@@ -307,6 +312,7 @@ public class LdaGibbsSampling {
 			resultBeans= model.saveIteratedModelforFudanTopic(ldaparameters.iteration,docSet);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			resultBeans=null;
 			e.printStackTrace();
 		}
 		

@@ -51,9 +51,9 @@ Bundle-ClassPath: .,
  lib/slf4j-api-1.6.1.jar,
  lib/slf4j-log4j12-1.6.1.jar,
  lib/commons-lang-2.6.jar,
- lib/htmlparser-1.5.jar,
  lib/swt4.4M5.jar,
  lib/commons-cli-1.2.jar,
  lib/fnlp-app-2.0-SNAPSHOT.jar,
  lib/fnlp-core-2.0-SNAPSHOT.jar,
- lib/trove4j-3.0.3.jar
+ lib/trove4j-3.0.3.jar,
+ lib/htmlparser-1.5.jar

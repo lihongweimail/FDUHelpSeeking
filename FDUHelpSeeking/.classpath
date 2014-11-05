@@ -28,12 +28,12 @@
 	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/lucene-analyzers-smartcn-4.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
-	<classpathentry kind="lib" path="lib/htmlparser-1.5.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/swt4.4M5.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/fnlp-app-2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/fnlp-core-2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/trove4j-3.0.3.jar"/>
+	<classpathentry kind="lib" path="lib/htmlparser-1.5.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

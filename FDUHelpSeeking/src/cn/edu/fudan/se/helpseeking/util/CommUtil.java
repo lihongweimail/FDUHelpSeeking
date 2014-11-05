@@ -55,7 +55,7 @@ public class CommUtil {
 	//给定一个字串，特别但是包结构带类名，或者是方法的全名带参数时，为了再foamtree上显示更明显，预处理一下，去除一些特殊字符，得到分词结果
 	public static String getSimpleWords(String tempstr) {
 		String resultstr="";
-		tempstr=tempstr.replace(';', ' ');
+		tempstr=tempstr.replaceAll(";", " ");
     	if (tempstr.contains("(") && tempstr.contains(")")) {
 						
 			int firstpartlastIndex=tempstr.indexOf('(');

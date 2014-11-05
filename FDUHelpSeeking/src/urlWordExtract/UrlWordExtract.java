@@ -43,7 +43,7 @@ public static String getText(String url) throws ParserException{
     //设置将一序列空格由一个单一空格所代替  
     sb.setCollapse(true);  
     //传入要解析的URL 
-    System.out.println("input url in urlwordextract :"+ url);
+   // System.out.println("input url in urlwordextract :"+ url);
     sb.setURL(url);
    
     
