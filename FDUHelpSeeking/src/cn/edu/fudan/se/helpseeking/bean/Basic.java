@@ -17,7 +17,8 @@ public class Basic {
 		BroughtToTop,ChangedTo,
 		Closed,Deactivated,
 		Open;
-	
+	//("Problem View Changed");
+		
 		/**
 		 * @return The corresponding event based on the string provided, or null
 		 *         if no such STring.
@@ -26,22 +27,22 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("BroughtToTop")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("BroughtToTop".toLowerCase())) { //$NON-NLS-1$
 				return BroughtToTop;
 			}
-			if (string.equals("Open")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Open".toLowerCase())) { //$NON-NLS-1$
 				return Open;
 			}
-			if (string.equals("Closed")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Closed".toLowerCase())) { //$NON-NLS-1$
 				return Closed;
 			}
-			if (string.equals("Activated")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Activated".toLowerCase())) { //$NON-NLS-1$
 				return Activated;
 			}
-			if (string.equals("Deactivated")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Deactivated".toLowerCase())) { //$NON-NLS-1$
 				return Deactivated;
 			}
-			if (string.equals("ChangedTo")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangedTo".toLowerCase())) { //$NON-NLS-1$
 				return ChangedTo;
 			}
 					
@@ -77,11 +78,14 @@ public class Basic {
 	}
 	
 	
+// SelectionAction:
 	
+//	ac.setActionKind(Kind.SELECTION);
+//	ac.setActionName("PartOpen");
 	
 	public enum CommandAction {
 		
-		HelpCommand, 
+		Save,HelpCommand, 
 		InlineEdit;
 	
 		/**
@@ -92,22 +96,27 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("HelpCommand")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Save".toLowerCase())) { //$NON-NLS-1$
+				return Save;
+			}
+			if (string.toLowerCase().equals("HelpCommand".toLowerCase())) { //$NON-NLS-1$
 				return HelpCommand;
 			}
-			if (string.equals("InlineEdit")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("InlineEdit".toLowerCase())) { //$NON-NLS-1$
 				return InlineEdit;
 			}
 			return null;
 		}
 
 		public  boolean isChooseAction() {
-			return this == HelpCommand || this == InlineEdit;
+			return this==Save ||this == HelpCommand || this == InlineEdit;
 
 		}
 		@Override
 		public String toString() {
 			switch (this) {
+			case Save:
+				return "Save";  //$NON-NLS-1$
 			case HelpCommand:
 				return "HelpCommand"; //$NON-NLS-1$
 			case InlineEdit:
@@ -136,10 +145,10 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("ERROR")) { //$NON-NLS-1$
+			if (string.toUpperCase().equals("ERROR")) { //$NON-NLS-1$
 				return ERROR;
 			}
-			if (string.equals("WARNING")) { //$NON-NLS-1$
+			if (string.toUpperCase().equals("WARNING")) { //$NON-NLS-1$
 				return WARNING;
 			}
 			return null;
@@ -177,43 +186,43 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("AddLineBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddLineBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return AddLineBreakpoint;
 			}
-			if (string.equals("AddMethodBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddMethodBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return AddMethodBreakpoint;
 			}
-			if (string.equals("DeleteLineBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("DeleteLineBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return DeleteLineBreakpoint;
 			}
-			if (string.equals("DeleteMethodBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("DeleteMethodBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return DeleteMethodBreakpoint;
 			}
-			if (string.equals("ChangeLineBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeLineBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return ChangeLineBreakpoint;
 			}
-			if (string.equals("ChangeMethodBreakpoint")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeMethodBreakpoint".toLowerCase())) { //$NON-NLS-1$
 				return ChangeMethodBreakpoint;
 			}
-			if (string.equals("Suspend")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Suspend".toLowerCase())) { //$NON-NLS-1$
 				return Suspend;
 			}
-			if (string.equals("Resume")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Resume".toLowerCase())) { //$NON-NLS-1$
 				return Resume;
 			}
-			if (string.equals("Terminate")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Terminate".toLowerCase())) { //$NON-NLS-1$
 				return Terminate;
 			}
-			if (string.equals("StepInto")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("StepInto".toLowerCase())) { //$NON-NLS-1$
 				return StepInto;
 			}
-			if (string.equals("StepReturn")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("StepReturn".toLowerCase())) { //$NON-NLS-1$
 				return StepReturn;
 			}
-			if (string.equals("StepEnd")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("StepEnd".toLowerCase())) { //$NON-NLS-1$
 				return StepEnd;
 			}
-			if (string.equals("StepOver")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("StepOver".toLowerCase())) { //$NON-NLS-1$
 				return StepOver;
 			}			
 			return null;
@@ -282,43 +291,43 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("AddField")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddField".toLowerCase())) { //$NON-NLS-1$
 				return AddField;
 			}
-			if (string.equals("AddMethod")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddMethod".toLowerCase())) { //$NON-NLS-1$
 				return AddMethod;
 			}
-			if (string.equals("AddImportDeclaration")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddImportDeclaration".toLowerCase())) { //$NON-NLS-1$
 				return AddImportDeclaration;
 			}
-			if (string.equals("AddClass")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("AddClass".toLowerCase())) { //$NON-NLS-1$
 				return AddClass;
 			}
-			if (string.equals("DeleteField")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("DeleteField".toLowerCase())) { //$NON-NLS-1$
 				return DeleteField;
 			}
-			if (string.equals("DeleteMethod")) { //$NON-NLS-1$ 
+			if (string.toLowerCase().equals("DeleteMethod".toLowerCase())) { //$NON-NLS-1$ 
 				return DeleteMethod;
 			}
-			if (string.equals("DeleteImportDeclaration")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("DeleteImportDeclaration".toLowerCase())) { //$NON-NLS-1$
 				return DeleteImportDeclaration;
 			}
-			if (string.equals("DeleteClass")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("DeleteClass".toLowerCase())) { //$NON-NLS-1$
 				return DeleteClass;
 			}
-			if (string.equals("ChangeField")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeField".toLowerCase())) { //$NON-NLS-1$
 				return ChangeField;
 			}
-			if (string.equals("ChangeMethod")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeMethod".toLowerCase())) { //$NON-NLS-1$
 				return ChangeMethod;
 			}
-			if (string.equals("ChangeImportDeclaration")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeImportDeclaration".toLowerCase())) { //$NON-NLS-1$
 				return ChangeImportDeclaration;
 			}
-			if (string.equals("ChangeClass")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ChangeClass".toLowerCase())) { //$NON-NLS-1$
 				return ChangeClass;
 			}
-			if (string.equals("ContentAssistSelected")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ContentAssistSelected".toLowerCase())) { //$NON-NLS-1$
 				return ContentAssistSelected;
 			}
 			
@@ -464,43 +473,43 @@ public class Basic {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("selection")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("selection".toLowerCase())) { //$NON-NLS-1$
 				return SELECTION;
 			}
-			if (string.equals("edit")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("edit".toLowerCase())) { //$NON-NLS-1$
 				return EDIT;
 			}
-			if (string.equals("debug")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("debug".toLowerCase())) { //$NON-NLS-1$
 				return DEBUG;
 			}
-			if (string.equals("command")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("command".toLowerCase())) { //$NON-NLS-1$
 				return COMMAND;
 			}
-			if (string.equals("preference")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("preference".toLowerCase())) { //$NON-NLS-1$
 				return PREFERENCE;
 			}
-			if (string.equals("prediction")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("prediction".toLowerCase())) { //$NON-NLS-1$
 				return PREDICTION;
 			}
-			if (string.equals("propagation")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("propagation".toLowerCase())) { //$NON-NLS-1$
 				return PROPAGATION;
 			}
-			if (string.equals("manipulation")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("manipulation".toLowerCase())) { //$NON-NLS-1$
 				return MANIPULATION;
 			}
-			if (string.equals("attention")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("attention".toLowerCase())) { //$NON-NLS-1$
 				return ATTENTION;
 			}
-			if (string.equals("resource")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("resource".toLowerCase())) { //$NON-NLS-1$
 				return RESOURCE;
 			}
-			if (string.equals("revision")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("revision".toLowerCase())) { //$NON-NLS-1$
 				return REVISION;
 			}
-			if (string.equals("test")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("test".toLowerCase())) { //$NON-NLS-1$
 				return TEST;
 			}
-			if (string.equals("job")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("job".toLowerCase())) { //$NON-NLS-1$
 				return JOB;
 			}
 			return null;
@@ -511,7 +520,7 @@ public class Basic {
 		 */
 		public boolean isUserEvent() {
 			return this == SELECTION || this == EDIT || this == COMMAND
-					|| this == PREFERENCE;
+					|| this == PREFERENCE || this==DEBUG || this == TEST ;
 		}
 
 		/**
@@ -567,13 +576,13 @@ public enum QueryLevel {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("High")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("High".toLowerCase())) { //$NON-NLS-1$
 				return High;
 			}
-			if (string.equals("Middle")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Middle".toLowerCase())) { //$NON-NLS-1$
 				return Middle;
 			}
-			if (string.equals("Other")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("Other".toLowerCase())) { //$NON-NLS-1$
 				return Other;
 			}
 			return null;
@@ -614,13 +623,13 @@ public enum QueryLevel {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("FrameWorkMessage")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("FrameWorkMessage".toLowerCase())) { //$NON-NLS-1$
 				return FrameWorkMessage;
 			}
-			if (string.equals("ProgramOutput")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ProgramOutput".toLowerCase())) { //$NON-NLS-1$
 				return ProgramOutput;
 			}
-			if (string.equals("ExceptionalMessage")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("ExceptionalMessage".toLowerCase())) { //$NON-NLS-1$
 				return ExceptionalMessage;
 			}
 			return null;
@@ -654,7 +663,7 @@ public enum QueryLevel {
 			if (string == null) {
 				return null;
 			}
-			if (string.equals("SelectPart")) { //$NON-NLS-1$
+			if (string.toLowerCase().equals("SelectPart".toLowerCase())) { //$NON-NLS-1$
 				return SelectPart;
 			}
 				
@@ -699,7 +708,7 @@ public enum QueryLevel {
 	public static final  Resource myResource=new Resource();
 	public static final String javaExceptionalName = myResource.getResource(javaExceptionalFileName );
 	public static final List<String> javaExceptionalNameList=CommUtil.arrayToList((javaExceptionalName).split(SPLIT_STRING));
-	//爆出到数据库中最大的候选检索词保留数量
+	//保存到数据库中最大的候选检索词保留数量
 	public final static int MAX_CANDIDATE_KEYWORDS=100;
 	public static final int MAX_DEEP_PACKAGE_COUNT = 10;
 

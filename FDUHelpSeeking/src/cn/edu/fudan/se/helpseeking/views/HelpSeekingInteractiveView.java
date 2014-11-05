@@ -6,12 +6,14 @@ import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import liuyang.nlp.lda.main.LdaGibbsSampling;
 
 import org.carrot2.core.Cluster;
 import org.carrot2.core.Document;
+import org.carrot2.util.factory.IFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -45,6 +47,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.texteditor.CaseAction;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.fnlp.nlp.cn.CNFactory;
 import org.htmlparser.util.ParserException;
@@ -998,6 +1001,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 			setCurrentSearchID(searchID);
 			
+			
+			
+			
+			
+			
            setCurrentQueryText(queryText);
            
 			
@@ -1038,7 +1046,80 @@ public class HelpSeekingInteractiveView extends ViewPart {
 //			    }   
 		
 		
-		private static void dosearch(final String search)  {
+		private static void dosearch( String searchtxt)  {
+			
+			List<String> searchList=CommUtil.stringToList(searchtxt,"[ ]");
+			
+	        String tagNameforsearch="";
+	        
+	        
+	        List<Integer> collectcount=new ArrayList<Integer>();
+	        collectcount.add(0);
+	        collectcount.add(0);
+	        collectcount.add(0);
+	        collectcount.add(0);
+//	        0 exceptioncount=0;
+//	        1 errorcount=0;
+//	        2 apicount=0;
+//	        3 othercount=0;
+	        
+	        for (int i = 0; i < searchList.size(); i++) {
+				String simpleStr=CommUtil.getSimpleWords(searchList.get(i));
+				List<String> firstpart=CommUtil.stringToList(simpleStr,"[ ]");
+				for (int j = 0; j < currentSearchKeyWords201411.size(); j++) {
+					if (currentSearchKeyWords201411.get(i).getKeywordName().toLowerCase().contains(firstpart.get(0).toLowerCase())) {
+						tagNameforsearch=(currentSearchKeyWords201411.get(i).getTagName()).toLowerCase();
+						switch (tagNameforsearch) {
+						case "exception":
+							collectcount.set(0,collectcount.get(0)+1);
+							break;
+						case "api":
+							collectcount.set(1,collectcount.get(1)+1);
+							break;
+						case "error":
+							collectcount.set(2,collectcount.get(2)+1);
+						    break;
+						case "other":
+							collectcount.set(3,collectcount.get(3)+1);
+							break;
+							
+
+						default:
+							collectcount.set(3,collectcount.get(3)+1);
+							break;
+						}
+						
+						continue;
+						
+					}
+				}
+				
+			}
+	        
+	        int countindex=0;
+	        int max=collectcount.get(0); 
+	        for(int i=1;i<collectcount.size();i++){ 
+	         if(collectcount.get(i)>max) 
+	         { max=collectcount.get(i);
+	         countindex=i;
+	         }
+	         }
+	         
+		
+	        tagNameforsearch=" ";//other
+		if(countindex==0)
+			tagNameforsearch="exception";
+		else
+			if(countindex==1)
+				tagNameforsearch="api example";
+			else
+				if(countindex==2)
+					tagNameforsearch="error";
+				else
+					if(countindex==3)
+						tagNameforsearch=" ";//other
+
+	        final String search=(searchtxt +" "+ tagNameforsearch).trim();
 			
 			 Job job = new Job("GetDatafromGoogle"){   
 				 protected IStatus run(IProgressMonitor monitor){   
@@ -1271,7 +1352,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	
 
 
-
+public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>();
 
 
 	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
@@ -1283,12 +1364,20 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// + "{ label: \"tool\", weight: 1.0 }"
 		
 		
+		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
+			currentSearchKeyWords201411.remove(i);
+		}
+		
+		
 		//处理异常字符 如“；”等，并截短
 		
 			
 		//试着处理给出的词汇截短符号：
 		//java.io.xxx   java.io.xx.yy(zzz)
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+			
+			currentSearchKeyWords201411.add(keyWordsforQuery.get(i));
+		
 			
 			String tempstr=keyWordsforQuery.get(i).getKeywordName();
 			

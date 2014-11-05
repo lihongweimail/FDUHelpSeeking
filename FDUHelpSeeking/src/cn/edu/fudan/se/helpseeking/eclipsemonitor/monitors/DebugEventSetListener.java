@@ -11,6 +11,7 @@ import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.Basic.DebugAction;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.CodeUtil;
@@ -43,11 +44,11 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 			switch (kind) {
 			case DebugEvent.RESUME:
 				kindString = "Resume";
-				actionNameKind="Resume";
+				actionNameKind=DebugAction.Resume.toString();//"Resume";
 				break;
 			case DebugEvent.SUSPEND:
 				kindString = "Suspend";
-				actionNameKind="Suspend";
+				actionNameKind=DebugAction.Suspend.toString();//"Suspend";
 				break;
 			case DebugEvent.CREATE:
 				kindString = "Create";
@@ -55,7 +56,7 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 				break;
 			case DebugEvent.TERMINATE:
 				kindString = "Terminate";
-				actionNameKind="Terminate";
+				actionNameKind=DebugAction.Terminate.toString();//"Terminate";
 				break;
 			case DebugEvent.CHANGE:
 				kindString = "Change";
@@ -69,16 +70,21 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 			switch (detail) {
 			case DebugEvent.STEP_INTO:
 				detailString = "Setp Into";
-				actionNameDetail="StepInto";
+				actionNameDetail=DebugAction.StepInto.toString();//"StepInto";
 				break;
 			case DebugEvent.STEP_RETURN:
 				detailString = "Step Return";
-				actionNameDetail="StepReturn";
+				actionNameDetail=DebugAction.StepOver.toString();//"StepReturn";
 				break;
 			case DebugEvent.STEP_END:
 				detailString = "Step End";
-				actionNameDetail="StepEnd";
+				actionNameDetail=DebugAction.StepEnd.toString();//"StepEnd";
 				break;
+			case DebugEvent.STEP_OVER:
+				detailString = "Step Over";
+				actionNameDetail=DebugAction.StepOver.toString();//"StepOver";
+				break;
+				
 			case DebugEvent.BREAKPOINT:
 				detailString = "Breakpoint";
 				actionNameDetail="Breakpoint";
@@ -110,6 +116,8 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 			} else {
 				originId = "Kind: " + kindString + ", ";
 			}
+			
+			
 			if (detailString.equals("")) {
 				originId += "Detail: Unspecified";
 				actionNameDetail="Detail: Unspecified";
@@ -117,6 +125,8 @@ public class DebugEventSetListener extends AbstractUserActivityMonitor
 				originId += "Detail: " + detailString;
 				
 			}
+			
+			
 			e.setOriginId(originId);
 			actionName=actionNameKind+" "+actionNameDetail;
 			e.setActionName(actionName);

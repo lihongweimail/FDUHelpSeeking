@@ -79,7 +79,7 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 			actionName=event.getCommand().getName() == null ? event
 					.getCommand().getId() : event.getCommand().getName();
 			
-			if(event.getCommand().getName().equals("Save")){
+			if(event.getCommand().getName().toLowerCase().equals("Save".toLowerCase())){
 				mytype="command";
 				actionName="save";
 				mykind=Kind.COMMAND;

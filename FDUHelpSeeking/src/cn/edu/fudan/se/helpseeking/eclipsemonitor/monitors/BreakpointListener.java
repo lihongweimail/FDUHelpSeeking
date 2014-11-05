@@ -18,6 +18,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
+import cn.edu.fudan.se.helpseeking.bean.Basic.DebugAction;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
@@ -49,13 +50,13 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Add a method breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("AddBreakpoint Method");
+						e.setActionName(DebugAction.AddMethodBreakpoint.toString());//("AddBreakpoint Method");
 					} else if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Add a breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("AddBreakpoint Line");
+						e.setActionName(DebugAction.AddLineBreakpoint.toString());//("AddBreakpoint Line");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
@@ -113,19 +114,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
-					e.setActionName("DeleteBreakpoint");
+					e.setActionName(DebugAction.DeleteLineBreakpoint.toString());//("DeleteBreakpoint");
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Delete a breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("DeleteBreakpoint Line");
+						e.setActionName(DebugAction.DeleteLineBreakpoint.toString());//("DeleteBreakpoint Line");
 					} else if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Delete a method breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("DeleteBreakpoint Method");
+						e.setActionName(DebugAction.DeleteMethodBreakpoint.toString());//("DeleteBreakpoint Method");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);
@@ -185,19 +186,19 @@ public class BreakpointListener extends AbstractUserActivityMonitor implements
 					e.setByuser(true);
 					e.setDate(Calendar.getInstance().getTime());
 					e.setKind(Kind.DEBUG);
-					e.setActionName("ChangeBreakpoint");
+					e.setActionName(DebugAction.ChangeLineBreakpoint.toString());//("ChangeBreakpoint");
 					if (breakpoint instanceof JavaLineBreakpoint) {
 						JavaLineBreakpoint bp = (JavaLineBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Change a breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("ChangeBreakpoint Line");
+						e.setActionName(DebugAction.ChangeLineBreakpoint.toString());//("ChangeBreakpoint Line");
 					} else if (breakpoint instanceof JavaMethodBreakpoint) {
 						JavaMethodBreakpoint bp = (JavaMethodBreakpoint) breakpoint;
 						e.setLineno(String.valueOf(bp.getLineNumber()));
 						e.setOriginId("Change a method breakpoint at line "
 								+ bp.getLineNumber());
-						e.setActionName("ChangeBreakpoint Method");
+						e.setActionName(DebugAction.ChangeMethodBreakpoint.toString());//("ChangeBreakpoint Method");
 					}
 					IResource resource = breakpoint.getMarker().getResource();
 					ICompilationUnit icu = JavaCore.createCompilationUnitFrom((IFile) resource);

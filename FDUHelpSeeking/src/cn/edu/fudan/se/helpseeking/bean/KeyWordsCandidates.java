@@ -120,7 +120,17 @@ public void setIndex(int index) {
 	}
 	
 
-	
+	public String  toString()
+	{
+		String result="";
+		for (int i = 0; i < this.keyWords.size(); i++) {
+			result=result+" "+this.keyWords.get(i).getKeywordName();
+		}
+		
+		
+	return result.trim();
+		
+	}
 	
 
 }

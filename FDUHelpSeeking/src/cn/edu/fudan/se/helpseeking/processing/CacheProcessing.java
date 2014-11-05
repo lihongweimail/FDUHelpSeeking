@@ -523,7 +523,7 @@ public class CacheProcessing extends Thread {
 					// //频率加权
 					// double frequency=doKeyWords.get(j1).getFrequency();
 					System.out.println("doOldStep fuction \n score: "+score);
-					System.out.println("dokeyWords: "+doKeyWords.get(i).getKeyWords().toString());
+					System.out.println("dokeyWords: "+doKeyWords.get(i).getKeyWords().toString()+" mytagname: "+(doKeyWords.get(i).getKeyWords().size()>0?doKeyWords.get(i).getKeyWords().get(0).getTagName():"no words FOR TAGNAME"));
 
 					doKeyWords.get(j1).getKeyWords().get(i).setScore(score);
 					doKeyWords.get(j1).getKeyWords().get(i).setFrequency(freq);

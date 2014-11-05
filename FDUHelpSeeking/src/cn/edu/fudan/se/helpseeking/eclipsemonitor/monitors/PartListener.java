@@ -129,11 +129,14 @@ import org.eclipse.ui.PlatformUI;
 
 import cn.edu.fudan.se.helpseeking.bean.Action;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.bean.Basic.SelectionAction;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
+import cn.edu.fudan.se.helpseeking.bean.EditCode;
 import cn.edu.fudan.se.helpseeking.bean.EditorInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerInfo;
 import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.Information;
+import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.InteractionEvent;
 import cn.edu.fudan.se.helpseeking.util.ContextUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
@@ -217,6 +220,15 @@ public class PartListener extends AbstractUserActivityMonitor implements
 								action.setDescription(e.getOriginId());
 								action.setTime(new Timestamp(System.currentTimeMillis()));
 								info.setAction(action);
+								EditCode editCode=new EditCode();
+								editCode.setClassModel(null);
+								editCode.setCursor(null);
+								SyntacticBlock syntacticBlock=new SyntacticBlock();
+								syntacticBlock.setCode(proposal.getDisplayString());
+								syntacticBlock.setExceptionName("");
+								syntacticBlock.setType("Assist");
+								editCode.setSyntacticBlock(syntacticBlock);
+								info.setEditCode(editCode);
 								
 								
 								//需要先写入数据库，才能得到ID
