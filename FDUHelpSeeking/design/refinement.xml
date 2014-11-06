@@ -1,0 +1,41 @@
+<CustomSearchEngine>
+  <Title>Universities</Title>
+    <Context>
+      <Facet>
+        <FacetItem title="Lectures">
+           <Label name="lectures" mode="BOOST" weight="0.8">
+              <Rewrite>lecture OR lectures</Rewrite>
+           </Label>
+        </FacetItem>
+      </Facet>
+      <Facet>
+        <FacetItem title="Assignments">
+          <Label name="assignments" mode="BOOST" weight="0.8">
+            <Rewrite>homework OR assignment OR assignments</Rewrite>
+          </Label>
+        </FacetItem>
+     </Facet>
+     <Facet>
+       <FacetItem title="Reference">
+         <Label name="reference" mode="FILTER">
+            <IgnoreBackgroundLabels>true</IgnoreBackgroundLabels>
+         </Label>
+       </FacetItem>
+     </Facet>
+     <Facet>
+        <FacetItem title="Papers">
+          <Label name="papers" mode="FILTER"/>
+          <Redirect url="http://scholar.google.com/scholar?q=$q"/>
+        </FacetItem>
+      </Facet>
+      <BackgroundLabels>
+        <Label name="_cse_omuauf_lfve" mode="FILTER"/>
+        <Label name="_cse_exclude_omuauf_lfve" mode="ELIMINATE"/>
+      </BackgroundLabels>
+    </Context>
+  </CustomSearchEngine>
+ 
+ <CustomSearchEngine top_refinements="n">
+</CustomSearchEngine>
+
+ 

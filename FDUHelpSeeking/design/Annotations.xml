@@ -1,0 +1,15 @@
+<Annotations>
+    
+  <Annotation about="*.edu/*" score="0.0001">
+    <Label name="vision_label"/>
+  </Annotation>
+
+  <Annotation about="*.ucsd.edu/*" score="0.7">
+    <Label name="vision_label"/>
+  </Annotation>
+
+  <Annotation about="*.vision.ucsd.edu/*" score="1">
+    <Label name="vision_label"/>
+  </Annotation>
+
+</Annotations>

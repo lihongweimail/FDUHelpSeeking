@@ -1,3 +1,5 @@
+// 正常可用的 LdaGibbsSampling.java
+
 package liuyang.nlp.lda.main;
 
 import java.beans.beancontext.BeanContext;

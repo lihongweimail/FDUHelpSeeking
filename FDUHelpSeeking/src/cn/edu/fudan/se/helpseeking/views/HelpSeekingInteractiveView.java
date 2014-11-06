@@ -1192,11 +1192,25 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						} // if googlesearchlist.size > 0
 						else {
 							System.out.println("No return results!");
+							browserpart = FDUHelpSeekingPlugin
+									.getDefault()
+									.getWorkbench()
+									.getActiveWorkbenchWindow()
+									.getActivePage()
+									.findView(
+											"cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
+
+							if ((browserpart instanceof HelpSeekingInteractiveView)) {
+								HelpSeekingInteractiveView bv = (HelpSeekingInteractiveView) browserpart;
 							MessageDialog
-									.openInformation(PlatformUI.getWorkbench()
-											.getActiveWorkbenchWindow().getShell(),
-											"Search google faild! ",
-											"Sorry connection wrong or no results! Please search agin wait for a while!");
+								.openInformation(bv.getSite().getShell(),
+										"Search google faild! ",
+										"Sorry connection wrong or no results! Please waiting for a while search again or new keywords!");
+				
+								
+							}
+
+							
 						}
 
 					 

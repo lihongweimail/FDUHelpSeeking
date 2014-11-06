@@ -1,0 +1,27 @@
+ <CustomSearchEngine volunteers="false"
+                      keywords="java  &quot;exception  &quot;API  &quot;method  &quot;package  &quot;class &quot;">
+ 
+  <Title>Exception</Title>
+  <Description>"all exception"</Description>
+  <Context>
+
+     <!--Search engine labels-->
+<BackgroundLabels>
+  <Label name="_cse_hwbuiarvsbo" mode="FILTER"/>
+  <Label name="_cse_exclude_hwbuiarvsbo" mode="ELIMINATE"/>
+</BackgroundLabels>
+
+<!--Refinement label-->
+   <Facet>
+      <FacetItem title="Lectures">
+         <Label name="lectures" mode="BOOST" weight="0.8">
+            <Rewrite>lecture OR lectures</Rewrite>
+         </Label>
+      </FacetItem>
+    </Facet>
+   
+  </Context>
+  
+ 
+ 
+ </CustomSearchEngine>
