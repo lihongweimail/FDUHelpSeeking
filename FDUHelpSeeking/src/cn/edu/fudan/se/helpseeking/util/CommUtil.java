@@ -16,6 +16,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.fnlp.nlp.cn.CNFactory;
+import org.fnlp.util.exception.LoadModelException;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
@@ -56,19 +58,41 @@ public class CommUtil {
 	public static String getSimpleWords(String tempstr) {
 		String resultstr="";
 		tempstr=tempstr.replaceAll(";", " ");
-    	if (tempstr.contains("(") && tempstr.contains(")")) {
+		
+		int firstpartlastIndex=tempstr.indexOf('(');
+		int lastpartIndex=tempstr.lastIndexOf(')');
+
+		
+    	if (tempstr.contains("(") && tempstr.contains(")") && firstpartlastIndex<=lastpartIndex) {
 						
-			int firstpartlastIndex=tempstr.indexOf('(');
-			String firstPart=tempstr.substring(0, firstpartlastIndex);
+			
+			
+			String firstPart=" ";
+			if (firstpartlastIndex==0) {
+				firstPart=" ";
+
+			}else
+			{
+				firstPart=tempstr.substring(0, firstpartlastIndex);
+				}
+			
+			
 			System.out.println("firstpart: "+firstPart);
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
 			String name=namePart.get( (namePart.size()-1)>0?(namePart.size()-1):0);
 			
+	
 			name = getTokensfromCodeStr(name);
 						
+						
 			
-			int lastpartIndex=tempstr.lastIndexOf(')');
-			String secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
+			String secondPart=" ";
+			
+			if (firstpartlastIndex+1==lastpartIndex) {
+				secondPart=" ";
+			}else
+			secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
+			
 			System.out.println("secondpart: "+ secondPart);
 			List<String> secondkeywordparts=new ArrayList<String>();
 			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
@@ -117,6 +141,13 @@ public class CommUtil {
 			}
 			else 
 			{
+				if (tempstr.contains("(")) {
+					tempstr.replaceAll("[(]", " ");
+				}
+				if (tempstr.contains(")")) {
+					tempstr.replaceAll("[)]", " ");
+				}
+				
 				List<String> packageClassName=new ArrayList<String>();
 				packageClassName=CommUtil.stringToList(tempstr, "[.]");
 					resultstr=getTokensfromCodeStr(packageClassName.get(packageClassName.size()-1));
@@ -143,6 +174,29 @@ public class CommUtil {
 			}
 		}
 		return listTemp;
+	}
+	
+	public static String removeDuplicateWordsWithBlankSplit(List<String> list) {
+		Collections.sort(list);
+		List<String> listTemp = new ArrayList<String>();
+		List<String> resultTemp=new ArrayList<String>();
+		Iterator<String> it = list.iterator();
+		while (it.hasNext()) {
+			String a = it.next().trim();
+			if (listTemp.contains(a.toLowerCase())) {
+				it.remove();
+			} else {
+				listTemp.add(a.toLowerCase());
+				resultTemp.add(a);
+			}
+		}
+		
+		String result = "";
+		for (int i = 0; i < resultTemp.size(); i++) {
+			result = result + resultTemp.get(i).trim() + " ";
+		}
+
+		return result.trim();
 	}
 
 	public static String removeDuplicateWords(List<String> list) {
@@ -222,6 +276,138 @@ public class CommUtil {
 		}
 
 		return result;
+
+	}
+	
+	
+	
+	public static boolean findClawInValidatePage(String url)
+	{
+		boolean result=false;
+		
+	    int indexlastpoint=url.lastIndexOf('.');
+	    String extendname=(url.substring(indexlastpoint)).toLowerCase().trim();
+	    
+	    switch (extendname) {
+		case "txt":
+			result=true;
+
+			break;
+		case "doc" :
+		case "docx":
+		case "xls":
+		case "xlsx":
+		case "ppt":
+		case "pptx":
+		
+			result=true;
+
+			break;
+
+		case "zip":
+		case "rar":
+		case "jar":
+		case "exe":
+
+		case "gz":
+		case "dmg":
+		case "pkg":
+			result=true;
+
+			break;
+
+		case "pdf":
+		case "rtf":
+			result=true;
+			break;
+
+		default:
+			result=false;
+			break;
+		}
+		
+			
+		
+		return result;
+		
+	}
+	
+	public static String removeStopWordsAsStringSplitBlank(String tokens) {
+		String result = "";
+		if (tokens == null || tokens.equals("")) {
+			return null;
+
+		}
+		List<String> keyWords = constructDefaultFilterString("StopResource",
+				"javaStopList.txt", "userStopList.txt");
+
+		for (String token : tokens.split(Basic.SPLIT_STRING)) {
+
+			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
+				String lowercasetoken;
+				lowercasetoken = token.toLowerCase();
+				boolean flage = false;
+				for (String keyword : keyWords) {
+					if (lowercasetoken.trim().equals(keyword.trim().toLowerCase())) {
+						// System.out.println("not add keyword:"+ token);
+						flage = true;
+						break;
+					}
+				}
+
+				if (!flage) {
+					if (result.equals("")) {
+						result = token;
+					} else {
+						result = result + " " + token;
+					}
+				}
+
+			}
+		}
+
+		return result;
+
+	}
+	
+	public static String removeStopWordsAsStringwithSplitBlank(String tokens,String split) {
+		String result = "";
+		if (tokens == null || tokens.equals("")) {
+			return null;
+
+		}
+		
+		tokens=tokens.replaceAll("[(]", " ( ").replaceAll("[)]", " ) ").replaceAll("[<]", " < ").replaceAll("[>]", " > ").replaceAll("[\\[]", " \\[ ").replaceAll("[\\]]", " \\] ");
+		List<String> keyWords = constructDefaultFilterString("StopResource",
+				"javaStopList.txt", "userStopList.txt");
+
+		//split : "[&#$_.@|{}!*%+-= \\:;,?/\"\'\t\b\r\n\0 ]";  除了 ( ) < > []
+		for (String token : tokens.split(split)) {
+
+			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
+				String lowercasetoken;
+				lowercasetoken = token.toLowerCase();
+				boolean flage = false;
+				for (String keyword : keyWords) {
+					if (lowercasetoken.trim().equals(keyword.trim().toLowerCase())) {
+						// System.out.println("not add keyword:"+ token);
+						flage = true;
+						break;
+					}
+				}
+
+				if (!flage) {
+					if (result.equals("")) {
+						result = token;
+					} else {
+						result = result + " " + token;
+					}
+				}
+
+			}
+		}
+
+		return result.trim();
 
 	}
 
@@ -575,7 +761,7 @@ public class CommUtil {
 		
 			
 		System.out.println("the set ratio: "+ratio+"count same words"+countDifferentWords+"the different ratio: "+((countDifferentWords)/last.size()));
-			if (((countDifferentWords)/last.size())>ratio) {
+			if (((countDifferentWords)/last.size())>=ratio) {
 				result = true;
 	      }
 			
@@ -686,4 +872,45 @@ public class CommUtil {
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
+	
+	
+	public static String fudanSplitWords(String testText) {
+		//中文分词工具  复旦大学 nlp 
+		if (!testText.trim().equals("")) {
+		    
+		    testText = testText.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ").replaceAll("�", " ");
+		  //停用词
+		    testText=CommUtil.removeStopWordsAsStringSplitBlank(testText);
+			
+				try {
+			CNFactory factory =CNFactory.getInstance(CommUtil.getFDUPluginWorkingPath()+"/models");
+			String[] words=factory.seg(testText);
+
+			String temp="";
+		    for (int i = 0; i < words.length; i++) {
+		    	if (temp.equals("")) {
+					temp=words[i].toString().trim();
+				}else {
+					temp=temp+" "+words[i].toString().trim();
+				}
+				
+			}
+			System.out.println("current Chinese words split: "+temp);
+			if (!temp.equals("")) {
+				testText=temp;
+			}
+			
+		} catch (LoadModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		
+		}
+		return testText;
+	}
+	
+
+	
 }

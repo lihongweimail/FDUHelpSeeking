@@ -1,4 +1,6 @@
-package cn.edu.fudan.se.helpseeking.test;
+package urlWordExtract;
+
+import java.util.concurrent.Callable;
 
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
@@ -11,13 +13,81 @@ import org.htmlparser.tags.ParagraphTag;
 import org.htmlparser.tags.TableTag;
 import org.htmlparser.util.NodeList;
 
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
+
 /**
 * 标题:利用htmlparser提取网页纯文本的例子 
 * @author 
 * 
 */
-public class GetT {
+public class GetT implements Callable<String>{
+	
+    public String myUrl="";
+    
+	
+	public String getMyUrl() {
+		return myUrl;
+	}
+
+	public void setMyUrl(String myUrl) {
+		this.myUrl = myUrl;
+	}
+
+	public GetT(String url) {
+		setMyUrl(url);
+
+		
+	}
    
+	@Override
+	public String call() throws Exception {
+		
+	      
+        if (CommUtil.findClawInValidatePage(myUrl)) {
+			return "";
+      		}
+
+	       String sCurrentLine;
+	        String sTotalString;
+	        sCurrentLine = "";
+	        sTotalString = "";
+	        String testText="";
+	        
+	        try {
+	        	 java.io.InputStream l_urlStream;
+	 	        java.net.URL l_url = new java.net.URL(myUrl);
+	 	        java.net.HttpURLConnection l_connection = (java.net.HttpURLConnection) l_url
+	 	              .openConnection();
+	 	        l_connection.connect();
+	 	        l_connection.setConnectTimeout(2000);
+	 	        l_urlStream = l_connection.getInputStream();
+//	 	        System.out.println("page encoding: "+l_connection.getContentEncoding());
+	 	        java.io.BufferedReader l_reader = new java.io.BufferedReader(
+	 	              new java.io.InputStreamReader(l_urlStream));
+	 	        while ((sCurrentLine = l_reader.readLine()) != null) {
+	 	           sTotalString += sCurrentLine+"\r\n";
+	 	        }
+//	 	        System.out.println(sTotalString);
+
+//	 	        System.out.println("====================");
+		        testText = extractText(sTotalString);
+
+
+			} catch (Exception e) {
+			
+				testText="";
+			
+			}
+	       	        
+	        
+	        
+//	        System.out.println(testText);
+
+	     
+	        return testText;
+	}
+
+	
 	public static String testHtml(String url) throws Exception {
       
         String sCurrentLine;
@@ -31,6 +101,7 @@ public class GetT {
         l_connection.connect();
         l_connection.setConnectTimeout(2000);
         l_urlStream = l_connection.getInputStream();
+//        System.out.println("page encoding: "+l_connection.getContentEncoding());
         java.io.BufferedReader l_reader = new java.io.BufferedReader(
               new java.io.InputStreamReader(l_urlStream));
         while ((sCurrentLine = l_reader.readLine()) != null) {
@@ -39,6 +110,9 @@ public class GetT {
 //        System.out.println(sTotalString);
 
 //        System.out.println("====================");
+        
+        
+        
         String testText = extractText(sTotalString);
 //        System.out.println(testText);
      
@@ -69,7 +143,7 @@ public class GetT {
 //      	System.out.println(list.elementAt(i).toHtml());
 //      }
 
-      System.out.println(list.size());
+//      System.out.println(list.size());
       for (int i=0;i<list.size();i++){
        Node nodet = list.elementAt(i);
 //       System.out.println("NODES["+i+"]:"+new String(nodet.toPlainTextString().getBytes("GBK")));
@@ -103,6 +177,8 @@ public class GetT {
 
    public static void main(String[] args) throws Exception {
 //      test5("http://news.ccidnet.com/index.htm");
-      testHtml("http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html");
+      System.out.println(testHtml("http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html"));
    }
+
+
 }

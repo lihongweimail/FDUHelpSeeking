@@ -1068,7 +1068,7 @@ public class Cache {
 			}
 			String exceptionalString = editCode.getSyntacticBlock()
 					.getExceptionName();
-			String rString = codeString + ";" + exceptionalString;
+			String rString = codeString + " ; " + exceptionalString;
 			rString = CommUtil.removeDuplicateWords(CommUtil
 					.stringToList(rString));
 
@@ -1086,7 +1086,7 @@ public class Cache {
 					String keyvalue = apinameMap[i][0];
 					String value = apinameMap[i][1];
 					// System.out.println(keyvalue+":"+value+":"+str);
-					if (keyvalue.toLowerCase().equals(str.toLowerCase())) {
+					if (keyvalue.toLowerCase().equals(str.trim().toLowerCase())) {
 						str = value;
 						flag = true;
 						break;
@@ -1102,14 +1102,14 @@ public class Cache {
 
 				for (String jestr : Basic.javaExceptionalNameList) {
 
-					if (str.toLowerCase().contains("Exception".toLowerCase())) {
+					if (str.trim().toLowerCase().contains("Exception".toLowerCase())) {
 						kw.setWeightOne(4);
 						kw.setTagName("Exception");
 						flag = true;
 						break;
 					}
 
-					if (str.equals(jestr)) {
+					if (str.trim().equals(jestr)) {
 						kw.setWeightOne(4);
 						kw.setTagName("Exception");
 						flag = true;
@@ -1347,7 +1347,7 @@ if (paraType.length>0 )
 
 				String exceptionalString = debugCode.getSyntacticBlock()
 						.getExceptionName();
-				String rString = codeString + ";" + exceptionalString;
+				String rString = codeString + " ; " + exceptionalString;
 
 				rString = CommUtil.removeDuplicateWords(CommUtil
 						.stringToList(rString));
@@ -1365,7 +1365,7 @@ if (paraType.length>0 )
 						String keyvalue = apinameMap[i][0];
 						String value = apinameMap[i][1];
 						// System.out.println(keyvalue+":"+value+":"+str);
-						if (keyvalue.toLowerCase().contains(str.toLowerCase())) {
+						if (keyvalue.toLowerCase().contains(str.trim().toLowerCase())) {
 							str = value;
 							flag = true;
 							break;
@@ -1381,7 +1381,7 @@ if (paraType.length>0 )
 
 					for (String jestr : Basic.javaExceptionalNameList) {
 
-						if (str.toLowerCase().contains(
+						if (str.trim().toLowerCase().contains(
 								"Exception".toLowerCase())) {
 							kw.setWeightOne(4);
 							kw.setTagName("Exception");
@@ -1389,7 +1389,7 @@ if (paraType.length>0 )
 							break;
 						}
 
-						if (str.equals(jestr)) {
+						if (str.trim().equals(jestr)) {
 							kw.setWeightOne(4);
 							kw.setTagName("Exception");
 							flag = true;

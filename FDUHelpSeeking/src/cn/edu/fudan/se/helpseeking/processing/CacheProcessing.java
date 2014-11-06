@@ -772,7 +772,7 @@ public class CacheProcessing extends Thread {
 
 				String exceptionalString = eCodeInfo.getSyntacticBlock()
 						.getExceptionName();
-				String rString = codeString + exceptionalString;
+				String rString = codeString +" "+ exceptionalString;
 
 				for (String str : (rString.split(Basic.SPLIT_STRING))) {
 					KeyWord kw = new KeyWord();
@@ -781,7 +781,7 @@ public class CacheProcessing extends Thread {
 					kw.setTagName("Other");
 
 					for (String jestr : Basic.javaExceptionalNameList) {
-						if (str.equals(jestr)) {
+						if (str.trim().equals(jestr)) {
 							kw.setWeightTwo(2);
 							kw.setTagName("Exception");
 							break;
@@ -802,7 +802,7 @@ public class CacheProcessing extends Thread {
 
 			String exceptionalString = dCodeInfo.getSyntacticBlock()
 					.getExceptionName();
-			String rString = codeString + exceptionalString;
+			String rString = codeString +" "+ exceptionalString;
 
 			for (String str : (rString.split(Basic.SPLIT_STRING))) {
 				KeyWord kw = new KeyWord();
@@ -811,7 +811,7 @@ public class CacheProcessing extends Thread {
 				kw.setTagName("Other");
 
 				for (String jestr : Basic.javaExceptionalNameList) {
-					if (str.equals(jestr)) {
+					if (str.trim().equals(jestr)) {
 						kw.setWeightTwo(2);
 						kw.setTagName("Exception");
 						break;
@@ -1198,6 +1198,26 @@ public class CacheProcessing extends Thread {
 				}
 
 				KeyWord kw = currentCache.getCurrentKeywordsList().get(i);
+				
+				//去除停用词 减少无需要得词汇
+				
+				//处理异常字符，得到截短符号，切词
+				
+				String keywordsvalidate=(CommUtil.getSimpleWords(kw.getKeywordName())).trim();
+			
+				String splitchar="[&#$_.@|{}!*%+-=\\:;,?/\"\'\t\b\r\n\0 ]";
+				if (!keywordsvalidate.trim().equals(""))
+				 keywordsvalidate=CommUtil.removeStopWordsAsStringwithSplitBlank(keywordsvalidate,splitchar);
+				
+			
+				//去除停用词后， 包名 和 方法签名中的异常信息 重复等情况
+				 if (!keywordsvalidate.trim().equals(""))
+				keywordsvalidate=CommUtil.removeDuplicateWordsWithBlankSplit(CommUtil.stringToList(keywordsvalidate,splitchar));
+			
+				if (!keywordsvalidate.trim().equals("")) {
+					
+					kw.setKeywordName(keywordsvalidate.trim());
+				
 				keyWordsforQuery.add(kw);
 
 				if (i == 0) {
@@ -1210,6 +1230,8 @@ public class CacheProcessing extends Thread {
 
 				if (countj == Basic.TEMP_K_KEYWORDS) {
 					break;
+				}
+				
 				}
 			}
 
@@ -1378,6 +1400,9 @@ public class CacheProcessing extends Thread {
 					}
 
 				}
+				
+				
+				//2014.10 新版 数据传输处
 				
 				if (!keyWordsforQuery.isEmpty()) {
 					

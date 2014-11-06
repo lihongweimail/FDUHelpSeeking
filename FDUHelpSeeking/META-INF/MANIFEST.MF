@@ -56,4 +56,8 @@ Bundle-ClassPath: .,
  lib/fnlp-app-2.0-SNAPSHOT.jar,
  lib/fnlp-core-2.0-SNAPSHOT.jar,
  lib/trove4j-3.0.3.jar,
- lib/htmlparser-1.5.jar
+ lib/htmlparser.jar,
+ lib/filterbuilder.jar,
+ lib/htmllexer.jar,
+ lib/sitecapturer.jar,
+ lib/thumbelina.jar

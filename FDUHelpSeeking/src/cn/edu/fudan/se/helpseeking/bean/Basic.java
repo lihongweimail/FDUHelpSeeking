@@ -743,6 +743,6 @@ public enum QueryLevel {
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
-	public final static double  RATIOOFNEWSEARCHSTRING=0.6;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
+	public final static double  RATIOOFNEWSEARCHSTRING=0.382;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
 	
 }

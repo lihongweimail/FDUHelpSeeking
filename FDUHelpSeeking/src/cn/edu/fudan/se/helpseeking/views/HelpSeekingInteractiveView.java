@@ -185,52 +185,41 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 				}
 
-				if (txtSearch.getText().trim().equals("foamtreetest.html")) {
-					txtSearch.setText("");
-					e.title = "HelloHongwei";
-				}
+	
 
 				if (!e.title.trim().toLowerCase()
 						.equals("HelloHongwei".toLowerCase())) {
-					// if (!CommUtil.compareString(Cache.getInstance()
-					// .getCurrentBrowserTitle(), e.title)) {
-
-					String searchtext = txtSearch.getText();
-					boolean titleaddflag = true;
-
+	
 					
-					//????因为需要显示足够大，已经将串处理，只保留了类名或方法名因此不需要“.”分割符了
-					//需要处理的是符号串中的空格。
-					//String candidateWord = (e.title.trim()).replace(" ", ".");
-					String candidateWord = (e.title.trim()).replace(" ", "");
-					
-					String temp2 = "";
-					// ???? titleaddflag = true;
-					for (String str : searchtext.split("[ ]")) {
-						if (!str.trim().toLowerCase()
-								.equals(candidateWord.toLowerCase())) {
-							if (temp2.equals("")) {
-								temp2 = str.trim();
-							} else {
-								temp2 = temp2 + " " + str.trim();
+					boolean isuseword=true;
+					for (int i = 0; i < SearchList.size(); i++) {
+						if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(e.title.trim().toLowerCase())) {
+							isuseword=false;
+							SearchList.remove(i);
+							break;
+						}
+						
+					}
+					if (isuseword) {
+						for (int j = 0; j < currentSearchKeyWords201411.size(); j++) {
+							if (currentSearchKeyWords201411.get(j).getKeywordName().trim().toLowerCase().equals(e.title.trim().toLowerCase())) {
+								SearchList.add(currentSearchKeyWords201411.get(j));
+								break;
 							}
-						} else {
-							titleaddflag = false;
+							
 						}
-
+						
 					}
-
-					if (titleaddflag) {
-						if (temp2.equals("")) {
-							temp2 = candidateWord;
-
-						} else {
-							temp2 = temp2 + " " + candidateWord;
-						}
+					
+					
+					String searchtext="";
+					for (int i = 0; i < SearchList.size(); i++) {
+						searchtext=searchtext.trim()+" "+SearchList.get(i).getKeywordName();
 					}
-
-					txtSearch.setText(temp2);
-
+					
+					
+					txtSearch.setText(searchtext);
+					
 				}
 			}
 		});
@@ -1002,10 +991,6 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			setCurrentSearchID(searchID);
 			
 			
-			
-			
-			
-			
            setCurrentQueryText(queryText);
            
 			
@@ -1018,6 +1003,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	static SearchResults sResults;
 	static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 	static List<WEBResult> resultsForTopicList = new ArrayList<WEBResult>();
+	static List<KeyWord> SearchList=new ArrayList<KeyWord>();
 	
 //防止两个同类job同时执行  myjob1.setRule(Schedule_RULE);  myjob2.setRule(Schedule_RULE); 
 	private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {   
@@ -1048,7 +1034,6 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		
 		private static void dosearch( String searchtxt)  {
 			
-			List<String> searchList=CommUtil.stringToList(searchtxt,"[ ]");
 			
 	        String tagNameforsearch="";
 	        
@@ -1063,13 +1048,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 //	        2 apicount=0;
 //	        3 othercount=0;
 	        
-	        for (int i = 0; i < searchList.size(); i++) {
-				String simpleStr=CommUtil.getSimpleWords(searchList.get(i));
-				List<String> firstpart=CommUtil.stringToList(simpleStr,"[ ]");
-				for (int j = 0; j < currentSearchKeyWords201411.size(); j++) {
-					if (currentSearchKeyWords201411.get(i).getKeywordName().toLowerCase().contains(firstpart.get(0).toLowerCase())) {
-						tagNameforsearch=(currentSearchKeyWords201411.get(i).getTagName()).toLowerCase();
-						switch (tagNameforsearch) {
+	        for (int i = 0; i < SearchList.size(); i++) {
+				String simpleStr=SearchList.get(i).getKeywordName();
+                   tagNameforsearch=SearchList.get(i).getTagName();
+				
+		     switch (tagNameforsearch) {
 						case "exception":
 							collectcount.set(0,collectcount.get(0)+1);
 							break;
@@ -1088,13 +1071,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 							collectcount.set(3,collectcount.get(3)+1);
 							break;
 						}
-						
-						continue;
-						
+											
 					}
-				}
 				
-			}
+				
+
 	        
 	        int countindex=0;
 	        int max=collectcount.get(0); 
@@ -1393,30 +1374,30 @@ public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>()
 			currentSearchKeyWords201411.add(keyWordsforQuery.get(i));
 		
 			
-			String tempstr=keyWordsforQuery.get(i).getKeywordName();
+//			2014.11.07 暂时注销 前面context trace中已经处理过
+//			String tempstr=currentSearchKeyWords201411.get(i).getKeywordName();			
+//			//处理异常字符，得到截短符号，切词
+//			String simplestr=(CommUtil.getSimpleWords(tempstr)).trim();		
+//		//	赋值返回
+//			currentSearchKeyWords201411.get(i).setKeywordName(simplestr);
+//			if (simplestr.trim().equals("")) {
+//				currentSearchKeyWords201411.remove(i);
+//			}
 			
-			//处理异常字符，得到截短符号，切词
-			String simplestr=CommUtil.getSimpleWords(tempstr);
 			
-	
 			
-			//赋值返回
-			keyWordsforQuery.get(i).setKeywordName(simplestr);
-			if (simplestr.trim().equals("")) {
-				keyWordsforQuery.remove(i);
-			}
 		}
 				
 		
 		//去除重复词
 		List<KeyWord> noDupkeyworksforquery=new ArrayList<KeyWord>();
 		
-		for (int i = 0; i < keyWordsforQuery.size(); i++) {
+		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
 			
 			boolean samekeyworks=false;
 			int nodupkeyworksqueryindex=0;
 			for (int j = 0; j < noDupkeyworksforquery.size(); j++) {
-				if (keyWordsforQuery.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
+				if (currentSearchKeyWords201411.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
 					samekeyworks=true;
 					nodupkeyworksqueryindex=j;
 					break;
@@ -1426,16 +1407,17 @@ public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>()
 			
 			if (samekeyworks) {
 				double score1=noDupkeyworksforquery.get(nodupkeyworksqueryindex).getScore();
-				double score2=keyWordsforQuery.get(i).getScore();
+				double score2=currentSearchKeyWords201411.get(i).getScore();
 				noDupkeyworksforquery.get(nodupkeyworksqueryindex).setScore(score1+score2);
 			}else 
 			{
-				noDupkeyworksforquery.add(keyWordsforQuery.get(i));
+				noDupkeyworksforquery.add(currentSearchKeyWords201411.get(i));
 			}
 			
 			
 		}
 		
+		currentSearchKeyWords201411=noDupkeyworksforquery;
 		
 
 		String searchwords = "";

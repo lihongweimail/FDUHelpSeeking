@@ -3,10 +3,14 @@ package urlWordExtract;
 import java.net.ConnectException;
 import java.util.concurrent.Callable;
 
+import org.fnlp.nlp.cn.CNFactory;
+import org.fnlp.util.exception.LoadModelException;
 import org.htmlparser.Parser;
 import org.htmlparser.beans.StringBean;
 import org.htmlparser.util.ParserException;
 import org.htmlparser.visitors.TextExtractingVisitor;
+
+import cn.edu.fudan.se.helpseeking.util.CommUtil;
 /** 
  * 根据提供的URL，获取此URL对应网页的纯文本信息 
  * @param url 提供的URL链接 
@@ -34,6 +38,11 @@ public class UrlWordExtract implements Callable<String>{
 		
 public static String getText(String url) throws ParserException{  
 
+    
+    if (CommUtil.findClawInValidatePage(url)) {
+		return "";
+  		}
+
     StringBean sb = new StringBean();  
 //    String url = "http://wordcram.org/";  
     //设置不需要得到页面所包含的链接信息  
@@ -46,12 +55,11 @@ public static String getText(String url) throws ParserException{
    // System.out.println("input url in urlwordextract :"+ url);
     sb.setURL(url);
    
+    String testText= sb.getStrings();
+     
+       
     
-    
-    
-    //返回解析后的网页纯文本信息  
-   // return getPlainText(sb.getStrings());  
-    return sb.getStrings();
+    return testText;
 }  
 
 public static void main(String[] args)  {

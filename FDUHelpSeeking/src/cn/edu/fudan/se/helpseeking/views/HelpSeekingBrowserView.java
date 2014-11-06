@@ -245,8 +245,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
          System.out.println("browser id: "+"OpenWebsite"+String.valueOf(currentBrowserID) );
          browser.openURL(new URL((urls.getUrl())));
         
-         //browser.getId()
-         
+                
      } catch (PartInitException p) {
          p.printStackTrace();
      } catch (MalformedURLException p) {

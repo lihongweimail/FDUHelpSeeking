@@ -7,6 +7,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.fnlp.nlp.cn.CNFactory;
@@ -26,6 +33,8 @@ import liuyang.nlp.lda.conf.ConstantConfig;
 import liuyang.nlp.lda.conf.PathConfig;
 import liuyang.nlp.lda.conf.UrlConfig;
 import liuyang.nlp.lda.main.Documents.Document;
+import urlWordExtract.GetT;
+import urlWordExtract.NewWordExtract;
 import urlWordExtract.UrlWordExtract;
 
 /**Liu Yang's implementation of Gibbs Sampling of LDA
@@ -178,40 +187,20 @@ public class LdaGibbsSampling {
 				currentTopicindex=i;
 			}
 		}
-				
-		
-	for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {
-		
-//		 private void perform(){   
-//		 Job job = new Job("jobname获取数据"){   
-//		 protected IStatus run(IProgressMonitor monitor){   
-//		    // 在此添加获取数据的代码   
-//		    Display.getDefault().asyncExec(new Runnable(){   
-//		        public void run(){   
-//		        // 在此添加更新界面的代码   
-//		                 }      
-//		             });
-//	            return Status.OK_STATUS;
-//		         }
-//		 };   
-//	             job.setRule(Schedule_RULE);
-//		         job.schedule(); 
-//		}
-//
-		//防止两个同类job同时执行  myjob1.setRule(Schedule_RULE);  myjob2.setRule(Schedule_RULE); 
-//		private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {   
-//			public boolean contains(ISchedulingRule rule) {   
-//			return this.equals(rule);   
-//			}   
-//			public boolean isConflicting(ISchedulingRule rule) {   
-//			return this.equals(rule);   
-//			}   
-//			}; 
-		
+	
+
+		Documents docSet = new Documents();
 
 		
 		
 		
+	
+		//替换方案X 线程池		start	
+		ExecutorService pool=Executors.newSingleThreadExecutor();
+		List<Future<String>> callablFutures=new ArrayList<Future<String>>();
+		try {
+	
+	    for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {	
 			WEBPageBean CurrentUrl=new WEBPageBean();
 					CurrentUrl.setUrl(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
 					CurrentUrl.setTitle(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
@@ -219,10 +208,130 @@ public class LdaGibbsSampling {
 	
 			System.out.println("claw web page: "+CurrentUrl.getUrl());
 			String pageContent="";
+	
+			Callable<String> c1=new GetT(CurrentUrl.getUrl());
+			Future<String> f1=pool.submit(c1);
+		    callablFutures.add(f1);
 			
+		}
+	    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		for (int i = 0; i < callablFutures.size(); i++) {
+			
+			String tempString="";
+			try {
+				try {
+					tempString=callablFutures.get(i).get(5000,TimeUnit.MILLISECONDS);
+				} catch (TimeoutException e) {
+					// TODO Auto-generated catch block
+					tempString="";
+					callablFutures.get(i).cancel(true);
+					e.printStackTrace();
+				}
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				tempString="";
+				callablFutures.get(i).cancel(true);
+
+				e.printStackTrace();
+			} catch (ExecutionException e) {
+				tempString="";
+				callablFutures.get(i).cancel(true);
+
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+			String summaryText=allWebPages.get(currentTopicindex).getPages().get(i).getSummary();
+			
+			if (tempString.trim().equals("")) {
+				tempString=summaryText;
+			}else
+			{
+				tempString=tempString+" "+summaryText;
+			}
+			
+			
+
+			allWebPages.get(currentTopicindex).getPages().get(i).setContent(tempString);
+			
+			UrlContent += " \n"+tempString;	
+
+			tempString=CommUtil.fudanSplitWords(tempString);
+
+			
+			docSet.readDocs(tempString);//读待采样数据	
+		}
 		
-			//替换方案： 一 雪娇提供
+		pool.shutdown();
+		//替换方案X 线程池		 end		
+		
+		
+		
+		
+/*		
+		//替换方案二 ：  htmlparser GBK 编码  开始
+		try {
+	
+	    for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {	
+			WEBPageBean CurrentUrl=new WEBPageBean();
+					CurrentUrl.setUrl(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setTitle(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setSummary(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+	
+			System.out.println("claw web page: "+CurrentUrl.getUrl());
+			String pageContent="";
+
+			try {
 			
+			
+			pageContent =CurrentUrl.getSummary()+" "+NewWordExtract.testHtml(CurrentUrl.getUrl());
+
+		} catch (Exception e1) {
+							// TODO Auto-generated catch block
+			pageContent=CurrentUrl.getSummary();
+		    System.out.println("claw web exception , use webpage summary!");
+			//e1.printStackTrace();
+		}
+			
+			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ").replaceAll("�", " ");
+			
+			
+			pageContent=CommUtil.fudanSplitWords(pageContent);
+//			System.out.println(pageContent);
+			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
+			
+			docSet.readDocs(pageContent);//读待采样数据	
+
+			
+		}
+	    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+*/
+		
+		
+		
+		
+/*  	//替换方案： 一 雪娇提供
+
+		
+		try {
+	
+	    for (int j = 0; j < allWebPages.get(currentTopicindex).getPages().size(); j++) {	
+			WEBPageBean CurrentUrl=new WEBPageBean();
+					CurrentUrl.setUrl(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setTitle(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+					CurrentUrl.setSummary(allWebPages.get(currentTopicindex).getPages().get(j).getUrl());
+	
+			System.out.println("claw web page: "+CurrentUrl.getUrl());
+			String pageContent="";
+		
+					
 			try {
 				
 				pageContent = UrlWordExtract.getText(CurrentUrl.getUrl());
@@ -233,59 +342,26 @@ public class LdaGibbsSampling {
 			    System.out.println("claw web exception , use webpage summary!");
 				//e1.printStackTrace();
 			}
-			
-//			//替换方案： 二 新加入
-//			
-//			pageContent = UrlWordExtract.getPlainText(CurrentUrl.getUrl());
-			
-			
-			
+			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ").replaceAll("�", " ");
 
-			pageContent = pageContent.replaceAll("&quot;", "\"").replaceAll("&nbsp;", "\"").replaceAll("&#39;", "\'").replaceAll("<b>", " ").replaceAll("</", " ").replaceAll(">", " ").replaceAll("b>", " ").replaceAll(";", " ").replaceAll("&gt", " ").replaceAll("&lt", " ");
-
-			
-			//中文分词工具  复旦大学 nlp 
-			if (!pageContent.trim().equals("")) {
-				
-					try {
-				CNFactory factory =CNFactory.getInstance(CommUtil.getFDUPluginWorkingPath()+"/models");
-				String[] words=factory.seg(pageContent);
-
-				String temp="";
-                for (int i = 0; i < words.length; i++) {
-                	if (temp.equals("")) {
-						temp=words[i].toString().trim();
-					}else {
-						temp=temp+" "+words[i].toString().trim();
-					}
-					
-				}
-				System.out.println("current Chinese words split: "+temp);
-				if (!temp.equals("")) {
-					pageContent=temp;
-				}
-				
-			} catch (LoadModelException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			}
-
-			//完成切词
-			
+			pageContent=CommUtil.fudanSplitWords(pageContent);
+			System.out.println(pageContent);
 			allWebPages.get(currentTopicindex).getPages().get(j).setContent(pageContent);
-			
+//			
+//			UrlContent += " \n"+tempString;	
 
 			
-			UrlContent += " \n"+pageContent;
-			
-			
+			docSet.readDocs(pageContent);//读待采样数据	
+
 			
 		}
-	
-		Documents docSet = new Documents();
-		docSet.readDocs(UrlContent);//读待采样数据	
+	    
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+*/		
+			
+		
 //		System.out.println("all webpages: \n"+UrlContent);
 		
 		//System.out.println(UrlWordExtract.getText(Url2) );		
