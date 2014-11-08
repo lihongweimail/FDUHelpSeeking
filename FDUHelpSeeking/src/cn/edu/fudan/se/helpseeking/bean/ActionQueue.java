@@ -38,6 +38,7 @@ public class ActionQueue {
 		  return moveUpWindow();
 	  }
 	
+	//使用ACTIONID号找到 动作的缓存信息
 public ActionCache getActionCachewithActionID(int actionID)
 {
 	ActionCache ac=null;

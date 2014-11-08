@@ -22,6 +22,7 @@ import org.fnlp.util.exception.LoadModelException;
 import org.hamcrest.core.Is;
 import org.htmlparser.util.ParserException;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
 import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
@@ -223,7 +224,7 @@ public class LdaGibbsSampling {
 			String tempString="";
 			try {
 				try {
-					tempString=callablFutures.get(i).get(5000,TimeUnit.MILLISECONDS);
+					tempString=callablFutures.get(i).get(Basic.CLAWLIMITEDTIME,TimeUnit.MILLISECONDS);
 				} catch (TimeoutException e) {
 					// TODO Auto-generated catch block
 					tempString="";

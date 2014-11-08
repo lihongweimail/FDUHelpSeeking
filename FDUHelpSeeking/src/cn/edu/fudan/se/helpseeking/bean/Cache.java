@@ -6,9 +6,13 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.ui.texteditor.CaseAction;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic.DebugAction;
+import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import edu.mit.jwi.data.compare.CommentComparator;
 
 public class Cache {
 
@@ -60,16 +64,7 @@ public class Cache {
 	List<SearchResults> cacheAutoSearchResults = new ArrayList<>();
 	int cacheAutoSearchResultsIndex = 0;
 	
-	 String currentBrowserTitle="HelloHongwei";
-	 
-	
-	public String getCurrentBrowserTitle() {
-		return currentBrowserTitle;
-	}
 
-	public void setCurrentBrowserTitle(String currentBrowserTitle) {
-		this.currentBrowserTitle = currentBrowserTitle;
-	}
 
 	//记录最近的N个检索词
 	int countAutoTry=0;//自动检索词窗口太小使用的词重复时被拒绝检索次数 3次 则打开普通检索
@@ -390,7 +385,7 @@ public class Cache {
 		a.setActionID(id);
 		actions.actionList.add(a);
 
-		// 增加频率
+		// 增加频率  同类动作
 
 		boolean flagCount = false;
 		for (int j1 = 0; j1 < acFrequencysList.size(); j1++) {
@@ -425,7 +420,7 @@ public class Cache {
 		if (removeActionID != -1) // 则说明动作已经放满了滑动窗口 ， 这时考虑不在窗口内的信息从信息集合中移除
 		{
 
-			// 最简单的策略直接删除， 后续需要可配置功能
+			// 最简单的策略直接删除最早的动作， 后续需要可配置功能
 			removeInformationNaive(removeActionID);
 
 			// 移除频率
@@ -884,17 +879,23 @@ public class Cache {
 
 		}
 
-		// if (information.getIdeOutput() != null) {
-		// addIDEOutput(information.getIdeOutput(), currentID);
-		// addKeywordsToConsoleviewKeywords(information.getIdeOutput().getRuntimeInformation());
-		// addKeywordsToProblemViewKeywords(information.getIdeOutput().getCompileInformation());
-		// }
+		if (Basic.ALGORITHMSELECTION==2) {
+			
+	
+		
+//		 if (information.getIdeOutput() != null) {
+//		 addIDEOutput(information.getIdeOutput(), currentID);
+//		 addKeywordsToConsoleviewKeywords(information.getIdeOutput().getRuntimeInformation());
+//		 addKeywordsToProblemViewKeywords(information.getIdeOutput().getCompileInformation());
+//		 }
 
-		// if (information.getExplorerRelated() != null) {
-		// addExplorerRelated(information.getExplorerRelated(), currentID);
-		// addKeywordsEditorInfoToRelatedExplorerKeywords(information.getExplorerRelated().getEditorInfo());
-		// addKeywordsExplorerInfoToRelatedExplorerKeyWords(information.getExplorerRelated().getExplorerInfo());
-		// }
+		 if (information.getExplorerRelated() != null) {
+		 addExplorerRelated(information.getExplorerRelated(), currentID);
+		 addKeywordsEditorInfoToRelatedExplorerKeywords(information.getExplorerRelated().getEditorInfo());
+		 addKeywordsExplorerInfoToRelatedExplorerKeyWords(information.getExplorerRelated().getExplorerInfo());
+		 }
+			
+		}
 
 		adjustConsolesKeywords();
 		adjustProblemsKeywords();
@@ -997,9 +998,22 @@ public class Cache {
 					}
 					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
+					
+				    if (Basic.ALGORITHMSELECTION==1) {
+
 					kw.setWeightOne(1);
 					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 					kw.setTagName("Other");
+				    }
+				    
+				    if (Basic.ALGORITHMSELECTION==2) {
+				    	kw.setWeightOne(Basic.action_select);
+				    	kw.setWeightTwo(Basic.api_normal);
+						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+						kw.setTagName("select # package explorer outlier");
+				    }
+
+					
 					tempKeyWords.add(kw);
 				}
 			}
@@ -1032,9 +1046,23 @@ public class Cache {
 					}
 					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
+				
+				    if (Basic.ALGORITHMSELECTION==1) {
+
 					kw.setWeightOne(1);
 					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 					kw.setTagName("Other");
+				    }
+				    
+				    if (Basic.ALGORITHMSELECTION==2) {
+				    	kw.setWeightOne(Basic.action_reveal);
+				    	kw.setWeightTwo(Basic.api_normal);
+						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+						kw.setTagName("other #  select edit code reveal api ");
+				    }
+
+					
+					
 					tempKeyWords.add(kw);
 				}
 			}
@@ -1095,29 +1123,59 @@ public class Cache {
 				}
 
 			     }
+				
+				
 				KeyWord kw = new KeyWord();
 				kw.setKeywordName(str.trim());
+				
+
+				if (Basic.ALGORITHMSELECTION==2) {
+					
+					kw.setWeightOne(Basic.action_select); // interest level action  save or debug 
+					Action ac=actions.getActionCachewithActionID(currentID).getAction();
+					if (ac!=null)
+					kw.setTagName(genTagName(ac,ac.actionName.toLowerCase()));
+					
+					kw.setWeightTwo(Basic.api_normal); //interest level api  normal
+					kw.setTagName("Other");
+					
+				}
+	
+				
+				if (Basic.ALGORITHMSELECTION==1) {				
 				kw.setWeightOne(2);
 				kw.setTagName("Other");
-
+				}
+				
 				for (String jestr : Basic.javaExceptionalNameList) {
 
 					if (str.trim().toLowerCase().contains("Exception".toLowerCase())) {
+						if (Basic.ALGORITHMSELECTION==1) {	
 						kw.setWeightOne(4);
+						}
 						kw.setTagName("Exception");
 						flag = true;
 						break;
 					}
 
 					if (str.trim().equals(jestr)) {
+						if (Basic.ALGORITHMSELECTION==1) {	
 						kw.setWeightOne(4);
+						}
 						kw.setTagName("Exception");
 						flag = true;
 						break;
 					}
 				}
 				if (flag) {
+					
+					if (Basic.ALGORITHMSELECTION==1)	
 					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+					
+					if (Basic.ALGORITHMSELECTION==2)	
+						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+					
+					
 					tempKeyWords.add(kw);
 
 				}
@@ -1345,6 +1403,7 @@ if (paraType.length>0 )
 					return;
 				}
 
+	
 				String exceptionalString = debugCode.getSyntacticBlock()
 						.getExceptionName();
 				String rString = codeString + " ; " + exceptionalString;
@@ -1374,47 +1433,131 @@ if (paraType.length>0 )
 					}
                 }
 
+                
+                
 					KeyWord kw = new KeyWord();
+					
 					kw.setKeywordName(str.trim());
+					
+
+					if (Basic.ALGORITHMSELECTION==2) {
+						
+						kw.setWeightOne(Basic.action_saveOrDebug); // interest level action  save or debug 
+						Action ac=actions.getActionCachewithActionID(currentID).getAction();
+						if (ac!=null)
+						kw.setTagName(genTagName(ac,ac.actionName.toLowerCase()));
+						
+						kw.setWeightTwo(Basic.api_normal); //interest level api  normal
+						kw.setTagName("Other");
+						
+					}else
+					if (Basic.ALGORITHMSELECTION==1) {				
+
 					kw.setWeightOne(2);
 					kw.setTagName("Other");
-
+					}
+					
 					for (String jestr : Basic.javaExceptionalNameList) {
 
 						if (str.trim().toLowerCase().contains(
 								"Exception".toLowerCase())) {
+							
+							if (Basic.ALGORITHMSELECTION==1) {				
 							kw.setWeightOne(4);
+							}
+							
 							kw.setTagName("Exception");
+
 							flag = true;
 							break;
 						}
 
 						if (str.trim().equals(jestr)) {
+							if (Basic.ALGORITHMSELECTION==1) {				
 							kw.setWeightOne(4);
+							}
+							
 							kw.setTagName("Exception");
 							flag = true;
 							break;
 						}
 					}
 
+					
+					//赋初值  
 					if (flag) {
+						if (Basic.ALGORITHMSELECTION==1)	
 						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						
+						if (Basic.ALGORITHMSELECTION==2)	
+							kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+						
 						tempKeyWords.add(kw);
 
 					}
+					
 
 				}
-
+				
+				
 				debugCodeCandidates.setActionID(currentID); // 不跟随动作删除
 				debugCodeCandidates.setLevel(Basic.KeyWordsLevel.Level_Six);
 				debugCodeCandidates.setOldStep(5);
 				debugCodeCandidates.setKeyWords(tempKeyWords);
-				codeKeyWords.add(debugCodeCandidates);
+				codeKeyWords.add(debugCodeCandidates);		
+				}
 
-			}
+
+			
 
 		}
 
+	}
+
+	
+	//actionname 请小写
+	private String genTagName(Action ac, String actionName) {
+		String tagName="other # other";
+
+		switch (ac.getActionKind().toString().toLowerCase().trim()) {
+		case "selection":
+		case "select":
+		case "edit":
+			
+			tagName="select # api "+actionName;
+			break;
+			
+		case "debug":
+					
+			tagName="select # api "+actionName;
+			if (actionName.contains("Run Java Application".toLowerCase())) {
+				tagName="exception # "+actionName;
+						
+			}
+			
+			break;
+		
+		case "command":
+			if (actionName.contains("save")) {
+				tagName="error #"+actionName;
+
+			}
+
+
+		default:
+			tagName="other # "+actionName;
+			break;
+		}
+
+		 return null;
+	}
+
+	public  double vinit(double weightOne, double weightTwo) {
+
+		double result=1.0;
+		result=Math.pow(Basic.gama, weightOne)*weightTwo;
+		
+		return result;
 	}
 
 	private void addCurrentClassModelKeywordsToClassmodelKeyWords(int mode) {
@@ -1491,14 +1634,36 @@ if (paraType.length>0 )
 							.arrayToList(result1.split("[;]"))) {
 						KeyWord kw = new KeyWord();
 						kw.setKeywordName(str.trim());
+						
+						if (Basic.ALGORITHMSELECTION==1) {				
 						kw.setWeightOne(2);
+						}
+						
+						if (Basic.ALGORITHMSELECTION==2) {				
+							kw.setWeightOne(Basic.action_reveal);
+							kw.setWeightTwo(Basic.api_normal);
+							}
+
+						
 						for (String jestr : Basic.javaExceptionalNameList) {
 							if (str.equals(jestr)) {
+								
+								if (Basic.ALGORITHMSELECTION==1) {				
 								kw.setWeightOne(4);
+								}
+								
 								break;
 							}
 						}
+						
+						if (Basic.ALGORITHMSELECTION==1) {				
 						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
+						}
+						
+						if (Basic.ALGORITHMSELECTION==2) {				
+							kw.setScore(vinit(kw.getWeightOne(), kw.getWeightTwo()));
+						}
+						
 						kw.setTagName("API");
 						tempKeyWords.add(kw);
 					}
@@ -1555,10 +1720,23 @@ if (paraType.length>0 )
 						}
 						KeyWord kw = new KeyWord();
 						kw.setKeywordName(str.trim());
+
+						
+						   if (Basic.ALGORITHMSELECTION==1) {
 						kw.setWeightOne(4);
 						kw.setWeightTwo(1);
 						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 						kw.setTagName("Error");
+						   }
+						   
+						    if (Basic.ALGORITHMSELECTION==2) {
+						    	kw.setWeightOne(Basic.action_saveOrDebug);
+						    	kw.setWeightTwo(Basic.api_hasCompileError);
+								kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+								kw.setTagName("error #  has compile error  edit save debug");
+						    }
+
+						
 						tempKeyWords.add(kw);
 					}
 				}
@@ -1578,10 +1756,22 @@ if (paraType.length>0 )
 						}
 						KeyWord kw = new KeyWord();
 						kw.setKeywordName(str.trim());
+						
+					    if (Basic.ALGORITHMSELECTION==1) {
+
 						kw.setWeightOne(4);
 						kw.setWeightTwo(1);
 						kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 						kw.setTagName("Other");
+					    }
+					    
+					    if (Basic.ALGORITHMSELECTION==2) {
+					    	kw.setWeightOne(Basic.action_select);
+					    	kw.setWeightTwo(Basic.api_hasCompileError);
+							kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+							kw.setTagName("warning #  has compile warning  edit save debug");
+					    }
+						
 						tempKeyWords.add(kw);
 					}
 				}
@@ -1677,19 +1867,24 @@ if (paraType.length>0 )
 
 				if (!str.trim().equals("")) {
 					KeyWord kw = new KeyWord();
-					kw.setKeywordName(str.trim());
+					
+				    kw.setKeywordName(str.trim());
+					
+				    if (Basic.ALGORITHMSELECTION==1) {
+
 					kw.setWeightOne(4);
-
-					// for (String jestr : Basic.javaExceptionalNameList) {
-					// if (str.trim().equals(jestr)) {
-					// kw.setWeightTwo(3);
-					// break;
-					// }
-					// }
-
 					kw.setScore(kw.getWeightOne() * kw.getWeightTwo());
 					kw.setTagName("Exception");
-					tempKeyWords.add(kw);
+				    }
+				    
+				    if (Basic.ALGORITHMSELECTION==2) {
+				    	kw.setWeightOne(Basic.action_execute);
+				    	kw.setWeightTwo(Basic.api_causeException);
+						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
+						kw.setTagName("exception # execute cause Exception");
+				    }
+					
+				    tempKeyWords.add(kw);
 				}
 
 			}
@@ -1711,11 +1906,25 @@ if (paraType.length>0 )
 						.stringToList(filteredterms));
 
 				kw2.setKeywordName(filteredterms);
+				
+				//普通描述文本 视为 代码级别
+				 if (Basic.ALGORITHMSELECTION==1) {
+
 				kw2.setWeightOne(4);
 				kw2.setWeightTwo(1);
 				kw2.setScore(kw2.getWeightOne() * kw2.getWeightTwo());
 				kw2.setTagName("Exception");
-				tempKeyWords.add(kw2);
+				 }
+				    
+				 if (Basic.ALGORITHMSELECTION==2) {
+				    	kw2.setWeightOne(Basic.action_reveal);
+				    	kw2.setWeightTwo(Basic.api_normal);
+						kw2.setScore(vinit(kw2.getWeightOne(),kw2.getWeightTwo()));
+						kw2.setTagName("exception # execute cause Exception");
+				    }
+			 
+
+			tempKeyWords.add(kw2);
 
 			}
 

@@ -99,126 +99,230 @@ public class CacheProcessing extends Thread {
 			// 同步块中！防止 出错！ //调整好keyword生成后，将这部分处理修改为老化策略处理
 			// simpleTacticProcessing();
 
-			// TODO 新算法： 完成20140430:03:37
+			
+			if (Basic.ALGORITHMSELECTION==1) {
+				// TODO 新算法： 完成20140430:03:37
 
-			newTacticProcessing();
+				newTacticProcessing();
+			}
+		
+			if (Basic.ALGORITHMSELECTION==2) {
+				
+				// 20141107新算法：
+					tacticNewAlgrithmProcessing();
+			}
+			
+
 
 			// 放置在searchView
+			// 14.10.25 将上下文 信息 传到 interactive view 的formtree中去
+
 			simpleTacticQuery();
 
-			// 14.10.25 将上下文 信息 传到 interactive view 的formtree中去
-			// interactiveTacticQuery();
 
 		}
 	}
 
-	private void interactiveTacticQuery() {
-		//
+	// 20141107新算法：
+	// hongwei add  是否可以理解为对每个词word的分值： 每个动作进来后，
+	
+	//1、它带来的words按照动作序列号，动作类型（Interest level action），
+	//词的来源(Interest level API), 给出 初值； 接着给每个动作进行老化计算一次动作中词的分值；  
+	
+	//2、将focus窗口中的每个动作中的有与新动作相同的词计算一个权重，例如累加后计算F得到方差，
+	// 将该方差作为权重（目前使用这个方式）加到新进入动作中该词的分值中
+	//（每个新动作才有的权利，以对应新动作更关注）
 
-		if (partInteractiveView instanceof HelpSeekingInteractiveView) {
-			HelpSeekingInteractiveView v = (HelpSeekingInteractiveView) partInteractiveView;
-			String searchText = "";
-			List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
 
-			int candidateKeywordNum = currentCache.getCurrentKeywordsList()
-					.size();
-			int countj = 0;
-			for (int i = 0; i < candidateKeywordNum; i++) {
+	private void tacticNewAlgrithmProcessing() {
 
-				if (currentCache.getCurrentKeywordsList().get(i)
-						.getKeywordName().trim().equals("")) {
+		// 老化处理：
+		List<KeyWordsCandidates> consoleCacheKeyWords = currentCache
+				.getConsoleCacheKeyWords();
+		List<KeyWordsCandidates> problemCacheKeyWords = currentCache
+				.getProblemCacheKeyWords();
+		List<KeyWordsCandidates> classmodelKeyWords = currentCache
+				.getClassmodelKeyWords();
+//		 List<KeyWordsCandidates> consoleViewKeyWords=new ArrayList<>();
+//		 List<KeyWordsCandidates> problemViewKeyWords=new ArrayList<>();
+		List<KeyWordsCandidates> codeKeyWords = currentCache.getCodeKeyWords();
+		List<KeyWordsCandidates> relatedExplorerKeyWords = currentCache
+				.getRelatedExplorerKeyWords();
+
+		// System.out.println("console");
+		doNewAlgrithmOldStep(consoleCacheKeyWords);
+		// System.out.println("problem");
+		doNewAlgrithmOldStep(problemCacheKeyWords);
+		// System.out.println("classmodel");
+		doNewAlgrithmOldStep(classmodelKeyWords);
+		doNewAlgrithmOldStep(codeKeyWords);
+		doNewAlgrithmOldStep(relatedExplorerKeyWords);
+
+		// 拼接 候选词
+
+		boolean flage = false;
+		List<KeyWord> totallKeyWords = new ArrayList<>();
+
+		if (consoleCacheKeyWords != null) {
+			for (int i = 0; i < consoleCacheKeyWords.size(); i++) {
+				List<KeyWord> tempKeyWords = consoleCacheKeyWords.get(i)
+						.getKeyWords();
+
+				if (tempKeyWords.size() > 0) {
+					totallKeyWords.addAll(tempKeyWords);
+					flage = true;
+				}
+
+			}
+		}
+
+		if (problemCacheKeyWords != null) {
+			for (int i = 0; i < problemCacheKeyWords.size(); i++) {
+				List<KeyWord> tempKeyWords = problemCacheKeyWords.get(i)
+						.getKeyWords();
+
+				if (tempKeyWords.size() > 0) {
+					totallKeyWords.addAll(tempKeyWords);
+					flage = true;
+				}
+
+			}
+		}
+
+		if (classmodelKeyWords != null) {
+			for (int i = 0; i < classmodelKeyWords.size(); i++) {
+				List<KeyWord> tempKeyWords = classmodelKeyWords.get(i)
+						.getKeyWords();
+
+				if (tempKeyWords.size() > 0) {
+					totallKeyWords.addAll(tempKeyWords);
+					flage = true;
+				}
+
+			}
+		}
+
+		if (codeKeyWords != null) {
+			for (int i = 0; i < codeKeyWords.size(); i++) {
+				List<KeyWord> tempKeyWords = codeKeyWords.get(i).getKeyWords();
+
+				if (tempKeyWords.size() > 0) {
+					totallKeyWords.addAll(tempKeyWords);
+					flage = true;
+				}
+
+			}
+		}
+
+		if (relatedExplorerKeyWords != null) {
+			for (int i = 0; i < relatedExplorerKeyWords.size(); i++) {
+				List<KeyWord> tempKeyWords = relatedExplorerKeyWords.get(i)
+						.getKeyWords();
+
+				if (tempKeyWords.size() > 0) {
+					totallKeyWords.addAll(tempKeyWords);
+					flage = true;
+				}
+
+			}
+		}
+
+		// 对所有词处理
+
+		// 按照keyword排序
+		Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
+
+			@Override
+			public int compare(KeyWord o1, KeyWord o2) {
+				// TODO Auto-generated method stub
+				return o2.getKeywordName().compareTo(o1.getKeywordName());
+			}
+		});
+
+		// 移入历史库中
+
+		WindowTotalKeyWords mytemp = new WindowTotalKeyWords();
+		mytemp.setTotallKeyWords(totallKeyWords);
+		mytemp.setId(currentCache.getCurrentID());
+		currentCache.getHistoryKeyWords().add(mytemp);
+		resetHistroyWindow(Basic.SLIDE_WINDOW_SIZE);
+
+		// 计算历史信息，的重合程度，得到频率再次计算各个词的权重。
+
+		totallKeyWords = docontextweightforWords(Basic.CountWindowSize);
+
+		// 重写totallkeywords
+
+		List<KeyWord> deDupilcateTotallKeyWords = new ArrayList<>();
+
+		if (flage) {
+			// 按照keyword排序
+			Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
+
+				@Override
+				public int compare(KeyWord o1, KeyWord o2) {
+					// TODO Auto-generated method stub
+					return o2.getKeywordName().compareTo(o1.getKeywordName());
+				}
+			});
+
+			// 去除重复，保留score大的
+
+			for (int i = 0; i < totallKeyWords.size(); i++) {
+				boolean flage1 = false;
+				KeyWord oldWord = totallKeyWords.get(i);
+
+				if (deDupilcateTotallKeyWords.size() == 0) {
+					deDupilcateTotallKeyWords.add(oldWord);
 					continue;
 				}
 
-				KeyWord kw = currentCache.getCurrentKeywordsList().get(i);
-				
-				keyWordsforQuery.add(kw);
+				for (int j = 0; j < deDupilcateTotallKeyWords.size(); j++) {
+					KeyWord newWord = deDupilcateTotallKeyWords.get(j);
 
-				if (i == 0) {
-					searchText = kw.getKeywordName();
-				} else {
-					searchText = searchText + " " + kw.getKeywordName();
-				}
+					if (newWord.getKeywordName().equals(
+							oldWord.getKeywordName())) {
+						flage1 = true;
 
-				countj = countj + 1;
-
-				if (countj == Basic.TEMP_K_KEYWORDS) {
-					break;
-				}
-
-			}
-
-			//
-			// 定时器开启检索
-
-			KeyWordsCandidates kCandidates = new KeyWordsCandidates();
-			kCandidates.setKeyWords(keyWordsforQuery);
-			kCandidates.setActionID(currentCache.getCurrentID());
-			kCandidates.setDistance(1);
-			kCandidates.setFrequency(1);
-
-			currentCache.getHistorysearchlist().add(kCandidates);
-			resethistorysearchlist(Basic.History_SearchList_Size);
-
-			// 从 kCandidates中保存了历史上动作生成的所有每个动作后，可得到的前K个用于检索的词
-			// 其中kCandidates的keyWords中保存了一组词以及器权重
-			// 试着将每个动作产生的词 都传递 到foamtree （以后增加策略）
-
-			int mode = 1;
-			// 1 改写 foamtree 关键词 表示是动作生成的查询 并不立即查询
-			// 2 为新增的查询，准备自动查询，值为2时触发自动查询。
-			// 3新增定时检索 (考虑暂时不给出)
-
-			// 历史上使用过这组关键词，历史窗口 3
-
-			// if (!CommUtil.compareHistoryString(searchText,
-			// Cache.getLastsearchwords(), Basic.historyQueryWindowCount) )
-
-			if (!CommUtil.compareString(searchText, Cache.getLastsearchwords())) {
-				v.setCurrentActionID(currentCache.getCurrentID());
-
-				// 在 problem view 更新 时 Attention动作类型 动作名称"Problem View Changed"
-				ActionCache ac = currentCache
-						.getActions()
-						.getActionCachewithActionID(currentCache.getCurrentID());
-				if (ac.getAction().getActionKind() == Kind.ATTENTION
-						&& ac.getAction().getActionName()
-								.equals("Problem View Changed")) {
-					mode = 2;
-					notifiyQueryList(keyWordsforQuery, QueryLevel.High, mode);
-				} else if (ac.getAction().getActionKind() == Kind.ATTENTION
-						&& ac.getAction().getActionName()
-								.equals("Console View Changed")) {
-					mode = 2;
-					notifiyQueryList(keyWordsforQuery, QueryLevel.High, mode);
-				} else {
-					if (mode == 1) {
-
-						notifiyQueryList(keyWordsforQuery, QueryLevel.Middle,
-								mode);
-
+						if (newWord.getScore() < oldWord.getScore()) {
+							newWord.setScore(oldWord.getScore());
+							newWord.setWeightOne(oldWord.getWeightOne());
+							newWord.setWeightTwo(oldWord.getWeightTwo());
+						}
 					}
 
 				}
-				// TODO 受控实验 开快关 为编译无自动提示功能版本而注释掉自动赋值 代码
-				// v.setCandidateSearchWords(searchText,keyWordsforQuery);
-				if (!keyWordsforQuery.isEmpty()) {
-					v.setNewWordsAndMode(keyWordsforQuery, mode);
-					v.setCurrentActionID(currentCache.getCurrentID());
 
+				if (!flage1) {
+					deDupilcateTotallKeyWords.add(oldWord);
 				}
 
-				System.out.println("say tactic mode = " + mode);
-				if (!searchText.equals("")) {
-					Cache.setLastsearchwords(searchText);
-				}
-			} else {
-				System.out.println("the same searchwords!");
 			}
 
+			// score降序排序keyword
+			Collections.sort(deDupilcateTotallKeyWords,
+					new Comparator<KeyWord>() {
+						public int compare(KeyWord arg0, KeyWord arg1) {
+							if (arg1.getScore() - arg0.getScore() < 0)
+								return -1;
+							else if (arg1.getScore() - arg0.getScore() > 0) {
+								return 1;
+							} else
+								return 0;
+
+						}
+					});
+
+			// 取前k个单词作为查询词
+			currentCache.setCurrentKeywordsList(deDupilcateTotallKeyWords);
+			System.out.println("newTacticProcessing function\n deDupilcateTotallKeyWords: "+deDupilcateTotallKeyWords.toString());
 		}
 
 	}
+	
+	
+	// TODO 新算法： 完成20140430:03:37
+
 
 	private void newTacticProcessing() {
 
@@ -486,6 +590,94 @@ public class CacheProcessing extends Thread {
 
 	}
 
+	// 20141107 新算法老化实现
+	private void doNewAlgrithmOldStep(List<KeyWordsCandidates> doKeyWords) {
+
+		if (doKeyWords.size() > 0) {
+
+			int indexzerodistance = 0;
+			for (int j1 = 0; j1 < doKeyWords.size(); j1++) {
+
+				int distance = currentCache.findyouDistance(doKeyWords.get(j1)
+						.getActionID());
+
+				doKeyWords.get(j1).setDistance(distance);
+
+				// 老化
+				if (distance > 0) {
+					for (int i = 0; i < doKeyWords.get(j1).getKeyWords().size(); i++) {
+						double score = doKeyWords.get(j1).getKeyWords().get(i)
+								.getScore()
+								/ (Math.pow(Basic.gama, distance));
+						doKeyWords.get(j1).getKeyWords().get(i).setScore(score);
+					}
+				}
+
+				// 保留 新入的动作位置，用于定位该动作的词 以用于加权
+				if (distance == 0) {
+					indexzerodistance = j1;
+				}
+
+			}
+
+			// 完成老化后 对新入的词汇处置累加权 这里使用方差X 选用 标准差？
+			if (doKeyWords.get(indexzerodistance).getKeyWords().size() > 0) {
+
+				for (int j = 0; j < doKeyWords.get(indexzerodistance)
+						.getKeyWords().size(); j++) {
+					String newenterword = doKeyWords.get(indexzerodistance)
+							.getKeyWords().get(j).getKeywordName()
+							.toLowerCase().trim();
+					double score = doKeyWords.get(indexzerodistance)
+							.getKeyWords().get(j).getScore();
+					double standarddeviation = 0.0;
+
+					List<Double> scorelist = new ArrayList<Double>();
+					double sumscore = 0.0;
+
+					for (int i = 0; i < doKeyWords.size(); i++) {
+						if (i != indexzerodistance) {
+							for (int k = 0; k < doKeyWords.get(i).getKeyWords()
+									.size(); k++) {
+								String curword = doKeyWords.get(i)
+										.getKeyWords().get(k).getKeywordName();
+								if (curword.toLowerCase().trim()
+										.equals(newenterword)) {
+									double myscore = doKeyWords.get(i)
+											.getKeyWords().get(k).getScore();
+									scorelist.add(myscore);
+									sumscore = sumscore + myscore;
+
+								}
+							}
+						}
+
+					}
+
+					if (scorelist.size() > 0) {
+
+						double avg = sumscore / scorelist.size();
+						double sumsqurediff = 0.0;
+						for (int i = 0; i < scorelist.size(); i++) {
+							double myscore = scorelist.get(i);
+							sumsqurediff = sumsqurediff
+									+ Math.pow(myscore - avg, 2);
+						}
+						if (scorelist.size() == 1) {
+							standarddeviation = 0.0;
+						} else {
+							standarddeviation = Math.sqrt(sumsqurediff
+									/ (scorelist.size() - 1));
+						}
+
+						doKeyWords.get(indexzerodistance).getKeyWords().get(j)
+								.setScore(score + standarddeviation);
+					}
+				}
+			}
+		}
+	}
+	
 	private void doOldStep(List<KeyWordsCandidates> doKeyWords) {
 
 		for (int j1 = 0; j1 < doKeyWords.size(); j1++) {

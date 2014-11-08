@@ -155,8 +155,12 @@ public class ExecutionListener extends AbstractUserActivityMonitor implements
 			e1.printStackTrace();
 		}
 		
+	
+		
+		
 		Information info = new Information();
 		info.setType(mytype);
+		
 		info.setDebugCode(null);
 		info.setEditCode(null);
 		info.setExplorerRelated(null);

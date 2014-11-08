@@ -744,5 +744,24 @@ public enum QueryLevel {
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
 	public final static double  RATIOOFNEWSEARCHSTRING=0.382;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
+	public static final long CLAWLIMITEDTIME = 5000;//爬取网络页面时，等待的时间，超时后，就放弃，以改善交互
+	public  static int ALGORITHMSELECTION=2; //算法设置，1为5月份的算法的关键词数据初值设置， 2 为11月新算法的关键词初值设置
+	
+	//新算法权重
+	//对于action来说有两个权重设置：  weightOne  和 weightTwo  他们分别用于描述  interest level  中 action 的级别 以及 API 来源的级别
+	//  DOI -model  (Degree  of Interestes)
+	// interest level action :     select 1 <  reveal 2 < save or debug 3 < execute 4
+	// interest level api   :       normal 1 < has-compile_error 2 < cause_exception 3
+	
+		public final static int action_select=1;
+		public final static int action_reveal=2;
+		public final static int action_saveOrDebug=3;
+		public final static int action_execute=4;
+		public final static int api_normal=1;
+		public final static int api_hasCompileError=2;
+		public final static int api_causeException=3;
+		
+		public final static double gama=2.0;  //新算法权重值
+	
 	
 }

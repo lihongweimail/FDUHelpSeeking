@@ -1052,27 +1052,28 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				String simpleStr=SearchList.get(i).getKeywordName();
                    tagNameforsearch=SearchList.get(i).getTagName();
 				
-		     switch (tagNameforsearch) {
-						case "exception":
-							collectcount.set(0,collectcount.get(0)+1);
-							break;
-						case "api":
-							collectcount.set(1,collectcount.get(1)+1);
-							break;
-						case "error":
-							collectcount.set(2,collectcount.get(2)+1);
-						    break;
-						case "other":
-							collectcount.set(3,collectcount.get(3)+1);
-							break;
-							
+                   if (tagNameforsearch.contains("exception")) {
+						collectcount.set(0,collectcount.get(0)+1);
+						break;
+				}else
+                   if (tagNameforsearch.contains("api")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else
+                   if (tagNameforsearch.contains("error")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else
+                   if (tagNameforsearch.contains("other")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else {
+ 					collectcount.set(3,collectcount.get(3)+1);
 
-						default:
-							collectcount.set(3,collectcount.get(3)+1);
-							break;
-						}
+					
+				}
 											
-					}
+			}
 				
 				
 
@@ -1461,11 +1462,12 @@ public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>()
 		// mode=1时，不自动查询， mode=2时自动查询
 
 		// txtSearch.setText(searchwords);
+		
 
 		if (mode == 2) {
-			
-				setCurrentQueryText(searchwords);
-				 
+			setCurrentQueryText(searchwords);
+
+							 
 	
 
 							dosearch(getCurrentQueryText());
