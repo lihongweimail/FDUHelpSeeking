@@ -355,7 +355,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					if ((browserpart instanceof HelpSeekingBrowserView)) {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 						bv.getTopicContentText().setText(currentTopicName);
-						bv.genUrlTree(allWebPages.get(currentTopicindex)
+						bv.genUrlTree(currentTopicName,allWebPages.get(currentTopicindex)
 								.getPages(),SearchList);
 					}
 
@@ -414,7 +414,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 							bv.getTopicContentText().setText(currentTopicName);
-							bv.genUrlTree(curTopicWEBPages.getPages(),SearchList);
+							bv.genUrlTree(currentTopicName, curTopicWEBPages.getPages(),SearchList);
 						}
 
 						allWebPages.add(curTopicWEBPages);

@@ -3,6 +3,7 @@ package cn.edu.fudan.se.helpseeking.views;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -30,10 +32,12 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.htmlparser.tags.LabelTag;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
+import cn.edu.fudan.se.helpseeking.bean.HistoryUrlSearch;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
@@ -72,6 +76,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 	private Composite urlpartComposite;
 	private Button preTopicBtn;
 	private Button succTopicBtn;
+	private Label idlabel;
 	private Text  topicContentText;
 	public Text getTopicContentText() {
 		return topicContentText;
@@ -98,7 +103,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 		  
 		  Composite urllistComposite=new Composite(urlSashForm, SWT.BORDER);
 		  
-		  urllistComposite.setLayout(new GridLayout(7, false));
+		  urllistComposite.setLayout(new GridLayout(9, false));
 			
 		  
 		  preTopicBtn=new Button(urllistComposite,SWT.BORDER);
@@ -109,11 +114,27 @@ public class HelpSeekingBrowserView extends ViewPart {
 			
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
-				MessageDialog
-				.openInformation(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(),
-						"Coding",
-						"Sorry! Please wait for a while!");
+//				MessageDialog
+//				.openInformation(PlatformUI.getWorkbench()
+//						.getActiveWorkbenchWindow().getShell(),
+//						"Coding",
+//						"Sorry! Please wait for a while!");
+
+				if (historyUrlSearch.size()>0) {
+					
+	                 int id=(historyid-1)<0?0:(historyid-1);
+	                 historyid=historyid-1;
+	                 idlabel.setText("ID: "+id);
+	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(), historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
+	                 if (id==0) {
+							
+							preTopicBtn.setEnabled(false);
+						}			
+	                 succTopicBtn.setEnabled(true);
+				}
+				
+			
+			
 			}
 			
 			@Override
@@ -123,6 +144,10 @@ public class HelpSeekingBrowserView extends ViewPart {
 			}
 		});
 		  
+		  idlabel=new Label(urllistComposite, SWT.NONE);
+		 GridData gd_label = new GridData(SWT.FILL, SWT.FILL, true, true,2, 1);
+		 idlabel.setText("ID:     ");
+			
 		  
 		  topicContentText = new Text(urllistComposite, SWT.BORDER | SWT.WRAP
 					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
@@ -149,15 +174,25 @@ public class HelpSeekingBrowserView extends ViewPart {
 //					urr.setTitle("hello click url!");
 //					urr.setUrl(CommUtil.getPluginCurrentPath()+"foamtreetest.html");
 //				  openNewTabByURL(urr);
-					MessageDialog
-					.openInformation(PlatformUI.getWorkbench()
-							.getActiveWorkbenchWindow().getShell(),
-							"Coding",
-							"Sorry! Please wait for a while!");
-
-				  
+//					MessageDialog
+//					.openInformation(PlatformUI.getWorkbench()
+//							.getActiveWorkbenchWindow().getShell(),
+//							"Coding",
+//							"Sorry! Please wait for a while!");
+if (historyUrlSearch.size()>0) {
+	
+	                 int id=(historyid+1)>currentHistoryUrlSearchID?currentHistoryUrlSearchID:(historyid+1);
+					historyid=historyid+1;
+					 idlabel.setText("ID: "+id);
+	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(),historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
+							if (id==currentHistoryUrlSearchID) {
+								succTopicBtn.setEnabled(false);
+								
+							}			
+							preTopicBtn.setEnabled(true);
 				}
 				
+				}
 				@Override
 				public void widgetDefaultSelected(SelectionEvent arg0) {
 					// TODO Auto-generated method stub
@@ -292,17 +327,45 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	}
 
 	
+	
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
 	}
 
-	public void genUrlTree(List<WEBPageBean> list, List<KeyWord> searchList) {
+	private List<HistoryUrlSearch> historyUrlSearch=new ArrayList<HistoryUrlSearch>();
+	private int currentHistoryUrlSearchID=0;
+	private int historyid=0;
+	
+	
+	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList) {
+		HistoryUrlSearch hus=new HistoryUrlSearch();
+		hus.setSearchList(searchList);
+		hus.setWebpageList(list);
+		hus.setTopicName(currentTopicName);
+		hus.setId(historyUrlSearch.size());
 		
+		historyUrlSearch.add(hus);
+		currentHistoryUrlSearchID=historyUrlSearch.size()-1;
+		historyid=currentHistoryUrlSearchID;
+		
+		succTopicBtn.setEnabled(true);
+		preTopicBtn.setEnabled(true);
+		 idlabel.setText("ID: "+hus.getId());
+
+		
+		doGenUrlTree(currentTopicName,list, searchList);
+		
+		
+	}
+
+	private void doGenUrlTree(String topicname, List<WEBPageBean> list, List<KeyWord> searchList) {
 		int R=CommUtil.randomInt(128, 0);
 		int Y=CommUtil.randomInt(255, 0);
 		int B=CommUtil.randomInt(255, 0);
+		
+		topicContentText.setText(topicname);
 			
 		  urlTree.removeAll();
 		 urlTree.setForeground(SWTResourceManager.getColor(R, Y, B));
@@ -345,8 +408,6 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 //			
 			urlTreeItem.setExpanded(true);
 		}
-		
-		
 	}
 
 	public String genHightLightStr(WEBPageBean webPageBean, List<KeyWord> searchList) {
