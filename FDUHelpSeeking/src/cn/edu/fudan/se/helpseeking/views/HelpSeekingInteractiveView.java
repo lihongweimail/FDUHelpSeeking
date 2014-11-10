@@ -59,6 +59,7 @@ import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWordsBean;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.bean.NewQueryRec;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
@@ -1041,6 +1042,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		this.currentQueryText = currentQueryText;
 	}
 
+	
+private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>();
+	
+	
 	private void manualSearch() {
 		System.out.println("Say start manual search ...");
 
@@ -1065,8 +1070,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			
            setCurrentQueryText(queryText);
            
-			
-						dosearch(getCurrentQueryText());
+           
+		
+		   dosearch(getCurrentQueryText());
+						
 
 											
 		}
@@ -1174,6 +1181,23 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						tagNameforsearch=" ";//other
 
 	        final String search=(searchtxt +" "+ tagNameforsearch).trim();
+	        
+	        
+	        //========================== 记录检索信息数据库
+	        
+			//??nqr.setQuerywords(querywords);
+			//??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
+			//??nqr.setTime(time);
+
+	       
+	      //  queryRecsfordatabase.get(currentQueryID).setSelectFromFoamtreeWords(selectFromFoamtreeWords);
+	        queryRecsfordatabase.get(currentQueryID).setStartTime(new Timestamp(System.currentTimeMillis()));
+	        queryRecsfordatabase.get(currentQueryID).setQuerywords(SearchList);
+	    
+	        
+	        
+	        //多任务实施检索
+	        
 			
 			 Job job = new Job("GetDatafromGoogle"){   
 				 protected IStatus run(IProgressMonitor monitor){   
@@ -1420,16 +1444,17 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	
 
 
-public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>();
+private static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>();
+private static int currentQueryID=0;
 
-
-	public void setNewWordsAndMode(List<KeyWord> keyWordsforQuery, int mode) {
+public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> keyWordsforQuery, int mode) {
 		// 生成foamtree的候选词和权重字符串
 		// + "{ label: \"Welcome\", weight: 2.0 },"
 		// + "{ label: \"HelpSeeking\", weight: 4.0 },"
 		// + "{ label: \"To\", weight: 1.0},"
 		// + "{ label: \"Plugin\", weight: 2.0 },"
 		// + "{ label: \"tool\", weight: 1.0 }"
+		
 		
 		
 		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
@@ -1492,6 +1517,22 @@ public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>()
 		
 		currentSearchKeyWords201411=noDupkeyworksforquery;
 		
+		
+		//记录数据准备存盘到数据库
+		NewQueryRec nqr=new NewQueryRec();
+		nqr.setIds(queryRecsfordatabase.size());
+		nqr.setFoamtreeWords(noDupkeyworksforquery);
+		nqr.setSnapshotWords(snapShotAllKeyWords);
+		//??nqr.setQuerywords(querywords);
+		//??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
+		//??nqr.setTime(time);
+		
+		//nqr.setUser(user);
+		currentQueryID=nqr.getIds();
+		
+		queryRecsfordatabase.add(nqr);
+		
+		
 
 		String searchwords = "";
 		// String currentWord="";
@@ -1539,13 +1580,7 @@ public static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>()
 		if (mode == 2) {
 			setCurrentQueryText(searchwords);
 
-							 
-	
-
 							dosearch(getCurrentQueryText());
-
-
-				
 				
 		}
 

@@ -40,9 +40,13 @@ public class CommUtil {
 	public static String getTokensfromCodeStr(String name) {
 		String tempstr;
 		TokenExtractor mytoExtractor=new TokenExtractor();
-		List<String> mystrlist=mytoExtractor.analysis(name);
+		List<String> mystrlist=new ArrayList<String>();
+				
 		tempstr="";
-		for (int j = 0; j < mystrlist.size(); j++) {
+
+		if (Basic.ALGORITHMSELECTION==1) {
+			mystrlist=mytoExtractor.analysis(name);
+			for (int j = 0; j < mystrlist.size(); j++) {
 			if (tempstr.equals("")) {
 				tempstr=mystrlist.get(j).toString();
 			}else {
@@ -50,6 +54,22 @@ public class CommUtil {
 			}
 
 		}
+		}
+		if (Basic.ALGORITHMSELECTION==2) {
+			
+			mystrlist=CommUtil.stringToList(name, SPLITE_STRING, 2);
+			for (int j = 0; j < mystrlist.size(); j++) {
+				if (tempstr.equals("")) {
+					tempstr=mystrlist.get(j).toString();
+				}else {
+					tempstr=tempstr+" "+mystrlist.get(j).toString();
+				}
+
+			}
+			
+		}
+		
+		
 		return tempstr;
 	}
 	

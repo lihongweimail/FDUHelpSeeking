@@ -6,10 +6,17 @@ public class WEBPageBean {
 	String title="";
 	String summary="";
 	String content="";
+	String containsStr="----";
 	
 	
 	
 	
+	public String getContainsStr() {
+		return containsStr;
+	}
+	public void setContainsStr(String containsStr) {
+		this.containsStr = containsStr;
+	}
 	public String getUrl() {
 		return url;
 	}

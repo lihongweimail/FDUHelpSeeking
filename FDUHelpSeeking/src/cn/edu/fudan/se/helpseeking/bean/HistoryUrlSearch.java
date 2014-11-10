@@ -6,7 +6,7 @@ public class HistoryUrlSearch {
 	
 	int id;
 	String topicName;
-		List<WEBPageBean> webpageList;
+	List<WEBPageBean> webpageList;
 	List<KeyWord> searchList;
 	
 	

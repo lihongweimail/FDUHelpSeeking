@@ -248,8 +248,8 @@ public class CacheProcessing extends Thread {
 		resetHistroyWindow(Basic.SLIDE_WINDOW_SIZE);
 
 		// 计算历史信息，的重合程度，得到频率再次计算各个词的权重。
-
-		totallKeyWords = docontextweightforWords(Basic.CountWindowSize);
+        // 14.11.10 新算法不使用这个
+		// totallKeyWords = docontextweightforWords(Basic.CountWindowSize);
 
 		// 重写totallkeywords
 
@@ -315,7 +315,10 @@ public class CacheProcessing extends Thread {
 
 			// 取前k个单词作为查询词
 			currentCache.setCurrentKeywordsList(deDupilcateTotallKeyWords);
-			System.out.println("newTacticProcessing function\n deDupilcateTotallKeyWords: "+deDupilcateTotallKeyWords.toString());
+			System.out.println("newTacticProcessing function\n currentkeywrds set: ");
+			for (int i = 0; i < deDupilcateTotallKeyWords.size(); i++) {
+				System.out.println(deDupilcateTotallKeyWords.get(i).getKeywordName().toString());
+			}
 		}
 
 	}
@@ -1395,8 +1398,12 @@ public class CacheProcessing extends Thread {
 				
 				//处理异常字符，得到截短符号，切词
 				
-				String keywordsvalidate=(CommUtil.getSimpleWords(kw.getKeywordName())).trim();
-			
+				
+				String keywordsvalidate="";
+					keywordsvalidate=(CommUtil.getSimpleWords(kw.getKeywordName())).trim();
+
+				
+				
 				String splitchar="[&#$_.@|{}!*%+-=\\:;,?/\"\'\t\b\r\n\0 ]";
 				if (!keywordsvalidate.trim().equals(""))
 				 keywordsvalidate=CommUtil.removeStopWordsAsStringwithSplitBlank(keywordsvalidate,splitchar);
@@ -1599,7 +1606,7 @@ public class CacheProcessing extends Thread {
 				if (!keyWordsforQuery.isEmpty()) {
 					
 	
-					viteractive.setNewWordsAndMode(keyWordsforQuery, mode);
+					viteractive.setNewWordsAndMode(currentCache.getCurrentKeywordsList(),keyWordsforQuery, mode);
 					viteractive.setCurrentActionID(currentCache.getCurrentID());
 				}
 

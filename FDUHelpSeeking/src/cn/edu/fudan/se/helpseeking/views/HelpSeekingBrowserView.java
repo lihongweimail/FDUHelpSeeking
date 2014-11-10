@@ -342,11 +342,26 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList) {
 		HistoryUrlSearch hus=new HistoryUrlSearch();
 		hus.setSearchList(searchList);
+		
+		for (int i = 0; i < list.size(); i++) {
+			String containsstr=genHightLightStr(list.get(i),searchList);
+			list.get(i).setContainsStr(containsstr);
+		}
+
+		
+		
 		hus.setWebpageList(list);
 		hus.setTopicName(currentTopicName);
 		hus.setId(historyUrlSearch.size());
 		
+		
+		
 		historyUrlSearch.add(hus);
+		
+		
+		
+		
+		
 		currentHistoryUrlSearchID=historyUrlSearch.size()-1;
 		historyid=currentHistoryUrlSearchID;
 		
@@ -378,7 +393,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			urr.setUrl(list.get(i).getUrl().trim());
 			
 			
-			urr.setHightlightString(genHightLightStr(list.get(i),searchList));
+			urr.setHightlightString(list.get(i).getContainsStr());
 			
 			
 			urlTreeItem.setData(urr);
