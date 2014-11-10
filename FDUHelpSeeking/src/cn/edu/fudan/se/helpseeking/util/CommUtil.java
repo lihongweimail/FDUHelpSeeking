@@ -531,7 +531,7 @@ public class CommUtil {
 
 	}
 
-	public static String getFDUPluginWorkingPath() {
+	public static String getFDUHelpseekingPluginWorkingPath() {
 		
 		
 		String workingPath = System.getProperties().getProperty("user.home");	
@@ -884,7 +884,7 @@ public class CommUtil {
 		    testText=CommUtil.removeStopWordsAsStringSplitBlank(testText);
 			
 				try {
-			CNFactory factory =CNFactory.getInstance(CommUtil.getFDUPluginWorkingPath()+"/models");
+			CNFactory factory =CNFactory.getInstance(CommUtil.getFDUHelpseekingPluginWorkingPath()+"/models");
 			String[] words=factory.seg(testText);
 
 			String temp="";

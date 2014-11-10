@@ -154,8 +154,8 @@ public class LdaGibbsSampling {
 		
 		// TODO Auto-generated method stub
 		//String originalDocsPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.ldaDocsPath;
-		String resultPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.LdaResultsPath;
-		String parameterFile= CommUtil.getFDUPluginWorkingPath()+"/"+ConstantConfig.LDAPARAMETERFILE;
+		String resultPath = CommUtil.getFDUHelpseekingPluginWorkingPath()+"/"+PathConfig.LdaResultsPath;
+		String parameterFile= CommUtil.getFDUHelpseekingPluginWorkingPath()+"/"+ConstantConfig.LDAPARAMETERFILE;
 		//String Url1= UrlConfig.Url1;
 		//String Url2= UrlConfig.Url2;
 		
@@ -195,8 +195,7 @@ public class LdaGibbsSampling {
 		
 		
 		
-	
-		//替换方案X 线程池		start	
+	if (Basic.CLAWMODE==1) {		//替换方案X 线程池		start	
 		ExecutorService pool=Executors.newSingleThreadExecutor();
 		List<Future<String>> callablFutures=new ArrayList<Future<String>>();
 		try {
@@ -269,10 +268,14 @@ public class LdaGibbsSampling {
 		pool.shutdown();
 		//替换方案X 线程池		 end		
 		
+
 		
+	}
+
 		
-		
-/*		
+if (Basic.CLAWMODE==2) {
+	
+
 		//替换方案二 ：  htmlparser GBK 编码  开始
 		try {
 	
@@ -313,12 +316,15 @@ public class LdaGibbsSampling {
 			e.printStackTrace();
 		}
 		
-*/
+}
 		
 		
+	
+if (Basic.CLAWMODE==3) {
+	
+
 		
-		
-/*  	//替换方案： 一 雪娇提供
+  	//替换方案： 一 雪娇提供
 
 		
 		try {
@@ -360,7 +366,7 @@ public class LdaGibbsSampling {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-*/		
+}		
 			
 		
 //		System.out.println("all webpages: \n"+UrlContent);

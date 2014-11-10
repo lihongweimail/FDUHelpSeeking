@@ -31,6 +31,7 @@ import org.eclipse.jdt.internal.debug.core.breakpoints.JavaLineBreakpoint;
 import org.eclipse.jdt.internal.debug.core.breakpoints.JavaMethodBreakpoint;
 import org.eclipse.jface.text.ITextSelection;
 
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.Breakpoint;
 import cn.edu.fudan.se.helpseeking.bean.ClassModel;
 import cn.edu.fudan.se.helpseeking.bean.Cursor;
@@ -409,7 +410,7 @@ public class CodeUtil {
 				public boolean visit(SimpleName name) {
 					int differ = cu.getLineNumber(name.getStartPosition()) 
 							- lineNumber - 1;
-					if(differ > -3 && differ < 3){
+					if(differ > -Basic.linelimited && differ < Basic.linelimited){
 						IBinding binding = name.resolveBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
@@ -431,7 +432,7 @@ public class CodeUtil {
 				public boolean visit(MethodInvocation method) {
 					int differ = cu.getLineNumber(method.getStartPosition()) 
 							- lineNumber - 1;
-					if(differ > -3 && differ < 3){
+					if(differ > -Basic.linelimited && differ < Basic.linelimited){
 						IMethodBinding binding = method.resolveMethodBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
@@ -467,7 +468,7 @@ public class CodeUtil {
 				public boolean visit(ClassInstanceCreation creation) {
 					int differ = cu.getLineNumber(creation.getStartPosition()) 
 							- lineNumber - 1;
-					if(differ > -3 && differ < 3){
+					if(differ > -Basic.linelimited && differ < Basic.linelimited){
 						IMethodBinding binding = creation.resolveConstructorBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();

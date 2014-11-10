@@ -1,6 +1,7 @@
 package urlWordExtract;
 
 
+import org.fnlp.nlp.cn.ner.stringPreHandlingModule;
 import org.htmlparser.Node;
 import org.htmlparser.NodeFilter;
 import org.htmlparser.Parser;
@@ -13,6 +14,7 @@ import org.htmlparser.tags.TableTag;
 import org.htmlparser.util.NodeList;
 
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.util.FileHelper;
 
 
 /**
@@ -117,9 +119,54 @@ public class NewWordExtract {
 
    }
 
+   
+   
+	public static String testHtmltoFile(String url, String wordslist) throws Exception {
+	      
+	      
+        if (CommUtil.findClawInValidatePage(url)) {
+			return "";
+      		}
+
+		
+		String sCurrentLine;
+        String sTotalString;
+        sCurrentLine = "";
+        sTotalString = "";
+     
+
+        java.io.InputStream l_urlStream;
+        java.net.URL l_url = new java.net.URL(url);
+        java.net.HttpURLConnection l_connection = (java.net.HttpURLConnection) l_url
+              .openConnection();
+        l_connection.connect();
+        l_connection.setConnectTimeout(2000);
+        l_urlStream = l_connection.getInputStream();
+//        System.out.println("page encoding: "+l_connection.getContentEncoding());
+        java.io.BufferedReader l_reader = new java.io.BufferedReader(
+              new java.io.InputStreamReader(l_urlStream));
+        while ((sCurrentLine = l_reader.readLine()) != null) {
+           sTotalString += sCurrentLine+"\r\n";
+        }
+        System.out.println(sTotalString);
+System.out.println(CommUtil.getFDUHelpseekingPluginWorkingPath()+"/test.html");
+        FileHelper.writeNewFile(CommUtil.getFDUHelpseekingPluginWorkingPath()+"/test.html", sTotalString);
+        
+//        System.out.println("====================");
+        
+              
+        String testText = extractText(sTotalString);
+//        System.out.println(testText);
+     
+        return testText;
+
+   }
+
+   
+   
    public static void main(String[] args) throws Exception {
 //      test5("http://news.ccidnet.com/index.htm");
-      System.out.println(testHtml("http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html"));
+      System.out.println(testHtmltoFile(CommUtil.getFDUHelpseekingPluginWorkingPath()+"/test.html","http://www.oracle.com/technetwork/articles/java/index-jsp-135444.html"));
    }
 
 

@@ -259,7 +259,7 @@ public class LdaModel {
 		// TODO Auto-generated method stub
 		//lda.params lda.phi lda.theta lda.tassign lda.twords
 		//lda.params
-		String resPath = CommUtil.getFDUPluginWorkingPath()+"/"+PathConfig.LdaResultsPath;
+		String resPath = CommUtil.getFDUHelpseekingPluginWorkingPath()+"/"+PathConfig.LdaResultsPath;
 		
 		
 		String modelName = "lda_" + iters;//迭代次数每次传进来，用作保存时对文件的命名

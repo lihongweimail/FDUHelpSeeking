@@ -636,7 +636,7 @@ public class CacheProcessing extends Thread {
 					double sumscore = 0.0;
 
 					for (int i = 0; i < doKeyWords.size(); i++) {
-						if (i != indexzerodistance) {
+						
 							for (int k = 0; k < doKeyWords.get(i).getKeyWords()
 									.size(); k++) {
 								String curword = doKeyWords.get(i)
@@ -650,7 +650,7 @@ public class CacheProcessing extends Thread {
 
 								}
 							}
-						}
+						
 
 					}
 

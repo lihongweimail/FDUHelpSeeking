@@ -4,7 +4,8 @@ CREATE TABLE IF NOT EXISTS  action (
 	endtime timestamp NULL DEFAULT NULL,  
 	actionKind varchar(245) DEFAULT NULL,  
 	actionName varchar(245) DEFAULT NULL,  
-	description text,  byuser varchar(10) DEFAULT NULL,  
+	description text, 
+	byuser varchar(10) DEFAULT NULL,  
 	user varchar(45) DEFAULT NULL);
 	
 	create index IF NOT EXISTS action_id on action(id);

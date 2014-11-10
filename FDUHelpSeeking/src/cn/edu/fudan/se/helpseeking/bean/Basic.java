@@ -463,7 +463,7 @@ public class Basic {
 		 * User selection of elements, issued by the Eclipse post-selection
 		 * mechanism.
 		 */
-		SELECTION, TEST;
+		SELECTION, TEST,SELECTIONFOCUS;
 
 		/**
 		 * @return The corresponding event based on the string provided, or null
@@ -475,6 +475,9 @@ public class Basic {
 			}
 			if (string.toLowerCase().equals("selection".toLowerCase())) { //$NON-NLS-1$
 				return SELECTION;
+			}
+			if (string.toLowerCase().equals("selectionfocus".toLowerCase())) { //$NON-NLS-1$
+				return SELECTIONFOCUS;
 			}
 			if (string.toLowerCase().equals("edit".toLowerCase())) { //$NON-NLS-1$
 				return EDIT;
@@ -519,7 +522,7 @@ public class Basic {
 		 * TODO: add PREFERENCE?
 		 */
 		public boolean isUserEvent() {
-			return this == SELECTION || this == EDIT || this == COMMAND
+			return this == SELECTION || this==SELECTIONFOCUS|| this == EDIT || this == COMMAND
 					|| this == PREFERENCE || this==DEBUG || this == TEST ;
 		}
 
@@ -532,6 +535,8 @@ public class Basic {
 			switch (this) {
 			case SELECTION:
 				return "selection"; //$NON-NLS-1$
+			case SELECTIONFOCUS:
+				return "selectionfocus";
 			case EDIT:
 				return "edit"; //$NON-NLS-1$
 			case DEBUG:
@@ -743,7 +748,7 @@ public enum QueryLevel {
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
-	public final static double  RATIOOFNEWSEARCHSTRING=0.382;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
+	public final static double  RATIOOFNEWSEARCHSTRING=0.1;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
 	public static final long CLAWLIMITEDTIME = 5000;//爬取网络页面时，等待的时间，超时后，就放弃，以改善交互
 	public  static int ALGORITHMSELECTION=2; //算法设置，1为5月份的算法的关键词数据初值设置， 2 为11月新算法的关键词初值设置
 	
@@ -757,11 +762,16 @@ public enum QueryLevel {
 		public final static int action_reveal=2;
 		public final static int action_saveOrDebug=3;
 		public final static int action_execute=4;
+		public final static int action_selectfocus=5;
+		
 		public final static int api_normal=1;
 		public final static int api_hasCompileError=2;
 		public final static int api_causeException=3;
 		
-		public final static double gama=2.0;  //新算法权重值
+		public final static double gama=3.0;  //新算法权重值
+		public static  int CLAWMODE = 1;  //爬取网页的技术  1：使用线程池  2：使用GBK编码获取网页，非线程  3： 雪娇提供的stringbean方案
 	
 	
+		//光标所在行附近的代码：  目前是设置为前后2行；共计5行；为了更加关注，设置为1行，就自己
+		public static int linelimited=3;   //3
 }

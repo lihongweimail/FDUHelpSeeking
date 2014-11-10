@@ -54,7 +54,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		InteractionEvent event = new InteractionEvent();
 		event.setByuser(true);
-		event.setKind(Kind.SELECTION);
+		event.setKind(Kind.SELECTIONFOCUS);
 
 		// add this variable for extract info. hongwei 2014.3.4
 		String selectionContent = "";
@@ -78,7 +78,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 						+ " from Part: " + part.getTitle());
 				// add
 				String selectName = s.getFirstElement().toString().substring(0,
-								s.getFirstElement().toString().length() > 20 ? 20
+								s.getFirstElement().toString().length() > 240 ? 240
 										: s.getFirstElement().toString().length());
 				
 				event.setActionName("select "+selectName);
@@ -270,7 +270,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				event.setActionName("Select "
 						+ s.getText().substring(
 								0,
-								s.getText().length() > 20 ? 20 : s.getText()
+								s.getText().length() > 240 ? 240 : s.getText()
 										.length()));
 				// add
 				selectionContent = s.getText();
@@ -325,7 +325,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 							.get()
 							.substring(
 									0,
-									s.getDocument().get().length() > 20 ? 20
+									s.getDocument().get().length() > 240 ? 240
 											: s.getDocument().get().length()));
 			// add
 			selectionContent = s.getDocument().get();
@@ -364,7 +364,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				info.setExplorerRelated(null);
 			
 				
-				event.setKind(Kind.ATTENTION);
+				event.setKind(Kind.SELECTIONFOCUS);
 				event.setActionName("Console View Changed");
 				
 				
@@ -376,7 +376,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 					.toString()
 					.equals("org.eclipse.ui.internal.views.markers.ProblemsView")) {
 				
-				event.setKind(Kind.ATTENTION);
+				event.setKind(Kind.SELECTIONFOCUS);
 				info.setType("CompileInfo");
 				cpi.setContent(selectionContent);
 				cpi.setType(CompileInfoType.ERROR);

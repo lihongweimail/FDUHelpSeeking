@@ -21,7 +21,7 @@ public class FilePathTest {
 	  
 	  System.out.println(System.getProperties().getProperty("os.name"));
 	  System.out.println(System.getProperties().getProperty("user.home"));
-	  System.out.println(CommUtil.getFDUPluginWorkingPath());
+	  System.out.println(CommUtil.getFDUHelpseekingPluginWorkingPath());
 	  
 	 }
 	}

@@ -145,11 +145,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	Composite foamtreeComposite;
 
-	String foamTreeFileNamePath = CommUtil.getFDUPluginWorkingPath()
+	String foamTreeFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
 			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
-	String foamTreeTopicFilterFileNamePath = CommUtil.getFDUPluginWorkingPath()
+	String foamTreeTopicFilterFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
 			+ "/topicfilter.html";
-	String searchHTMLPath = CommUtil.getFDUPluginWorkingPath() + "/search.html";
+	String searchHTMLPath = CommUtil.getFDUHelpseekingPluginWorkingPath() + "/search.html";
 
 	public static List<TopicWEBPagesBean> allWebPages = new ArrayList<TopicWEBPagesBean>();
 
@@ -165,7 +165,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
-		initFoamTreeEnv(CommUtil.getFDUPluginWorkingPath());
+		initFoamTreeEnv(CommUtil.getFDUHelpseekingPluginWorkingPath());
 
 		foamtreeBrowser = new Browser(sashComposite, SWT.BORDER);
 		foamtreeBrowser
@@ -575,49 +575,49 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		Resource models_arRes = new Resource();
 		models_arRes.getResource("/models/ar.m", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/ar.m");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/ar.m");
 
 		Resource models_depRes = new Resource();
 		models_depRes.getResource("/models/dep.m", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/dep.m");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dep.m");
 
 		Resource models_dictambiguityRes = new Resource();
 		models_dictambiguityRes.getResource("/models/dict_ambiguity.txt", true,
-				CommUtil.getFDUPluginWorkingPath()
+				CommUtil.getFDUHelpseekingPluginWorkingPath()
 						+ "/models/dict_ambiguity.txt");
 
 		Resource models_dicdepRes = new Resource();
 		models_dicdepRes.getResource("/models/dict_dep.txt", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/dict_dep.txt");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict_dep.txt");
 
 		Resource models_dictRes = new Resource();
 		models_dictRes.getResource("/models/dict.txt", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/dict.txt");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict.txt");
 
 		Resource models_ExtractPatternRes = new Resource();
 		models_ExtractPatternRes.getResource("/models/ExtractPattern.txt",
-				true, CommUtil.getFDUPluginWorkingPath()
+				true, CommUtil.getFDUHelpseekingPluginWorkingPath()
 						+ "/models/ExtractPattern.txt");
 
 		Resource models_posRes = new Resource();
 		models_posRes.getResource("/models/pos.m", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/pos.m");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/pos.m");
 
 		Resource models_segRes = new Resource();
 		models_segRes.getResource("/models/seg.m", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/seg.m");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/seg.m");
 
 		Resource models_stocktreeRes = new Resource();
 		models_stocktreeRes.getResource("/models/Stock-Tree.txt", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/Stock-Tree.txt");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/Stock-Tree.txt");
 
 		Resource models_timeRes = new Resource();
 		models_timeRes.getResource("/models/time.m", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/time.m");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/time.m");
 
 		Resource models_wordgraphRes = new Resource();
 		models_wordgraphRes.getResource("/models/wordgraph.txt", true,
-				CommUtil.getFDUPluginWorkingPath() + "/models/wordgraph.txt");
+				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/wordgraph.txt");
 		
 	}
 	

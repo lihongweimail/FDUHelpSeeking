@@ -497,13 +497,24 @@ public class Cache {
 	// 简单的连续相同不记录模式
 	private boolean checkInformation(Information information) {
 		boolean result = false;
+		
+		
+		
 		if (actions.getActionList() == null) {
 			// System.out.println("actons is null");
 			return false;
 		}
+		
+		
 		Action newEnterAction = information.getAction();
 		Action lastCacheAction = null;
 		List<ActionCache> acs = actions.getActionList();
+		
+
+		if (newEnterAction.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+			return false;
+		}
+		
 
 		for (int i = acs.size() - 1; i >= 0; i--) {
 			if (acs.get(i).getActionID() == currentID) {
@@ -527,9 +538,9 @@ public class Cache {
 			
 
 			
-			int size=informations.size()<Basic.Mini_Actions?informations.size():Basic.Mini_Actions;
+			int size=(informations.size()<Basic.Mini_Actions) ? informations.size():Basic.Mini_Actions;
 
-			// 如果历史上在5秒内有相同的动作和描述业禁止出现;倒数的5个动作中有相同的 则不计入
+			// 如果历史上在5秒内有相同的动作和描述也禁止出现;倒数的5个动作中有相同的 则不计入
 			for (int i=informations.size()-1;i>informations.size()-size;i--) {
 			
 				Action testAction = informations.get(i).getInformation().getAction();
@@ -1011,6 +1022,22 @@ public class Cache {
 				    	kw.setWeightTwo(Basic.api_normal);
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("select # package explorer outlier");
+						Action ac = actions.getActionCachewithActionID(currentID).getAction();
+						if (ac != null) {
+						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+							kw.setWeightOne(Basic.action_selectfocus);
+					           if (ac.getActionName().toLowerCase().contains("compile")) {
+								kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+							if (ac.getActionName().toLowerCase().contains("console")) {
+							     kw.setWeightTwo(Basic.api_causeException);
+								}
+							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+							     kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+					       }
+
+						}
 				    }
 
 					
@@ -1059,6 +1086,23 @@ public class Cache {
 				    	kw.setWeightTwo(Basic.api_normal);
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("other #  select edit code reveal api ");
+						Action ac = actions.getActionCachewithActionID(currentID).getAction();
+						if (ac != null) {
+						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+							kw.setWeightOne(Basic.action_selectfocus);
+					           if (ac.getActionName().toLowerCase().contains("compile")) {
+								kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+							if (ac.getActionName().toLowerCase().contains("console")) {
+							     kw.setWeightTwo(Basic.api_causeException);
+								}
+							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+							     kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+
+					       }
+
+						}
 				    }
 
 					
@@ -1138,6 +1182,22 @@ public class Cache {
 					
 					kw.setWeightTwo(Basic.api_normal); //interest level api  normal
 					kw.setTagName("Other");
+					
+					if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+						kw.setWeightOne(Basic.action_selectfocus);
+				           if (ac.getActionName().toLowerCase().contains("compile")) {
+							kw.setWeightTwo(Basic.api_hasCompileError);
+							}
+						if (ac.getActionName().toLowerCase().contains("console")) {
+						     kw.setWeightTwo(Basic.api_causeException);
+							}
+						if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+						     kw.setWeightTwo(Basic.api_hasCompileError);
+							}
+
+				       }
+
+					
 					
 				}
 	
@@ -1450,6 +1510,22 @@ if (paraType.length>0 )
 						kw.setWeightTwo(Basic.api_normal); //interest level api  normal
 						kw.setTagName("Other");
 						
+						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+							kw.setWeightOne(Basic.action_selectfocus);
+							
+							if (ac.getActionName().toLowerCase().contains("compile")) {
+								kw.setWeightTwo(Basic.api_hasCompileError);
+							}
+							if (ac.getActionName().toLowerCase().contains("console")) {
+								kw.setWeightTwo(Basic.api_causeException);
+							}
+							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+							     kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+
+
+						}
+						
 					}else
 					if (Basic.ALGORITHMSELECTION==1) {				
 
@@ -1642,7 +1718,27 @@ if (paraType.length>0 )
 						if (Basic.ALGORITHMSELECTION==2) {				
 							kw.setWeightOne(Basic.action_reveal);
 							kw.setWeightTwo(Basic.api_normal);
+							Action ac = actions.getActionCachewithActionID(
+									currentID).getAction();
+							if (ac != null) {
+								if (ac.getActionKind().equals(
+										Kind.SELECTIONFOCUS)) {
+									kw.setWeightOne(Basic.action_reveal);
+
+									if (ac.getActionName().toLowerCase()
+											.contains("compile")) {
+										kw.setWeightTwo(Basic.api_hasCompileError);
+									}
+									if (ac.getActionName().toLowerCase()
+											.contains("console")) {
+										kw.setWeightTwo(Basic.api_causeException);
+									}
+
+								}
+
 							}
+
+						}
 
 						
 						for (String jestr : Basic.javaExceptionalNameList) {
@@ -1734,6 +1830,24 @@ if (paraType.length>0 )
 						    	kw.setWeightTwo(Basic.api_hasCompileError);
 								kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 								kw.setTagName("error #  has compile error  edit save debug");
+								
+								Action ac = actions.getActionCachewithActionID(currentID).getAction();
+								if (ac != null) {
+								if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+									kw.setWeightOne(Basic.action_selectfocus);
+							           if (ac.getActionName().toLowerCase().contains("compile")) {
+										kw.setWeightTwo(Basic.api_hasCompileError);
+										}
+									if (ac.getActionName().toLowerCase().contains("console")) {
+									     kw.setWeightTwo(Basic.api_causeException);
+										}
+									if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+									     kw.setWeightTwo(Basic.api_hasCompileError);
+										}
+
+							       }
+
+								}
 						    }
 
 						
@@ -1770,6 +1884,24 @@ if (paraType.length>0 )
 					    	kw.setWeightTwo(Basic.api_hasCompileError);
 							kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 							kw.setTagName("warning #  has compile warning  edit save debug");
+							
+							Action ac = actions.getActionCachewithActionID(currentID).getAction();
+							if (ac != null) {
+							if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+								kw.setWeightOne(Basic.action_selectfocus);
+						           if (ac.getActionName().toLowerCase().contains("compile")) {
+									kw.setWeightTwo(Basic.api_hasCompileError);
+									}
+								if (ac.getActionName().toLowerCase().contains("console")) {
+								     kw.setWeightTwo(Basic.api_causeException);
+									}
+								if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+								     kw.setWeightTwo(Basic.api_hasCompileError);
+									}
+
+						       }
+
+							}
 					    }
 						
 						tempKeyWords.add(kw);
@@ -1882,6 +2014,23 @@ if (paraType.length>0 )
 				    	kw.setWeightTwo(Basic.api_causeException);
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("exception # execute cause Exception");
+						Action ac = actions.getActionCachewithActionID(currentID).getAction();
+						if (ac != null) {
+						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+							kw.setWeightOne(Basic.action_selectfocus);
+					           if (ac.getActionName().toLowerCase().contains("compile")) {
+								kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+							if (ac.getActionName().toLowerCase().contains("console")) {
+							     kw.setWeightTwo(Basic.api_causeException);
+								}
+							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+							     kw.setWeightTwo(Basic.api_hasCompileError);
+								}
+
+					       }
+
+						}
 				    }
 					
 				    tempKeyWords.add(kw);
@@ -1921,6 +2070,24 @@ if (paraType.length>0 )
 				    	kw2.setWeightTwo(Basic.api_normal);
 						kw2.setScore(vinit(kw2.getWeightOne(),kw2.getWeightTwo()));
 						kw2.setTagName("exception # execute cause Exception");
+						
+						Action ac = actions.getActionCachewithActionID(currentID).getAction();
+						if (ac != null) {
+						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+							kw2.setWeightOne(Basic.action_selectfocus);
+					           if (ac.getActionName().toLowerCase().contains("compile")) {
+								kw2.setWeightTwo(Basic.api_hasCompileError);
+								}
+							if (ac.getActionName().toLowerCase().contains("console")) {
+							     kw2.setWeightTwo(Basic.api_causeException);
+								}
+							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
+							     kw2.setWeightTwo(Basic.api_hasCompileError);
+								}
+
+					       }
+
+						}
 				    }
 			 
 
