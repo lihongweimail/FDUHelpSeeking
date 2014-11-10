@@ -339,8 +339,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					}
 
 					currentTopicName = item.getText().trim();
-					
-					genTopicWordsFoamTree(allWebPages.get(currentTopicindex).getMyfudanTopicWords());
+				
+					//注销
+					//genTopicWordsFoamTree(allWebPages.get(currentTopicindex).getMyfudanTopicWords());
 
 
 					browserpart = FDUHelpSeekingPlugin
@@ -355,19 +356,77 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 						bv.getTopicContentText().setText(currentTopicName);
 						bv.genUrlTree(allWebPages.get(currentTopicindex)
-								.getPages());
+								.getPages(),SearchList);
 					}
 
 					
 					
 					// sendoutURLlist
-				} else
+				} 
+				
+				else
 
 				// 检查是否是topic
 
 				{
 					if (item.getData() == "TOPIC") {
-						//刷新
+						
+						//注销替代语句
+						item.setData("TOPICX");
+						item.setForeground(Display.getDefault().getSystemColor(
+								SWT.COLOR_GREEN));
+						// 获得URLlist
+						ArrayList<String> urlList = new ArrayList<String>();
+						List<WEBPageBean> currentWebPages = new ArrayList<WEBPageBean>();
+						TopicWEBPagesBean curTopicWEBPages = new TopicWEBPagesBean();
+
+						TreeItem[] treeItemSet = item.getItems();
+						for (int i = 0; i < treeItemSet.length; i++) {
+							WEBPageBean webpage = new WEBPageBean();
+							urlList.add(treeItemSet[i].getData().toString());
+							webpage.setTitle(treeItemSet[i].getItem(0)
+									.getText());
+							webpage.setUrl(treeItemSet[i].getItem(1).getText());
+							webpage.setSummary(treeItemSet[i].getItem(2)
+									.getText());
+
+							currentWebPages.add(webpage);
+
+						}
+
+						curTopicWEBPages
+								.setTopicName(item.getText().trim());
+						curTopicWEBPages.setPages(currentWebPages);
+
+						currentTopicName = item.getText().trim();
+
+						// //老处理模式，点击topic 后在browser view处 显示该topic下的URL.
+						// // 将topic的所有数据传到browser窗口
+
+						browserpart = FDUHelpSeekingPlugin
+								.getDefault()
+								.getWorkbench()
+								.getActiveWorkbenchWindow()
+								.getActivePage()
+								.findView(
+										"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+
+						if ((browserpart instanceof HelpSeekingBrowserView)) {
+							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+							bv.getTopicContentText().setText(currentTopicName);
+							bv.genUrlTree(curTopicWEBPages.getPages(),SearchList);
+						}
+
+						allWebPages.add(curTopicWEBPages);
+						setCurrentTopicItem(item);
+						setCurrrentTopicWEBPages(curTopicWEBPages);
+						
+						
+						
+						
+						
+//注销前代码						
+/*						//刷新
 						String foamTreeTopicFilterContent = "dataObject: {"
 								+ "groups: ["
 								+ "{ label: \"Plase Waiting\", weight: 6.0 ,type: \"node\" },"
@@ -423,7 +482,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 							bv.getTopicContentText().setText(currentTopicName);
-							bv.genUrlTree(curTopicWEBPages.getPages());
+							bv.genUrlTree(curTopicWEBPages.getPages(),SearchList);
 						}
 
 						allWebPages.add(curTopicWEBPages);
@@ -477,15 +536,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 								 };   
 							             job.setRule(Schedule_RULE);
 								         job.schedule();  
-							 
-			
-			
-									
-			
-							
-							
-						}
+						}  //注销前代码
+	*/
 
+						
 					}
 				}
 			}
@@ -499,14 +553,22 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 			
 		});
-
+		
+		
+		//注销 filterbrowser
+/*
 		topicFilterBrowser = new Browser(topicSashForm, SWT.BORDER);
 		topicFilterBrowser
 				.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
+		topicFilterBrowser.setVisible(false);
 
-		topicSashForm.setWeights(new int[] { 100, 300, 300 });
+*/		
+		
+		
+		topicSashForm.setWeights(new int[] { 50, 300 });
 
-		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
+		
+/*		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
 		genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
 				foamTreeTopicFilterContent, "HelloHongwei");
 
@@ -555,7 +617,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					if ((browserpart instanceof HelpSeekingBrowserView)) {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 						// bv.getTopicContentText().setText(currentTopicName);
-						bv.genUrlTree(usefulWebpages);
+						bv.genUrlTree(usefulWebpages,SearchList);
 					}
 
 				}
@@ -565,7 +627,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
 		// topicFilterBrowser.refresh();
-
+*/
 		sashComposite.setWeights(new int[] { 200, 400 });
 		
 		
@@ -982,6 +1044,16 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	private void manualSearch() {
 		System.out.println("Say start manual search ...");
 
+		topictree.removeAll();
+		TreeItem it1=new TreeItem(topictree, SWT.None);
+		it1.setText("start searching ...");
+		TreeItem it2=new TreeItem(topictree, SWT.None);
+		it2.setText("Please waiting...");
+		it2.setForeground(Display.getDefault()
+						.getSystemColor(SWT.COLOR_RED));
+		
+		
+		
 		String queryText = txtSearch.getText().trim();
 
 		if (!queryText.equals("")) {

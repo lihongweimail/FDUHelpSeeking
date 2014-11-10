@@ -12,10 +12,19 @@ public class UseResultsRecord {
 	int position;
 	String type;	
 	String solutionID;
-	
+	String hightlightString;
+
 	Timestamp time;
 	
 	
+	
+	
+	public String getHightlightString() {
+		return hightlightString;
+	}
+	public void setHightlightString(String hightlightString) {
+		this.hightlightString = hightlightString;
+	}
 	public Timestamp getTime() {
 		return time;
 	}

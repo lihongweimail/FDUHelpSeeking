@@ -34,6 +34,7 @@ import org.eclipse.wb.swt.SWTResourceManager;
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
+import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -297,7 +298,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 
 	}
 
-	public void genUrlTree(List<WEBPageBean> list) {
+	public void genUrlTree(List<WEBPageBean> list, List<KeyWord> searchList) {
 		
 		int R=CommUtil.randomInt(128, 0);
 		int Y=CommUtil.randomInt(255, 0);
@@ -312,11 +313,26 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			UseResultsRecord urr=new UseResultsRecord();
 			urr.setTitle(list.get(i).getTitle().trim());
 			urr.setUrl(list.get(i).getUrl().trim());
+			
+			
+			urr.setHightlightString(genHightLightStr(list.get(i),searchList));
+			
+			
 			urlTreeItem.setData(urr);
 			urlTreeItem.setText(list.get(i).getTitle().trim());
 	
 			urlTreeItem.setForeground(Display.getDefault()
-					.getSystemColor(SWT.COLOR_RED));
+					.getSystemColor(SWT.COLOR_BLACK));
+			
+			TreeItem hightlightWordsitem=new TreeItem(urlTreeItem, SWT.NONE);
+			hightlightWordsitem.setData(null);
+			hightlightWordsitem.setText(urr.getHightlightString());
+			if (!urr.getHightlightString().equals("----")) {
+				hightlightWordsitem.setForeground(Display.getDefault()
+						.getSystemColor(SWT.COLOR_RED));
+			}
+			
+
 			
 			
 			TreeItem urlTreeItemofItemtitle =new TreeItem(urlTreeItem, SWT.NONE);
@@ -331,5 +347,38 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		}
 		
 		
+	}
+
+	public String genHightLightStr(WEBPageBean webPageBean, List<KeyWord> searchList) {
+		// TODO Auto-generated method stub
+		String highlightstr="";
+		if (searchList==null) {
+			return "----";
+		}
+		for (int i = 0; i < searchList.size(); i++) {
+			
+			String[] tempsStrings=searchList.get(i).getKeywordName().split("[ ]");
+			if (tempsStrings!=null)
+				if( tempsStrings.length>0) {
+					for (int j = 0; j < tempsStrings.length; j++) {
+						String temps=(tempsStrings[j]).toLowerCase();
+					
+				if (webPageBean.getTitle().toLowerCase().trim().contains(temps)  
+						|| webPageBean.getSummary().toLowerCase().trim().contains(temps)
+						|| webPageBean.getContent().toLowerCase().trim().contains(temps)) {
+					highlightstr=highlightstr+" "+temps;
+				}
+					}
+
+			}
+			
+			
+			
+		}
+		if (highlightstr.equals("")) {
+			highlightstr="----";
+		}
+		
+		return highlightstr.trim();
 	}
 }
