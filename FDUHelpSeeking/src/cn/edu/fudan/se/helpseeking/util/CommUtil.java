@@ -44,7 +44,7 @@ public class CommUtil {
 				
 		tempstr="";
 
-		if (Basic.ALGORITHMSELECTION==1) {
+//		if (Basic.ALGORITHMSELECTION==1) {
 			mystrlist=mytoExtractor.analysis(name);
 			for (int j = 0; j < mystrlist.size(); j++) {
 			if (tempstr.equals("")) {
@@ -53,20 +53,20 @@ public class CommUtil {
 				tempstr=tempstr+" "+mystrlist.get(j).toString();
 			}
 
-		}
-		}
-		if (Basic.ALGORITHMSELECTION==2) {
-			
-			mystrlist=CommUtil.stringToList(name, SPLITE_STRING, 2);
-			for (int j = 0; j < mystrlist.size(); j++) {
-				if (tempstr.equals("")) {
-					tempstr=mystrlist.get(j).toString();
-				}else {
-					tempstr=tempstr+" "+mystrlist.get(j).toString();
-				}
-
-			}
-			
+//		}
+//		}
+//		if (Basic.ALGORITHMSELECTION==2) {
+//			
+//			mystrlist=CommUtil.stringToList(name, SPLITE_STRING, 2);
+//			for (int j = 0; j < mystrlist.size(); j++) {
+//				if (tempstr.equals("")) {
+//					tempstr=mystrlist.get(j).toString();
+//				}else {
+//					tempstr=tempstr+" "+mystrlist.get(j).toString();
+//				}
+//
+//			}
+	
 		}
 		
 		

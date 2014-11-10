@@ -1542,6 +1542,9 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 			
 			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
 			String labels = noDupkeyworksforquery.get(i).getKeywordName();
+			labels=CommUtil.getTokensfromCodeStr(labels);
+			
+			
 					//.replace(".", " ");
 
 			labelWeight = labelWeight
