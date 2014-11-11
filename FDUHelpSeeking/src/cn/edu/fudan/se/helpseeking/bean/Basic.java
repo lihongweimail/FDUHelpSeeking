@@ -748,7 +748,10 @@ public enum QueryLevel {
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
-	public final static double  RATIOOFNEWSEARCHSTRING=0.16;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
+	public  static double  RATIOOFNEWSEARCHSTRING=0.16;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词  这个比例要按照系统已有的词的数量来动态调整，如果系统候选词多可以放大，如果系统词少例如就10个词的情况，就小一点
+	public static final int DifferentPostion = 2;//新的词比旧词排序后位置不同
+
+	
 	public static final long CLAWLIMITEDTIME = 5000;//爬取网络页面时，等待的时间 毫秒，超时后，就放弃，以改善交互
 	public  static int ALGORITHMSELECTION=2; //算法设置，1为5月份的算法的关键词数据初值设置， 2 为11月新算法的关键词初值设置
 	
@@ -769,6 +772,7 @@ public enum QueryLevel {
 		public final static int api_causeException=3;
 		
 		public final static double gama=3.0;  //新算法权重值
+		
 		public static  int CLAWMODE = 1;  //爬取网页的技术  1：使用线程池  2：使用GBK编码获取网页，非线程  3： 雪娇提供的stringbean方案
 	
 	

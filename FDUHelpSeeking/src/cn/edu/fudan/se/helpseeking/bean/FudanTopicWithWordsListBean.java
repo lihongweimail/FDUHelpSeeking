@@ -40,8 +40,9 @@ public class FudanTopicWithWordsListBean {
 
 			//String labels = wordsList.get(i).getWordName().replace(".", " ");
 			//引入切词工具 处置
-			String labels = CommUtil.getSimpleWords(wordsList.get(i).getWordName().replace(".", " "));
-
+			//不切词更好：
+			//String labels = CommUtil.getSimpleWords(wordsList.get(i).getWordName().replace(".", " "));
+			String labels = wordsList.get(i).getWordName();
 			labelWeight = labelWeight + "{ label: \"" + labels 
 					+ "\""
 					+", "

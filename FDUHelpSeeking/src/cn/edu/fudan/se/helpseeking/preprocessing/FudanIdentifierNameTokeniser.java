@@ -36,8 +36,21 @@ public class FudanIdentifierNameTokeniser
 	private boolean isIgnoreCase=false;
 	private List<String> keyWords=new ArrayList<String>();
 	private int minLength =2;
+//	private boolean notUseStopwords=false; //默认需要过滤停用词
 	
 	
+	
+	
+//	public boolean isNotUseStopwords() {
+//		return notUseStopwords;
+//	}
+//
+//
+//	public void setNotUseStopwords(boolean notUseStopwords) {
+//		this.notUseStopwords = notUseStopwords;
+//	}
+
+
 	public FudanIdentifierNameTokeniser()
 	{
 		super();
@@ -49,17 +62,22 @@ public class FudanIdentifierNameTokeniser
 		identifierNametokeniser = tokeniser;
 		minLength = 1;	
 		isIgnoreCase = false;
-		constructDefaultFilterString(JAVA_STOP_LIST_FILENAME,USER_STOP_LIST_FILENAME);
-		
-
+		constructDefaultFilterString(JAVA_STOP_LIST_FILENAME,USER_STOP_LIST_FILENAME);	
 		
 	}
+	
+	
 	
 	
 
 	
 	private void constructDefaultFilterString(String stopfileName, String userStopFileName)
 	{	
+//		if (notUseStopwords) {
+//			keyWords=null;
+//			return;
+//		}
+		
 		stopfileName = "/" + stop_list_path +  "/" + stopfileName;
 		userStopFileName="/"+ stop_list_path + "/"+userStopFileName;
 		

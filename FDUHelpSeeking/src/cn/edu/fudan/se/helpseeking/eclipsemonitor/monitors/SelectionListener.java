@@ -10,6 +10,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.ITypeRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
+import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.internal.ui.javaeditor.CompilationUnitEditor;
 import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.IMarkSelection;
@@ -207,14 +208,18 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection s = (ITextSelection) selection;
-			if (s.getLength() == 0) {
+			
+			IEditorPart unitEditor = PlatformUI.getWorkbench()
+					.getActiveWorkbenchWindow().getActivePage()
+					.getActiveEditor();
+			
+			//if (s.getLength() == 0) {
+			if(unitEditor instanceof CompilationUnitEditor) {
 				event.setActionName("InsertCursor");
 				event.setOriginId("Insert cursor in line " + s.getStartLine()
 						+ " of Part " + part.getTitle());
 
-				IEditorPart unitEditor = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage()
-						.getActiveEditor();
+				
 				if (unitEditor instanceof CompilationUnitEditor) {
 					ITypeRoot typeRoot = JavaUI
 							.getEditorInputTypeRoot(unitEditor.getEditorInput());
@@ -263,7 +268,8 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 				}
 				// System.out.println("光标位置：" + s.getStartLine());
-				return;// do things about cursor and code when length == 0
+				//????? 下面这行被注释
+				 return;// do things about cursor and code when length == 0
 			} else {
 				event.setOriginId("Select: " + s.getText() + " from Part: "
 						+ part.getTitle());
@@ -287,7 +293,10 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 				SyntacticBlock sb=new SyntacticBlock();
 				sb.setType("CompileInfoSelect");
 				sb.setExceptionName(selectionContent);
-				sb.setCode(selectionContent);
+				
+			
+				 sb.setCode(selectionContent);  
+				//sb.setCode(CodeUtil.createEditCodeBySelection(icu, s));  
 				ec.setSyntacticBlock(sb);
 				info.setEditCode(ec);
 				info.setDebugCode(null);

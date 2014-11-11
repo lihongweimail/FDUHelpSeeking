@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
 import org.eclipse.ui.texteditor.CaseAction;
+import org.htmlparser.filters.AndFilter;
 
 import cn.edu.fudan.se.helpseeking.bean.Basic.DebugAction;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
@@ -928,6 +929,21 @@ public class Cache {
 		
 		
 	}
+	
+	
+	
+	
+	static List<KeyWord> lastKeyWordsforQuery=new ArrayList<KeyWord>();
+	
+	
+
+	public static List<KeyWord> getLastKeyWordsforQuery() {
+		return lastKeyWordsforQuery;
+	}
+
+	public static  void setLastKeyWordsforQuery(List<KeyWord> lastKeyWordsforQuery) {
+	  Cache.lastKeyWordsforQuery = lastKeyWordsforQuery;
+	}
 
 	List<ActionInformation> acFrequencysList = new ArrayList<>();
 
@@ -1004,7 +1020,7 @@ public class Cache {
 
 				// 取消息
 				for (String str : explorerInfo.getSelectObjectNameList()) {
-					if ((str == null) || str.equals("")) {
+					if ((str == null) || str.equals("") || str.contains(".java")) {
 						break;
 					}
 					KeyWord kw = new KeyWord();
@@ -1068,7 +1084,7 @@ public class Cache {
 					|| editorInfo.getClassQualifiedNameList().size() > 0) {
 				// 取消息
 				for (String str : editorInfo.getClassQualifiedNameList()) {
-					if ((str == null) || str.equals("")) {
+					if ((str == null) || str.equals("")  || str.contains(".java")) {
 						break;
 					}
 					KeyWord kw = new KeyWord();
@@ -1134,7 +1150,7 @@ public class Cache {
 			String codeString = editCode.getSyntacticBlock().getCode();
 
 			codeString = CommUtil.removeStopWordsAsString(codeString);
-
+ 
 			if (codeString == null) {
 				return;
 			}
@@ -1149,6 +1165,12 @@ public class Cache {
 			String[][] apinameMap = getVarialToAPImap(editCode.getClassModel());
 
 			for (String str : (rString.split("[;]"))) {
+				
+				if (str.contains(".java") || str.trim().equals("")) {
+					continue;
+				}
+
+				
 				boolean flag = false;
 				if (apinameMap!=null) {
 					
@@ -1475,7 +1497,14 @@ if (paraType.length>0 )
 						.getClassModel());
 
 				for (String str : (rString.split("[;]"))) {
+					
+					
 					boolean flag = false;
+					
+					if (str.contains(".java")) {
+						continue;
+					}
+					
                 if (apinameMap!=null) {
 					
 				
@@ -1656,6 +1685,9 @@ if (paraType.length>0 )
 						.getInternalCallee();
 				// String
 				// upclass=CommUtil.ListToString(getCurrentClassModel().getUpClass());
+				
+				String qualifiedName=getCurrentClassModel().getQualifiedName();
+												
 				List<String> belowclass = getCurrentClassModel()
 						.getBelowClass();
 
@@ -1663,12 +1695,21 @@ if (paraType.length>0 )
 
 					// 方法的qualified name 中，intercallee中包含自己的类名信息需要去除
 					String finalcalleestr = "";
+					// 将自己加入到 处理中
+					if (qualifiedName!=null  && !qualifiedName.trim().equals("")) {
+						finalcalleestr=qualifiedName;
 
-					if (callee != null && callee.size() > 0) {
+					}
+
+					if (callee != null )
+						if ( callee.size() > 0) {
 
 						for (String calleestr : callee) {
-							String[] methodnamestr = calleestr
-									.split(Basic.SPLIT_STRING);
+//							String[] methodnamestr = calleestr
+//									.split(Basic.SPLIT_STRING);
+							
+						
+
 
 							if (getCurrentClassModel().calleeInfo!=null && getCurrentClassModel().calleeInfo.get(calleestr)!=null){
 							MethodInfo mif = getCurrentClassModel().calleeInfo
@@ -1681,7 +1722,7 @@ if (paraType.length>0 )
 									mif.getParaTypes());
 							}
 
-							
+						
 
 							if (finalcalleestr.equals("")) {
 								finalcalleestr = calleequrifyname;
@@ -1708,6 +1749,13 @@ if (paraType.length>0 )
 
 					for (String str : CommUtil
 							.arrayToList(result1.split("[;]"))) {
+
+						if (str.contains(".java") || str.trim().equals("")) {
+							continue;
+						}
+
+						
+						
 						KeyWord kw = new KeyWord();
 						kw.setKeywordName(str.trim());
 						
@@ -1723,7 +1771,7 @@ if (paraType.length>0 )
 							if (ac != null) {
 								if (ac.getActionKind().equals(
 										Kind.SELECTIONFOCUS)) {
-									kw.setWeightOne(Basic.action_reveal);
+									kw.setWeightOne(Basic.action_selectfocus); //Basic.action_reveal
 
 									if (ac.getActionName().toLowerCase()
 											.contains("compile")) {
@@ -1993,7 +2041,7 @@ if (paraType.length>0 )
 					.stringToList(exceptionName));
 
 			for (String str : exceptionName.split("[;]")) {
-				if (str.trim().equals("")) {
+				if (str.trim().equals("") ) {
 					continue;
 				}
 

@@ -1,5 +1,6 @@
 package cn.edu.fudan.se.helpseeking.util;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -49,7 +50,7 @@ public class CodeUtil {
 		path = path.substring(path.indexOf(".") + 1);
 		path = path.substring(path.indexOf(".") + 1);
 		path = path.substring(path.indexOf(".") + 1);
-		final String prefix = path.substring(0, path.length() / 2);
+		final String prefix = path.substring(0, path.lastIndexOf("."));  //这里代码有误 取前缀错误
 		
 		EditCode ec = new EditCode();
 
@@ -64,6 +65,9 @@ public class CodeUtil {
 			} else if (element instanceof IMethod) {
 				sblock.setType("Method");
 				sblock.setCode(((IMethod) element).getSource());
+				//?????? 识别和获得 override 型的方法签名
+				Modifier.toString(((IMethod) element).getElementType());
+				
 				methodname = ((IMethod) element).getDeclaringType().getPackageFragment()
 						.getElementName() + "." + ((IMethod) element).getDeclaringType()
 						.getElementName() + "." + ((IMethod) element).getElementName();
@@ -72,22 +76,7 @@ public class CodeUtil {
 			e.printStackTrace();
 		}
 
-		//find the not normal formal keywords 
-//		if (sblock.getCode().contains("L")) {
-//			
-//			System.out.println("codeutil-createeditcodebyjavaelement  code contains L :" );
-//
-//		}
-//		if (sblock.getType().contains("L")) {
-//			
-//			System.out.println("codeutil-createeditcodebyjavaelement  type define contains L :" );
-//
-//		}
-//		if (sblock.getExceptionName().contains("L")) {
-//			
-//			System.out.println("codeutil-createeditcodebyjavaelement  exception name contains L :" );
-//
-//		}
+
 		
 		
 		ec.setSyntacticBlock(sblock);
@@ -129,6 +118,12 @@ public class CodeUtil {
 		}
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
+//		if ((IMethod) node instanceof MethodDeclaration ) {
+//			cmodel.setQualifiedName(((MethodDeclaration) node).getName().getFullyQualifiedName());
+//		}else {
+			cmodel.setQualifiedName(methodname);
+//		}
+		
 		ec.setClassModel(cmodel);
 
 		Cursor c = new Cursor();
@@ -183,6 +178,7 @@ public class CodeUtil {
 
 		ClassModel cmodel = new ClassModel();
 		cmodel.setType(sblock.getType());
+		
 		cmodel.setCode(sblock.getCode());
 		if (icu != null) {
 			String path = icu.getPath().toString().replace("/", ".");
@@ -216,6 +212,7 @@ public class CodeUtil {
 						paraTypes[i] = typeParam.toString();
 						i ++;
 					}
+					cmodel.setQualifiedName(((MethodDeclaration) node).getName().getFullyQualifiedName());
 					cmodel.setParaTypes(paraTypes);
 					}else {
 						cmodel.setParaTypes(null);
@@ -246,7 +243,7 @@ public class CodeUtil {
 						return true;
 					}
 		
-					public boolean visit(MethodInvocation method) {
+		public boolean visit(MethodInvocation method) {
 						IMethodBinding binding = method.resolveMethodBinding();
 						if(binding != null){
 							IJavaElement element = binding.getJavaElement();
@@ -300,7 +297,7 @@ public class CodeUtil {
 		path = path.substring(path.indexOf(".") + 1);
 		path = path.substring(path.indexOf(".") + 1);
 		path = path.substring(path.indexOf(".") + 1);
-		final String prefix = path.substring(0, path.length() / 2);
+		final String prefix = path.substring(0, path.lastIndexOf("."));
 		
 		DebugCode dc = new DebugCode();
 
@@ -371,6 +368,7 @@ public class CodeUtil {
 
 		ClassModel cmodel = constructClassModelByNode(node, cu, prefix, bpoint.getLineNo());
 		cmodel.setType(sblock.getType());
+		cmodel.setQualifiedName(bpoint.getMethodQualifiedName());
 		cmodel.setCode(sblock.getCode());
 		dc.setClassModel(cmodel);
 

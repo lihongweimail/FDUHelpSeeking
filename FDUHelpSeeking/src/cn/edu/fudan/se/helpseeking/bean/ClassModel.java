@@ -19,6 +19,7 @@ public class ClassModel {
 	String code;
 	String returnType;
 	String[] paraTypes;
+	String qualifiedName;
 
 	// 这段代码在调用的方法，或那些方法调用了这段方法所在的方法
 	// 保存方法的qualified name
@@ -34,6 +35,16 @@ public class ClassModel {
 	int currentClassModelID=0;//累加只在新加入代码时累加 在classmodel内部保留设置值
 	
 	
+	
+	
+
+	public String getQualifiedName() {
+		return qualifiedName;
+	}
+
+	public void setQualifiedName(String qualifiedName) {
+		this.qualifiedName = qualifiedName;
+	}
 
 	public int getCurrentClassModelID() {
 		return currentClassModelID;

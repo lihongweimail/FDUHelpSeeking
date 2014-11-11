@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
@@ -22,6 +23,7 @@ import org.fnlp.util.exception.LoadModelException;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
+import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 
 public class CommUtil {
@@ -101,8 +103,8 @@ public class CommUtil {
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
 			String name=namePart.get( (namePart.size()-1)>0?(namePart.size()-1):0);
 			
-	
-			name = getTokensfromCodeStr(name);
+	//为了保证最后一个方法名或类名不被去除 停用
+			//name = getTokensfromCodeStr(name);
 						
 						
 			
@@ -170,8 +172,9 @@ public class CommUtil {
 				
 				List<String> packageClassName=new ArrayList<String>();
 				packageClassName=CommUtil.stringToList(tempstr, "[.]");
-					resultstr=getTokensfromCodeStr(packageClassName.get(packageClassName.size()-1));
-				
+					//resultstr=getTokensfromCodeStr(packageClassName.get(packageClassName.size()-1));
+					resultstr=packageClassName.get(packageClassName.size()-1);
+					
 				
 			}
 		
@@ -212,10 +215,19 @@ public class CommUtil {
 		}
 		
 		String result = "";
-		for (int i = 0; i < resultTemp.size(); i++) {
-			result = result + resultTemp.get(i).trim() + " ";
+		
+		for (int i = 0; i < list.size(); i++) {
+			
+			for (int j = 0; j < resultTemp.size();  j++) {
+				if (list.get(i).toLowerCase().trim().equals(resultTemp.get(j).toLowerCase().trim())) {
+					result =  result+" "+list.get(i);
+				}
+			}
+			
 		}
-
+		
+		
+		
 		return result.trim();
 	}
 
@@ -232,11 +244,17 @@ public class CommUtil {
 			}
 		}
 		String result = "";
-		for (int i = 0; i < listTemp.size(); i++) {
-			result = result + listTemp.get(i) + ";";
+            
+		for (int i = 0; i < list.size(); i++) {
+			
+			for (int j = 0; j < listTemp.size();  j++) {
+				if (list.get(i).toLowerCase().trim().equals(listTemp.get(j).toLowerCase().trim())) {
+					result = result+";" + list.get(i).trim();
+				}
+			}
+			
 		}
-
-		return result;
+		return result.trim();
 	}
 
 	public static List<String> removeStopWordsFromList(List<String> tokens) {
@@ -744,43 +762,82 @@ public class CommUtil {
 	}
 
 	
-	public static boolean compareStringwitRatio(String searchwords,
-			String lastsearchwords,double ratio) 
+	public static boolean compareStringwitRatio(List<KeyWord> keyWordsforQuery,
+			List<KeyWord> lastKeyWords,double ratio) 
+			
+			//比率变化了，或者词的顺序有变化返回真
 	{
 		boolean result = false;
-
-		List<String> last = CommUtil.stringToList(lastsearchwords, "[ ]");
-		List<String> now = CommUtil.stringToList(searchwords, "[ ]");
-
-		Collections.sort(last);
-		Collections.sort(now);
 		
-		double countDifferentWords=0.0;
-		
-		if (last.size()==0 ) {
+
+		if (lastKeyWords.size()==0 ) {
 			return true;
 		}
+		
+
+		List<KeyWord> last = lastKeyWords;
+		List<KeyWord> now = keyWordsforQuery;
+
+		//按照keyword排序
+				Collections.sort(last, new Comparator<KeyWord>() {
+
+					@Override
+					public int compare(KeyWord o1, KeyWord o2) {
+						// TODO Auto-generated method stub
+						return o2.getKeywordName().compareTo(o1.getKeywordName());
+					}
+				});
+				
+				Collections.sort(now, new Comparator<KeyWord>() {
+
+					@Override
+					public int compare(KeyWord o1, KeyWord o2) {
+						// TODO Auto-generated method stub
+						return o2.getKeywordName().compareTo(o1.getKeywordName());
+					}
+				});
+		
+		double countDifferentWords=0.0;
+		int countdifferentpostion=0;
+		
 
 		for (int i = 0; i < last.size(); i++) {
-			boolean isdifferent=true;
+			
+			boolean test=true;
 			for (int j = 0; j < now.size(); j++) {
-				if ((last.get(i).toLowerCase().trim()).equals(now.get(j).toLowerCase().trim())) {
-					isdifferent=false;
-					break;
+				if (last.get(i).getKeywordName().equals(now.get(j).getKeywordName())) {
+					test=false;
 				}
+			}
+			if (test) {
+				countDifferentWords=countDifferentWords+1;
+			}
+			
+			if (i<now.size()) {
+				
+				if (last.get(i).getKeywordName().equals(now.get(i).getKeywordName())) {
+					if (last.get(i).getScore()!=now.get(i).getScore()) {
+						countdifferentpostion=countdifferentpostion+1;
+
+					}
+			}
+				
 				
 			}
 			
-			if (isdifferent) {
-				countDifferentWords=countDifferentWords+1.0;
-			}
 			
 		}
-
 		
 		
+		
+		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords)/last.size()));
+		System.out.println("different position: "+ countdifferentpostion);
+		
+		if (countdifferentpostion>Basic.DifferentPostion) {
+			result=true;
+		}
 			
-		System.out.println("the set ratio: "+ratio+"count same words"+countDifferentWords+"the different ratio: "+((countDifferentWords)/last.size()));
+		
 			if (((countDifferentWords)/last.size())>=ratio) {
 				result = true;
 	      }

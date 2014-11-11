@@ -194,7 +194,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					
 					boolean isuseword=true;
 					for (int i = 0; i < SearchList.size(); i++) {
-						if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(e.title.trim().toLowerCase())) {
+						if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())).getKeywordName().trim().toLowerCase())) {
 							isuseword=false;
 							SearchList.remove(i);
 							break;
@@ -202,13 +202,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						
 					}
 					if (isuseword) {
-						for (int j = 0; j < currentSearchKeyWords201411.size(); j++) {
-							if (currentSearchKeyWords201411.get(j).getKeywordName().trim().toLowerCase().equals(e.title.trim().toLowerCase())) {
-								SearchList.add(currentSearchKeyWords201411.get(j));
-								break;
-							}
-							
-						}
+						
+						SearchList.add(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())));
+							}		
+						
 						
 					}
 					
@@ -222,7 +219,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					txtSearch.setText(searchtext);
 					
 				}
-			}
+			
 		});
 
 		foamtreeBrowser.setUrl(foamTreeFileNamePath);
@@ -983,7 +980,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				+ "\n,\n"
 				+ "onGroupClick: function (event) {\n"
 				+ "if (event.group.type==\"leaf\") {"
-				+ "window.document.title=event.group.label;}\n"
+				+ "window.document.title=event.group.id;}\n"
 				+ "}\n"
 				+ "});\n" + "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
 
@@ -1542,19 +1539,20 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 			
 			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
 			String labels = noDupkeyworksforquery.get(i).getKeywordName();
-			labels=CommUtil.getTokensfromCodeStr(labels);
+			// labels=CommUtil.getTokensfromCodeStr(labels,true);
 			
 			
 					//.replace(".", " ");
 
 			labelWeight = labelWeight
-					+ "{ label: \""
+					+ "{ id: \"" + i 
+					+ "\" , label: \""
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
 					+ noDupkeyworksforquery.get(i).getScore() + " ,type: \"leaf\"},";
 			searchwords = searchwords + " "
-					+ noDupkeyworksforquery.get(i).getKeywordName();
+					+ CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
 			System.out.println("candidate keyword No." + i + " : "
 					+ noDupkeyworksforquery.get(i).getKeywordName());
 

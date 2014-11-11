@@ -230,14 +230,20 @@ public class CacheProcessing extends Thread {
 		// 对所有词处理
 
 		// 按照keyword排序
-		Collections.sort(totallKeyWords, new Comparator<KeyWord>() {
-
-			@Override
-			public int compare(KeyWord o1, KeyWord o2) {
-				// TODO Auto-generated method stub
-				return o2.getKeywordName().compareTo(o1.getKeywordName());
-			}
-		});
+	
+		
+		// score降序排序keyword
+					Collections.sort(totallKeyWords,
+							new Comparator<KeyWord>() {
+								public int compare(KeyWord arg0, KeyWord arg1) {
+									if (arg1.getScore() - arg0.getScore() < 0)
+										return -1;
+									else if (arg1.getScore() - arg0.getScore() > 0) {
+										return 1;
+									} else
+										return 0;
+								}
+							});
 
 		// 移入历史库中
 
@@ -317,7 +323,7 @@ public class CacheProcessing extends Thread {
 			currentCache.setCurrentKeywordsList(deDupilcateTotallKeyWords);
 			System.out.println("newTacticProcessing function\n currentkeywrds set: ");
 			for (int i = 0; i < deDupilcateTotallKeyWords.size(); i++) {
-				System.out.println(deDupilcateTotallKeyWords.get(i).getKeywordName().toString());
+				System.out.println(deDupilcateTotallKeyWords.get(i).getKeywordName().toString() + " "+ deDupilcateTotallKeyWords.get(i).getScore());
 			}
 		}
 
@@ -1394,15 +1400,13 @@ public class CacheProcessing extends Thread {
 
 				KeyWord kw = currentCache.getCurrentKeywordsList().get(i);
 				
-				//去除停用词 减少无需要得词汇
-				
-				//处理异常字符，得到截短符号，切词
-				
-				
-				String keywordsvalidate="";
-					keywordsvalidate=(CommUtil.getSimpleWords(kw.getKeywordName())).trim();
+				String keywordsvalidate=kw.getKeywordName();
+								
+				//处理异常字符，得到截短符号，切词  (为了保证 抽取到 override 等方法 展示不用截短；而只用 去停用词)
+		        //   keywordsvalidate=(CommUtil.getSimpleWords(keywordsvalidate)).trim();
 
-				
+					//去除停用词 减少无需要得词汇
+
 				
 				String splitchar="[&#$_.@|{}!*%+-=\\:;,?/\"\'\t\b\r\n\0 ]";
 				if (!keywordsvalidate.trim().equals(""))
@@ -1542,7 +1546,7 @@ public class CacheProcessing extends Thread {
 			
 			//比较如果新词汇是变化了60%以上的词汇时，则推荐新关键词 
 			
-			if (CommUtil.compareStringwitRatio(searchText, Cache.getLastsearchwords(),Basic.RATIOOFNEWSEARCHSTRING)) 
+			if (CommUtil.compareStringwitRatio(keyWordsforQuery, currentCache.getLastKeyWordsforQuery(),Basic.RATIOOFNEWSEARCHSTRING)) 
 			{
 				if (v != null)
 				v.setCurrentActionID(currentCache.getCurrentID());
@@ -1609,6 +1613,8 @@ public class CacheProcessing extends Thread {
 					viteractive.setNewWordsAndMode(currentCache.getCurrentKeywordsList(),keyWordsforQuery, mode);
 					viteractive.setCurrentActionID(currentCache.getCurrentID());
 				}
+				
+				currentCache.setLastKeyWordsforQuery(keyWordsforQuery);
 
 				if (!searchText.equals("")) {
 					Cache.setLastsearchwords(searchText);

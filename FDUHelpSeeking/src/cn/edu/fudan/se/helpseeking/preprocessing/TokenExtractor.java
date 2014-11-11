@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.NotActiveException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,20 @@ public class TokenExtractor
 
 	boolean isAcceptAlphabet = true;
 	boolean isAcceptDigit = false;
+	boolean nousestopwords=false;
 
 	
+	
+	
+	
+	public boolean isNousestopwords() {
+		return nousestopwords;
+	}
+
+	public void setNousestopwords(boolean nousestopwords) {
+		this.nousestopwords = nousestopwords;
+	}
+
 	//给出一个串分析得到字符
 	public List<String>  analysis(String tokenString)
 	{
@@ -37,7 +50,19 @@ public class TokenExtractor
 		
 	}
 
-
+	//给出一个串分析得到字符
+		public List<String>  analysis(String tokenString, boolean notusestopwords)
+		{
+			List<String> tokens=new ArrayList<String>();
+			TokenExtractor tokenExtractor = new TokenExtractor();
+			tokenExtractor.isAcceptAlphabet(true);
+			tokenExtractor.isAcceptDigit(false);
+			tokenExtractor.setNousestopwords(notusestopwords);
+			tokens=tokenExtractor.getIdentifierOccurenceOfString(tokenString);		
+			setTokens(tokens);
+			return  tokens;
+			
+		}
 	
 
 	public  List <String> processTokenOnlyNounsVerbs()
@@ -67,7 +92,13 @@ public class TokenExtractor
 		
 		List<String> tokens;
 
+		if (nousestopwords) {
+			tokens = tokeniser.tokeniseOnly(tokenString);
+
+		}else
 		tokens = tokeniser.tokenise(tokenString);
+		
+		
 		for (String token : tokens)
 		{
 			if (isStringAccepted(content, token))
@@ -97,7 +128,17 @@ public class TokenExtractor
 				{
 					break;
 				}
+				if (isAcceptAlphabet) {
+					
+				}
+				
+				if (nousestopwords) {
+					tokens = tokeniser.tokeniseOnly(line);
+
+				}else
 				tokens = tokeniser.tokenise(line);
+
+				
 				for (String token : tokens)
 				{
 					if (isStringAccepted(content, token)) content.add(token);
