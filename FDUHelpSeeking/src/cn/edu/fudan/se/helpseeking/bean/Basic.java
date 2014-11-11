@@ -748,7 +748,7 @@ public enum QueryLevel {
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
-	public final static double  RATIOOFNEWSEARCHSTRING=0.38;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
+	public final static double  RATIOOFNEWSEARCHSTRING=0.16;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词
 	public static final long CLAWLIMITEDTIME = 5000;//爬取网络页面时，等待的时间 毫秒，超时后，就放弃，以改善交互
 	public  static int ALGORITHMSELECTION=2; //算法设置，1为5月份的算法的关键词数据初值设置， 2 为11月新算法的关键词初值设置
 	
@@ -773,5 +773,5 @@ public enum QueryLevel {
 	
 	
 		//光标所在行附近的代码：  目前是设置为前后2行；共计5行；为了更加关注，设置为1行，就自己
-		public static int linelimited=3;   //3  发现新算法的词太少，所以这个代码行数量 还是设置为3 同时 词的集合变化太少 变化率RATIOOFNEWSEARCHSTRING设置为0.1 （原来设置0.6 或0.38）
+		public static int linelimited=1;   //3  发现新算法的词太少，所以这个代码行数量 还是设置为3 同时 词的集合变化太少 变化率RATIOOFNEWSEARCHSTRING设置为0.1 （原来设置0.6 或0.38）
 }
