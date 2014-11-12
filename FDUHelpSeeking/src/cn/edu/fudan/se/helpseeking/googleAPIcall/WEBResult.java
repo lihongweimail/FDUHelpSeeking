@@ -2,7 +2,7 @@ package cn.edu.fudan.se.helpseeking.googleAPIcall;
 
 public class WEBResult {
 
-  	   private String  content;
+  	   private String  summary;
   	   private String unescapedUrl;
   	   private String url;
          private String title;
@@ -13,11 +13,11 @@ public class WEBResult {
       private String signedRedirectUrl;
      private String language;
       
-      public String getContent() {
-			return content;
+      public String getSummary() {
+			return summary;
 		}
-		public void setContent(String content) {
-			this.content = content;
+		public void setSummary(String content) {
+			this.summary = content;
 		}
 		public String getLanguage() {
 			return language;

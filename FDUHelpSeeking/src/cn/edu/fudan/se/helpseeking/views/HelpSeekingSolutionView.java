@@ -642,7 +642,7 @@ private void manualSearch() {
 					item.setForeground(Display.getDefault()
 							.getSystemColor(SWT.COLOR_BLUE));
 
-					String compareContent=xml+" "+webResult.getContent();
+					String compareContent=xml+" "+webResult.getSummary();
 				
 					
 					SearchNode sNode=new SearchNode();
@@ -673,9 +673,9 @@ private void manualSearch() {
 					}
 					
 					//展示content  内容  还需要 优化处理  显示关键词 附近的词 构成的串 并突出显示
-					if (webResult.getContent()!=null) {
+					if (webResult.getSummary()!=null) {
 						
-						String content=webResult.getContent();
+						String content=webResult.getSummary();
 						
 						//处理content  保留部分文字
 						

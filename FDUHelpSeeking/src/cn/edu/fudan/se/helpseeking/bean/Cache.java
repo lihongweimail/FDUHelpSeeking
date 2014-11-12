@@ -65,10 +65,11 @@ public class Cache {
 	List<SearchResults> cacheAutoSearchResults = new ArrayList<>();
 	int cacheAutoSearchResultsIndex = 0;
 	
-
-
+      //用于选择时相同动作最多连续被阻止4词
+      int selectActionSametimes=4;
 	//记录最近的N个检索词
 	int countAutoTry=0;//自动检索词窗口太小使用的词重复时被拒绝检索次数 3次 则打开普通检索
+	
 	
 	public int getCountAutoTry() {
 		return countAutoTry;
@@ -521,12 +522,32 @@ public class Cache {
 		
 
 		if (newEnterAction.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-			if (newEnterAction.getActionName().toLowerCase().trim().equals(lastCacheAction.getActionName().toLowerCase().trim())) {
-				return true;
+
+			if (lastCacheAction != null) {
+
+				if (newEnterAction.getDescription() != null
+						&& lastCacheAction.getDescription() != null) {
+
+					if (newEnterAction
+							.getDescription()
+							.toLowerCase()
+							.trim()
+							.equals(lastCacheAction.getDescription()
+									.toLowerCase().trim())) {
+						if (selectActionSametimes==0) {
+							selectActionSametimes=4;
+							return false;
+						}
+						selectActionSametimes = selectActionSametimes - 1;
+						
+						return true;
+
+					}
+
+				}
+				return false;
 			}
-			return false;
-		}
-		
+		}		
 
 	
 

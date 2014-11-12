@@ -84,7 +84,7 @@ public class SampleWebResults {
 	        	WEBResult result = new WEBResult();
 	        	result.setUrl(row[0]);
 	        	result.setTitle(row[1]);
-	        	result.setContent(row[2]);
+	        	result.setSummary(row[2]);
 	        	documents.add(result);
 	         //   documents.add(new Document(row[1], row[2], row[0]));
 	        }

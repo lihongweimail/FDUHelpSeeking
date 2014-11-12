@@ -773,7 +773,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// 2014.10.15
 				webResult.setTitle(titleNoFormating);
 				WEBResult forTopicPrepareItem = new WEBResult();
-				forTopicPrepareItem.setContent(webResult.getContent());
+				forTopicPrepareItem.setSummary(webResult.getSummary());
 				forTopicPrepareItem.setUrl(webResult.getUrl());
 				forTopicPrepareItem.setTitle(webResult.getTitle());
 				resultsForTopicList.add(forTopicPrepareItem);
@@ -803,7 +803,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					i = i + 1;
 					webResult.setUrl(liString.get(i).trim());
 					i = i + 1;
-					webResult.setContent(liString.get(i).trim());
+					webResult.setSummary(liString.get(i).trim());
 					i = i + 1;
 					googlesearchList.add(webResult);
 
@@ -1251,9 +1251,10 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 								// 2014.10.15
 								webResult.setTitle(titleNoFormating);
 								WEBResult forTopicPrepareItem = new WEBResult();
-								forTopicPrepareItem.setContent(webResult.getContent());
+								forTopicPrepareItem.setSummary(webResult.getSummary());
 								forTopicPrepareItem.setUrl(webResult.getUrl());
 								forTopicPrepareItem.setTitle(webResult.getTitle());
+								
 								resultsForTopicList.add(forTopicPrepareItem);
 
 								// end of 2014.10.15
@@ -1574,7 +1575,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ Math.log(currentSearchKeyWords201411.get(i).getScore()) + " ,type: \"leaf\"},";
+					+ Math.log10(currentSearchKeyWords201411.get(i).getScore()) + " ,type: \"leaf\"},";
 			
 			searchwords = searchwords + " "
 					+ currentSearchKeyWords201411.get(i).getKeywordName();

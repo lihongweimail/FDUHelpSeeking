@@ -66,7 +66,7 @@ public class LoopGoogleAPICall extends Thread{
 
 			System.out.println("content: "
 					+ results.getResponseData().getResults().get(m)
-					.getContent());
+					.getSummary());
 			System.out.println("unescapedUrl: "
 					+ results.getResponseData().getResults().get(m)
 					.getUnescapedUrl());
@@ -367,7 +367,7 @@ public class LoopGoogleAPICall extends Thread{
 
 
 					WEBResult temp=new WEBResult();
-					temp.setContent(items.get(m).getSnippet());
+					temp.setSummary(items.get(m).getSnippet());
 					temp.setLanguage(null);
 					temp.setLocation(null);
 					temp.setPublishedDate(null);;
@@ -490,11 +490,11 @@ public class LoopGoogleAPICall extends Thread{
 					System.out.println("URL: "
 							+ tempRresults.getResponseData().getResults().get(m)
 							.getUrl() + "\n");
-					System.out.println("content: "+tempRresults.getResponseData().getResults().get(m).getContent()+"\n");
+					System.out.println("content: "+tempRresults.getResponseData().getResults().get(m).getSummary()+"\n");
 					WEBResult old=tempRresults.getResponseData().getResults().get(m);
 					results.add(old);
 					WEBResult temp=new WEBResult();
-					temp.setContent(old.getContent());
+					temp.setSummary(old.getSummary());
 					temp.setLanguage(old.getLanguage());
 					temp.setLocation(old.getLocation());
 					temp.setPublishedDate(old.getPublishedDate());;

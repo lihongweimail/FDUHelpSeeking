@@ -61,7 +61,7 @@ public class CarrotTopic {
 		
 		for(WEBResult r : results)
 		{
-			docs.add(new Document(r.getTitle(), r.getContent(),r.getUrl()));
+			docs.add(new Document(r.getTitle(), r.getSummary(),r.getUrl()));
 		}
 		
 		return docs;

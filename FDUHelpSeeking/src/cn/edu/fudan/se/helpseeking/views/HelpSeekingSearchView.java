@@ -920,49 +920,49 @@ public class HelpSeekingSearchView extends ViewPart {
 		WEBResult tResult1 = new WEBResult();
 		tResult1.setTitleNoFormatting("SAX XML Parser throwing Null Pointer Exception - Stack Overflow [SAXParser,NullPointerException]");
 		tResult1.setUrl("http://stackoverflow.com/questions/8761121/sax-xml-parser-throwing-null-pointer-exception");
-		tResult1.setContent("an SAX XML Parser in Java and I keep getting a null pointer exception that I can't seem to figure out how to fix.");
+		tResult1.setSummary("an SAX XML Parser in Java and I keep getting a null pointer exception that I can't seem to figure out how to fix.");
 		webResults.add(tResult1);
 
 		WEBResult tResult2 = new WEBResult();
 		tResult2.setTitleNoFormatting("android - NullPointerException While Parsing XML - Stack Overflow [SAXParser,NullPointerException]");
 		tResult2.setUrl("http://stackoverflow.com/questions/7147855/nullpointerexception-while-parsing-xml");
-		tResult2.setContent("... I am getting a NullPointerException. I've searched on StackOverflow and Google .. Any ideas on what I should do to fix this?");
+		tResult2.setSummary("... I am getting a NullPointerException. I've searched on StackOverflow and Google .. Any ideas on what I should do to fix this?");
 		webResults.add(tResult2);
 
 		WEBResult tResult3 = new WEBResult();
 		tResult3.setTitleNoFormatting("XML parsing using SaxParser with complete code | Java Code Geeks [SAXParser]");
 		tResult3.setUrl("http://www.javacodegeeks.com/2012/01/xml-parsing-using-saxparser-with.html");
-		tResult3.setContent("SAX parser use callback function (org.xml.sax.helpers.DefaultHandler) ... extend DefaultHandler and override few methods ...");
+		tResult3.setSummary("SAX parser use callback function (org.xml.sax.helpers.DefaultHandler) ... extend DefaultHandler and override few methods ...");
 		webResults.add(tResult3);
 
 		WEBResult tResult4 = new WEBResult();
 		tResult4.setTitleNoFormatting("[#JDK-7157610] NullPointerException occurs when parsing XML ...[https://bugs.openjdk.java.net/browse/JDK-7157610]");
 		tResult4.setUrl("https://bugs.openjdk.java.net/browse/JDK-7157610");
-		tResult4.setContent("The problem is found in JAXP RI 1.4.5.... SAXParserFactory object, XMLReader object or DocumentBuilderFactory object, NullPointerException..");
+		tResult4.setSummary("The problem is found in JAXP RI 1.4.5.... SAXParserFactory object, XMLReader object or DocumentBuilderFactory object, NullPointerException..");
 		webResults.add(tResult4);
 
 		WEBResult tResult5 = new WEBResult();
 		tResult5.setTitleNoFormatting("null pointer exception using SAX XML Parser ...[NullPointerException]");
 		tResult5.setUrl("http://http://stackoverflow.com/questions/8761121/sax-xml-parser-throwing-null-pointer-exception");
-		tResult5.setContent("...SAX Parser for XML Parsing. The problem is if I print, everything is fine. ...");
+		tResult5.setSummary("...SAX Parser for XML Parsing. The problem is if I print, everything is fine. ...");
 		webResults.add(tResult5);
 
 		WEBResult tResult6 = new WEBResult();
 		tResult6.setTitleNoFormatting("File.listFiles() returns null pointer exception | DaniWeb [NullPointerException]");
 		tResult6.setUrl(" http://www.daniweb.com/software-development/java/threads/459574/file.listfiles-returns-null-pointer-exception");
-		tResult6.setContent("...the lastmodified file from a folder,... File.listFiles() method ... returning a null pointer exception ...");
+		tResult6.setSummary("...the lastmodified file from a folder,... File.listFiles() method ... returning a null pointer exception ...");
 		webResults.add(tResult6);
 
 		WEBResult tResult7 = new WEBResult();
 		tResult7.setTitleNoFormatting("Step By Step guide to Read XML file in Java Using SAX Parser ...[SAXParser]");
 		tResult7.setUrl("http://javarevisited.blogspot.com/2011/12/parse-read-xml-file-java-sax-parser.html");
-		tResult7.setContent("Reading XML file in java using SAX Parser is little different than reading xml file in Java with DOM parser ...");
+		tResult7.setSummary("Reading XML file in java using SAX Parser is little different than reading xml file in Java with DOM parser ...");
 		webResults.add(tResult7);
 
 		WEBResult tResult8 = new WEBResult();
 		tResult8.setTitleNoFormatting("ParserFactory | Android Developers ");
 		tResult8.setUrl("http://developer.android.com/reference/org/xml/sax/helpers/ParserFactory.html");
-		tResult8.setContent("ParserFactory... Java-specific class for dynamically loading SAX parsers. .. SAX parser...");
+		tResult8.setSummary("ParserFactory... Java-specific class for dynamically loading SAX parsers. .. SAX parser...");
 		webResults.add(tResult8);
 
 		googlesearchList = webResults;
@@ -1000,7 +1000,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 				item.setData(webResult.getUrl());
 
-				String compareContent = xml + " " + webResult.getContent();
+				String compareContent = xml + " " + webResult.getSummary();
 
 				SearchNode sNode = new SearchNode();
 				sNode.setTitle(resultTitle);
@@ -1032,9 +1032,9 @@ public class HelpSeekingSearchView extends ViewPart {
 				// }
 
 				// 展示content 内容 还需要 优化处理 显示关键词 附近的词 构成的串 并突出显示
-				if (webResult.getContent() != null) {
+				if (webResult.getSummary() != null) {
 
-					String content = webResult.getContent();
+					String content = webResult.getSummary();
 
 					// 处理content 保留部分文字
 
@@ -1513,9 +1513,9 @@ public class HelpSeekingSearchView extends ViewPart {
 				// }
 
 				// 展示content 内容 还需要 优化处理 显示关键词 附近的词 构成的串 并突出显示
-				if (webResult.getContent() != null) {
+				if (webResult.getSummary() != null) {
 
-					String content = webResult.getContent();
+					String content = webResult.getSummary();
 
 					// 处理content 保留部分文字
 
@@ -1704,7 +1704,7 @@ public class HelpSeekingSearchView extends ViewPart {
 
 			TreeItem item = new TreeItem(searchResultsTree, SWT.NONE);
 
-			String content = xml + " " + webResult.getContent();
+			String content = xml + " " + webResult.getSummary();
 
 			item.setText(xml);
 			item.setData(webResult.getUrl());

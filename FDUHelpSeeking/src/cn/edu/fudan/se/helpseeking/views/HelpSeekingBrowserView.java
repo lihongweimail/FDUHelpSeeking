@@ -417,10 +417,15 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			urlTreeItemofItemtitle.setData(urr);
 			urlTreeItemofItemtitle.setText(list.get(i).getUrl().trim());
 			
-//			TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
-//			urlTreeItemofItemsummary.setData(urr);
-//			urlTreeItemofItemsummary.setText(sendoutURLlist[i].getItem(2).getText());
-//			
+			
+		
+			
+			TreeItem urlTreeItemofItemsummary =new TreeItem(urlTreeItem, SWT.NONE);
+			urlTreeItemofItemsummary.setData(urr);
+			urlTreeItemofItemsummary.setText(list.get(i).getSummary().trim());
+			urlTreeItemofItemsummary.setForeground(Display.getDefault()
+					.getSystemColor(SWT.COLOR_BLACK));
+			
 			urlTreeItem.setExpanded(true);
 		}
 	}

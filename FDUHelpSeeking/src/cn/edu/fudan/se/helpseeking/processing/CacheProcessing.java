@@ -1427,8 +1427,18 @@ public class CacheProcessing extends Thread {
 					if (keywordsvalidate.contains("Lorg.")) {
 						keywordsvalidate=keywordsvalidate.replace("org.", "");
 					}
-			
-										
+					if (keywordsvalidate.contains("Lutil.")) {
+						keywordsvalidate=keywordsvalidate.replace("util.", "");
+					}
+					if (keywordsvalidate.contains("Lio.")) {
+						keywordsvalidate=keywordsvalidate.replace("io.", "");
+					}
+					if (keywordsvalidate.contains("Llang.")) {
+						keywordsvalidate=keywordsvalidate.replace("lang.", "");
+					}
+					if (keywordsvalidate.contains("Ljavax.")) {
+						keywordsvalidate=keywordsvalidate.replace("javax.", "");
+					}
 					kw.setKeywordName(keywordsvalidate.trim());
 				
 				keyWordsforQuery.add(kw);
