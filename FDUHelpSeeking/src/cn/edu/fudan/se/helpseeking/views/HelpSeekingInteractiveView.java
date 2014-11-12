@@ -1300,7 +1300,7 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 				        	for (int i = SearchList.size()-1; i >=0; i--) {
 								SearchList.remove(i);
 							}
-				        	txtSearch.setText("");
+				        	
 							
 				        	
 				    		genTopicTree();
