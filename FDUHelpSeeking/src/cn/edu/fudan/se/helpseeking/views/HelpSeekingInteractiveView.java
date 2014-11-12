@@ -1538,7 +1538,8 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 
 			
 			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
-			String labels = noDupkeyworksforquery.get(i).getKeywordName();
+			String labels = CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
+					//noDupkeyworksforquery.get(i).getKeywordName();
 			// labels=CommUtil.getTokensfromCodeStr(labels,true);
 			
 			
@@ -1550,7 +1551,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ noDupkeyworksforquery.get(i).getScore() + " ,type: \"leaf\"},";
+					+ Math.log(noDupkeyworksforquery.get(i).getScore()) + " ,type: \"leaf\"},";
 			searchwords = searchwords + " "
 					+ CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
 			System.out.println("candidate keyword No." + i + " : "

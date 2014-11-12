@@ -771,7 +771,7 @@ public enum QueryLevel {
 		public final static int api_hasCompileError=2;
 		public final static int api_causeException=3;
 		
-		public final static double gama=3.0;  //新算法权重值
+		public final static double gama=2.0;  //新算法权重值
 		
 		public static  int CLAWMODE = 1;  //爬取网页的技术  1：使用线程池  2：使用GBK编码获取网页，非线程  3： 雪娇提供的stringbean方案
 	
