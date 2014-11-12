@@ -17,52 +17,54 @@ public class Stu {
         this.age = age;  
     }  
     public static String genShortName(String labels) {
-    	if (labels.contains(".")) {
-    		int index=labels.indexOf(".");
-    		int lastindex=labels.lastIndexOf(".");
-    		int indexbrack=labels.length();
+    	
+  
+    		int index;
+    		int lastindex;
+    		int indexbrack;
     		
-    		if (index<lastindex)
-    		{
+    		    		
+		if (labels.contains("(")) {
 
-    		
-    		if (labels.contains("(")) {
-    			indexbrack=labels.indexOf("(");
+			if (labels.contains(".")) {
+				index = labels.indexOf(".");
+				lastindex = labels.lastIndexOf(".");
 
-    						
-    			if (indexbrack>lastindex) {
-    				String templeftString=labels.substring(0,indexbrack);
-    				String[] cmlist=templeftString.split("[.]");
-    				int size=cmlist.length;
-    				String classMethodname=cmlist[size-2]+"."+cmlist[size-1];
-    				
-    				String otherpart=labels.substring(indexbrack);
-    				
-    				labels=classMethodname+otherpart; 
-    				
-    			  }else {
-    				  String templeftString=labels.substring(0,indexbrack);
-      				String[] cmlist=templeftString.split("[.]");
-      				int size=cmlist.length;
-      				String classMethodname=cmlist[size-2]+"."+cmlist[size-1];
-      				
-      				String otherpart=labels.substring(indexbrack);
-      				
-      				otherpart=genShortName(otherpart);
-      				labels=classMethodname+otherpart; 
+				indexbrack = labels.indexOf("(");
+
+				if (indexbrack > lastindex) {
+					String templeftString = labels.substring(0, indexbrack);
+					String[] cmlist = templeftString.split("[.]");
+					int size = cmlist.length;
+					String classMethodname = cmlist[size - 2] + "."
+							+ cmlist[size - 1];
+
+					String otherpart = labels.substring(indexbrack);
+					    
+					if (otherpart.contains(",")) {
+						
+					
+					       String[] otherpartlist=otherpart.split("[,]");
+					       for (int i = 0; i < otherpartlist.length; i++) {
+							otherpartlist[i]=genShortName(otherpartlist[i]);
+						}
+					       
+					
+					}    
+
+					labels = classMethodname + otherpart;
+
+				} else {
+					
+					
+					
 				}
-    			
-    					
-    		   }
-    		else
-    			{
-    				
-    			   
-    			   
-    			}
-    		
-    		}
-    	}
+
+			}
+
+		} else {
+
+		}
    
     return labels;
     
@@ -70,15 +72,15 @@ public class Stu {
 
     public static void main(String[] args) {
     	
-    	String tempstr="java.io.string;java.lang.String.replace(CharSequence.target, CharSequence.replacement);";
+    	String tempstr="java.io.string;java.lang.String.replace(CharSequence.target(I,wo), CharSequence.replacement());";
     	//io.java.iostream
     	//java.util.Calendar.setTimeInMillis(long millis)
 //java.lang.String.replace(CharSequence target, CharSequence replacement)
     	//
     	
-    	//getSimpleWords(tempstr);
+    	getSimpleWords(tempstr);
 		
-    System.out.println(genShortName(tempstr));
+   // System.out.println(genShortName(tempstr));
     	
 //    	Calendar c = Calendar.getInstance();
 //    	  c.setTimeInMillis(new Date().getTime());
@@ -116,7 +118,11 @@ public class Stu {
 			String firstPart=tempstr.substring(0, firstpartlastIndex);
 			System.out.println("firstpart: "+firstPart);
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
+			
 			String name=namePart.get(namePart.size()-1);
+			if (namePart.size()>1) {
+				name=namePart.get(namePart.size()-2)+"."+namePart.get(namePart.size()-1);
+			}
 			
 			int lastpartIndex=tempstr.lastIndexOf(')');
 			String secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
@@ -161,7 +167,7 @@ public class Stu {
 				
 			}
 		
-        System.out.println("last formal: result" + resultstr);
+        System.out.println("last formal: result : " + resultstr);
         return resultstr;
 	}
     

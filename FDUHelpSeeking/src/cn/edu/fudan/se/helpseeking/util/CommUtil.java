@@ -182,6 +182,74 @@ public class CommUtil {
         return resultstr;
 	}
 
+	public static String getNewSimpleWords(String tempstr) {
+		String resultstr="";
+		tempstr=tempstr.replace(';', ' ');
+    	if (tempstr.contains("(")) {
+						
+			int firstpartlastIndex=tempstr.indexOf('(');
+			String firstPart=tempstr.substring(0, firstpartlastIndex);
+			System.out.println("firstpart: "+firstPart);
+			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
+			
+			String name=namePart.get(namePart.size()-1);
+			if (namePart.size()>1) {
+				name=namePart.get(namePart.size()-2)+"."+namePart.get(namePart.size()-1);
+			}
+			
+			int lastpartIndex;
+			String secondPart;
+			if (tempstr.contains(")")) {
+				lastpartIndex=tempstr.lastIndexOf(')');
+				secondPart=tempstr.substring(firstpartlastIndex+1,lastpartIndex);
+			}else
+				secondPart=tempstr.substring(firstpartlastIndex+1);
+			
+			System.out.println("secondpart: "+ secondPart);
+			List<String> secondkeywordparts=new ArrayList<String>();
+			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
+			
+			String parameterList="";
+			
+			for (int i = 0; i < secondkeywordparts.size(); i++) {
+				if (secondkeywordparts.get(i).trim().contains(" ")) {
+					List<String> para=new ArrayList<String>();
+					para=CommUtil.stringToList(secondkeywordparts.get(i), "[ ]");
+					
+					if (parameterList.equals("")) {
+						parameterList=para.get(0);
+					}else
+					{parameterList=parameterList+" , "+para.get(0);}
+					
+				}
+				else
+				{
+				List<String> para=new ArrayList<String>();
+				para=CommUtil.stringToList(secondkeywordparts.get(i), "[.]");
+
+				if (parameterList.equals("")) {
+					parameterList=para.get(para.size()-1);
+				}else
+				{parameterList=parameterList+" , "+para.get(para.size()-1);}
+				}
+			}
+			
+			resultstr=name +"("+parameterList+")";
+ 
+			}
+			else 
+			{
+				List<String> packageClassName=new ArrayList<String>();
+				packageClassName=CommUtil.stringToList(tempstr, "[.]");
+					resultstr=packageClassName.get(packageClassName.size()-1);
+				
+				
+			}
+		
+        System.out.println("last formal: result : " + resultstr);
+        return resultstr;
+	}
+    
 	private static int minLength = 2;
 
 	public static List<String> removeDuplicateWithOrder(List<String> list) {
@@ -237,7 +305,7 @@ public class CommUtil {
 		Iterator<String> it = list.iterator();
 		while (it.hasNext()) {
 			String a = it.next();
-			if (listTemp.contains(a)||a==null) {
+			if (listTemp.contains(a)||a==null || a.trim().equals("")) {
 				it.remove();
 			} else {
 				listTemp.add(a);
@@ -785,69 +853,64 @@ public class CommUtil {
 
 		List<KeyWord> last = lastKeyWords;
 		List<KeyWord> now = keyWordsforQuery;
-
-		//按照keyword排序
-		// score降序排序keyword
-					Collections.sort(last,
-							new Comparator<KeyWord>() {
-								public int compare(KeyWord arg0, KeyWord arg1) {
-									if (arg1.getScore() - arg0.getScore() < 0)
-										return -1;
-									else if (arg1.getScore() - arg0.getScore() > 0) {
-										return 1;
-									} else
-										return 0;
-
-								}
-							});
-				
-					// score降序排序keyword
-					Collections.sort(now,
-							new Comparator<KeyWord>() {
-								public int compare(KeyWord arg0, KeyWord arg1) {
-									if (arg1.getScore() - arg0.getScore() < 0)
-										return -1;
-									else if (arg1.getScore() - arg0.getScore() > 0) {
-										return 1;
-									} else
-										return 0;
-
-								}
-							});		
-		double countDifferentWords=0.0;
+//
+//		//按照keyword排序
+//		// score降序排序keyword
+//					Collections.sort(last,
+//							new Comparator<KeyWord>() {
+//								public int compare(KeyWord arg0, KeyWord arg1) {
+//									if (arg1.getScore() - arg0.getScore() < 0)
+//										return -1;
+//									else if (arg1.getScore() - arg0.getScore() > 0) {
+//										return 1;
+//									} else
+//										return 0;
+//
+//								}
+//							});
+//				
+//					// score降序排序keyword
+//					Collections.sort(now,
+//							new Comparator<KeyWord>() {
+//								public int compare(KeyWord arg0, KeyWord arg1) {
+//									if (arg1.getScore() - arg0.getScore() < 0)
+//										return -1;
+//									else if (arg1.getScore() - arg0.getScore() > 0) {
+//										return 1;
+//									} else
+//										return 0;
+//
+//								}
+//							});		
+		int countDifferentWords=0;
 		int countdifferentpostion=0;
 		
 
-		for (int i = 0; i < last.size(); i++) {
+		for (int i = 0; i < now.size(); i++) {
 			
-			boolean test=true;
-			for (int j = 0; j < now.size(); j++) {
-				if (last.get(i).getKeywordName().equals(now.get(j).getKeywordName())) {
-					test=false;
+			boolean test=false;
+			for (int j = 0; j < last.size(); j++) {
+				
+				if (now.get(i).getKeywordName().equals(last.get(j).getKeywordName())) {
+					test=true;
+					if (now.get(i).getScore()!=last.get(j).getScore()) {
+						countdifferentpostion=countdifferentpostion+1;
+					}
+					
+					break;
 				}
 			}
-			if (test) {
+			
+			if (!test) {
 				countDifferentWords=countDifferentWords+1;
 			}
 			
-			if (i<now.size()) {
 				
-				if (last.get(i).getKeywordName().equals(now.get(i).getKeywordName())) {
-					if (last.get(i).getScore()!=now.get(i).getScore()) {
-						countdifferentpostion=countdifferentpostion+1;
-
-					}
-			}
-				
-				
-			}
-			
-			
 		}
 		
 		
 		
-		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords)/last.size()));
+		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords*1.0)/last.size()));
 		System.out.println("different position: "+ countdifferentpostion);
 		
 		if (countdifferentpostion>=Basic.DifferentPostion) {
@@ -855,7 +918,7 @@ public class CommUtil {
 		}
 			
 		
-			if (((countDifferentWords)/last.size())>=ratio) {
+			if (((countDifferentWords*1.0)/last.size())>=ratio) {
 				result = true;
 	      }
 			

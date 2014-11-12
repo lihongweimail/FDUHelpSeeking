@@ -1418,7 +1418,14 @@ public class CacheProcessing extends Thread {
 //				keywordsvalidate=CommUtil.removeDuplicateWordsWithBlankSplit(CommUtil.stringToList(keywordsvalidate,splitchar));
 			
 				if (!keywordsvalidate.trim().equals("")) {
-					
+					if (keywordsvalidate.contains(";")) {
+						keywordsvalidate=keywordsvalidate.replaceAll("[;]", " ");
+					}
+					if (keywordsvalidate.contains("Ljava.")) {
+						keywordsvalidate=keywordsvalidate.replace("java.", "");
+					}
+			
+										
 					kw.setKeywordName(keywordsvalidate.trim());
 				
 				keyWordsforQuery.add(kw);

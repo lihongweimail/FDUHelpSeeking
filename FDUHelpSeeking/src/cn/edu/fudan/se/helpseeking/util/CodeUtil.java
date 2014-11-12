@@ -77,7 +77,7 @@ public class CodeUtil {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				
+
 				
 				methodname = ((IMethod) element).getDeclaringType().getPackageFragment()
 						.getElementName() + (((IMethod) element).getDeclaringType().getPackageFragment()
@@ -89,7 +89,7 @@ public class CodeUtil {
 				String currentName=((IMethod) element).getElementName();
 				
 				for (int i = 0; i < overrideMethodFinds.size(); i++) {
-					if (currentName.toLowerCase().contains(overrideMethodFinds.get(i).getMethodName().toLowerCase())) {
+					if (overrideMethodFinds.get(i).getMethodName().toLowerCase().contains(currentName.toLowerCase())) {
 						overrideName=overrideMethodFinds.get(i).getOverrideType()+"."+overrideMethodFinds.get(i).getOverrideName();
 						break;
 					}

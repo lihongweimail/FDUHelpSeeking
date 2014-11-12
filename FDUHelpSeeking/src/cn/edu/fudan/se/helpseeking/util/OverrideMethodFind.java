@@ -3,6 +3,8 @@ package cn.edu.fudan.se.helpseeking.util;
 import java.lang.reflect.Modifier;
 import java.util.List;
 
+import liuyang.nlp.lda.main.LdaGibbsSampling.parameters;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaProject;
@@ -18,6 +20,7 @@ import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.NodeFinder;
 import org.eclipse.jdt.core.dom.TypeDeclaration;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import cn.edu.fudan.se.helpseeking.bean.OverrideMethods;
 
@@ -173,7 +176,7 @@ public class OverrideMethodFind {
 	     IMethodBinding[] methodBinds = typeBind.getDeclaredMethods();
 	     for(IMethodBinding methodBind : methodBinds) {
 	          /* check if method binding is for synchronized method */
-	         //everyone can check:   if(Modifier.isSynchronized(methodBind.getModifiers()))
+	          //if(Modifier.isSynchronized(methodBind.getModifiers()))
 	               /* search of similar method signature of super-class hierarchy */
 	               findOverrideInHierarchy(methodBind, typeBind,overrideMethodFinds);
 	     }		
@@ -192,47 +195,26 @@ public class OverrideMethodFind {
 	     else
 	     {  //qianmian 
        	  OverrideMethods oms=new OverrideMethods();
-  	     
-    	     //overridenMethodBind.getKey() :  Lorg/eclipse/ui/part/EditorPart;.doSave(Lorg/eclipse/core/runtime/IProgressMonitor;)V
-    	          String className=overridenMethodBind.getKey().substring(0,(overridenMethodBind.getKey()).indexOf(";"));
-    	                 if (className.contains("/")) {
-    	                	 className=className.substring(className.lastIndexOf("/")+1);
-    					}
-    	                 String methodName=overridenMethodBind.getName();
-    	                 
-    	                 
-    	          String methodNamestr=overridenMethodBind.getKey().substring((overridenMethodBind.getKey()).lastIndexOf(".")+1);
-    	                 methodNamestr=methodNamestr.substring(0, methodNamestr.length()-1);
-    	                 
-    	         
-    	        		  	          
-    	          String currentMethodName=methodName+"(";
-    	                 
-    	          List<String> methodnamelist=CommUtil.arrayToList(methodNamestr.split("[;]"));
-    	          for (int i = 0; i < methodnamelist.size(); i++) {
-    	        	  String str=methodnamelist.get(i);
-    	        	  if (str.contains("/")) {
-    	        		  str=str.substring(str.lastIndexOf("/")+1);
-    	        		  methodnamelist.set(i, str);
-    				}
-    	        	  
-    				
-    			}
-    	          
-    	          
-    	          for (int i = 0; i < methodnamelist.size(); i++) {
-    	        	  currentMethodName=currentMethodName+methodnamelist.get(i);
-    			}
-    	          
-    	          
-    	          
+       	 String methodDeclaration = overridenMethodBind.toString();
+       	 String classname=overridenMethodBind.getDeclaringClass().getName();
+       	 String methodParameter=methodDeclaration.substring(methodDeclaration.indexOf("("));
+       	 if (methodParameter.contains(" throws ")) {
+       		 if (methodParameter.contains(")")) {
+       			methodParameter=methodParameter.substring(0,methodDeclaration.indexOf(")"))	;
+			}
+			
+		}
+       	String methodName=overridenMethodBind.getName();
+     	          
     	         oms.setMethodName(methodName);
-    	         oms.setOverrideName(currentMethodName);
-    	         oms.setOverrideType(className);
+    	         oms.setOverrideName(methodName+methodParameter);
+    	         oms.setOverrideType(classname);
     	         overrideMethodFinds.add(oms);
 	     
 	    	 System.out.println(methodBind.getKey() + " Overrides " + overridenMethodBind.getKey());
 	     
+	    	 System.out.println("methodname:"+methodName+"\n overridename: "+oms.getOverrideName());
+             System.out.println("classname: "+oms.getOverrideType());
 	     }
 	 
 	     /* search in super interfaces also */
@@ -243,48 +225,26 @@ public class OverrideMethodFind {
 	          else
 	          {
 	        	  
-	        	  OverrideMethods oms=new OverrideMethods();
-	       	     
-	     	     //overridenMethodBind.getKey() :  Lorg/eclipse/ui/part/EditorPart;.doSave(Lorg/eclipse/core/runtime/IProgressMonitor;)V
-	     	          String className=overridenMethodBind.getKey().substring(0,(overridenMethodBind.getKey()).indexOf(";"));
-	     	                 if (className.contains("/")) {
-	     	                	 className=className.substring(className.lastIndexOf("/")+1);
-	     					}
-	     	                 String methodName=overridenMethodBind.getName();
-	     	                 
-	     	                 
-	     	          String methodNamestr=overridenMethodBind.getKey().substring((overridenMethodBind.getKey()).lastIndexOf(".")+1);
-	     	                 methodNamestr=methodNamestr.substring(0, methodNamestr.length()-1);
-	     	                 
-	     	         
-	     	        		  	          
-	     	          String currentMethodName=methodName+"(";
-	     	                 
-	     	          List<String> methodnamelist=CommUtil.arrayToList(methodNamestr.split("[;]"));
-	     	          for (int i = 0; i < methodnamelist.size(); i++) {
-	     	        	  String str=methodnamelist.get(i);
-	     	        	  if (str.contains("/")) {
-	     	        		  str=str.substring(str.lastIndexOf("/")+1);
-	     	        		  methodnamelist.set(i, str);
-	     				}
-	     	        	  
-	     				
-	     			}
-	     	          
-	     	          
-	     	          for (int i = 0; i < methodnamelist.size(); i++) {
-	     	        	  currentMethodName=currentMethodName+methodnamelist.get(i);
-	     			}
-	     	          
-	     	          
-	     	          
-	     	         oms.setMethodName(methodName);
-	     	         oms.setOverrideName(currentMethodName);
-	     	         oms.setOverrideType(className);
-	     	         overrideMethodFinds.add(oms);
-	 	    
+	          	  OverrideMethods oms=new OverrideMethods();
+	            	 String methodDeclaration = overridenMethodBind.toString();
+	            	 String classname=overridenMethodBind.getDeclaringClass().getName();
+	            	 String methodParameter=methodDeclaration.substring(methodDeclaration.indexOf("("));
+	            	String methodName=overridenMethodBind.getName();
+	            	if (methodParameter.contains(" throws ")) {
+	              		 if (methodParameter.contains(")")) {
+	              			methodParameter=methodParameter.substring(0,methodDeclaration.indexOf(")"))	;
+	       			}
+	       			
+	       		}
+	          	          
+	         	         oms.setMethodName(methodName);
+	         	         oms.setOverrideName(methodName+methodParameter);
+	         	         oms.setOverrideType(classname);
+	         	         overrideMethodFinds.add(oms);
+
 	               System.out.println(methodBind.getKey() + " Overrides " + overridenMethodBind.getKey());
-	     
+	                System.out.println("methodname:"+methodName+"\n overridename: "+oms.getOverrideName());
+	                System.out.println("classname: "+oms.getOverrideType());
 	          }
 	          
 	     } 

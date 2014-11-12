@@ -1454,7 +1454,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		
 		
 		
-		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
+		for (int i =currentSearchKeyWords201411.size()-1;i>=0; i--) {
 			currentSearchKeyWords201411.remove(i);
 		}
 		
@@ -1484,41 +1484,42 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		}
 				
 		
-		//去除重复词
-		List<KeyWord> noDupkeyworksforquery=new ArrayList<KeyWord>();
+		//去除重复词  不必重复
+//		List<KeyWord> noDupkeyworksforquery=new ArrayList<KeyWord>();
+//		
+//		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
+//			
+//			boolean samekeyworks=false;
+//			int nodupkeyworksqueryindex=0;
+//			for (int j = 0; j < noDupkeyworksforquery.size(); j++) {
+//				if (currentSearchKeyWords201411.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
+//					samekeyworks=true;
+//					nodupkeyworksqueryindex=j;
+//					break;
+//				}
+//				
+//			}
+//			
+//			if (samekeyworks) {
+//				double score1=noDupkeyworksforquery.get(nodupkeyworksqueryindex).getScore();
+//				double score2=currentSearchKeyWords201411.get(i).getScore();
+//				noDupkeyworksforquery.get(nodupkeyworksqueryindex).setScore(score1+score2);
+//			}else 
+//			{
+//				noDupkeyworksforquery.add(currentSearchKeyWords201411.get(i));
+//			}
+//			
+//			
+//		}
 		
-		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
-			
-			boolean samekeyworks=false;
-			int nodupkeyworksqueryindex=0;
-			for (int j = 0; j < noDupkeyworksforquery.size(); j++) {
-				if (currentSearchKeyWords201411.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
-					samekeyworks=true;
-					nodupkeyworksqueryindex=j;
-					break;
-				}
-				
-			}
-			
-			if (samekeyworks) {
-				double score1=noDupkeyworksforquery.get(nodupkeyworksqueryindex).getScore();
-				double score2=currentSearchKeyWords201411.get(i).getScore();
-				noDupkeyworksforquery.get(nodupkeyworksqueryindex).setScore(score1+score2);
-			}else 
-			{
-				noDupkeyworksforquery.add(currentSearchKeyWords201411.get(i));
-			}
-			
-			
-		}
 		
-		currentSearchKeyWords201411=noDupkeyworksforquery;
+		//List<KeyWord> noDupkeyworksforquery=currentSearchKeyWords201411;
 		
 		
 		//记录数据准备存盘到数据库
 		NewQueryRec nqr=new NewQueryRec();
 		nqr.setIds(queryRecsfordatabase.size());
-		nqr.setFoamtreeWords(noDupkeyworksforquery);
+		nqr.setFoamtreeWords(currentSearchKeyWords201411);
 		nqr.setSnapshotWords(snapShotAllKeyWords);
 		//??nqr.setQuerywords(querywords);
 		//??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
@@ -1534,15 +1535,15 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		String searchwords = "";
 		// String currentWord="";
 		String labelWeight = "";
-		for (int i = 0; i < noDupkeyworksforquery.size(); i++) {
+		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
 
 			
 			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
 			
 			String labels ="";
 			
-			labels=noDupkeyworksforquery.get(i).getKeywordName();
-			labels=genShortName(labels);
+			labels=currentSearchKeyWords201411.get(i).getKeywordName();
+			labels=CommUtil.getNewSimpleWords(labels);
 			
 			
 			if (labels.contains(".")) {
@@ -1567,12 +1568,12 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ Math.log(noDupkeyworksforquery.get(i).getScore()) + " ,type: \"leaf\"},";
+					+ Math.log(currentSearchKeyWords201411.get(i).getScore()) + " ,type: \"leaf\"},";
 			
 			searchwords = searchwords + " "
-					+ noDupkeyworksforquery.get(i).getKeywordName();
+					+ currentSearchKeyWords201411.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
-					+ noDupkeyworksforquery.get(i).getKeywordName());
+					+ currentSearchKeyWords201411.get(i).getKeywordName());
 
 		}
 
@@ -1605,42 +1606,6 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 
 	}
 
-public String genShortName(String labels) {
-	if (labels.contains(".")) {
-		int index=labels.indexOf(".");
-		int lastindex=labels.lastIndexOf(".");
-		int indexbrack=labels.length();
-		
-		if (index<lastindex)
-		{
-
-		
-		if (labels.contains("(")) {
-			indexbrack=labels.indexOf("(");
-
-						
-			if (indexbrack>lastindex) {
-				String templeftString=labels.substring(0,lastindex-1);
-				String methodn=labels.substring(lastindex+1,indexbrack-1);
-				int lastx=templeftString.indexOf(".");
-				String classn=templeftString.substring(lastx);
-				
-			  }
-			
-					
-		   }
-		else
-			{
-				
-			   
-			   
-			}
-		
-		}
-	}
-	
-	return labels;
-}
 
 	@Override
 	public void setFocus() {

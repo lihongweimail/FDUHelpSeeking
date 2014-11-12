@@ -1300,12 +1300,14 @@ public class Cache {
 		if (result.charAt(0) == 'T' && result.charAt(result.length() - 1) == ';') {
 			result = result.substring(1, result.length() - 1);
 		}
-
+		if (result.charAt(0) == 'I' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
 		if (result.charAt(0) == 'Q' && result.charAt(result.length() - 1) == ';') {
 			result = result.substring(1, result.length() - 1);
 		}
 
-		if (result.charAt(0) == 'T' && result.charAt(result.length() - 1) == ';') {
+		if (result.charAt(0) == 'E' && result.charAt(result.length() - 1) == ';') {
 			result = result.substring(1, result.length() - 1);
 		}
 		if (result.trim().charAt(0) == 'Z' && result.charAt(result.length() - 1) == ';') {
