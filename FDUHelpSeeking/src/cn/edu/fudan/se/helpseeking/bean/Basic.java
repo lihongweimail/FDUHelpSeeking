@@ -748,8 +748,8 @@ public enum QueryLevel {
 	public static int SELECTTOPICWORDNUMBER=1; //从topic中选择前三个词作为topic的标题名字
 	public static boolean isProcessingQuilifedName=false; 	//???? LDA前 选择是否开启 处理 包和类 方法 签名串  
 	
-	public static  double  RATIOOFNEWSEARCHSTRING=0.36;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词  这个比例要按照系统已有的词的数量来动态调整，如果系统候选词多可以放大，如果系统词少例如就10个词的情况，就小一点
-	public  static int DifferentPostion = 2;//相同词按分值排序后位置不同
+	public static  double  RATIOOFNEWSEARCHSTRING=0.24;  //给定一个值，两个串中的不相同的词大于这个值，则容许刷新新的一组关键词  这个比例要按照系统已有的词的数量来动态调整，如果系统候选词多可以放大，如果系统词少例如就10个词的情况，就小一点
+	public  static int DifferentPostion = 4;//相同词按分值排序后位置不同
 
 	
 	public static final long CLAWLIMITEDTIME = 5000;//爬取网络页面时，等待的时间 毫秒，超时后，就放弃，以改善交互

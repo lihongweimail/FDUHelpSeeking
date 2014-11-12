@@ -99,7 +99,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	// private static Tree urlTree;
 	// 2014.10 end.
 
-	private Text txtSearch;
+	private static Text txtSearch;
 	// private static IViewPart tagcloudpart;
 	private static IViewPart browserpart;
 
@@ -1297,6 +1297,12 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 				        	// 2014.10.15
 				    		// 调用topic API 生成topictree
 
+				        	for (int i = SearchList.size()-1; i >=0; i--) {
+								SearchList.remove(i);
+							}
+				        	txtSearch.setText("");
+							
+				        	
 				    		genTopicTree();
 
 				    		// end of 2014.10.15

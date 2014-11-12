@@ -239,7 +239,7 @@ public class SelectionListener extends AbstractUserActivityMonitor implements
 
 					action.setTime(new Timestamp(System.currentTimeMillis()));
 					action.setActionKind(event.getKind());
-					action.setActionName(event.getActionName());
+					action.setActionName(event.getActionName()+" "+info.getEditCode().getClassModel().getQualifiedName());
 					action.setDescription(event.getOriginId());
 					action.setByuser(true);
 					info.setAction(action);

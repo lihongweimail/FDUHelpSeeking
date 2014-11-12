@@ -483,6 +483,7 @@ public class Cache {
 
 	public void addInformationToCache(Information information, int actionID) {
 
+		
 		if (checkInformation(information)) {
 			System.out.println("refuse one more time dupplicate action");
 			return;
@@ -510,13 +511,6 @@ public class Cache {
 		Action newEnterAction = information.getAction();
 		Action lastCacheAction = null;
 		List<ActionCache> acs = actions.getActionList();
-		
-
-		if (newEnterAction.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-			return false;
-		}
-		
-
 		for (int i = acs.size() - 1; i >= 0; i--) {
 			if (acs.get(i).getActionID() == currentID) {
 				lastCacheAction = acs.get(i).getAction();
@@ -524,6 +518,17 @@ public class Cache {
 
 			}
 		}
+		
+
+		if (newEnterAction.getActionKind().equals(Kind.SELECTIONFOCUS)) {
+			if (newEnterAction.getActionName().toLowerCase().trim().equals(lastCacheAction.getActionName().toLowerCase().trim())) {
+				return true;
+			}
+			return false;
+		}
+		
+
+	
 
 
 

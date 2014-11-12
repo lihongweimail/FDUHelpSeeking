@@ -897,7 +897,7 @@ public class CommUtil {
 						countdifferentpostion=countdifferentpostion+1;
 					}
 					
-					break;
+					
 				}
 			}
 			
