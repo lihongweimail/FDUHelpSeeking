@@ -237,7 +237,7 @@ public class CommUtil {
 		Iterator<String> it = list.iterator();
 		while (it.hasNext()) {
 			String a = it.next();
-			if (listTemp.contains(a)) {
+			if (listTemp.contains(a)||a==null) {
 				it.remove();
 			} else {
 				listTemp.add(a);
@@ -249,6 +249,9 @@ public class CommUtil {
 			
 			for (int j = 0; j < listTemp.size();  j++) {
 				if (list.get(i).toLowerCase().trim().equals(listTemp.get(j).toLowerCase().trim())) {
+					if (result.equals("")) {
+						result=list.get(i).trim();
+					}else
 					result = result+";" + list.get(i).trim();
 				}
 			}
@@ -422,7 +425,9 @@ public class CommUtil {
 		//split : "[&#$_.@|{}!*%+-= \\:;,?/\"\'\t\b\r\n\0 ]";  除了 ( ) < > []
 		for (String token : tokens.split(split)) {
 
-			if (token.length() >= minLength && (int) token.charAt(0) < 255) {
+			if (!token.trim().equals("")) {
+				if ( (int) token.charAt(0) < 255) {
+			
 				String lowercasetoken;
 				lowercasetoken = token.toLowerCase();
 				boolean flage = false;
@@ -444,6 +449,9 @@ public class CommUtil {
 
 			}
 		}
+	
+		}
+
 
 		return result.trim();
 
@@ -779,24 +787,33 @@ public class CommUtil {
 		List<KeyWord> now = keyWordsforQuery;
 
 		//按照keyword排序
-				Collections.sort(last, new Comparator<KeyWord>() {
+		// score降序排序keyword
+					Collections.sort(last,
+							new Comparator<KeyWord>() {
+								public int compare(KeyWord arg0, KeyWord arg1) {
+									if (arg1.getScore() - arg0.getScore() < 0)
+										return -1;
+									else if (arg1.getScore() - arg0.getScore() > 0) {
+										return 1;
+									} else
+										return 0;
 
-					@Override
-					public int compare(KeyWord o1, KeyWord o2) {
-						// TODO Auto-generated method stub
-						return o2.getKeywordName().compareTo(o1.getKeywordName());
-					}
-				});
+								}
+							});
 				
-				Collections.sort(now, new Comparator<KeyWord>() {
+					// score降序排序keyword
+					Collections.sort(now,
+							new Comparator<KeyWord>() {
+								public int compare(KeyWord arg0, KeyWord arg1) {
+									if (arg1.getScore() - arg0.getScore() < 0)
+										return -1;
+									else if (arg1.getScore() - arg0.getScore() > 0) {
+										return 1;
+									} else
+										return 0;
 
-					@Override
-					public int compare(KeyWord o1, KeyWord o2) {
-						// TODO Auto-generated method stub
-						return o2.getKeywordName().compareTo(o1.getKeywordName());
-					}
-				});
-		
+								}
+							});		
 		double countDifferentWords=0.0;
 		int countdifferentpostion=0;
 		
@@ -833,7 +850,7 @@ public class CommUtil {
 		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords)/last.size()));
 		System.out.println("different position: "+ countdifferentpostion);
 		
-		if (countdifferentpostion>Basic.DifferentPostion) {
+		if (countdifferentpostion>=Basic.DifferentPostion) {
 			result=true;
 		}
 			

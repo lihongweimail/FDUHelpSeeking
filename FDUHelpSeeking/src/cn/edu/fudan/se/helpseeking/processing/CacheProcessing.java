@@ -1407,15 +1407,15 @@ public class CacheProcessing extends Thread {
 
 					//去除停用词 减少无需要得词汇
 
-				
-				String splitchar="[&#$_.@|{}!*%+-=\\:;,?/\"\'\t\b\r\n\0 ]";
-				if (!keywordsvalidate.trim().equals(""))
-				 keywordsvalidate=CommUtil.removeStopWordsAsStringwithSplitBlank(keywordsvalidate,splitchar);
+				//有问题： 先停用：
+//				String splitchar="[&#$_.@|{}!*%+-=\\:;,?/\"\'\t\b\r\n\0 ]";
+//				if (!keywordsvalidate.trim().equals(""))
+//				 keywordsvalidate=CommUtil.removeStopWordsAsStringwithSplitBlank(keywordsvalidate,splitchar);
 				
 			
 				//去除停用词后， 包名 和 方法签名中的异常信息 重复等情况
-				 if (!keywordsvalidate.trim().equals(""))
-				keywordsvalidate=CommUtil.removeDuplicateWordsWithBlankSplit(CommUtil.stringToList(keywordsvalidate,splitchar));
+//				 if (!keywordsvalidate.trim().equals(""))
+//				keywordsvalidate=CommUtil.removeDuplicateWordsWithBlankSplit(CommUtil.stringToList(keywordsvalidate,splitchar));
 			
 				if (!keywordsvalidate.trim().equals("")) {
 					

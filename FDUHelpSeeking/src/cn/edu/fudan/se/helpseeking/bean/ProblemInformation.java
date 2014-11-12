@@ -92,7 +92,7 @@ public class ProblemInformation {
 		this.source = source;
 	}
 
-	@Override
+	@Override 
 	public boolean equals(Object obj) {
 		if(obj instanceof ProblemInformation){
 			ProblemInformation problemInformation = (ProblemInformation)obj;

@@ -39,6 +39,7 @@ import cn.edu.fudan.se.helpseeking.bean.Cursor;
 import cn.edu.fudan.se.helpseeking.bean.DebugCode;
 import cn.edu.fudan.se.helpseeking.bean.EditCode;
 import cn.edu.fudan.se.helpseeking.bean.MethodInfo;
+import cn.edu.fudan.se.helpseeking.bean.OverrideMethods;
 import cn.edu.fudan.se.helpseeking.bean.SyntacticBlock;
 
 @SuppressWarnings("restriction")
@@ -56,6 +57,10 @@ public class CodeUtil {
 
 		// TODO exception name
 		String methodname = "";
+		String overrideName="";
+		List<OverrideMethods> overrideMethodFinds=new ArrayList<OverrideMethods>();
+		
+		
 		SyntacticBlock sblock = new SyntacticBlock();
 		try {
 			IJavaElement element = unit.getElementAt(s.getOffset());
@@ -65,12 +70,33 @@ public class CodeUtil {
 			} else if (element instanceof IMethod) {
 				sblock.setType("Method");
 				sblock.setCode(((IMethod) element).getSource());
-				//?????? 识别和获得 override 型的方法签名
-				Modifier.toString(((IMethod) element).getElementType());
+				
+				try {
+					OverrideMethodFind.analyse(unit,overrideMethodFinds);
+				} catch (CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
 				
 				methodname = ((IMethod) element).getDeclaringType().getPackageFragment()
-						.getElementName() + "." + ((IMethod) element).getDeclaringType()
-						.getElementName() + "." + ((IMethod) element).getElementName();
+						.getElementName() + (((IMethod) element).getDeclaringType().getPackageFragment()
+						.getElementName().equals("")?"":"." )+ ((IMethod) element).getDeclaringType()
+						.getElementName() + (((IMethod) element).getDeclaringType()
+						.getElementName().equals("")? "": ".")+ ((IMethod) element).getElementName();
+				
+				overrideName=methodname;
+				String currentName=((IMethod) element).getElementName();
+				
+				for (int i = 0; i < overrideMethodFinds.size(); i++) {
+					if (currentName.toLowerCase().contains(overrideMethodFinds.get(i).getMethodName().toLowerCase())) {
+						overrideName=overrideMethodFinds.get(i).getOverrideType()+"."+overrideMethodFinds.get(i).getOverrideName();
+						break;
+					}
+					
+				}
+				
+				
 			}
 		} catch (JavaModelException e) {
 			e.printStackTrace();
@@ -118,11 +144,9 @@ public class CodeUtil {
 		}
 		cmodel.setType(sblock.getType());
 		cmodel.setCode(sblock.getCode());
-//		if ((IMethod) node instanceof MethodDeclaration ) {
-//			cmodel.setQualifiedName(((MethodDeclaration) node).getName().getFullyQualifiedName());
-//		}else {
-			cmodel.setQualifiedName(methodname);
-//		}
+
+	cmodel.setQualifiedName(overrideName);
+
 		
 		ec.setClassModel(cmodel);
 

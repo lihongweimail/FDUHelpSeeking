@@ -1023,6 +1023,12 @@ public class Cache {
 					if ((str == null) || str.equals("") || str.contains(".java")) {
 						break;
 					}
+					
+					if (str.contains("helpseeking")) {
+						System.out.println("here here 5");
+					}
+
+					
 					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
 					
@@ -1087,6 +1093,13 @@ public class Cache {
 					if ((str == null) || str.equals("")  || str.contains(".java")) {
 						break;
 					}
+					
+					if (str.contains("helpseeking")) {
+						System.out.println("here here 4");
+					}
+
+					
+					
 					KeyWord kw = new KeyWord();
 					kw.setKeywordName(str.trim());
 				
@@ -1168,6 +1181,10 @@ public class Cache {
 				
 				if (str.contains(".java") || str.trim().equals("")) {
 					continue;
+				}
+
+				if (str.contains("helpseeking")) {
+					System.out.println("here here 3");
 				}
 
 				
@@ -1291,8 +1308,16 @@ public class Cache {
 		if (result.charAt(0) == 'T' && result.charAt(result.length() - 1) == ';') {
 			result = result.substring(1, result.length() - 1);
 		}
-
-		result.replace(';', ' ');
+		if (result.trim().charAt(0) == 'Z' && result.charAt(result.length() - 1) == ';') {
+			result = result.substring(1, result.length() - 1);
+		}
+		if (result.trim().equals("Z") || result.trim().equals("TE")) {
+			result = "";
+		}
+if (result.contains(";")) {
+	result.replace(';', ' ');
+}
+		
 
 		return result;
 	}
@@ -1498,6 +1523,9 @@ if (paraType.length>0 )
 
 				for (String str : (rString.split("[;]"))) {
 					
+					if (str.contains("helpseeking")) {
+						System.out.println("here here 1");
+					}
 					
 					boolean flag = false;
 					
@@ -1754,6 +1782,10 @@ if (paraType.length>0 )
 							continue;
 						}
 
+						if (str.contains("helpseeking")) {
+							System.out.println("here here 2");
+						}
+
 						
 						
 						KeyWord kw = new KeyWord();
@@ -1862,6 +1894,12 @@ if (paraType.length>0 )
 						if (str.trim().equals("")) {
 							continue;
 						}
+						
+						if (str.contains("helpseeking")) {
+							System.out.println("here here 8");
+						}
+
+						
 						KeyWord kw = new KeyWord();
 						kw.setKeywordName(str.trim());
 
@@ -1916,7 +1954,15 @@ if (paraType.length>0 )
 						if (str.trim().equals("")) {
 							continue;
 						}
+						
+						if (str.contains("helpseeking")) {
+							System.out.println("here here 9");
+						}
+
+						
 						KeyWord kw = new KeyWord();
+												
+						
 						kw.setKeywordName(str.trim());
 						
 					    if (Basic.ALGORITHMSELECTION==1) {
@@ -2045,6 +2091,11 @@ if (paraType.length>0 )
 					continue;
 				}
 
+				if (str.contains("helpseeking")) {
+					System.out.println("here here 6");
+				}
+
+				
 				if (!str.trim().equals("")) {
 					KeyWord kw = new KeyWord();
 					
@@ -2099,6 +2150,12 @@ if (paraType.length>0 )
 					continue;
 				}
 
+				
+				if (filteredterms.contains("helpseeking")) {
+					System.out.println("here here 7");
+				}
+
+				
 				filteredterms = CommUtil.removeDuplicateWords(CommUtil
 						.stringToList(filteredterms));
 

@@ -180,7 +180,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
 
-				System.out.println("select group label is : " + e.title);
+//				System.out.println("select group label is : " + e.title);
 				if (e.title.trim().equals("foamtreetest.html")) {
 					return;
 
@@ -1538,7 +1538,22 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 
 			
 			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
-			String labels = CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
+			
+			String labels ="";
+			
+			labels=noDupkeyworksforquery.get(i).getKeywordName();
+			if (labels.contains(".")) {
+				labels.replaceAll("[.]", " . ");
+			}
+			if (labels.contains("(")) {
+				labels.replaceAll("[(]", " ( ");
+			}
+			if (labels.contains(")")) {
+				labels.replaceAll("[)]", " ) ");
+			}
+			
+			//停用		
+			//CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
 					//noDupkeyworksforquery.get(i).getKeywordName();
 			// labels=CommUtil.getTokensfromCodeStr(labels,true);
 			
@@ -1553,7 +1568,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 					+ labels + "\", weight: "
 					+ Math.log(noDupkeyworksforquery.get(i).getScore()) + " ,type: \"leaf\"},";
 			searchwords = searchwords + " "
-					+ CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
+					+ noDupkeyworksforquery.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
 					+ noDupkeyworksforquery.get(i).getKeywordName());
 
