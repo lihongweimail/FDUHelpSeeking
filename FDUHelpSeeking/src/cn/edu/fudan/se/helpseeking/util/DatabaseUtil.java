@@ -34,6 +34,10 @@ import cn.edu.fudan.se.helpseeking.bean.ExplorerRelated;
 import cn.edu.fudan.se.helpseeking.bean.IDEOutput;
 import cn.edu.fudan.se.helpseeking.bean.Information;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.bean.NewQueryRec;
+import cn.edu.fudan.se.helpseeking.bean.NewTopicInfoRec;
+import cn.edu.fudan.se.helpseeking.bean.NewTopicWebPagesInfo;
+import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
@@ -2091,6 +2095,242 @@ return dbError;
 
 		return ideOutput;
 	}
+	
+	
+
+	public static int addNewTopicInfoRectoDatabase(NewTopicInfoRec ntif) {
+		int result = 0;
+		
+		if (ntif == null) {
+			return -1;
+		}
+	
+		PreparedStatement ps = null;
+		
+		try {
+			String sql = "insert into newtopicinforec(topicId,topicName,searchId,URLcount)  values(?,?,?,?)";
+			
+			ps = con.prepareStatement(sql);
+	
+			//ps.setint(1,null)  for auto increment of id
+			ps.setString(2, ntif.getTopicName());
+			ps.setString(3, ntif.getSearchId());
+			//ps.setTimestamp(4, ntif.getClickTopicTime());
+			ps.setInt(4, ntif.getURLcount());
+	
+			result = ps.executeUpdate();
+
+
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+	
+		return result;
+
+		
+	}
+
+	public static String getNewTopicInfoRecTopicId() {
+		int topicId=-1;
+		topicId=findlastID("select max(topicId) from newtopicinforec ");
+		return String.valueOf(topicId);
+		
+	}
+
+
+	
+public static int addNewTopicWEbPagesInfotoDatabase(
+			List<NewTopicWebPagesInfo> ntwpiList) {
+
+		int result = 0;
+
+		if (ntwpiList == null) {
+			return -1;
+		}
+		
+
+if (ntwpiList.size()>0) {
+	
+
+for (int i = 0; i < ntwpiList.size(); i++) {
+	
+	
+		PreparedStatement ps = null;
+	
+		try {
+			String sql = "insert into newtopicwebpagesinfo(webPagesId,topicId,webTitle,webSummary,webURL)  values(?,?,?,?,?)";
+
+			ps = con.prepareStatement(sql);
+
+			//ps.setint(1,null) for auto increment
+			ps.setInt(2, ntwpiList.get(i).getTopicId().equals("")?-1:Integer.valueOf(ntwpiList.get(i).getTopicId()));
+			ps.setString(3, ntwpiList.get(i).getWebTitle());
+			ps.setString(4, ntwpiList.get(i).getWebSummary());
+			ps.setString(5, ntwpiList.get(i).getWebURL());	
+
+			result = ps.executeUpdate();
+	
+			// }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (rs != null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			if (ps != null)
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		}
+}
+}	
+		
+		return result;
+
+		
+	}
+
+
+
+public static int addNewWebUseInfo(NewWebUseInfo nwuiInfo) {
+
+	int result = 0;
+	
+	if (nwuiInfo == null) {
+		return -1;
+	}
+
+	PreparedStatement ps = null;
+	
+	try {
+		String sql = "insert into newwebuseinfo(useWebId,topicId,topicName,webURL,openTime)  values(?,?,?,?,?)";
+		
+		ps = con.prepareStatement(sql);
+
+		//ps.setint(1,null)  for auto increment of id
+		
+
+		ps.setInt(2, nwuiInfo.getTopicId().equals("")?-1:Integer.valueOf(nwuiInfo.getTopicId()));
+		ps.setString(3, nwuiInfo.getTopicName());
+		ps.setString(4, nwuiInfo.getWebURL());
+		ps.setTimestamp(5, nwuiInfo.getOpenTime());
+		
+		result = ps.executeUpdate();
+
+
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		if (rs != null)
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		if (ps != null)
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	return result;
+
+
+	
+	
+}
+
+public static int addNewQueryRec(NewQueryRec queryRecsfordatabase) {
+	int result = 0;
+	
+	if (queryRecsfordatabase == null) {
+		return -1;
+	}
+
+	PreparedStatement ps = null;
+	
+	try {
+		String sql = "insert into newqueryrec(ids,user,queryId,querywords,selectFromFoamtreeWords,inputWords,apiKeyWordsinQuery,exceptionKeyWordsinQuery,errorKeyWordsinQuery,otherKeyWordsinQuery,starttime,pretimepoint,snapshotWords,foamtreeWords ,countQueryKeywords)  values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+		
+		ps = con.prepareStatement(sql);
+
+		//ps.setint(1,null)  for auto increment of id
+		ps.setString(2, queryRecsfordatabase.getUser());
+		ps.setString(3, queryRecsfordatabase.getQueryId());
+		ps.setString(4, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getQuerywords()));
+		ps.setString(5, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getSelectFromFoamtreeWords()));
+		ps.setString(6, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getInputWords()));
+		ps.setString(7, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getApiKeyWordsinQuery()));
+		ps.setString(8, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getExceptionKeyWordsinQuery()));
+		ps.setString(9, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getErrorKeyWordsinQuery()));
+		ps.setString(10, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getOtherKeyWordsinQuery()));
+		ps.setTimestamp(11, queryRecsfordatabase.getStarttime());
+		ps.setTimestamp(12, queryRecsfordatabase.getPretimepoint());;
+		ps.setString(13, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getSnapshotWords()));
+		ps.setString(14, queryRecsfordatabase.getStringsformKeywords(queryRecsfordatabase.getFoamtreeWords()));
+		ps.setInt(15, queryRecsfordatabase.getCountQueryKeywords());
+		
+
+
+
+		
+		result = ps.executeUpdate();
+
+
+	} catch (SQLException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} finally {
+		if (rs != null)
+			try {
+				rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		if (ps != null)
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+
+	return result;
+
+
+	
+}
 
 
 

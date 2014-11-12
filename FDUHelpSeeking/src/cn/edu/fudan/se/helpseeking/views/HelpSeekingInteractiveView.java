@@ -1,19 +1,12 @@
 package cn.edu.fudan.se.helpseeking.views;
 
-import java.awt.RenderingHints.Key;
-import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-
-import liuyang.nlp.lda.main.LdaGibbsSampling;
 
 import org.carrot2.core.Cluster;
 import org.carrot2.core.Document;
-import org.carrot2.util.factory.IFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -25,41 +18,35 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.browser.TitleEvent;
 import org.eclipse.swt.browser.TitleListener;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.handlers.WizardHandler.New;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.texteditor.CaseAction;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.fnlp.nlp.cn.CNFactory;
-import org.htmlparser.util.ParserException;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
-import cn.edu.fudan.se.helpseeking.bean.Basic.QueryLevel;
 import cn.edu.fudan.se.helpseeking.bean.Cache;
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWithWordsListBean;
 import cn.edu.fudan.se.helpseeking.bean.FudanTopicWordsBean;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.NewQueryRec;
+import cn.edu.fudan.se.helpseeking.bean.NewTopicInfoRec;
+import cn.edu.fudan.se.helpseeking.bean.NewTopicWebPagesInfo;
+import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
 import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.SearchNode;
 import cn.edu.fudan.se.helpseeking.bean.SearchResults;
@@ -68,14 +55,11 @@ import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.views.Images;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
-import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
-import cn.edu.fudan.se.helpseeking.test.SampleWebResults;
 import cn.edu.fudan.se.helpseeking.util.CarrotTopic;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
-import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingInteractiveView extends ViewPart {
 
@@ -108,12 +92,23 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	private static int currentActionID = 0;
 	private static String currentSearchID = "0";
+	private static int searchFlag=0;//大于0就是第二次检索
+	
+
+	
+	public static int getSearchFlag() {
+		return searchFlag;
+	}
+
+	public static void setSearchFlag(int searchFlag) {
+		HelpSeekingInteractiveView.searchFlag = searchFlag;
+	}
 
 	public void setTxtSeachText(List<KeyWord> selectedKeyWords) {
 		sendfromselectSearchWords = selectedKeyWords;
 	}
 
-	public String getCurrentSearchID() {
+	public static String getCurrentSearchID() {
 		return currentSearchID;
 	}
 
@@ -353,8 +348,30 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					if ((browserpart instanceof HelpSeekingBrowserView)) {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 						bv.getTopicContentText().setText(currentTopicName);
+						String topicId = "";
+						
+						for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
+							if (currentTopicInfoRecs.get(i).equals(currentTopicName)) {
+								topicId=currentTopicInfoRecs.get(i).getTopicId();
+							}
+						}
+
+						
 						bv.genUrlTree(currentTopicName,allWebPages.get(currentTopicindex)
-								.getPages(),SearchList);
+								.getPages(),SearchList,currentSearchID,topicId);
+						
+
+						NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+						
+						nwuiInfo.setTopicName(currentTopicName);
+						nwuiInfo.setTopicId(topicId);
+					
+						
+						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+						
+						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
+						
+						
 					}
 
 					
@@ -412,7 +429,31 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 							bv.getTopicContentText().setText(currentTopicName);
-							bv.genUrlTree(currentTopicName, curTopicWEBPages.getPages(),SearchList);
+							String topicId="";
+							
+							for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
+								if (currentTopicInfoRecs.get(i).equals(currentTopicName)) {
+									topicId=currentTopicInfoRecs.get(i).getTopicId();
+								}
+							}
+							
+							bv.genUrlTree(currentTopicName, curTopicWEBPages.getPages(),SearchList,currentSearchID,topicId);
+						
+							
+							
+							NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+							
+							nwuiInfo.setTopicName(currentTopicName);
+							nwuiInfo.setTopicId(topicId);
+						
+							
+							nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+							
+							DatabaseUtil.addNewWebUseInfo(nwuiInfo);
+
+														
+							
+							
 						}
 
 						allWebPages.add(curTopicWEBPages);
@@ -1040,7 +1081,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	}
 
 	
-private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>();
+private static	NewQueryRec queryRecsfordatabase=new NewQueryRec();
 	
 	
 	private void manualSearch() {
@@ -1056,11 +1097,20 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 		
 		
 		
+		
 		String queryText = txtSearch.getText().trim();
 
 		if (!queryText.equals("")) {
 
-			String searchID = "P"+getCurrentActionID();
+			setSearchFlag(getSearchFlag()+1);
+			
+			String searchID ;
+			if (getSearchFlag()>0) {
+				searchID= "P"+getCurrentActionID()+("A"+getSearchFlag());
+			}else {
+				searchID= "P"+getCurrentActionID();
+			}
+			
 
 			setCurrentSearchID(searchID);
 			
@@ -1112,6 +1162,22 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 			
 			
 	        String tagNameforsearch="";
+	        
+	        startTimestamp=new Timestamp(System.currentTimeMillis());
+	        preTimePoint=startTimestamp;
+	        queryRecsfordatabase.setStarttime(startTimestamp);
+	        
+	        String tempsearchtxt=searchtxt;
+
+	        for (int i = SearchList.size()-1; i >=0; i--) {
+				if (tempsearchtxt.contains(SearchList.get(i).getKeywordName().trim())) {
+					SearchList.remove(i);
+				}
+				
+			}
+	       
+	        
+	        
 	        
 	        
 	        List<Integer> collectcount=new ArrayList<Integer>();
@@ -1187,10 +1253,61 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 			//??nqr.setTime(time);
 
 	       
-	      //  queryRecsfordatabase.get(currentQueryID).setSelectFromFoamtreeWords(selectFromFoamtreeWords);
-	        queryRecsfordatabase.get(currentQueryID).setStartTime(new Timestamp(System.currentTimeMillis()));
-	        queryRecsfordatabase.get(currentQueryID).setQuerywords(SearchList);
-	    
+		    
+	        
+			
+			
+			String tempsearch=search;
+			queryRecsfordatabase.setSelectFromFoamtreeWords(SearchList);
+			for (int i = 0; i < SearchList.size(); i++) {
+				if (tempsearch.contains(CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName()).trim())) {
+					tempsearch.replace(CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName()).trim(), "").trim();
+				}
+			}
+			
+				String[] inputString=tempsearch.split("[ ]");
+				List<KeyWord> inputkeyKeyWords=new ArrayList<KeyWord>();
+			
+			for (String keys : inputString) {
+				
+				KeyWord kWord=new KeyWord();
+				kWord.setKeywordName(keys);
+				kWord.setTagName("manual");
+				inputkeyKeyWords.add(kWord);	
+			}
+			queryRecsfordatabase.setInputWords(inputkeyKeyWords);
+			
+			List<KeyWord> inFoamtreeKeyWords=queryRecsfordatabase.getFoamtreeWords();
+			List<KeyWord> apiKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> errorKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> exceptionKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> otherKeyWordsinQuery=new ArrayList<KeyWord>();
+			for (int i = 0; i < inFoamtreeKeyWords.size(); i++) {
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("api")) {
+					apiKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("error")) {
+					errorKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("exception")) {
+					exceptionKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("other")) {
+					otherKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+			}
+			
+			queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
+			
+			queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
+			
+			queryRecsfordatabase.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
+			
+			queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
+			
+
+			
+			
 	        
 	        
 	        //多任务实施检索
@@ -1289,18 +1406,14 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 							
 						}
 
+						
+						
+						
 					 
 					 
 				    Display.getDefault().asyncExec(new Runnable(){   
 				        public void run()
 				        {   
-				        	// 在此添加更新界面的代码
-				        	// 2014.10.15
-				    		// 调用topic API 生成topictree
-
-				        	for (int i = SearchList.size()-1; i >=0; i--) {
-								SearchList.remove(i);
-							}
 				        	
 							
 				        	
@@ -1308,6 +1421,16 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 
 				    		// end of 2014.10.15
 				        // 在此添加更新界面的代码   
+				    		
+				    		// 在此添加更新界面的代码
+				        	// 2014.10.15
+				    		// 调用topic API 生成topictree
+
+				        	for (int i = SearchList.size()-1; i >=0; i--) {
+								SearchList.remove(i);
+							}
+				        	
+				        	DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
 				                 
 				        }      
 				             
@@ -1349,6 +1472,11 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 			allWebPages.remove(i - 1);
 
 		}
+		
+		//移除topicid信息
+		for (int i = currentTopicInfoRecs.size(); i >0; i--) {
+			currentTopicInfoRecs.remove(i-1);
+		}
 
 		TreeItem topicsumm = new TreeItem(topictree, SWT.NONE);
 		topicsumm.setData("TOPIC_SUMMARY");
@@ -1366,6 +1494,25 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 			// 实现代码见 topictree的选择事件
 			topicitem.setForeground(Display.getDefault().getSystemColor(
 					SWT.COLOR_BLUE));
+			
+//写入数据库
+			
+			NewTopicInfoRec ntif=new NewTopicInfoRec();
+			ntif.setTopicName(topicitem.getText().trim());
+			ntif.setSearchId(getCurrentSearchID());
+			ntif.setURLcount(c.size());
+			//ntif.setClickTopicTime(new Timestamp(System.currentTimeMillis()));
+			//ntif.setTopicId(topicId);
+			DatabaseUtil.addNewTopicInfoRectoDatabase(ntif);
+			
+			
+			List<NewTopicWebPagesInfo> ntwpiList=new ArrayList<NewTopicWebPagesInfo>();
+			String topicId=DatabaseUtil.getNewTopicInfoRecTopicId();
+			NewTopicInfoRec  nifforlist=new NewTopicInfoRec();
+			nifforlist.setTopicId(topicId);
+			nifforlist.setTopicName(topicitem.getText().trim());
+			currentTopicInfoRecs.add(nifforlist);
+			
 
 			for (int j = 0; j < c.getAllDocuments().size(); j++) {
 				Document doc = c.getAllDocuments().get(j);
@@ -1384,8 +1531,22 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 				TreeItem itemsummary = new TreeItem(itemoftopic, SWT.NONE);
 				itemsummary.setText(doc.getSummary());
 				itemsummary.setData(doc.getContentUrl());
+							
+				
+				
+				NewTopicWebPagesInfo ntwpi=new NewTopicWebPagesInfo();
+					ntwpi.setTopicId(topicId);
+					ntwpi.setWebTitle(doc.getTitle());
+					ntwpi.setWebSummary(doc.getSummary());
+					ntwpi.setWebURL(doc.getContentUrl());
+					
 
+				ntwpiList.add(ntwpi);
 			}
+			
+			
+			DatabaseUtil.addNewTopicWEbPagesInfotoDatabase(ntwpiList);
+
 
 		}
 
@@ -1393,58 +1554,14 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 		topicsumm.setText("All topics ( Topics: " + clusters.size() + " URLs: "
 				+ totalurlnum + ")");
 		topicsumm.setExpanded(true);
+		
+		
+		
 
 	}
 
-	public static void savekeywordsToDatabase(Query query, String searchID,
-			String search, Timestamp starttime, String searchResultOutput) {
-		for (int i = 0; i < currentSearchWords.size(); i++) {
-			currentSearchWords.remove(i);
-		}
-
-		List<String> searchWords = CommUtil.arrayToList(search.split("[ ]"));
-
-		for (int i = 0; i < searchWords.size(); i++) {
-			boolean flag = true;
-			for (int j = 0; j < sendfromselectSearchWords.size(); j++) {
-				if (sendfromselectSearchWords.get(j).getKeywordName().trim()
-						.equals(searchWords.get(i).trim())) {
-					sendfromselectSearchWords.get(j).setPositionInUseString(j);
-					sendfromselectSearchWords.get(j).setRecommand(true);
-					sendfromselectSearchWords.get(j).setTimes(starttime);
-					sendfromselectSearchWords.get(j).setLastSearchID(searchID);
-					currentSearchWords.add(sendfromselectSearchWords.get(j));
-					flag = false;
-				}
-			}
-			if (flag) {
-				KeyWord word = new KeyWord();
-				word.setKeywordName(searchWords.get(i).trim());
-				word.setLastSearchID(searchID);
-				word.setPositionInUseString(i);
-				word.setTimes(starttime);
-				word.setSearchID("NO");// 意味着这个是人工词汇
-				word.setRecommand(false);
-				currentSearchWords.add(word);
-			}
-		}// end for i
-
-		DatabaseUtil.addSearchWordsToDataBase(currentSearchWords);
-
-		// 需要保存关键词和当前cache到数据库中：
-		DatabaseUtil.addKeyWordsToDataBase(query);
-		for (SearchNode snNode : sResults.getSearchNode()) {
-			DatabaseUtil.addSearchResultsTODataBase(sResults.getSearchID(),
-					snNode);
-		}
-		searchResultOutput = query.toString() + searchResultOutput
-				+ "\n============\n";
-		FileHelper.appendContentToFile("result.txt", searchResultOutput);
-
-		Cache.getInstance().setTimerAutoSearchmode(0);
-		Cache.getInstance().setLastAutoSearchTime(
-				new Timestamp(System.currentTimeMillis()));
-	}
+	
+static	List<NewTopicInfoRec> currentTopicInfoRecs=new ArrayList<NewTopicInfoRec>();//记录话题的编号
 	
 
 
@@ -1521,23 +1638,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		
 		
 		//List<KeyWord> noDupkeyworksforquery=currentSearchKeyWords201411;
-		
-		
-		//记录数据准备存盘到数据库
-		NewQueryRec nqr=new NewQueryRec();
-		nqr.setIds(queryRecsfordatabase.size());
-		nqr.setFoamtreeWords(currentSearchKeyWords201411);
-		nqr.setSnapshotWords(snapShotAllKeyWords);
-		//??nqr.setQuerywords(querywords);
-		//??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
-		//??nqr.setTime(time);
-		
-		//nqr.setUser(user);
-		currentQueryID=nqr.getIds();
-		
-		queryRecsfordatabase.add(nqr);
-		
-		
+	
 
 		String searchwords = "";
 		// String currentWord="";
@@ -1604,14 +1705,49 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		// txtSearch.setText(searchwords);
 		
 
-		if (mode == 2) {
-			setCurrentQueryText(searchwords);
-
-							dosearch(getCurrentQueryText());
+//		if (mode == 2) {
+//			setCurrentQueryText(searchwords);
+//
+//							dosearch(getCurrentQueryText());
+//				
+//		}
+		
+		
+		
+		
+		//记录数据准备存盘到数据库
+		
+//				queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
 				
-		}
+				
+				queryRecsfordatabase.setFoamtreeWords(keyWordsforQuery);
+				
+			
+				
+				queryRecsfordatabase.setPretimepoint(preTimePoint);
+				
+				queryRecsfordatabase.setQueryId(getCurrentSearchID());
+				
+//				queryRecsfordatabase.setInputWords(inputWords);
+//				queryRecsfordatabase.setSelectFromFoamtreeWords();
+				
+				queryRecsfordatabase.setSnapshotWords(snapShotAllKeyWords);
+				//queryRecsfordatabase.setStarttime(starttime);
+				//queryRecsfordatabase.setUser(user);
+				
+		
 
 	}
+
+
+static Timestamp startTimestamp=new Timestamp(System.currentTimeMillis());
+static Timestamp preTimePoint=new Timestamp(System.currentTimeMillis());
 
 
 	@Override

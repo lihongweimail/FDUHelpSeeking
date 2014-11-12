@@ -1422,23 +1422,30 @@ public class CacheProcessing extends Thread {
 						keywordsvalidate=keywordsvalidate.replaceAll("[;]", " ");
 					}
 					if (keywordsvalidate.contains("Ljava.")) {
-						keywordsvalidate=keywordsvalidate.replace("java.", "");
+						keywordsvalidate=keywordsvalidate.replace("Ljava.", "java.");
 					}
 					if (keywordsvalidate.contains("Lorg.")) {
-						keywordsvalidate=keywordsvalidate.replace("org.", "");
+						keywordsvalidate=keywordsvalidate.replace("Lorg.", "org.");
 					}
 					if (keywordsvalidate.contains("Lutil.")) {
-						keywordsvalidate=keywordsvalidate.replace("util.", "");
+						keywordsvalidate=keywordsvalidate.replace("Lutil.", "util");
 					}
 					if (keywordsvalidate.contains("Lio.")) {
-						keywordsvalidate=keywordsvalidate.replace("io.", "");
+						keywordsvalidate=keywordsvalidate.replace("Lio.", "io.");
 					}
 					if (keywordsvalidate.contains("Llang.")) {
-						keywordsvalidate=keywordsvalidate.replace("lang.", "");
+						keywordsvalidate=keywordsvalidate.replace("Llang.", "lang.");
 					}
 					if (keywordsvalidate.contains("Ljavax.")) {
-						keywordsvalidate=keywordsvalidate.replace("javax.", "");
+						keywordsvalidate=keywordsvalidate.replace("Ljavax.", "javax.");
 					}
+					if (keywordsvalidate.contains("LString.")) {
+						keywordsvalidate=keywordsvalidate.replace("LString.", "String.");
+					}
+					if (keywordsvalidate.contains("QString.")) {
+						keywordsvalidate=keywordsvalidate.replace("QString.", "String.");
+					}
+
 					kw.setKeywordName(keywordsvalidate.trim());
 				
 				keyWordsforQuery.add(kw);

@@ -2,6 +2,7 @@ package cn.edu.fudan.se.helpseeking.views;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -39,9 +40,11 @@ import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.HistoryUrlSearch;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
+import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingBrowserView extends ViewPart {
@@ -126,6 +129,18 @@ public class HelpSeekingBrowserView extends ViewPart {
 	                 historyid=historyid-1;
 	                 idlabel.setText("ID: "+id);
 	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(), historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
+	             	
+	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+						
+						nwuiInfo.setTopicName(historyUrlSearch.get(id).getTopicName());
+						
+						nwuiInfo.setTopicId(historyUrlSearch.get(id).getTopicId());
+						
+						
+						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+						
+						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
+	                 
 	                 if (id==0) {
 							
 							preTopicBtn.setEnabled(false);
@@ -157,6 +172,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 			gd_txtSearch.widthHint = -1;
 			topicContentText.setLayoutData(gd_txtSearch);
 			topicContentText.setForeground(SWTResourceManager.getColor(255, 0, 0));
+			topicContentText.setEditable(false);
 			
 			succTopicBtn=new Button(urllistComposite,SWT.BORDER);
 			succTopicBtn.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,1, 1));
@@ -179,13 +195,24 @@ public class HelpSeekingBrowserView extends ViewPart {
 //							.getActiveWorkbenchWindow().getShell(),
 //							"Coding",
 //							"Sorry! Please wait for a while!");
-if (historyUrlSearch.size()>0) {
+         if (historyUrlSearch.size()>0) {
 	
 	                 int id=(historyid+1)>currentHistoryUrlSearchID?currentHistoryUrlSearchID:(historyid+1);
 					historyid=historyid+1;
 					 idlabel.setText("ID: "+id);
 	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(),historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
-							if (id==currentHistoryUrlSearchID) {
+							
+	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+						
+						nwuiInfo.setTopicName(historyUrlSearch.get(id).getTopicName());
+						nwuiInfo.setTopicId(historyUrlSearch.get(id).getTopicId());
+					
+						
+						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+						
+						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
+	             
+	                 if (id==currentHistoryUrlSearchID) {
 								succTopicBtn.setEnabled(false);
 								
 							}			
@@ -277,9 +304,24 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
          newbrowserid.setId(browser.getId());
 //         FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
 //		pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
+
+			NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+			
+			nwuiInfo.setWebURL(urls.getUrl());
+			String tid="";
+			if ((historyUrlSearch.get(currentHistoryUrlSearchID).getTopicId())!=null)  
+			   tid=historyUrlSearch.get(currentHistoryUrlSearchID).getTopicId();
+			
+			nwuiInfo.setTopicId(tid);
+			nwuiInfo.setTopicName(historyUrlSearch.get(currentHistoryUrlSearchID).getTopicName());
+			nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
+         
          
          System.out.println("browser id: "+"OpenWebsite"+String.valueOf(currentBrowserID) );
          browser.openURL(new URL((urls.getUrl())));
+         
+         
         
                 
      } catch (PartInitException p) {
@@ -339,7 +381,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	private int historyid=0;
 	
 	
-	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList) {
+	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
 		HistoryUrlSearch hus=new HistoryUrlSearch();
 		hus.setSearchList(searchList);
 		
@@ -352,9 +394,11 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		
 		hus.setWebpageList(list);
 		hus.setTopicName(currentTopicName);
-		hus.setId(historyUrlSearch.size());
+		hus.setCoutpage(historyUrlSearch.size());
+		hus.setSearchID(searchId);
 		
-		
+		hus.setTopicId(topicId);
+				
 		
 		historyUrlSearch.add(hus);
 		
@@ -365,9 +409,14 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		currentHistoryUrlSearchID=historyUrlSearch.size()-1;
 		historyid=currentHistoryUrlSearchID;
 		
+		hus.setId(historyid);
 		succTopicBtn.setEnabled(true);
 		preTopicBtn.setEnabled(true);
-		 idlabel.setText("ID: "+hus.getId());
+		idlabel.setText("ID: "+hus.getId());
+		
+		
+		
+		
 
 		
 		doGenUrlTree(currentTopicName,list, searchList);
@@ -438,17 +487,19 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		}
 		for (int i = 0; i < searchList.size(); i++) {
 			
-			String[] tempsStrings=searchList.get(i).getKeywordName().split("[ ]");
+			String[] tempsStrings=searchList.get(i).getKeywordName().split("[ .()]");
 			if (tempsStrings!=null)
 				if( tempsStrings.length>0) {
 					for (int j = 0; j < tempsStrings.length; j++) {
-						String temps=(tempsStrings[j]).toLowerCase();
-					
-				if (webPageBean.getTitle().toLowerCase().trim().contains(temps)  
-						|| webPageBean.getSummary().toLowerCase().trim().contains(temps)
-						|| webPageBean.getContent().toLowerCase().trim().contains(temps)) {
-					highlightstr=highlightstr+" "+temps;
-				}
+						String temps=(tempsStrings[j]).toLowerCase().trim();
+					if (!temps.equals("")) {
+						if (webPageBean.getTitle().toLowerCase().trim().contains(temps)  
+								|| webPageBean.getSummary().toLowerCase().trim().contains(temps)
+								|| webPageBean.getContent().toLowerCase().trim().contains(temps)) {
+							highlightstr=highlightstr+" "+temps;
+						}
+					}
+				
 					}
 
 			}

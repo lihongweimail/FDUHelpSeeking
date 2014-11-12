@@ -1,3 +1,57 @@
+CREATE TABLE IF NOT EXISTS newqueryrec (
+  ids integer PRIMARY KEY UNIQUE AUTOINCREMENT,
+  user text,
+  queryId text,
+  querywords text,
+  selectFromFoamtreeWords text,
+  inputWords text,
+  apiKeyWordsinQuery text,
+  exceptionKeyWordsinQuery text,
+  errorKeyWordsinQuery text,
+  otherKeyWordsinQuery text,
+  starttime timestamp,
+  pretimepoint timestamp,
+  snapshotWords text,
+  foamtreeWords text,
+  countQueryKeywords integer
+);
+CREATE INDEX IF NOT EXISTS queryid ON newqueryrec (queryId);
+
+CREATE TABLE IF NOT EXISTS  newtopicinforec (
+  topicId integer PRIMARY KEY UNIQUE AUTOINCREMENT NOT NULL,
+  topicName text,
+  searchId char(40),
+  clickTopicTime timestamp,
+  URLcount integer
+);
+CREATE INDEX IF NOT EXISTS  searchid ON newtopicinforec (searchId);
+
+
+CREATE TABLE  IF NOT EXISTS newwebuseinfo (
+  useWebId integer PRIMARY KEY UNIQUE AUTOINCREMENT NOT NULL,
+  topicId integer,
+  webPagesId integer,
+  webURL text,
+  openTime timestamp,
+  closeTime timestamp,
+  topicName text
+);
+CREATE INDEX IF NOT EXISTS  topicname ON newwebuseinfo (topicName);
+
+
+
+
+CREATE TABLE  IF NOT EXISTS newtopicwebpagesinfo (
+  webPagesId integer PRIMARY KEY UNIQUE AUTOINCREMENT,
+  topicId integer,
+  webTitle text,
+  webSummary text,
+  webURL text
+);
+CREATE INDEX  IF NOT EXISTS topicid ON newtopicwebpagesinfo (topicId);
+
+
+
 CREATE TABLE IF NOT EXISTS  action (  
 	id integer PRIMARY KEY AUTOINCREMENT,  
 	time timestamp NULL DEFAULT NULL,  
