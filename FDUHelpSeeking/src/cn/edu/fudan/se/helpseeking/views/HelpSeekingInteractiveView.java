@@ -121,12 +121,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		this.currentSearchID = currentSearchID;
 	}
 
-	public int getCurrentActionID() {
+	public static int getCurrentActionID() {
 		return currentActionID;
 	}
 
-	public void setCurrentActionID(int currentActionID) {
-		this.currentActionID = currentActionID;
+	public static void setCurrentActionID(int currentAID) {
+		currentActionID = currentAID;
 	}
 
 	public Text getTxtSearch() {
@@ -212,7 +212,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					
 					String searchtext="";
 					for (int i = 0; i < SearchList.size(); i++) {
-						searchtext=searchtext.trim()+" "+SearchList.get(i).getKeywordName();
+						searchtext=searchtext.trim()+" "+CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName());
 					}
 					
 					
@@ -1060,7 +1060,7 @@ private static	List<NewQueryRec> queryRecsfordatabase=new ArrayList<NewQueryRec>
 
 		if (!queryText.equals("")) {
 
-			String searchID = "P" + getCurrentSearchID();
+			String searchID = "P"+getCurrentActionID();
 
 			setCurrentSearchID(searchID);
 			
