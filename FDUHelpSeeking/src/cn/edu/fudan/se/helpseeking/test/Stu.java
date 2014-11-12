@@ -16,7 +16,58 @@ public class Stu {
         this.name = name;  
         this.age = age;  
     }  
+    public static String genShortName(String labels) {
+    	if (labels.contains(".")) {
+    		int index=labels.indexOf(".");
+    		int lastindex=labels.lastIndexOf(".");
+    		int indexbrack=labels.length();
+    		
+    		if (index<lastindex)
+    		{
+
+    		
+    		if (labels.contains("(")) {
+    			indexbrack=labels.indexOf("(");
+
+    						
+    			if (indexbrack>lastindex) {
+    				String templeftString=labels.substring(0,indexbrack);
+    				String[] cmlist=templeftString.split("[.]");
+    				int size=cmlist.length;
+    				String classMethodname=cmlist[size-2]+"."+cmlist[size-1];
+    				
+    				String otherpart=labels.substring(indexbrack);
+    				
+    				labels=classMethodname+otherpart; 
+    				
+    			  }else {
+    				  String templeftString=labels.substring(0,indexbrack);
+      				String[] cmlist=templeftString.split("[.]");
+      				int size=cmlist.length;
+      				String classMethodname=cmlist[size-2]+"."+cmlist[size-1];
+      				
+      				String otherpart=labels.substring(indexbrack);
+      				
+      				otherpart=genShortName(otherpart);
+      				labels=classMethodname+otherpart; 
+				}
+    			
+    					
+    		   }
+    		else
+    			{
+    				
+    			   
+    			   
+    			}
+    		
+    		}
+    	}
+   
+    return labels;
     
+    }
+
     public static void main(String[] args) {
     	
     	String tempstr="java.io.string;java.lang.String.replace(CharSequence.target, CharSequence.replacement);";
@@ -25,9 +76,9 @@ public class Stu {
 //java.lang.String.replace(CharSequence target, CharSequence replacement)
     	//
     	
-    	getSimpleWords(tempstr);
+    	//getSimpleWords(tempstr);
 		
-    	
+    System.out.println(genShortName(tempstr));
     	
 //    	Calendar c = Calendar.getInstance();
 //    	  c.setTimeInMillis(new Date().getTime());

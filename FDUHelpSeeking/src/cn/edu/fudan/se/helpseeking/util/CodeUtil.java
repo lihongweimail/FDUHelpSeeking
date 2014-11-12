@@ -85,7 +85,7 @@ public class CodeUtil {
 						.getElementName() + (((IMethod) element).getDeclaringType()
 						.getElementName().equals("")? "": ".")+ ((IMethod) element).getElementName();
 				
-				overrideName=methodname;
+				overrideName="";
 				String currentName=((IMethod) element).getElementName();
 				
 				for (int i = 0; i < overrideMethodFinds.size(); i++) {
@@ -334,6 +334,7 @@ public class CodeUtil {
 				bpoint.setLineNo(((JavaMethodBreakpoint) bp).getLineNumber() - 1);
 				bpoint.setMethodQualifiedName(((JavaMethodBreakpoint) bp).getTypeName()	+ "."
 						+ ((JavaMethodBreakpoint) bp).getMethodName());
+				
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}

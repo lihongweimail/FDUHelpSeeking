@@ -1542,16 +1542,17 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 			String labels ="";
 			
 			labels=noDupkeyworksforquery.get(i).getKeywordName();
+			labels=genShortName(labels);
+			
+			
 			if (labels.contains(".")) {
-				labels.replaceAll("[.]", " . ");
-			}
-			if (labels.contains("(")) {
-				labels.replaceAll("[(]", " ( ");
-			}
-			if (labels.contains(")")) {
-				labels.replaceAll("[)]", " ) ");
+			    labels=labels.replaceAll("[.]", ". ");
 			}
 			
+			if (labels.contains("(")) {
+				labels=labels.replaceAll("[(]", " (");
+			}
+						
 			//停用		
 			//CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
 					//noDupkeyworksforquery.get(i).getKeywordName();
@@ -1567,6 +1568,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 					// "\", weight: "
 					+ labels + "\", weight: "
 					+ Math.log(noDupkeyworksforquery.get(i).getScore()) + " ,type: \"leaf\"},";
+			
 			searchwords = searchwords + " "
 					+ noDupkeyworksforquery.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
@@ -1602,6 +1604,43 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		}
 
 	}
+
+public String genShortName(String labels) {
+	if (labels.contains(".")) {
+		int index=labels.indexOf(".");
+		int lastindex=labels.lastIndexOf(".");
+		int indexbrack=labels.length();
+		
+		if (index<lastindex)
+		{
+
+		
+		if (labels.contains("(")) {
+			indexbrack=labels.indexOf("(");
+
+						
+			if (indexbrack>lastindex) {
+				String templeftString=labels.substring(0,lastindex-1);
+				String methodn=labels.substring(lastindex+1,indexbrack-1);
+				int lastx=templeftString.indexOf(".");
+				String classn=templeftString.substring(lastx);
+				
+			  }
+			
+					
+		   }
+		else
+			{
+				
+			   
+			   
+			}
+		
+		}
+	}
+	
+	return labels;
+}
 
 	@Override
 	public void setFocus() {
