@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS newqueryrec (
-  ids integer PRIMARY KEY UNIQUE AUTOINCREMENT,
+  ids integer PRIMARY KEY AUTOINCREMENT, 
   user text,
   queryId text,
   querywords text,
@@ -15,10 +15,11 @@ CREATE TABLE IF NOT EXISTS newqueryrec (
   foamtreeWords text,
   countQueryKeywords integer
 );
+
 CREATE INDEX IF NOT EXISTS queryid ON newqueryrec (queryId);
 
 CREATE TABLE IF NOT EXISTS  newtopicinforec (
-  topicId integer PRIMARY KEY UNIQUE AUTOINCREMENT NOT NULL,
+  topicId integer PRIMARY KEY AUTOINCREMENT, 
   topicName text,
   searchId char(40),
   clickTopicTime timestamp,
@@ -28,7 +29,7 @@ CREATE INDEX IF NOT EXISTS  searchid ON newtopicinforec (searchId);
 
 
 CREATE TABLE  IF NOT EXISTS newwebuseinfo (
-  useWebId integer PRIMARY KEY UNIQUE AUTOINCREMENT NOT NULL,
+  useWebId integer PRIMARY KEY AUTOINCREMENT, 
   topicId integer,
   webPagesId integer,
   webURL text,
@@ -42,7 +43,7 @@ CREATE INDEX IF NOT EXISTS  topicname ON newwebuseinfo (topicName);
 
 
 CREATE TABLE  IF NOT EXISTS newtopicwebpagesinfo (
-  webPagesId integer PRIMARY KEY UNIQUE AUTOINCREMENT,
+  webPagesId integer PRIMARY KEY AUTOINCREMENT, 
   topicId integer,
   webTitle text,
   webSummary text,
