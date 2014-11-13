@@ -199,9 +199,8 @@ public class OverrideMethodFind {
        	 String classname=overridenMethodBind.getDeclaringClass().getName();
        	 String methodParameter=methodDeclaration.substring(methodDeclaration.indexOf("("));
        	 if (methodParameter.contains(" throws ")) {
-       		 if (methodParameter.contains(")")) {
-       			methodParameter=methodParameter.substring(0,methodDeclaration.indexOf(")"))	;
-			}
+       		 	methodParameter=methodParameter.substring(0,methodParameter.indexOf(" throws "))	;
+			
 			
 		}
        	String methodName=overridenMethodBind.getName();
@@ -231,9 +230,9 @@ public class OverrideMethodFind {
 	            	 String methodParameter=methodDeclaration.substring(methodDeclaration.indexOf("("));
 	            	String methodName=overridenMethodBind.getName();
 	            	if (methodParameter.contains(" throws ")) {
-	              		 if (methodParameter.contains(")")) {
-	              			methodParameter=methodParameter.substring(0,methodDeclaration.indexOf(")"))	;
-	       			}
+	              		
+	              			methodParameter=methodParameter.substring(0,methodParameter.indexOf(" throw "))	;
+	       			
 	       			
 	       		}
 	          	          

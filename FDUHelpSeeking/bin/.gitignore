@@ -1,4 +1,7 @@
 /.DS_Store
+/.tagcloud
+/TagCloud.html
+/applettest.html
 /bin/
 /carrotsearch.foamtree.asserts.js
 /carrotsearch.foamtree.js
@@ -7,11 +10,7 @@
 /carrotsearch.foamtree.util.relaxationprogress.js
 /carrotsearch.foamtree.util.treemodel.js
 /cn/
-/.tagcloud
 /TagCloud$1.class
 /TagCloud.class
-/TagCloud.html
-/applettest.html
 /liuyang/
 /org/
-/urlWordExtract/

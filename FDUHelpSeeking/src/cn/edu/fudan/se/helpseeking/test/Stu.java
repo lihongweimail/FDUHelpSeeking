@@ -78,7 +78,11 @@ public class Stu {
 //java.lang.String.replace(CharSequence target, CharSequence replacement)
     	//
     	
-    	getSimpleWords(tempstr);
+    	
+    	System.out.println(tempstr.substring(0, tempstr.indexOf("lang")));
+    	
+    	
+    	//getSimpleWords(tempstr);
 		
    // System.out.println(genShortName(tempstr));
     	

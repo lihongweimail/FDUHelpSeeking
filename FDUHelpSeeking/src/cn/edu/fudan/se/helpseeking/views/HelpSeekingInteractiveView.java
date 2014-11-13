@@ -674,51 +674,51 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		//为中文切词准备数据：  
 		//
 
-		Resource models_arRes = new Resource();
-		models_arRes.getResource("/models/ar.m", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/ar.m");
-
-		Resource models_depRes = new Resource();
-		models_depRes.getResource("/models/dep.m", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dep.m");
-
-		Resource models_dictambiguityRes = new Resource();
-		models_dictambiguityRes.getResource("/models/dict_ambiguity.txt", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath()
-						+ "/models/dict_ambiguity.txt");
-
-		Resource models_dicdepRes = new Resource();
-		models_dicdepRes.getResource("/models/dict_dep.txt", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict_dep.txt");
-
-		Resource models_dictRes = new Resource();
-		models_dictRes.getResource("/models/dict.txt", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict.txt");
-
-		Resource models_ExtractPatternRes = new Resource();
-		models_ExtractPatternRes.getResource("/models/ExtractPattern.txt",
-				true, CommUtil.getFDUHelpseekingPluginWorkingPath()
-						+ "/models/ExtractPattern.txt");
-
-		Resource models_posRes = new Resource();
-		models_posRes.getResource("/models/pos.m", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/pos.m");
-
-		Resource models_segRes = new Resource();
-		models_segRes.getResource("/models/seg.m", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/seg.m");
-
-		Resource models_stocktreeRes = new Resource();
-		models_stocktreeRes.getResource("/models/Stock-Tree.txt", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/Stock-Tree.txt");
-
-		Resource models_timeRes = new Resource();
-		models_timeRes.getResource("/models/time.m", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/time.m");
-
-		Resource models_wordgraphRes = new Resource();
-		models_wordgraphRes.getResource("/models/wordgraph.txt", true,
-				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/wordgraph.txt");
+//		Resource models_arRes = new Resource();
+//		models_arRes.getResource("/models/ar.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/ar.m");
+//
+//		Resource models_depRes = new Resource();
+//		models_depRes.getResource("/models/dep.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dep.m");
+//
+//		Resource models_dictambiguityRes = new Resource();
+//		models_dictambiguityRes.getResource("/models/dict_ambiguity.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath()
+//						+ "/models/dict_ambiguity.txt");
+//
+//		Resource models_dicdepRes = new Resource();
+//		models_dicdepRes.getResource("/models/dict_dep.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict_dep.txt");
+//
+//		Resource models_dictRes = new Resource();
+//		models_dictRes.getResource("/models/dict.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict.txt");
+//
+//		Resource models_ExtractPatternRes = new Resource();
+//		models_ExtractPatternRes.getResource("/models/ExtractPattern.txt",
+//				true, CommUtil.getFDUHelpseekingPluginWorkingPath()
+//						+ "/models/ExtractPattern.txt");
+//
+//		Resource models_posRes = new Resource();
+//		models_posRes.getResource("/models/pos.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/pos.m");
+//
+//		Resource models_segRes = new Resource();
+//		models_segRes.getResource("/models/seg.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/seg.m");
+//
+//		Resource models_stocktreeRes = new Resource();
+//		models_stocktreeRes.getResource("/models/Stock-Tree.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/Stock-Tree.txt");
+//
+//		Resource models_timeRes = new Resource();
+//		models_timeRes.getResource("/models/time.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/time.m");
+//
+//		Resource models_wordgraphRes = new Resource();
+//		models_wordgraphRes.getResource("/models/wordgraph.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/wordgraph.txt");
 		
 	}
 	
