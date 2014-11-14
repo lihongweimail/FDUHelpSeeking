@@ -1773,6 +1773,10 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 				//queryRecsfordatabase.setUser(user);
 				
 				if (!Basic.Visualize_flage) {
+					preTimePoint=startTimestamp;
+					startTimestamp=new Timestamp(System.currentTimeMillis());
+					queryRecsfordatabase.setStarttime(startTimestamp);
+					
 					DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
 				}
 		
