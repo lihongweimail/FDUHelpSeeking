@@ -33,6 +33,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -67,7 +68,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	}
 
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView"; //$NON-NLS-1$
-
+    public static final String browserviewID="cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView";
+	
 	private static String javaExceptionalFileName = "/StopResource/javaExceptionalName.txt";
 	private static Resource myResource = new Resource();
 	private static String javaExceptionalName = myResource
@@ -333,6 +335,19 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			public void widgetSelected(SelectionEvent e) {
 				final TreeItem item = (TreeItem) e.item;
 
+			if	(FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage().findView(
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView") instanceof HelpSeekingBrowserView)
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					return;
+				}
+				
 				// 检查是否点击过这个topic
 				if (item.getData() == "TOPICX") { // 从 allpages 中读数据
 

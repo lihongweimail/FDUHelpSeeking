@@ -48,6 +48,8 @@ import cn.edu.fudan.se.helpseeking.util.DatabaseUtil;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class HelpSeekingBrowserView extends ViewPart {
+	
+	public static final String ID="cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView";
 
 	private static  String baseUrl;
 	
@@ -414,6 +416,10 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		preTopicBtn.setEnabled(true);
 		idlabel.setText("ID: "+hus.getId());
 		
+		succTopicBtn.setEnabled(false);
+		if (historyid!=0) {
+			preTopicBtn.setEnabled(true);
+		}
 		
 		
 		
