@@ -180,7 +180,21 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					return;
 
 				}
-
+				if (e.title.trim().equals("")) {
+					return;
+				}
+//新增是否为数字字符
+				boolean bl = true;    //存放是否全为数字
+				  char[] c = e.title.trim().toCharArray();    //把输入的字符串转成字符数组
+				  for(int i=0;i<c.length;i++){
+				   if(!Character.isDigit(c[i])){   //判断是否为数字
+				    bl = false;
+				    break;
+				   }
+				  }
+				  if(!bl){
+					  return;
+				  }
 	
 
 				if (!e.title.trim().toLowerCase()
@@ -196,10 +210,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						}
 						
 					}
+					
+					
 					if (isuseword) {
 						
 						SearchList.add(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())));
-							}		
+					}		
 						
 						
 					}
