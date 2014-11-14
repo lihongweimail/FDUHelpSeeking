@@ -161,12 +161,18 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
+		
+		sashComposite.setVisible(Basic.Visualize_flage);
+		
 		initFoamTreeEnv(CommUtil.getFDUHelpseekingPluginWorkingPath());
 
 		foamtreeBrowser = new Browser(sashComposite, SWT.BORDER);
 		foamtreeBrowser
 				.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
 
+		
+		foamtreeBrowser.setVisible(Basic.Visualize_flage);
+		
 		String foamTreeContent = ""; // 使用工具生成foamtree的内容
 		genFoamTree(300, 200, foamTreeFileNamePath, foamTreeContent,
 				"HelloHongwei");
@@ -239,10 +245,14 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// ============
 
 		SashForm topicSashForm = new SashForm(sashComposite, SWT.VERTICAL);
+		
+		topicSashForm.setVisible(Basic.Visualize_flage);
 
 		// sashComposit 水平分割处
 		Composite SearchComposite = new Composite(topicSashForm, SWT.NONE);
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
+		
+		SearchComposite.setVisible(Basic.Visualize_flage);
 		SearchComposite.setLayout(new GridLayout(2, false));
 
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
@@ -256,6 +266,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
 		txtSearch.setToolTipText("Input keyworks for searching");
+		txtSearch.setVisible(Basic.Visualize_flage);
+		
 		txtSearch.addKeyListener(new KeyListener() {
 
 			@Override
@@ -281,6 +293,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
 		// btnSearchGoogle.setText("Search");
+		btnSearchGoogle.setVisible(Basic.Visualize_flage);
 		btnSearchGoogle.setToolTipText("Search");
 		btnSearchGoogle.setImage(Images.SEARCH2.createImage());
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
@@ -318,14 +331,16 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		Composite topicCom = new Composite(topicSashForm, SWT.NONE);
 		topicCom.setLayout(new GridLayout(2, false));
 
+		topicCom.setVisible(Basic.Visualize_flage);
 		// topic list
+
 		topictree = new Tree(topicCom, SWT.BORDER | SWT.CENTER);
 
 		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 		
-		
+		topictree.setVisible(Basic.Visualize_flage);
 				
 		topictree.addSelectionListener(new SelectionListener() {
 
@@ -1757,6 +1772,9 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 				//queryRecsfordatabase.setStarttime(starttime);
 				//queryRecsfordatabase.setUser(user);
 				
+				if (!Basic.Visualize_flage) {
+					DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
+				}
 		
 
 	}
