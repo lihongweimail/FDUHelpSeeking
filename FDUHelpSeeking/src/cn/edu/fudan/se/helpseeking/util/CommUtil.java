@@ -736,6 +736,23 @@ public class CommUtil {
 		return new File(projectPath).getName();
 	}
 
+	public static String ListToString(List<String> list, char splitchar) {
+		String result = "";
+
+		if (list != null) {
+
+			for (String object : list) {
+				if (object != null)
+					result = result + object.toString() + splitchar;
+			}
+			result = result.trim();
+		} else {
+			result = null;
+		}
+
+		return result;
+	}
+
 	public static String ListToString(List<String> list) {
 		String result = "";
 

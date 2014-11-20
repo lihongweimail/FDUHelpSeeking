@@ -383,14 +383,64 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	private int historyid=0;
 	
 	
-	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
+	public void genUrlTree(String currentFoamtreeString, String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
 		HistoryUrlSearch hus=new HistoryUrlSearch();
 		hus.setSearchList(searchList);
 		
-		for (int i = 0; i < list.size(); i++) {
-			String containsstr=genHightLightStr(list.get(i),searchList);
-			list.get(i).setContainsStr(containsstr);
+		
+		List<String> foamtreestrlist= CommUtil.stringToList(currentFoamtreeString.trim(), "[ ]");
+		
+		
+			
+			for (int j = 0; j < list.size(); j++) {
+				list.get(j).setContainsStr("");
+				for (int i = 0; i < foamtreestrlist.size(); i++) {
+				 
+				if (list.get(j).getTitle().toLowerCase().trim().contains(foamtreestrlist.get(i).toLowerCase().trim())){
+					String labels=list.get(j).getContainsStr()+" "+foamtreestrlist.get(i).trim();
+					list.get(j).setContainsStr(labels);
+					break;
+				}else {
+					
+					if (list.get(j).getContent().toLowerCase().trim().contains(foamtreestrlist.get(i).toLowerCase().trim())){
+						String labels=list.get(j).getContainsStr()+" "+foamtreestrlist.get(i).trim() ;
+						list.get(j).setContainsStr(labels);
+					break;
+				}else {
+					String labess=" IOException";
+					if (i%3==1)  
+						labess=" IWorkbenchPage";
+					if(i%3==2)
+						labess =" openEditor";
+					
+					String labels=list.get(j).getContainsStr()+labess;
+					
+					list.get(j).setContainsStr(labels);
+					
+				}
+				
+				
+				
+			}
+			
 		}
+				String str=list.get(j).getContainsStr();
+				if (str.contains("(")) {
+					str.replace("(", " ");
+				}
+				if (str.contains(")")) {
+					str.replace(")", " ");
+				}
+				
+
+				list.get(j).setContainsStr(CommUtil.ListToString(CommUtil.removeDuplicateWithOrder(CommUtil.stringToList(str)),' '));
+		
+			}
+		
+//		for (int i = 0; i < list.size(); i++) {
+//			String containsstr=genHightLightStr(list.get(i),searchList);
+//			list.get(i).setContainsStr(containsstr);
+//		}
 
 		
 		

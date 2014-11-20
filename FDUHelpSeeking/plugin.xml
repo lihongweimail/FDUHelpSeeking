@@ -77,6 +77,22 @@
             name="amAssist Search"
             restorable="true">
       </view>
+           <view
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
+            icon="icons/refresh.gif"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
+            name="amAssist Overview"
+            restorable="true">
+      </view>
+           <view
+            category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView"
+            icon="icons/refresh.gif"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView"
+            name="amAssist DOI MODEL"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">

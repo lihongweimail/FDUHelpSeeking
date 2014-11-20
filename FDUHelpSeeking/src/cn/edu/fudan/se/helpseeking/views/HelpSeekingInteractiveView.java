@@ -27,8 +27,10 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -161,10 +163,17 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// foamtreeComposite=new Composite(sashComposite, SWT.NONE);
 		// foamtreeComposite.setLayout(new FillLayout());
 
+		
+		
+		
+		
 		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
 		// TODO: 考虑是否生成一次？
 		initFoamTreeEnv(CommUtil.getFDUHelpseekingPluginWorkingPath());
 
+					
+	
+		
 		foamtreeBrowser = new Browser(sashComposite, SWT.BORDER);
 		foamtreeBrowser
 				.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
@@ -177,59 +186,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			public void changed(TitleEvent e) {
 				// sShell.setText(APP_TITLE + " - " + e.title);
 
-//				System.out.println("select group label is : " + e.title);
-				if (e.title.trim().equals("foamtreetest.html")) {
-					return;
-
-				}
-				if (e.title.trim().equals("")) {
-					return;
-				}
-//新增是否为数字字符
-				boolean bl = true;    //存放是否全为数字
-				  char[] c = e.title.trim().toCharArray();    //把输入的字符串转成字符数组
-				  for(int i=0;i<c.length;i++){
-				   if(!Character.isDigit(c[i])){   //判断是否为数字
-				    bl = false;
-				    break;
-				   }
-				  }
-				  if(!bl){
-					  return;
-				  }
-	
-
-				if (!e.title.trim().toLowerCase()
-						.equals("HelloHongwei".toLowerCase())) {
-	
-					
-					boolean isuseword=true;
-					for (int i = 0; i < SearchList.size(); i++) {
-						if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())).getKeywordName().trim().toLowerCase())) {
-							isuseword=false;
-							SearchList.remove(i);
-							break;
-						}
-						
-					}
-					
-					
-					if (isuseword) {
-						
-						SearchList.add(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())));
-					}		
-						
-						
-					}
-					
-					
-					String searchtext="";
-					for (int i = 0; i < SearchList.size(); i++) {
-						searchtext=searchtext.trim()+" "+CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName());
-					}
-					
-					
-					txtSearch.setText(searchtext);
+				String title=e.title.trim();
+				
+				
+				
+   doFoamtreeClick(title,foamtreeBrowser.getBounds().width,foamtreeBrowser.getBounds().height);
 					
 				}
 			
@@ -238,6 +199,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		foamtreeBrowser.setUrl(foamTreeFileNamePath);
 		// browser.refresh();
 
+		if (Basic.mockup==2) {
+
+	foamtreeBrowser.setVisible(false);
+		}
+		
+		
 		// ============
 
 		SashForm topicSashForm = new SashForm(sashComposite, SWT.VERTICAL);
@@ -296,6 +263,62 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// urlBrowser.refresh();
 			}
 		});
+		
+		
+	if (Basic.mockup==2) {
+		
+		//以下是所需的UI Mockups
+		//1. 添加一个“Tweat ranking by API DOIs” checkbox，可以添加到searchbox下方。
+	//	2. 添加一个“Select preferred web site category” dropdown list，也可以添加到searchbox下方。
+	//	3. 对搜索结果用foamtree中APIEntities标注，不用使用foamtreeAPIEntities相同颜色，
+		//只要把网页中所出现的APIEntities排个序，显示出top3or4就可以。比如 xxxx，yyyy，zzzz，more。more代表还有其他，
+		// 用户可以click to see more。当然我们不用实际实现，但在UI中应该有。
+	//	4. 添加一个我前面email提到的overview view。在这个SNAER paper中不用真正实现这个view的功能，
+		//只要有一个view壳子就可以。可以把这个view与foamtree view并列放置，这样就可以show我们有这个view，但不用show view's content。
+
+		//==== 如果不需要highlight webpage content的话，会不会简单一些。
+	//	我是这样想的：我们可否用一个小的overview view来提供对网页内容的浏览支持。
+	//	比如这个overview view可以在一个treeview列出网页中出现的foamtree中的APIEntities。APIEntities可以按出现次数排序。
+	//	每一个APIEntity之下，按照出现位置先后，列出这个APIEntity在网页中出现位置的一个小片段（比如前后5个词）。
+	//	这样一个treeview应该也可以对网页内容提供一个很好的总结作用，并且能够支持快速选择网页相关内容。
+	//	这样一个overview view可否实现？
+
+		//以上四个Mockups中，1/2/4应该很容易实现。
+	//	3会麻烦一些，但我们已有webpage crawling实现以及webpage content分析，3也应该doable for SANER paper。实现3时，不用考虑webpage下载速度问题，只要能show出来就好了。
+
+		Composite  muckuicoComposite=new Composite(sashComposite,SWT.None);
+		muckuicoComposite.setLayout(new GridLayout(2, false));
+		
+		
+		Label tweatlabel=new Label(muckuicoComposite, SWT.None);
+		tweatlabel.setText("Tweat ranking by API DOIs");
+		tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+
+		
+		Button checkbox=new Button(muckuicoComposite, SWT.CHECK);
+		checkbox.setToolTipText("Tweat ranking by API DOIs");
+		checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				true, 1, 1));
+
+		
+		Label websitelabel = new Label(muckuicoComposite, SWT.None);
+		websitelabel.setText("Select preferred web site category");
+		websitelabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+				true, 1, 1));
+		
+		Combo websiteList = new Combo(muckuicoComposite, SWT.MULTI | SWT.V_SCROLL);
+		websiteList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+				true, 1, 1));
+		websiteList.add("Technical Blogs (TB)");
+		websiteList.add("Code Examples (CE)");
+		websiteList.add("Discussion Forum (DF)");
+		websiteList.add("Q&A web site (QA)");
+		
+		
+	}	
+	
+		
 
 		// urlBrowser=new Browser(SearchComposite, SWT.None);
 		// urlBrowser.setLayoutData(new
@@ -316,8 +339,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// SWT.VERTICAL);
 		// topicComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
 		// true, 2, 1));
-
-		Composite topicCom = new Composite(topicSashForm, SWT.NONE);
+	Composite topicCom;
+	
+	if (Basic.mockup==2) {
+		topicCom = new Composite(sashComposite, SWT.NONE);
+	}else
+		 topicCom = new Composite(topicSashForm, SWT.NONE);
+		
+		
+		
 		topicCom.setLayout(new GridLayout(2, false));
 
 		// topic list
@@ -388,7 +418,15 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						}
 
 						
-						bv.genUrlTree(currentTopicName,allWebPages.get(currentTopicindex)
+						List<String> containString=CommUtil.stringToList(txtSearch.getText(), "[ ]");
+						
+						
+						
+						
+						
+						
+						
+						bv.genUrlTree(currentFoamtreeString,currentTopicName,allWebPages.get(currentTopicindex)
 								.getPages(),SearchList,currentSearchID,topicId);
 						
 
@@ -468,7 +506,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 								}
 							}
 							
-							bv.genUrlTree(currentTopicName, curTopicWEBPages.getPages(),SearchList,currentSearchID,topicId);
+							bv.genUrlTree(currentFoamtreeString, currentTopicName, curTopicWEBPages.getPages(),SearchList,currentSearchID,topicId);
 						
 							
 							
@@ -634,9 +672,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 */		
 		
-		
-		topicSashForm.setWeights(new int[] { 50, 300 });
+    if (Basic.mockup!=2) {
+    	topicSashForm.setWeights(new int[] { 50, 300 });
 
+	}
+		
 		
 /*		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
 		genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
@@ -698,7 +738,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
 		// topicFilterBrowser.refresh();
 */
-		sashComposite.setWeights(new int[] { 200, 400 });
+    
+    if (Basic.mockup!=2) {
+    	sashComposite.setWeights(new int[] { 200, 400 });
+	}
+		
 		
 		
 		
@@ -1009,6 +1053,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	public void genFoamTree(int width, int height, String foamtreeFileNamePath,
 			String foamTreeContent, String title) {
 
+			
+		
 		if (foamTreeContent.equals("")) {
 			foamTreeContent = "dataObject: {"
 					+ "groups: ["
@@ -1594,7 +1640,7 @@ private static	NewQueryRec queryRecsfordatabase=new NewQueryRec();
 	
 static	List<NewTopicInfoRec> currentTopicInfoRecs=new ArrayList<NewTopicInfoRec>();//记录话题的编号
 	
-
+String currentFoamtreeString="";
 
 private static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>();
 private static int currentQueryID=0;
@@ -1670,7 +1716,7 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		
 		//List<KeyWord> noDupkeyworksforquery=currentSearchKeyWords201411;
 	
-
+currentFoamtreeString="";
 		String searchwords = "";
 		// String currentWord="";
 		String labelWeight = "";
@@ -1681,9 +1727,11 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 			
 			String labels ="";
 			
-			labels=currentSearchKeyWords201411.get(i).getKeywordName();
+						labels=currentSearchKeyWords201411.get(i).getKeywordName();
 			labels=CommUtil.getNewSimpleWords(labels);
 			
+			currentFoamtreeString=currentFoamtreeString+" "+labels;
+
 			
 			if (labels.contains(".")) {
 			    labels=labels.replaceAll("[.]", ". ");
@@ -1719,8 +1767,15 @@ public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> 
 		String foamTreeContent = "dataObject: {" + "groups: [" + labelWeight
 				+ "]" + "}";
 
-		int width = foamtreeBrowser.getBounds().width;
-		int height = foamtreeBrowser.getBounds().height;
+		
+		int width ;
+		int height ;
+		
+		
+		 width = foamtreeBrowser.getBounds().width;
+		 height = foamtreeBrowser.getBounds().height;
+			
+		
 		System.out.println("width & height:" + width + ":" + height);
 
 		// 生成网页
@@ -1785,6 +1840,65 @@ static Timestamp preTimePoint=new Timestamp(System.currentTimeMillis());
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
+	}
+
+	public void doFoamtreeClick(String title, int width, int height) {
+		//				System.out.println("select group label is : " + e.title);
+						if (title.equals("foamtreetest.html")) {
+							return;
+		
+						}
+						if (title.equals("")) {
+							return;
+						}
+		//新增是否为数字字符
+						boolean bl = true;    //存放是否全为数字
+						  char[] c = title.toCharArray();    //把输入的字符串转成字符数组
+						  for(int i=0;i<c.length;i++){
+						   if(!Character.isDigit(c[i])){   //判断是否为数字
+						    bl = false;
+						    break;
+						   }
+						  }
+						  if(!bl){
+							  return;
+						  }
+			
+		
+						if (!title.toLowerCase()
+								.equals("HelloHongwei".toLowerCase())) {
+			
+							
+							
+							
+							
+							boolean isuseword=true;
+							for (int i = 0; i < SearchList.size(); i++) {
+								if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(currentSearchKeyWords201411.get(Integer.valueOf(title)).getKeywordName().trim().toLowerCase())) {
+									isuseword=false;
+									SearchList.remove(i);
+									break;
+								}
+								
+							}
+							
+							
+							if (isuseword) {
+								
+								SearchList.add(currentSearchKeyWords201411.get(Integer.valueOf(title)));
+							}		
+								
+								
+							}
+							
+							
+							String searchtext="";
+							for (int i = 0; i < SearchList.size(); i++) {
+								searchtext=searchtext.trim()+" "+CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName());
+							}
+							
+							
+							txtSearch.setText(searchtext);
 	}
 
 }
