@@ -41,6 +41,7 @@ import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.HistoryUrlSearch;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
+import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -130,7 +131,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 	                 int id=(historyid-1)<0?0:(historyid-1);
 	                 historyid=historyid-1;
 	                 idlabel.setText("ID: "+id);
-	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(), historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
+	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(), historyUrlSearch.get(id).getWebpageList());
 	             	
 	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
 						
@@ -202,7 +203,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 	                 int id=(historyid+1)>currentHistoryUrlSearchID?currentHistoryUrlSearchID:(historyid+1);
 					historyid=historyid+1;
 					 idlabel.setText("ID: "+id);
-	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(),historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
+	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(),historyUrlSearch.get(id).getWebpageList()	);
 							
 	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
 						
@@ -383,65 +384,37 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	private int historyid=0;
 	
 	
-	public void genUrlTree(String currentFoamtreeString, String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
+	public void genUrlTree( String currentTopicName,  List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
+		
+		List<WEBPageBean> allwebpageListfirstPart=new ArrayList<WEBPageBean>();
+		List<WEBPageBean> allwebpageListsecondPart=new ArrayList<WEBPageBean>();
+		
+		
 		HistoryUrlSearch hus=new HistoryUrlSearch();
+		
 		hus.setSearchList(searchList);
+
 		
-		
-		List<String> foamtreestrlist= CommUtil.stringToList(currentFoamtreeString.trim(), "[ ]");
-		
-		
+		    
 			
 			for (int j = 0; j < list.size(); j++) {
-				list.get(j).setContainsStr("");
-				for (int i = 0; i < foamtreestrlist.size(); i++) {
-				 
-				if (list.get(j).getTitle().toLowerCase().trim().contains(foamtreestrlist.get(i).toLowerCase().trim())){
-					String labels=list.get(j).getContainsStr()+" "+foamtreestrlist.get(i).trim();
-					list.get(j).setContainsStr(labels);
-					break;
-				}else {
-					
-					if (list.get(j).getContent().toLowerCase().trim().contains(foamtreestrlist.get(i).toLowerCase().trim())){
-						String labels=list.get(j).getContainsStr()+" "+foamtreestrlist.get(i).trim() ;
-						list.get(j).setContainsStr(labels);
-					break;
-				}else {
-					String labess=" IOException";
-					if (i%3==1)  
-						labess=" IWorkbenchPage";
-					if(i%3==2)
-						labess =" openEditor";
-					
-					String labels=list.get(j).getContainsStr()+labess;
-					
-					list.get(j).setContainsStr(labels);
-					
-				}
+			
 				
-				
-				
+					if (list.get(j).isSelect()) {
+						allwebpageListfirstPart.add(list.get(j));
+						
+			}else {
+				allwebpageListsecondPart.add(list.get(j));
 			}
+					
+					
+			
+			
 			
 		}
-				String str=list.get(j).getContainsStr();
-				if (str.contains("(")) {
-					str.replace("(", " ");
-				}
-				if (str.contains(")")) {
-					str.replace(")", " ");
-				}
-				
-
-				list.get(j).setContainsStr(CommUtil.ListToString(CommUtil.removeDuplicateWithOrder(CommUtil.stringToList(str)),' '));
 		
-			}
-		
-//		for (int i = 0; i < list.size(); i++) {
-//			String containsstr=genHightLightStr(list.get(i),searchList);
-//			list.get(i).setContainsStr(containsstr);
-//		}
 
+		
 		
 		
 		hus.setWebpageList(list);
@@ -472,15 +445,22 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		}
 		
 		
-		
+		List<WEBPageBean> alllist=new ArrayList<WEBPageBean>();
+		for (int i = 0; i < allwebpageListfirstPart.size(); i++) {
+			alllist.add(allwebpageListfirstPart.get(i));
+			
+		}
+		for (int i = 0; i < allwebpageListsecondPart.size(); i++) {
+			alllist.add(allwebpageListsecondPart.get(i));
+		}
 
 		
-		doGenUrlTree(currentTopicName,list, searchList);
+		doGenUrlTree(currentTopicName, alllist);
 		
 		
 	}
 
-	private void doGenUrlTree(String topicname, List<WEBPageBean> list, List<KeyWord> searchList) {
+	public void doGenUrlTree(String topicname,  List<WEBPageBean> list) {
 		int R=CommUtil.randomInt(128, 0);
 		int Y=CommUtil.randomInt(255, 0);
 		int B=CommUtil.randomInt(255, 0);
@@ -489,6 +469,15 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			
 		  urlTree.removeAll();
 		 urlTree.setForeground(SWTResourceManager.getColor(R, Y, B));
+		 
+		 List<WEBPageBean> displaylist=new ArrayList<WEBPageBean>();
+		 
+		 for (int i = 0; i < list.size(); i++) {
+			displaylist.add(list.get(i));
+			
+		}
+		 
+		 
 		 
 		 
 		for (int i = 0; i < list.size(); i++) {
@@ -502,7 +491,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			
 			
 			urlTreeItem.setData(urr);
-			urlTreeItem.setText(list.get(i).getTitle().trim());
+			urlTreeItem.setText((i+1)+":  "+list.get(i).getTitle().trim());
 	
 			urlTreeItem.setForeground(Display.getDefault()
 					.getSystemColor(SWT.COLOR_BLACK));

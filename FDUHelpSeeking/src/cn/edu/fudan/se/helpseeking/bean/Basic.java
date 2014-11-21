@@ -778,5 +778,6 @@ public enum QueryLevel {
 	
 		//光标所在行附近的代码：  目前是设置为前后2行；共计5行；为了更加关注，设置为1行，就自己
 		public static int linelimited=1;   //3  发现新算法的词太少，所以这个代码行数量 还是设置为3 同时 词的集合变化太少 变化率RATIOOFNEWSEARCHSTRING设置为0.1 （原来设置0.6 或0.38）
-		public static int mockup=2;
+	//	public static int mockup=2;
+
 }

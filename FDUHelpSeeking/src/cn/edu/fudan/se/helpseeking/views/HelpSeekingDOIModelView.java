@@ -40,6 +40,14 @@ public class HelpSeekingDOIModelView extends ViewPart {
 
 	private Browser foamtreeBrowser;
 
+	public Browser getFoamtreeBrowser() {
+		return foamtreeBrowser;
+	}
+
+	public void setFoamtreeBrowser(Browser foamtreeBrowser) {
+		this.foamtreeBrowser = foamtreeBrowser;
+	}
+
 	String foamTreeFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
 			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
 	String foamTreeTopicFilterFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
@@ -97,11 +105,6 @@ public class HelpSeekingDOIModelView extends ViewPart {
 
 	}
 
-public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> keyWordsforQuery, int mode) {
-
-	bv.setNewWordsAndMode(snapShotAllKeyWords, keyWordsforQuery, mode);
-	
-}
 	
 	@Override
 	public void setFocus() {

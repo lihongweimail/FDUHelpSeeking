@@ -1458,6 +1458,10 @@ public class CacheProcessing extends Thread {
 					if (keywordsvalidate.contains("QObject.")) {
 						keywordsvalidate=keywordsvalidate.replace("QObject.", "Object.");
 					}
+					if (keywordsvalidate.contains("QString")) {
+						keywordsvalidate=keywordsvalidate.replace("QString", "String");
+					}
+
 
 					kw.setKeywordName(keywordsvalidate.trim());
 				

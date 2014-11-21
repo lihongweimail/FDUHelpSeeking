@@ -241,8 +241,12 @@ public class CommUtil {
 			{
 				List<String> packageClassName=new ArrayList<String>();
 				packageClassName=CommUtil.stringToList(tempstr, "[.]");
-					resultstr=packageClassName.get(packageClassName.size()-1);
 				
+				if (packageClassName.size()>0) {
+					resultstr=packageClassName.get(packageClassName.size()-1);
+				}else
+					
+				resultstr=tempstr;
 				
 			}
 		
@@ -1012,18 +1016,18 @@ public class CommUtil {
 		CxKeyPair ckp10 = new CxKeyPair(
 				"AIzaSyDHgWn_MeUvBp0ha41XIXUGsT0LQuaylSs",
 				"005635559766885752621:nnlxix8wrxo");
-		CxKeyPair ckp11 = new CxKeyPair(
-				"AIzaSyCEw3qtyVRYJ9QlhKgQN2FMwRa4N6zxt78",
-				"005635559766885752621:fqacawephkk");
-		CxKeyPair ckp12 = new CxKeyPair(
-				"AIzaSyARXdH3_gBhG3zg3mmCp6NH-RLCqs9w_h8",
-				"005635559766885752621:rjqlrd92ema");
-		CxKeyPair ckp13 = new CxKeyPair(
-				"AIzaSyA2aCykyQf1nZP2ZlA54Nrswliy0kThJ5w",
-				"005635559766885752621:mkhzdvvqmdc");
-		CxKeyPair ckp14 = new CxKeyPair(
-				"AIzaSyAlOeQI4kAlSHvxGpCA7oj9r4ZCzCAsXho",
-				"005635559766885752621:qurwj2b9mrw");
+//		CxKeyPair ckp11 = new CxKeyPair(
+//				"AIzaSyCEw3qtyVRYJ9QlhKgQN2FMwRa4N6zxt78",
+//				"005635559766885752621:fqacawephkk");
+//		CxKeyPair ckp12 = new CxKeyPair(
+//				"AIzaSyARXdH3_gBhG3zg3mmCp6NH-RLCqs9w_h8",
+//				"005635559766885752621:rjqlrd92ema");
+//		CxKeyPair ckp13 = new CxKeyPair(
+//				"AIzaSyA2aCykyQf1nZP2ZlA54Nrswliy0kThJ5w",
+//				"005635559766885752621:mkhzdvvqmdc");
+//		CxKeyPair ckp14 = new CxKeyPair(
+//				"AIzaSyAlOeQI4kAlSHvxGpCA7oj9r4ZCzCAsXho",
+//				"005635559766885752621:qurwj2b9mrw");
 		allCxKeyPair.add(ckp1);
 		allCxKeyPair.add(ckp2);
 		allCxKeyPair.add(ckp3);
@@ -1034,10 +1038,10 @@ public class CommUtil {
 		allCxKeyPair.add(ckp8);
 		allCxKeyPair.add(ckp9);
 		allCxKeyPair.add(ckp10);
-		allCxKeyPair.add(ckp11);
-		allCxKeyPair.add(ckp12);
-		allCxKeyPair.add(ckp13);
-		allCxKeyPair.add(ckp14);
+//		allCxKeyPair.add(ckp11);
+//		allCxKeyPair.add(ckp12);
+//		allCxKeyPair.add(ckp13);
+//		allCxKeyPair.add(ckp14);
 		return allCxKeyPair;
 	}
 

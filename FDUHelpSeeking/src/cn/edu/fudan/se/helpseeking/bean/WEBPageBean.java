@@ -1,5 +1,9 @@
 package cn.edu.fudan.se.helpseeking.bean;
 
+/**
+ * @author Grand
+ *
+ */
 public class WEBPageBean {
 	
 	String url="";
@@ -7,10 +11,17 @@ public class WEBPageBean {
 	String summary="";
 	String content="";
 	String containsStr="----";
+	boolean isSelect=false; //该值为所在的topic是否被选择
 	
 	
 	
 	
+	public boolean isSelect() {
+		return isSelect;
+	}
+	public void setSelect(boolean isSelect) {
+		this.isSelect = isSelect;
+	}
 	public String getContainsStr() {
 		return containsStr;
 	}
