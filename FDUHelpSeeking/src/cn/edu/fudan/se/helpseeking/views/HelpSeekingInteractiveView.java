@@ -253,7 +253,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		final Combo websiteList = new Combo(checkComposite, SWT.MULTI
 				| SWT.V_SCROLL | SWT.READ_ONLY);
 
-		websiteList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+		websiteList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
 				1, 1));
 		websiteList.add("All");
 		websiteList.add("Technical Blogs (TB)");
