@@ -82,7 +82,7 @@
             class="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
             icon="icons/refresh.gif"
             id="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
-            name="amAssist Overview"
+            name="amAssist WebPage Overview"
             restorable="true">
       </view>
            <view

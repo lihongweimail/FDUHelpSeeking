@@ -47,6 +47,7 @@ import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.internal.browser.*;
 
+import cn.edu.fudan.se.helpseeking.bean.AroundWordsBean;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
@@ -156,52 +157,60 @@ public class HelpSeekingMuckUIOverviewView  extends ViewPart{
 		}
 		
 		
-		 List<WordsAroundAPI> reAroundAPIs=getWordsAround(apilist, webURL);
+		 getWordsAround(apilist, webURL);
 		 
 		 listTree.removeAll();
 		 
-		 for (int i = 0; i < reAroundAPIs.size(); i++) {
+//		 aroundwordslist
+		 
+		 for (int i = 0; i < aroundwordslist.size(); i++) {
 			TreeItem apiItem=new TreeItem(listTree, SWT.NONE);
-			apiItem.setText(reAroundAPIs.get(i).getApi());
-			for (int j = 0; j < reAroundAPIs.get(i).getWords().size(); j++) {
+			apiItem.setText(aroundwordslist.get(i).getKeywords());
+			for (int j = 0; j < aroundwordslist.get(i).getArourndwords().size(); j++) {
 				TreeItem worditem=new TreeItem(apiItem, SWT.NONE);
-				worditem.setText(reAroundAPIs.get(i).getWords().get(j));
+				worditem.setText(aroundwordslist.get(i).getArourndwords().get(j));
 			}
 			
-			 
+			 apiItem.setExpanded(true);
 		}
+		
 		
 	}
 	
+	public static List<AroundWordsBean> aroundwordslist=new ArrayList<AroundWordsBean>();
 	
-	public static List<WordsAroundAPI> getWordsAround(List<String> apis,String webURL) throws IOException 
+	public static  void getWordsAround(List<String> apis,String webURL) throws IOException 
 	{
 		
 		JsoupParser parser = new JsoupParser(webURL);
 		
+		for (int i = aroundwordslist.size(); i >0; i--) {
+			aroundwordslist.remove(i-1);
+		}
 				
 		//HashMap<String, List<String>> map = new HashMap<String, List<String>>();
-		List<WordsAroundAPI> results = new ArrayList<WordsAroundAPI>();
 		
+		
+		
+	
 		for(String api : apis)
 		{
-			
-			System.out.println(parser.getAroundWord(api, 4, results));
+			AroundWordsBean awb=new AroundWordsBean();
+			List<WordsAroundAPI> results = new ArrayList<WordsAroundAPI>();
+			parser.getAroundWord(api, 4, results);
 			//map.put(api, results);
+			awb.setKeywords(api);
+			for (int i = 0; i < results.size(); i++) {
+				
+				awb.getArourndwords().add(CommUtil.ListToString(results.get(i).getWords(), ' '));
+				
+			}
+			aroundwordslist.add(awb);
 			
 		}
 		
-		for(WordsAroundAPI waa : results)
-		{
-			System.out.println(waa.getApi());
-			for(String w : waa.getWords())
-			{
-				System.out.println("          " + w);
-			}
-		}
 		
 
-		return results;
 		
 	}
 	

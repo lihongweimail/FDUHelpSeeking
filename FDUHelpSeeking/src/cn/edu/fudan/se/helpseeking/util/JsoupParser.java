@@ -1,14 +1,12 @@
 package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,7 +22,10 @@ public class JsoupParser {
 	{
 		try
 		{
-			BufferedReader br = new BufferedReader(new FileReader("stopwords"));
+			
+
+			BufferedReader br = new BufferedReader(new FileReader(CommUtil.getFDUHelpseekingPluginWorkingPath()
+					+ "/stopwords.txt"));
 			
 			String line = br.readLine();
 			while(line != null)
@@ -65,6 +66,15 @@ public class JsoupParser {
 	
 	public JsoupParser(String url) throws IOException
 	{
+		
+		
+		Resource stopres = new Resource();
+		String stopString = stopres.getResource(
+		"/foamtree/stopwords.txt", true);
+		
+       FileHelper.writeNewFile(CommUtil.getFDUHelpseekingPluginWorkingPath()
+		+ "/stopwords.txt", stopString);
+
 		doc = Jsoup.connect(url).post();
 	}
 	
@@ -100,13 +110,14 @@ public class JsoupParser {
 			content.replaceAll("\\s+", " ");
 			
 			String[] words = content.toLowerCase().split(" ");
+			String[] backwords=content.split(" ");
 			for(int i=0; i<words.length; i++)
 			{
 				if(words[i].indexOf(api.toLowerCase()) > -1)
 				{
 					count += 1;
 					
-					WordsAroundAPI wapi = new WordsAroundAPI(words[i]);
+					WordsAroundAPI wapi = new WordsAroundAPI(backwords[i]);//(words[i]);
 					
 					int k = 0;
 					for(int j=i-1; j>=0 && k<step; j--)
@@ -115,7 +126,7 @@ public class JsoupParser {
 						if(!"".equals(words[j].trim()) && !STOPWORDS.contains(words[j].trim()) 
 								&& !isNumeric(words[j]) && !isNumeric(words[j].charAt(0)))
 						{
-							wapi.addWord(words[j]);
+							wapi.addWord(backwords[j]);//(words[j]);
 							k++;
 						}
 					}
@@ -126,7 +137,7 @@ public class JsoupParser {
 						if(!"".equals(words[j].trim()) && !STOPWORDS.contains(words[j]) 
 								&& !isNumeric(words[j]) && !isNumeric(words[j].charAt(0)))
 						{
-							wapi.addWord(words[j]);
+							wapi.addWord(backwords[j]);//(words[j]);
 							k++;
 						}
 					}
