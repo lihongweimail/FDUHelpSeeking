@@ -91,6 +91,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	private static Text txtSearch;
 	private static IViewPart dOIViewPart;
 	private static IViewPart browserpart;
+	private static IViewPart overviewViewPart;
 
 	private static List<KeyWord> currentSearchWords = new ArrayList<>();
 	private static List<KeyWord> sendfromselectSearchWords = new ArrayList<>();
@@ -183,7 +184,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.LF || e.character == SWT.CR) {
-					manualSearch();
+					if (!txtSearch.getText().trim().equals("")
+							&& txtSearch.getText().trim().length() >= 2) {
+
+						manualSearch();
+					}
 
 				}
 
@@ -202,8 +207,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+				if (!txtSearch.getText().trim().equals("")
+						&& txtSearch.getText().trim().length() >= 2) {
 
-				manualSearch();
+					manualSearch();
+				}
 
 			}
 		});
@@ -212,30 +220,30 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
 		checkComposite.setLayout(new GridLayout(2, false));
 
-		Label tweatlabel = new Label(checkComposite, SWT.None);
-		tweatlabel.setText("Tweat ranking by API DOIs");
-		tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-				1, 1));
-
-		Button checkbox = new Button(checkComposite, SWT.CHECK);
-		checkbox.setToolTipText("Tweat ranking by API DOIs");
-		checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
-				1, 1));
-		checkbox.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				// 还需要写代码 当选上这一项后 修改Google的检索设置
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				// 还需要写代码 当选上这一项后 修改Google的检索设置
-
-			}
-		});
+		// Label tweatlabel = new Label(checkComposite, SWT.None);
+		// tweatlabel.setText("Tweak ranking by API DOIs");
+		// tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+		// 1, 1));
+		//
+		// Button checkbox = new Button(checkComposite, SWT.CHECK);
+		// checkbox.setToolTipText("Tweak ranking by API DOIs");
+		// checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
+		// 1, 1));
+		// checkbox.addSelectionListener(new SelectionListener() {
+		//
+		// @Override
+		// public void widgetSelected(SelectionEvent arg0) {
+		// // TODO Auto-generated method stub
+		// // 还需要写代码 当选上这一项后 修改Google的检索设置
+		// }
+		//
+		// @Override
+		// public void widgetDefaultSelected(SelectionEvent arg0) {
+		// // TODO Auto-generated method stub
+		// // 还需要写代码 当选上这一项后 修改Google的检索设置
+		//
+		// }
+		// });
 
 		Label websitelabel = new Label(checkComposite, SWT.None);
 		websitelabel.setText("Select preferred web site category");
@@ -260,6 +268,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// TODO Auto-generated method stub
 				// System.out.println(websiteList.getSelectionIndex());
 				searchEngineSelect = websiteList.getSelectionIndex();
+				if (!txtSearch.getText().trim().equals("")
+						&& txtSearch.getText().trim().length() >= 2) {
+					manualSearch();
+				}
 
 			}
 
@@ -352,22 +364,22 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						}
 					}
 
-//					for (int i = 0; i < allpageslist.size(); i++) {
-//						for (int j = 0; j < newAllpagelist.size(); j++) {
-//							if (!allpageslist.get(i).getUrl()
-//									.equals(newAllpagelist.get(j).getUrl())) {
-//								leftpageslist.add(allpageslist.get(i));
-//
-//							}
-//						}
-//
-//					}
-//
-//					for (int i = 0; i < leftpageslist.size(); i++) {
-//						newAllpagelist.add(leftpageslist.get(i));
-//					}
-//
-//					allpageslist = newAllpagelist;
+					// for (int i = 0; i < allpageslist.size(); i++) {
+					// for (int j = 0; j < newAllpagelist.size(); j++) {
+					// if (!allpageslist.get(i).getUrl()
+					// .equals(newAllpagelist.get(j).getUrl())) {
+					// leftpageslist.add(allpageslist.get(i));
+					//
+					// }
+					// }
+					//
+					// }
+					//
+					// for (int i = 0; i < leftpageslist.size(); i++) {
+					// newAllpagelist.add(leftpageslist.get(i));
+					// }
+					//
+					// allpageslist = newAllpagelist;
 
 				}
 
@@ -400,7 +412,6 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 					if ((browserpart instanceof HelpSeekingBrowserView)) {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-						bv.getTopicContentText().setText(currentTopicName);
 						String topicId = "";
 
 						for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
@@ -477,7 +488,6 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-							bv.getTopicContentText().setText(currentTopicName);
 							String topicId = "";
 
 							for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
@@ -1076,12 +1086,30 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					int indexResultslist = 0;
 					for (WEBResult webResult : googlesearchList) {
 						String titleNoFormating = webResult.getTitle();
-						titleNoFormating = titleNoFormating.replaceAll(
-								"&quot;", "\"");
-						titleNoFormating.replaceAll("&#39;", "\'");
-						titleNoFormating.replaceAll("<b>", " ");
-						titleNoFormating.replaceAll("</", " ");
-						titleNoFormating.replaceAll("b>", " ");
+						if (titleNoFormating.isEmpty()
+								|| titleNoFormating == null)
+							continue;
+
+						if (titleNoFormating.contains("&quot;")) {
+							titleNoFormating = titleNoFormating.replace(
+									"&quot;", "\"");
+						}
+						if (titleNoFormating.contains("&#39;")) {
+							titleNoFormating = titleNoFormating.replace(
+									"&quot;", "\'");
+						}
+						if (titleNoFormating.contains("<b>")) {
+							titleNoFormating = titleNoFormating.replace("<b>",
+									" ");
+						}
+						if (titleNoFormating.contains("</")) {
+							titleNoFormating = titleNoFormating.replace("</",
+									" ");
+						}
+						if (titleNoFormating.contains("b>")) {
+							titleNoFormating = titleNoFormating.replace("b>",
+									" ");
+						}
 
 						searchResultOutput = searchResultOutput + "\n"
 								+ webResult.toString();
@@ -1104,125 +1132,152 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						webpb.setSelect(false);
 
 						for (int i1 = 0; i1 < foamtreestrlist.size(); i1++) {
-														
-							
-//					System.out.println("code split:# "+CommUtil.getTokensfromCodeStr(foamtreestrlist.get(i1)));
-							System.out.println("origin words:#  "+foamtreestrlist.get(i1));
-						System.out.println("new simple words:#  "+CommUtil.getNewSimpleWords(foamtreestrlist.get(i1)));
-//							System.out.println("simple words:#  "+CommUtil.getSimpleWords(foamtreestrlist.get(i1)));
-							
-							String tempstr=CommUtil.getNewSimpleWords(foamtreestrlist.get(i1));
+
+							// System.out.println("code split:# "+CommUtil.getTokensfromCodeStr(foamtreestrlist.get(i1)));
+							// System.out.println("origin words:#  "+foamtreestrlist.get(i1));
+							// System.out.println("new simple words:#  "+CommUtil.getNewSimpleWords(foamtreestrlist.get(i1)));
+							// System.out.println("simple words:#  "+CommUtil.getSimpleWords(foamtreestrlist.get(i1)));
+
+							String tempstr = CommUtil
+									.getNewSimpleWords(foamtreestrlist.get(i1)
+											.replace(" ", ""));
 							if (tempstr.contains("(")) {
-								tempstr=tempstr.replace("(", " ");
+								tempstr = tempstr.replace("(", " ");
 							}
 							if (tempstr.contains(")")) {
-								tempstr=tempstr.replace(")", " ");
+								tempstr = tempstr.replace(")", " ");
 							}
 							if (tempstr.contains(".")) {
-								tempstr=tempstr.replace(".", " ");
+								tempstr = tempstr.replace(".", " ");
 							}
-							
-							List<String> tempstrList=CommUtil.stringToList(tempstr, " ", 2);
-			boolean flag=false;				
 
-			for (int i = 0; i < tempstrList.size(); i++) {
-				String titleString=webpb
-						.getTitle()
-						.toLowerCase()
-						.trim();
-				
-				if (titleString.contains("(")) {
-					titleString=titleString.replace("(", " ");
-				}
-				if (titleString.contains(")")) {
-					titleString=titleString.replace(")", " ");
-				}
-				if (titleString.contains(".")) {
-					titleString=titleString.replace(".", " ");
-				}
-				if (titleString.contains(";")) {
-					titleString=titleString.replace(";", " ");
-				}
-				if (titleString.contains(",")) {
-					titleString=titleString.replace(",", " ");
-				}
+							List<String> tempstrList = CommUtil.stringToList(
+									tempstr, " ", 2);
+							boolean flag = false;
 
-				String summaryString=webpb
-						.getSummary()
-						.toLowerCase()
-						.trim();
-				
-				
-				if (summaryString.contains("(")) {
-					summaryString=summaryString.replace("(", " ");
-				}
-				if (summaryString.contains(")")) {
-					summaryString=summaryString.replace(")", " ");
-				}
-				if (summaryString.contains(".")) {
-					summaryString=summaryString.replace(".", " ");
-				}
-				if (summaryString.contains(";")) {
-					summaryString=summaryString.replace(";", " ");
-				}
-				if (summaryString.contains(",")) {
-					summaryString=summaryString.replace(",", " ");
-				}
+							int countforlabel = 0;
+							for (int i = 0; i < tempstrList.size(); i++) {
+								String titleString = webpb.getTitle()
+										.toLowerCase().trim();
 
+								if (titleString.contains("(")) {
+									titleString = titleString.replace("(", " ");
+								}
+								if (titleString.contains(")")) {
+									titleString = titleString.replace(")", " ");
+								}
+								if (titleString.contains(".")) {
+									titleString = titleString.replace(".", " ");
+								}
+								if (titleString.contains(";")) {
+									titleString = titleString.replace(";", " ");
+								}
+								if (titleString.contains(",")) {
+									titleString = titleString.replace(",", " ");
+								}
 
-				
-				
-				if (titleString
-						.contains(
-								tempstrList.get(i)
+								String summaryString = webpb.getSummary()
+										.toLowerCase().trim();
+
+								if (summaryString.contains("(")) {
+									summaryString = summaryString.replace("(",
+											" ");
+								}
+								if (summaryString.contains(")")) {
+									summaryString = summaryString.replace(")",
+											" ");
+								}
+								if (summaryString.contains(".")) {
+									summaryString = summaryString.replace(".",
+											" ");
+								}
+								if (summaryString.contains(";")) {
+									summaryString = summaryString.replace(";",
+											" ");
+								}
+								if (summaryString.contains(",")) {
+									summaryString = summaryString.replace(",",
+											" ");
+								}
+
+								if (titleString.contains(tempstrList.get(i)
 										.toLowerCase().trim())) {
-					if (webpb.getContainsStr().equals("----")) {
-						webpb.setContainsStr("");
-					}
-					
-					String labels = webpb.getContainsStr();
-					if (!labels.toLowerCase().trim().contains(foamtreestrlist.get(i1).trim())) {
-						labels=(labels+"  #   "+foamtreestrlist.get(i1)).trim();
-					}
+									if (webpb.getContainsStr().equals("----")) {
+										webpb.setContainsStr("");
+									}
 
-					webpb.setContainsStr(labels.trim());
-					flag=true;
-//					break;
-				} 
-				
+									String labels = webpb.getContainsStr();
+									if (!labels
+											.toLowerCase()
+											.trim()
+											.contains(
+													foamtreestrlist.get(i1)
+															.toLowerCase()
+															.trim())) {
+										countforlabel = countforlabel + 1;
+										if (countforlabel < 4) {
+											labels = (labels + "  #   " + foamtreestrlist
+													.get(i1)).trim();
+										} else {
+											if (countforlabel == 4) {
+												labels = (labels + "  #   MORE...")
+														.trim();
 
-					if (summaryString
-							.contains(
-									tempstrList.get(i)
-											.toLowerCase().trim())) {
-						if (webpb.getContainsStr().equals("----")) {
-							webpb.setContainsStr("");
+											}
+										}
+
+									}
+
+									webpb.setContainsStr(labels.trim());
+									flag = true;
+									// break;
+								}
+
+								if (summaryString.contains(tempstrList.get(i)
+										.toLowerCase().trim())) {
+									if (webpb.getContainsStr().equals("----")) {
+										webpb.setContainsStr("");
+									}
+									String labels = webpb.getContainsStr();
+									if (!labels
+											.toLowerCase()
+											.trim()
+											.contains(
+													foamtreestrlist.get(i1)
+															.toLowerCase()
+															.trim())) {
+										countforlabel = countforlabel + 1;
+										if (countforlabel < 4) {
+											labels = (labels + "  #   " + foamtreestrlist
+													.get(i1)).trim();
+										} else {
+											if (countforlabel == 4) {
+												labels = (labels + "  #   MORE...")
+														.trim();
+
+											}
+										}
+
+									}
+
+									webpb.setContainsStr(labels.trim());
+									flag = true;
+									// break;
+								}
+
+							}
+
+							// if (flag) {
+							// break;
+							// }
+
 						}
-						String labels = webpb.getContainsStr();
-						if (!labels.toLowerCase().trim().contains(foamtreestrlist.get(i1).trim())) {
-							labels=(labels+"  #   "+foamtreestrlist.get(i1)).trim();
-						}
-							
-
-						webpb.setContainsStr(labels.trim());
-						flag=true;
-//						break;
-					}
-
-				
-			}
-
-//			if (flag) {
-//				break;
-//			}
-
-		}
 
 						allpageslist.add(webpb);
 
 						// end of 2014.10.15
 
-		} // end foreach googlesearchlist
+					} // end foreach googlesearchlist
 
 					Timestamp endtime = new Timestamp(
 							System.currentTimeMillis());
@@ -1235,9 +1290,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					browserpart = FDUHelpSeekingPlugin
 							.getDefault()
 							.getWorkbench()
-							.getActiveWorkbenchWindow()
-							.getActivePage()
-							.findView(
+							.getActiveWorkbenchWindow().getActivePage().findView(
 									"cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
 
 					if ((browserpart instanceof HelpSeekingInteractiveView)) {
@@ -1273,13 +1326,16 @@ public class HelpSeekingInteractiveView extends ViewPart {
 												"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
 								HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 
-								bv.doGenUrlTree("", allpageslist);
+								List<WEBPageBean> nullList = new ArrayList<WEBPageBean>();
+								bv.doGenUrlTree(bv.getUrlTree(), nullList);
+								bv.doGenUrlTree(bv.getUrlTreeUnselect(),
+										allpageslist);
 
 							} catch (PartInitException e1) {
 								// TODO Auto-generated catch block
 								System.out
 										.println("sorry ! please show view HelpSeekingBrowserView.");
-								;
+
 							}
 
 						genTopicTree();
@@ -1469,7 +1525,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			labels = currentSearchKeyWords201411.get(i).getKeywordName();
 			labels = CommUtil.getNewSimpleWords(labels);
 
-			currentFoamtreeString = currentFoamtreeString + " " + labels;
+			currentFoamtreeString = currentFoamtreeString + " "
+					+ labels.replace(" ", "");
 
 			if (labels.contains(".")) {
 				labels = labels.replaceAll("[.]", ". ");
@@ -1539,6 +1596,36 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			bv.getFoamtreeBrowser().setUrl(foamTreeFileNamePath);
 
 		}
+
+		overviewViewPart = FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage()
+				.findView(
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+		if (overviewViewPart == null)
+			try {
+				FDUHelpSeekingPlugin
+						.getDefault()
+						.getWorkbench()
+						.getActiveWorkbenchWindow()
+						.getActivePage()
+						.showView(
+								"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+			} catch (PartInitException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+		if ((overviewViewPart instanceof HelpSeekingMuckUIOverviewView)) {
+			HelpSeekingMuckUIOverviewView ov = (HelpSeekingMuckUIOverviewView) overviewViewPart;
+			ov.setCurrentFoamtreeWords(currentFoamtreeString);
+
+			
+		}
+
+		
 
 		// 记录数据准备存盘到数据库
 

@@ -734,7 +734,7 @@ public enum QueryLevel {
 	
 	public final static int WAIT_GOOGLE_TIME=6000;
 	public final static int GOOGLE_RESULT_NUMBERS=10; //default 10  to get 10 urls ; values as 1--10
-	public final static int GOOGLE_SEARCH_ROUND=2; // default 10 for get 100 url  ; test as 1 for 10 url 
+	public final static int GOOGLE_SEARCH_ROUND=3; // default 10 for get 100 url  ; test as 1 for 10 url 
 	
 
 	public static INIHelper mycseini=new INIHelper("/cse.ini",true);

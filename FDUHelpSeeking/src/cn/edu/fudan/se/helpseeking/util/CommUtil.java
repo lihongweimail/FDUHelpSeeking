@@ -189,7 +189,7 @@ public class CommUtil {
 						
 			int firstpartlastIndex=tempstr.indexOf('(');
 			String firstPart=tempstr.substring(0, firstpartlastIndex);
-			System.out.println("firstpart: "+firstPart);
+//			System.out.println("firstpart: "+firstPart);
 			List<String> namePart=CommUtil.stringToList(firstPart, "[.]");
 			
 			String name=namePart.get(namePart.size()-1);
@@ -205,7 +205,7 @@ public class CommUtil {
 			}else
 				secondPart=tempstr.substring(firstpartlastIndex+1);
 			
-			System.out.println("secondpart: "+ secondPart);
+//			System.out.println("secondpart: "+ secondPart);
 			List<String> secondkeywordparts=new ArrayList<String>();
 			secondkeywordparts=CommUtil.stringToList(secondPart, "[,]");
 			
@@ -250,7 +250,7 @@ public class CommUtil {
 				
 			}
 		
-        System.out.println("last formal: result : " + resultstr);
+//        System.out.println("last formal: result : " + resultstr);
         return resultstr;
 	}
     
