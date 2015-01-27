@@ -24,8 +24,12 @@ public class JsoupParser {
 		{
 			
 
+<<<<<<< HEAD
 			BufferedReader br = new BufferedReader(new FileReader(CommUtil.getFDUHelpseekingPluginWorkingPath()
 					+ "/stopwords.txt"));
+=======
+			BufferedReader br = new BufferedReader(new FileReader(CommUtil.getFDUHelpseekingPluginWorkingPath()+ "/stopwords.txt"));
+>>>>>>> refs/remotes/origin/ICSE2015TOOLDEMO
 			
 			String line = br.readLine();
 			while(line != null)
@@ -66,12 +70,18 @@ public class JsoupParser {
 	
 	public JsoupParser(String url) throws IOException
 	{
+<<<<<<< HEAD
 		
 		
 		Resource stopres = new Resource();
 		String stopString = stopres.getResource(
 		"/foamtree/stopwords.txt", true);
 		
+=======
+		Resource stopres = new Resource();
+		String stopString = stopres.getResource(
+		"/foamtree/stopwords.txt", true);
+>>>>>>> refs/remotes/origin/ICSE2015TOOLDEMO
        FileHelper.writeNewFile(CommUtil.getFDUHelpseekingPluginWorkingPath()
 		+ "/stopwords.txt", stopString);
 
