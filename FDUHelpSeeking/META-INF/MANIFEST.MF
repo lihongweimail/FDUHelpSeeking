@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Help Seeking
 Bundle-SymbolicName: cn.edu.fudan.se.helpseeking;singleton:=true
-Bundle-Version: 2.7.64.qualifier
+Bundle-Version: 2.3.64.qualifier
 Bundle-Activator: cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin
 Bundle-Vendor: SE Lab of Fudan University
 Require-Bundle: org.eclipse.ui,
@@ -20,7 +20,8 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.ui.ide;bundle-version="3.8.1",
  org.junit;bundle-version="4.11.0",
  org.eclipse.ui.console;bundle-version="3.5.200",
- org.tigris.subversion.subclipse.core;bundle-version="1.10.5"
+ org.tigris.subversion.subclipse.core;bundle-version="1.10.5",
+ org.eclipse.ui.views;bundle-version="3.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .,

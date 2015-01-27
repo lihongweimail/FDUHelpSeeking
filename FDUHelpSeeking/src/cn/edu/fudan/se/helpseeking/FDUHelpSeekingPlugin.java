@@ -27,6 +27,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ActivityContextManager;
 import cn.edu.fudan.se.helpseeking.eclipsemonitor.ExtensionPointReader;
@@ -91,17 +92,17 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 	private IWorkbenchWindow launchingWorkbenchWindow = null;
 	
 	
-//	private  List<BrowserIDBean> currentBrowserIDs=new ArrayList<BrowserIDBean>();
-//	
-//
-//	public  List<BrowserIDBean> getCurrentBrowserIDs() {
-//		return currentBrowserIDs;
-//	}
-//
-//	public  void setCurrentBrowserIDs(List<BrowserIDBean> currentBrowserIDs) {
-//		FDUHelpSeekingPlugin.getINSTANCE().currentBrowserIDs = currentBrowserIDs;
-//	}
-//	
+	private  List<BrowserIDBean> currentBrowserIDs=new ArrayList<BrowserIDBean>();
+	
+
+	public  List<BrowserIDBean> getCurrentBrowserIDs() {
+		return currentBrowserIDs;
+	}
+
+	public  void setCurrentBrowserIDs(List<BrowserIDBean> currentBrowserIDs) {
+		FDUHelpSeekingPlugin.getINSTANCE().currentBrowserIDs = currentBrowserIDs;
+	}
+	
 	
 	public IPageLayout editorIPageLayout;
 	public void setEditorIPageLayout(IPageLayout editorIPageLayout) {

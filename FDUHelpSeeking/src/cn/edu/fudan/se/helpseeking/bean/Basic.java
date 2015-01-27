@@ -734,7 +734,7 @@ public enum QueryLevel {
 	
 	public final static int WAIT_GOOGLE_TIME=6000;
 	public final static int GOOGLE_RESULT_NUMBERS=10; //default 10  to get 10 urls ; values as 1--10
-	public final static int GOOGLE_SEARCH_ROUND=2; // default 10 for get 100 url  ; test as 1 for 10 url 
+	public final static int GOOGLE_SEARCH_ROUND=3; // default 10 for get 100 url  ; test as 1 for 10 url 
 	
 
 	public static INIHelper mycseini=new INIHelper("/cse.ini",true);
@@ -778,7 +778,6 @@ public enum QueryLevel {
 	
 		//光标所在行附近的代码：  目前是设置为前后2行；共计5行；为了更加关注，设置为1行，就自己
 		public static int linelimited=1;   //3  发现新算法的词太少，所以这个代码行数量 还是设置为3 同时 词的集合变化太少 变化率RATIOOFNEWSEARCHSTRING设置为0.1 （原来设置0.6 或0.38）
-		
-		 public static boolean Visualize_flage=false;  //false 就是受控组  //true 就是试验工具组
-		
+	//	public static int mockup=2;
+
 }

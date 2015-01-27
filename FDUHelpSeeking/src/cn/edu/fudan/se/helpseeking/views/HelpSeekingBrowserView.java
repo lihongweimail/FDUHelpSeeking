@@ -1,5 +1,6 @@
 package cn.edu.fudan.se.helpseeking.views;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
@@ -11,6 +12,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -34,14 +36,15 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.SWTResourceManager;
 import org.htmlparser.tags.LabelTag;
+import org.eclipse.ui.internal.browser.*;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
-import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.HistoryUrlSearch;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
 import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
+import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -78,20 +81,34 @@ public class HelpSeekingBrowserView extends ViewPart {
 	}
 	
 	private static Tree urlTree;
+	private static Tree urlTreeUnselect;
 	private SashForm sashForm;
-	private Composite urlpartComposite;
-	private Button preTopicBtn;
-	private Button succTopicBtn;
-	private Label idlabel;
-	private Text  topicContentText;
-	public Text getTopicContentText() {
-		return topicContentText;
-	}
-
+	
+	IViewPart overviewpart;
+	
 	
 
 	private static CTabFolder tabFolder;
-	private static CTabItem tabItem;
+	
+	
+	
+	
+	
+	public static Tree getUrlTree() {
+		return urlTree;
+	}
+
+	public static void setUrlTree(Tree urlTree) {
+		HelpSeekingBrowserView.urlTree = urlTree;
+	}
+
+	public static Tree getUrlTreeUnselect() {
+		return urlTreeUnselect;
+	}
+
+	public static void setUrlTreeUnselect(Tree urlTreeUnselect) {
+		HelpSeekingBrowserView.urlTreeUnselect = urlTreeUnselect;
+	}
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -99,203 +116,83 @@ public class HelpSeekingBrowserView extends ViewPart {
 		
 		
 		
-		 sashForm = new SashForm(arg0, SWT.HORIZONTAL);
-		 sashForm.setVisible(Basic.Visualize_flage);
-		//url list 
-		  urlpartComposite=new Composite(sashForm, SWT.BORDER);
+		 sashForm = new SashForm(arg0, SWT.VERTICAL);
+			
+		 Composite urlComposite = new Composite(sashForm, SWT.NONE);
+			// SearchComposite.setLayoutData(BorderLayout.CENTER);
+		 urlComposite.setLayout(new GridLayout(2, false));
 		 
-		  urlpartComposite.setLayout(new FillLayout());
-		  
-		  urlpartComposite.setVisible(Basic.Visualize_flage);
-		  
-		  SashForm urlSashForm=new SashForm(urlpartComposite, SWT.VERTICAL);
-		  
-		  urlSashForm.setVisible(Basic.Visualize_flage);
-		  
-		  Composite urllistComposite=new Composite(urlSashForm, SWT.BORDER);
-		  
-		  urllistComposite.setLayout(new GridLayout(9, false));
-			urllistComposite.setVisible(Basic.Visualize_flage);
-		  
-		  preTopicBtn=new Button(urllistComposite,SWT.BORDER);
-		  preTopicBtn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false,1, 1));
-		  preTopicBtn.setText("<");
-		  preTopicBtn.setToolTipText("Previous Topic");
-		  
-		  preTopicBtn.setVisible(Basic.Visualize_flage);
-		  
-		  preTopicBtn.addSelectionListener(new SelectionListener() {
-			
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-//				MessageDialog
-//				.openInformation(PlatformUI.getWorkbench()
-//						.getActiveWorkbenchWindow().getShell(),
-//						"Coding",
-//						"Sorry! Please wait for a while!");
+		 Label filetrLabel=new Label(urlComposite, SWT.None);
+		 filetrLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,2,1));
+		 filetrLabel.setText("Filtered Results:");
 
-				if (historyUrlSearch.size()>0) {
-					
-	                 int id=(historyid-1)<0?0:(historyid-1);
-	                 historyid=historyid-1;
-	                 idlabel.setText("ID: "+id);
-	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(), historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
-	             	
-	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
-						
-						nwuiInfo.setTopicName(historyUrlSearch.get(id).getTopicName());
-						
-						nwuiInfo.setTopicId(historyUrlSearch.get(id).getTopicId());
-						
-						
-						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
-						
-						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
-	                 
-	                 if (id==0) {
-							
-							preTopicBtn.setEnabled(false);
-						}			
-	                 succTopicBtn.setEnabled(true);
-				}
-				
+			urlTree=new Tree(urlComposite, SWT.BORDER);
+			urlTree.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 			
-			
-			}
-			
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-		  
-		  idlabel=new Label(urllistComposite, SWT.NONE);
-		  idlabel.setVisible(Basic.Visualize_flage);
-		 GridData gd_label = new GridData(SWT.FILL, SWT.FILL, true, true,2, 1);
-		 idlabel.setText("ID:     ");
-			
-		  
-		  topicContentText = new Text(urllistComposite, SWT.BORDER | SWT.WRAP
-					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.SEARCH | SWT.CANCEL
-					| SWT.MULTI);
-		  GridData gd_txtSearch = new GridData(SWT.FILL, SWT.FILL, true, true,5, 1);
-			gd_txtSearch.heightHint = -1;
-			gd_txtSearch.widthHint = -1;
-			topicContentText.setLayoutData(gd_txtSearch);
-			topicContentText.setForeground(SWTResourceManager.getColor(255, 0, 0));
-			topicContentText.setEditable(false);
-			topicContentText.setVisible(Basic.Visualize_flage);
-			
-			succTopicBtn=new Button(urllistComposite,SWT.BORDER);
-			succTopicBtn.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,1, 1));
-			succTopicBtn.setText(">");
-			succTopicBtn.setToolTipText("Succeeding Topic");
-			succTopicBtn.setVisible(Basic.Visualize_flage);
-
-			
-			
-			succTopicBtn.addSelectionListener(new SelectionListener() {
-				
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
-//					UseResultsRecord urr=new UseResultsRecord();
-//					urr.setTitle("hello click url!");
-//					urr.setUrl(CommUtil.getPluginCurrentPath()+"foamtreetest.html");
-//				  openNewTabByURL(urr);
-//					MessageDialog
-//					.openInformation(PlatformUI.getWorkbench()
-//							.getActiveWorkbenchWindow().getShell(),
-//							"Coding",
-//							"Sorry! Please wait for a while!");
-         if (historyUrlSearch.size()>0) {
-	
-	                 int id=(historyid+1)>currentHistoryUrlSearchID?currentHistoryUrlSearchID:(historyid+1);
-					historyid=historyid+1;
-					 idlabel.setText("ID: "+id);
-	                 doGenUrlTree(historyUrlSearch.get(id).getTopicName(),historyUrlSearch.get(id).getWebpageList()	, historyUrlSearch.get(id).getSearchList());
-							
-	                 NewWebUseInfo nwuiInfo=new NewWebUseInfo();
-						
-						nwuiInfo.setTopicName(historyUrlSearch.get(id).getTopicName());
-						nwuiInfo.setTopicId(historyUrlSearch.get(id).getTopicId());
-					
-						
-						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
-						
-						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
-	             
-	                 if (id==currentHistoryUrlSearchID) {
-								succTopicBtn.setEnabled(false);
-								
-							}			
-							preTopicBtn.setEnabled(true);
-				}
-				
-				}
-				@Override
-				public void widgetDefaultSelected(SelectionEvent arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
-			
-			
-			
-			urlTree=new Tree(urlSashForm, SWT.BORDER);
-			urlTree.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,7,1));
-			urlTree.setVisible(Basic.Visualize_flage);
-			
-			 urlSashForm.setWeights(new int[] {100, 400});
-
 			 urlTree.setForeground(SWTResourceManager.getColor(0, 0, 0));
 				
 			 TreeItem welcomeI=new TreeItem(urlTree, SWT.NONE);
 			 welcomeI.setText("Welcome");
-			 
 			 TreeItem toI=new TreeItem(urlTree, SWT.NONE);
 			 toI.setText("to");
-			 
 			 TreeItem helpseekingI=new TreeItem(urlTree, SWT.NONE);
 			 helpseekingI.setText("HelpSeeking");
-			 
 			 TreeItem pluginI=new TreeItem(urlTree, SWT.NONE);
 			 pluginI.setText("Plugin");
-			 
 			 TreeItem toolI=new TreeItem(urlTree, SWT.NONE);
 			 toolI.setText("Tool");
-			 
-			 
-			 
-			 
-			 
-				
+			 			
 				urlTree.addSelectionListener(new SelectionListener() {
 					
 					@Override
-					public void widgetSelected(SelectionEvent e) {
-						TreeItem item = (TreeItem) e.item;
-						UseResultsRecord urr=(UseResultsRecord) item.getData();
-						if(urr!=null)
-						{
-							//current compostie
-//							openNewTabByURL(urr);
-							
-							//eclipse editor aero
-							//获取4位时间整数
-							Calendar c = Calendar.getInstance();
-							  c.setTimeInMillis(new Date().getTime());
-							long currentBrowserID=c.getTimeInMillis();
-					          openNewURlinBrower(urr,currentBrowserID);
-						
-							
-							
-							
+			public void widgetSelected(SelectionEvent e) {
+				TreeItem item = (TreeItem) e.item;
+				UseResultsRecord urr = (UseResultsRecord) item.getData();
+				if (urr != null) {
+					// current compostie
+					// openNewTabByURL(urr);
+
+					// eclipse editor aero
+					// 获取4位时间整数
+					Calendar c = Calendar.getInstance();
+					c.setTimeInMillis(new Date().getTime());
+					long currentBrowserID = c.getTimeInMillis();
+					openNewURlinBrower(urr, currentBrowserID);
+
+						try {
+							PlatformUI
+									.getWorkbench()
+									.getActiveWorkbenchWindow()
+									.getActivePage()
+									.showView(
+											"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+						} catch (PartInitException e1) {
+							// TODO Auto-generated catch block
+							System.out.println("please open OVerview view.");
 						}
-						
-						
+
+						overviewpart = FDUHelpSeekingPlugin
+								.getDefault()
+								.getWorkbench()
+								.getActiveWorkbenchWindow()
+								.getActivePage()
+								.findView(
+										"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+
+						if ((overviewpart instanceof HelpSeekingMuckUIOverviewView)) {
+							HelpSeekingMuckUIOverviewView bv = (HelpSeekingMuckUIOverviewView) overviewpart;
+							try {
+								bv.genlistTree(urr.getUrl());
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+
+						}
+
 					}
+				
+			}
 					
 					@Override
 					public void widgetDefaultSelected(SelectionEvent e) {
@@ -304,25 +201,126 @@ public class HelpSeekingBrowserView extends ViewPart {
 					}
 				});
 			
-			
-//			tabFolder=new CTabFolder(sashForm, SWT.BORDER);
-			
-//		     sashForm.setWeights(new int[] {400, 100});
+				 Composite urlunselectComposite = new Composite(sashForm, SWT.NONE);
+					// SearchComposite.setLayoutData(BorderLayout.CENTER);
+				 urlunselectComposite.setLayout(new GridLayout(2, false));
+				 
+				 Label unselectLabel=new Label(urlunselectComposite, SWT.None);
+				 unselectLabel.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,2,1));
+				 unselectLabel.setText("Unselelct Results:");
+
+				 
+				 urlTreeUnselect=new Tree(urlunselectComposite, SWT.BORDER);
+				 urlTreeUnselect.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+					
+				 urlTreeUnselect.setForeground(SWTResourceManager.getColor(0, 0, 0));
+						
+					 TreeItem welcomeI1=new TreeItem(urlTreeUnselect, SWT.NONE);
+					 welcomeI1.setText("Welcome");
+					 TreeItem toI1=new TreeItem(urlTreeUnselect, SWT.NONE);
+					 toI1.setText("to");
+					 TreeItem helpseekingI1=new TreeItem(urlTreeUnselect, SWT.NONE);
+					 helpseekingI1.setText("HelpSeeking");
+					 TreeItem pluginI1=new TreeItem(urlTreeUnselect, SWT.NONE);
+					 pluginI1.setText("Plugin");
+					 TreeItem toolI1=new TreeItem(urlTreeUnselect, SWT.NONE);
+					 toolI1.setText("Tool");
+					 			
+					 urlTreeUnselect.addSelectionListener(new SelectionListener() {
+							
+							@Override
+							public void widgetSelected(SelectionEvent e) {
+								TreeItem item = (TreeItem) e.item;
+								UseResultsRecord urr=(UseResultsRecord) item.getData();
+								if(urr!=null)
+								{
+									//current compostie
+//									openNewTabByURL(urr);
+									
+									//eclipse editor aero
+									//获取4位时间整数
+									Calendar c = Calendar.getInstance();
+									  c.setTimeInMillis(new Date().getTime());
+									long currentBrowserID=c.getTimeInMillis();
+							          openNewURlinBrower(urr,currentBrowserID);
+							          
+										try {
+											PlatformUI
+													.getWorkbench()
+													.getActiveWorkbenchWindow()
+													.getActivePage()
+													.showView(
+															"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+										} catch (PartInitException e1) {
+											// TODO Auto-generated catch block
+											System.out.println("please open OVerview view.");
+										}
+
+										overviewpart = FDUHelpSeekingPlugin
+												.getDefault()
+												.getWorkbench()
+												.getActiveWorkbenchWindow()
+												.getActivePage()
+												.findView(
+														"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+
+										if ((overviewpart instanceof HelpSeekingMuckUIOverviewView)) {
+											HelpSeekingMuckUIOverviewView bv = (HelpSeekingMuckUIOverviewView) overviewpart;
+											try {
+												bv.genlistTree(urr.getUrl());
+											} catch (IOException e1) {
+												// TODO Auto-generated catch block
+												e1.printStackTrace();
+											}
+
+										}
+       
+							          
+									
+									
+									
+								}
+								
+								
+							}
+							
+							@Override
+							public void widgetDefaultSelected(SelectionEvent e) {
+								// TODO Auto-generated method stub
+								
+							}
+						});
+
+
+				
+				
+				 sashForm.setWeights(new int[] {200, 300});
 
 
 	}
 
 	
+	IWebBrowser browser;
+	
+	
 protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID) 
 {
 		
 	 try {
+		 
+		 
+		 
          IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-         IWebBrowser browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
+         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
          BrowserIDBean newbrowserid=new BrowserIDBean();
          newbrowserid.setId(browser.getId());
-//         FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
-//		pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
+         FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
+		 pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
+		 
+		 
+		
+		
+		
 
 			NewWebUseInfo nwuiInfo=new NewWebUseInfo();
 			
@@ -400,15 +398,37 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 	private int historyid=0;
 	
 	
-	public void genUrlTree(String currentTopicName, List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
-		HistoryUrlSearch hus=new HistoryUrlSearch();
-		hus.setSearchList(searchList);
+	public void genUrlTree( String currentTopicName,  List<WEBPageBean> list, List<KeyWord> searchList, String searchId, String topicId) {
 		
-		for (int i = 0; i < list.size(); i++) {
-			String containsstr=genHightLightStr(list.get(i),searchList);
-			list.get(i).setContainsStr(containsstr);
-		}
+		List<WEBPageBean> allwebpageListfirstPart=new ArrayList<WEBPageBean>();
+		List<WEBPageBean> allwebpageListsecondPart=new ArrayList<WEBPageBean>();
+		
+		
+		HistoryUrlSearch hus=new HistoryUrlSearch();
+		
+		hus.setSearchList(searchList);
 
+		
+		    
+			
+			for (int j = 0; j < list.size(); j++) {
+			
+				
+					if (list.get(j).isSelect()) {
+						allwebpageListfirstPart.add(list.get(j));
+						
+			}else {
+				allwebpageListsecondPart.add(list.get(j));
+			}
+					
+					
+			
+			
+			
+		}
+		
+
+		
 		
 		
 		hus.setWebpageList(list);
@@ -429,37 +449,48 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		historyid=currentHistoryUrlSearchID;
 		
 		hus.setId(historyid);
-		succTopicBtn.setEnabled(true);
-		preTopicBtn.setEnabled(true);
-		idlabel.setText("ID: "+hus.getId());
-		
-		succTopicBtn.setEnabled(false);
-		if (historyid!=0) {
-			preTopicBtn.setEnabled(true);
-		}
 		
 		
-		
+//		List<WEBPageBean> alllist=new ArrayList<WEBPageBean>();
+//		for (int i = 0; i < allwebpageListfirstPart.size(); i++) {
+//			alllist.add(allwebpageListfirstPart.get(i));
+//			
+//		}
+//		for (int i = 0; i < allwebpageListsecondPart.size(); i++) {
+//			alllist.add(allwebpageListsecondPart.get(i));
+//		}
 
 		
-		doGenUrlTree(currentTopicName,list, searchList);
+		doGenUrlTree(urlTree, allwebpageListfirstPart);
+		doGenUrlTree(urlTreeUnselect, allwebpageListsecondPart);
 		
 		
 	}
 
-	private void doGenUrlTree(String topicname, List<WEBPageBean> list, List<KeyWord> searchList) {
+	public void doGenUrlTree(Tree myTree,  List<WEBPageBean> list) {
 		int R=CommUtil.randomInt(128, 0);
 		int Y=CommUtil.randomInt(255, 0);
 		int B=CommUtil.randomInt(255, 0);
 		
-		topicContentText.setText(topicname);
+if (list==null) {
+	return;
+}
+
+		myTree.removeAll();
+		myTree.setForeground(SWTResourceManager.getColor(R, Y, B));
+		 
+		 List<WEBPageBean> displaylist=new ArrayList<WEBPageBean>();
+		 
+		 for (int i = 0; i < list.size(); i++) {
+			displaylist.add(list.get(i));
 			
-		  urlTree.removeAll();
-		 urlTree.setForeground(SWTResourceManager.getColor(R, Y, B));
+		}
+		 
+		 
 		 
 		 
 		for (int i = 0; i < list.size(); i++) {
-			TreeItem urlTreeItem= new TreeItem(urlTree, SWT.NONE);
+			TreeItem urlTreeItem= new TreeItem(myTree, SWT.NONE);
 			UseResultsRecord urr=new UseResultsRecord();
 			urr.setTitle(list.get(i).getTitle().trim());
 			urr.setUrl(list.get(i).getUrl().trim());
@@ -469,7 +500,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 			
 			
 			urlTreeItem.setData(urr);
-			urlTreeItem.setText(list.get(i).getTitle().trim());
+			urlTreeItem.setText((i+1)+":  "+list.get(i).getTitle().trim());
 	
 			urlTreeItem.setForeground(Display.getDefault()
 					.getSystemColor(SWT.COLOR_BLACK));

@@ -17,6 +17,9 @@ public class KeyWord {
 	int positionInUseString;
 	boolean isRecommand=true;
 	
+	int keywordColor;
+	
+	
 	String lastSearchID;//最后 真正 使用search button时的searchID    一般是A开头
 	
 	Timestamp times;
@@ -26,6 +29,14 @@ public class KeyWord {
 	
 	
 	
+	
+	
+	public int getKeywordColor() {
+		return keywordColor;
+	}
+	public void setKeywordColor(int keywordColor) {
+		this.keywordColor = keywordColor;
+	}
 	public int getFrequency() {
 		return frequency;
 	}
