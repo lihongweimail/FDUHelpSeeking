@@ -37,6 +37,7 @@ import org.htmlparser.tags.LabelTag;
 
 import swing2swt.layout.BorderLayout;
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
+import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
 import cn.edu.fudan.se.helpseeking.bean.HistoryUrlSearch;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
@@ -99,22 +100,30 @@ public class HelpSeekingBrowserView extends ViewPart {
 		
 		
 		 sashForm = new SashForm(arg0, SWT.HORIZONTAL);
+		 sashForm.setVisible(Basic.Visualize_flage);
 		//url list 
 		  urlpartComposite=new Composite(sashForm, SWT.BORDER);
 		 
 		  urlpartComposite.setLayout(new FillLayout());
 		  
+		  urlpartComposite.setVisible(Basic.Visualize_flage);
+		  
 		  SashForm urlSashForm=new SashForm(urlpartComposite, SWT.VERTICAL);
+		  
+		  urlSashForm.setVisible(Basic.Visualize_flage);
 		  
 		  Composite urllistComposite=new Composite(urlSashForm, SWT.BORDER);
 		  
 		  urllistComposite.setLayout(new GridLayout(9, false));
-			
+			urllistComposite.setVisible(Basic.Visualize_flage);
 		  
 		  preTopicBtn=new Button(urllistComposite,SWT.BORDER);
 		  preTopicBtn.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false,1, 1));
 		  preTopicBtn.setText("<");
 		  preTopicBtn.setToolTipText("Previous Topic");
+		  
+		  preTopicBtn.setVisible(Basic.Visualize_flage);
+		  
 		  preTopicBtn.addSelectionListener(new SelectionListener() {
 			
 			@Override
@@ -162,6 +171,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 		});
 		  
 		  idlabel=new Label(urllistComposite, SWT.NONE);
+		  idlabel.setVisible(Basic.Visualize_flage);
 		 GridData gd_label = new GridData(SWT.FILL, SWT.FILL, true, true,2, 1);
 		 idlabel.setText("ID:     ");
 			
@@ -175,11 +185,13 @@ public class HelpSeekingBrowserView extends ViewPart {
 			topicContentText.setLayoutData(gd_txtSearch);
 			topicContentText.setForeground(SWTResourceManager.getColor(255, 0, 0));
 			topicContentText.setEditable(false);
+			topicContentText.setVisible(Basic.Visualize_flage);
 			
 			succTopicBtn=new Button(urllistComposite,SWT.BORDER);
 			succTopicBtn.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false,1, 1));
 			succTopicBtn.setText(">");
 			succTopicBtn.setToolTipText("Succeeding Topic");
+			succTopicBtn.setVisible(Basic.Visualize_flage);
 
 			
 			
@@ -233,6 +245,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 			
 			urlTree=new Tree(urlSashForm, SWT.BORDER);
 			urlTree.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,7,1));
+			urlTree.setVisible(Basic.Visualize_flage);
 			
 			 urlSashForm.setWeights(new int[] {100, 400});
 
@@ -240,12 +253,16 @@ public class HelpSeekingBrowserView extends ViewPart {
 				
 			 TreeItem welcomeI=new TreeItem(urlTree, SWT.NONE);
 			 welcomeI.setText("Welcome");
+			 
 			 TreeItem toI=new TreeItem(urlTree, SWT.NONE);
 			 toI.setText("to");
+			 
 			 TreeItem helpseekingI=new TreeItem(urlTree, SWT.NONE);
 			 helpseekingI.setText("HelpSeeking");
+			 
 			 TreeItem pluginI=new TreeItem(urlTree, SWT.NONE);
 			 pluginI.setText("Plugin");
+			 
 			 TreeItem toolI=new TreeItem(urlTree, SWT.NONE);
 			 toolI.setText("Tool");
 			 
