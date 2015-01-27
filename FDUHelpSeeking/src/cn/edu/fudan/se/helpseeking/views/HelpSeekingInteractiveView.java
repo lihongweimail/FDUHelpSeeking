@@ -220,30 +220,30 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
 		checkComposite.setLayout(new GridLayout(2, false));
 
-		// Label tweatlabel = new Label(checkComposite, SWT.None);
-		// tweatlabel.setText("Tweak ranking by API DOIs");
-		// tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-		// 1, 1));
-		//
-		// Button checkbox = new Button(checkComposite, SWT.CHECK);
-		// checkbox.setToolTipText("Tweak ranking by API DOIs");
-		// checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
-		// 1, 1));
-		// checkbox.addSelectionListener(new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(SelectionEvent arg0) {
-		// // TODO Auto-generated method stub
-		// // 还需要写代码 当选上这一项后 修改Google的检索设置
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent arg0) {
-		// // TODO Auto-generated method stub
-		// // 还需要写代码 当选上这一项后 修改Google的检索设置
-		//
-		// }
-		// });
+		 Label tweatlabel = new Label(checkComposite, SWT.None);
+		 tweatlabel.setText("Tweak ranking by API DOIs");
+		 tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
+		 1, 1));
+		
+		 Button checkbox = new Button(checkComposite, SWT.CHECK);
+		 checkbox.setToolTipText("Tweak ranking by API DOIs");
+		 checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
+		 1, 1));
+		 checkbox.addSelectionListener(new SelectionListener() {
+		
+		 @Override
+		 public void widgetSelected(SelectionEvent arg0) {
+		 // TODO Auto-generated method stub
+		 // 还需要写代码 当选上这一项后 修改Google的检索设置
+		 }
+		
+		 @Override
+		 public void widgetDefaultSelected(SelectionEvent arg0) {
+		 // TODO Auto-generated method stub
+		 // 还需要写代码 当选上这一项后 修改Google的检索设置
+		
+		 }
+		 });
 
 		Label websitelabel = new Label(checkComposite, SWT.None);
 		websitelabel.setText("Select preferred web site category");
@@ -1603,7 +1603,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				.getActiveWorkbenchWindow()
 				.getActivePage()
 				.findView(
-						"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 		if (overviewViewPart == null)
 			try {
 				FDUHelpSeekingPlugin
@@ -1612,14 +1612,14 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						.getActiveWorkbenchWindow()
 						.getActivePage()
 						.showView(
-								"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+								"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 			} catch (PartInitException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 
-		if ((overviewViewPart instanceof HelpSeekingMuckUIOverviewView)) {
-			HelpSeekingMuckUIOverviewView ov = (HelpSeekingMuckUIOverviewView) overviewViewPart;
+		if ((overviewViewPart instanceof HelpSeekingWebPageOverviewView)) {
+			HelpSeekingWebPageOverviewView ov = (HelpSeekingWebPageOverviewView) overviewViewPart;
 			ov.setCurrentFoamtreeWords(currentFoamtreeString);
 
 			

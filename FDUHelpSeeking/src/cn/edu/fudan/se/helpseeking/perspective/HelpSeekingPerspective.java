@@ -25,7 +25,7 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		IFolderLayout leftbottom = layout.createFolder("leftbottom", IPageLayout.BOTTOM, 0.60f, IPageLayout.ID_PROJECT_EXPLORER);
 		//leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingTagCloundView");
 
-		leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+		leftbottom.addView("cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 	
 		
 		IFolderLayout rightup=layout.createFolder("rightup", IPageLayout.RIGHT, 0.60f,editorArea);
@@ -60,7 +60,7 @@ public class HelpSeekingPerspective implements IPerspectiveFactory{
 		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
 		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView");
 		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 		layout.addShowViewShortcut("cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView");
 		layout.addPerspectiveShortcut(ID);
 	

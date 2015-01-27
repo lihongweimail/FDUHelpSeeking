@@ -79,9 +79,9 @@
       </view>
            <view
             category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
-            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
+            class="cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView"
             icon="icons/refresh.gif"
-            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView"
+            id="cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView"
             name="amAssist WebPage Overview"
             restorable="true">
       </view>

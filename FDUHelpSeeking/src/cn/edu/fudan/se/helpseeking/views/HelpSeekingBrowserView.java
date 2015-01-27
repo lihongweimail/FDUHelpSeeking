@@ -165,7 +165,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 									.getActiveWorkbenchWindow()
 									.getActivePage()
 									.showView(
-											"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+											"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 						} catch (PartInitException e1) {
 							// TODO Auto-generated catch block
 							System.out.println("please open OVerview view.");
@@ -177,10 +177,10 @@ public class HelpSeekingBrowserView extends ViewPart {
 								.getActiveWorkbenchWindow()
 								.getActivePage()
 								.findView(
-										"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+										"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 
-						if ((overviewpart instanceof HelpSeekingMuckUIOverviewView)) {
-							HelpSeekingMuckUIOverviewView bv = (HelpSeekingMuckUIOverviewView) overviewpart;
+						if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
+							HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
 							try {
 								bv.genlistTree(urr.getUrl());
 							} catch (IOException e1) {
@@ -250,7 +250,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 													.getActiveWorkbenchWindow()
 													.getActivePage()
 													.showView(
-															"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+															"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 										} catch (PartInitException e1) {
 											// TODO Auto-generated catch block
 											System.out.println("please open OVerview view.");
@@ -262,10 +262,10 @@ public class HelpSeekingBrowserView extends ViewPart {
 												.getActiveWorkbenchWindow()
 												.getActivePage()
 												.findView(
-														"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
+														"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
 
-										if ((overviewpart instanceof HelpSeekingMuckUIOverviewView)) {
-											HelpSeekingMuckUIOverviewView bv = (HelpSeekingMuckUIOverviewView) overviewpart;
+										if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
+											HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
 											try {
 												bv.genlistTree(urr.getUrl());
 											} catch (IOException e1) {
