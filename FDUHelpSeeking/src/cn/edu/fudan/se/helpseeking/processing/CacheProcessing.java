@@ -43,7 +43,6 @@ import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.WindowTotalKeyWords;
 import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
-import cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSearchView;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView;
@@ -62,7 +61,6 @@ public class CacheProcessing extends Thread {
 	IViewPart part;
 	IViewPart partSolutionView;
 	IViewPart partInteractiveView;
-	IViewPart modiIViewPart;
 
 	public CacheProcessing() {
 
@@ -92,8 +90,6 @@ public class CacheProcessing extends Thread {
 						.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingSolutionView");
 				partInteractiveView = page
 						.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
-				
-				modiIViewPart=page.findView("cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView");
 
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -1374,11 +1370,6 @@ public class CacheProcessing extends Thread {
 		
 			HelpSeekingSearchView v ;
 			HelpSeekingInteractiveView viteractive;
-			HelpSeekingDOIModelView modiv = null;
-			
-			if (modiIViewPart instanceof HelpSeekingDOIModelView) {
-				modiv=(HelpSeekingDOIModelView) modiIViewPart;
-			}
 		
 
 		if (partInteractiveView instanceof HelpSeekingInteractiveView) 
@@ -1389,7 +1380,6 @@ public class CacheProcessing extends Thread {
 			v=null;
 			
 			viteractive=(HelpSeekingInteractiveView) partInteractiveView;
-			
 			
 			 String searchText = "";
 			List<KeyWord> keyWordsforQuery = new ArrayList<KeyWord>();
@@ -1458,10 +1448,6 @@ public class CacheProcessing extends Thread {
 					if (keywordsvalidate.contains("QObject.")) {
 						keywordsvalidate=keywordsvalidate.replace("QObject.", "Object.");
 					}
-					if (keywordsvalidate.contains("QString")) {
-						keywordsvalidate=keywordsvalidate.replace("QString", "String");
-					}
-
 
 					kw.setKeywordName(keywordsvalidate.trim());
 				
@@ -1654,10 +1640,8 @@ public class CacheProcessing extends Thread {
 				if (!keyWordsforQuery.isEmpty()) {
 					
 	
-					
 					viteractive.setNewWordsAndMode(currentCache.getCurrentKeywordsList(),keyWordsforQuery, mode);
 					viteractive.setCurrentActionID(currentCache.getCurrentID());
-				
 				}
 				
 				currentCache.setLastKeyWordsforQuery(keyWordsforQuery);

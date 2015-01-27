@@ -1,6 +1,5 @@
 package cn.edu.fudan.se.helpseeking.views;
 
-import java.security.AllPermission;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +27,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -71,8 +68,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	}
 
 	public static final String ID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView"; //$NON-NLS-1$
-	public static final String browserviewID = "cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView";
-
+    public static final String browserviewID="cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView";
+	
 	private static String javaExceptionalFileName = "/StopResource/javaExceptionalName.txt";
 	private static Resource myResource = new Resource();
 	private static String javaExceptionalName = myResource
@@ -89,17 +86,18 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	// 2014.10 end.
 
 	private static Text txtSearch;
-	private static IViewPart dOIViewPart;
+	// private static IViewPart tagcloudpart;
 	private static IViewPart browserpart;
-	private static IViewPart overviewViewPart;
 
 	private static List<KeyWord> currentSearchWords = new ArrayList<>();
 	private static List<KeyWord> sendfromselectSearchWords = new ArrayList<>();
 
 	private static int currentActionID = 0;
 	private static String currentSearchID = "0";
-	private static int searchFlag = 0;// 大于0就是第二次检索
+	private static int searchFlag=0;//大于0就是第二次检索
+	
 
+	
 	public static int getSearchFlag() {
 		return searchFlag;
 	}
@@ -137,19 +135,21 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	}
 
 	private SashForm sashComposite;
+	private Browser foamtreeBrowser;
+	private Browser topicFilterBrowser;
 
 	private String currentTopicName = "";
+	// private Browser urlBrowser;
+
+	Composite foamtreeComposite;
 
 	String foamTreeFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
 			+ "/foamtreetest.html";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
-	// String foamTreeTopicFilterFileNamePath =
-	// CommUtil.getFDUHelpseekingPluginWorkingPath()
-	// + "/topicfilter.html";
-	String searchHTMLPath = CommUtil.getFDUHelpseekingPluginWorkingPath()
-			+ "/search.html";
+	String foamTreeTopicFilterFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
+			+ "/topicfilter.html";
+	String searchHTMLPath = CommUtil.getFDUHelpseekingPluginWorkingPath() + "/search.html";
 
 	public static List<TopicWEBPagesBean> allWebPages = new ArrayList<TopicWEBPagesBean>();
-	public static List<WEBPageBean> allpageslist = new ArrayList<WEBPageBean>();
 
 	@Override
 	public void createPartControl(Composite arg0) {
@@ -158,8 +158,103 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		sashComposite = new SashForm(arg0, SWT.VERTICAL);
 
-		Composite SearchComposite = new Composite(sashComposite, SWT.NONE);
+		// foamtreeComposite=new Composite(sashComposite, SWT.NONE);
+		// foamtreeComposite.setLayout(new FillLayout());
+
+		// 生成foamtree需要的js脚本，并将它们和显示内容文件foamtreetest.html放在一个目录下。
+		// TODO: 考虑是否生成一次？
+		
+		sashComposite.setVisible(Basic.Visualize_flage);
+		
+		initFoamTreeEnv(CommUtil.getFDUHelpseekingPluginWorkingPath());
+
+		foamtreeBrowser = new Browser(sashComposite, SWT.BORDER);
+		foamtreeBrowser
+				.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
+
+		
+		foamtreeBrowser.setVisible(Basic.Visualize_flage);
+		
+		String foamTreeContent = ""; // 使用工具生成foamtree的内容
+		genFoamTree(300, 200, foamTreeFileNamePath, foamTreeContent,
+				"HelloHongwei");
+
+		foamtreeBrowser.addTitleListener(new TitleListener() {
+			public void changed(TitleEvent e) {
+				// sShell.setText(APP_TITLE + " - " + e.title);
+
+//				System.out.println("select group label is : " + e.title);
+				if (e.title.trim().equals("foamtreetest.html")) {
+					return;
+
+				}
+				if (e.title.trim().equals("")) {
+					return;
+				}
+//新增是否为数字字符
+				boolean bl = true;    //存放是否全为数字
+				  char[] c = e.title.trim().toCharArray();    //把输入的字符串转成字符数组
+				  for(int i=0;i<c.length;i++){
+				   if(!Character.isDigit(c[i])){   //判断是否为数字
+				    bl = false;
+				    break;
+				   }
+				  }
+				  if(!bl){
+					  return;
+				  }
+	
+
+				if (!e.title.trim().toLowerCase()
+						.equals("HelloHongwei".toLowerCase())) {
+	
+					
+					boolean isuseword=true;
+					for (int i = 0; i < SearchList.size(); i++) {
+						if (SearchList.get(i).getKeywordName().trim().toLowerCase().equals(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())).getKeywordName().trim().toLowerCase())) {
+							isuseword=false;
+							SearchList.remove(i);
+							break;
+						}
+						
+					}
+					
+					
+					if (isuseword) {
+						
+						SearchList.add(currentSearchKeyWords201411.get(Integer.valueOf(e.title.trim())));
+					}		
+						
+						
+					}
+					
+					
+					String searchtext="";
+					for (int i = 0; i < SearchList.size(); i++) {
+						searchtext=searchtext.trim()+" "+CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName());
+					}
+					
+					
+					txtSearch.setText(searchtext);
+					
+				}
+			
+		});
+
+		foamtreeBrowser.setUrl(foamTreeFileNamePath);
+		// browser.refresh();
+
+		// ============
+
+		SashForm topicSashForm = new SashForm(sashComposite, SWT.VERTICAL);
+		
+		topicSashForm.setVisible(Basic.Visualize_flage);
+
+		// sashComposit 水平分割处
+		Composite SearchComposite = new Composite(topicSashForm, SWT.NONE);
 		// SearchComposite.setLayoutData(BorderLayout.CENTER);
+		
+		SearchComposite.setVisible(Basic.Visualize_flage);
 		SearchComposite.setLayout(new GridLayout(2, false));
 
 		txtSearch = new Text(SearchComposite, SWT.BORDER | SWT.WRAP
@@ -170,9 +265,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		gd_txtSearch.heightHint = -1;
 		gd_txtSearch.widthHint = -1;
 		txtSearch.setLayoutData(gd_txtSearch);
-
+		
 		txtSearch.setForeground(SWTResourceManager.getColor(255, 0, 0));
 		txtSearch.setToolTipText("Input keyworks for searching");
+		txtSearch.setVisible(Basic.Visualize_flage);
+		
 		txtSearch.addKeyListener(new KeyListener() {
 
 			@Override
@@ -184,11 +281,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.character == SWT.LF || e.character == SWT.CR) {
-					if (!txtSearch.getText().trim().equals("")
-							&& txtSearch.getText().trim().length() >= 2) {
-
-						manualSearch();
-					}
+					manualSearch();
 
 				}
 
@@ -202,189 +295,77 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		btnSearchGoogle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
 				false, 1, 1));
 		// btnSearchGoogle.setText("Search");
+		btnSearchGoogle.setVisible(Basic.Visualize_flage);
 		btnSearchGoogle.setToolTipText("Search");
 		btnSearchGoogle.setImage(Images.SEARCH2.createImage());
 		btnSearchGoogle.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (!txtSearch.getText().trim().equals("")
-						&& txtSearch.getText().trim().length() >= 2) {
 
-					manualSearch();
-				}
-
+				manualSearch();
+				// 在这里放雪娇的 LDA的处理。使用JS脚本的技术 （目前放弃使用）
+				// genSearchHTML(txtSearch.getText());
+				// urlBrowser.setUrl(searchHTMLPath);
+				// urlBrowser.refresh();
 			}
 		});
 
-		Composite checkComposite = new Composite(sashComposite, SWT.NONE);
-		// SearchComposite.setLayoutData(BorderLayout.CENTER);
-		checkComposite.setLayout(new GridLayout(2, false));
-
-		// Label tweatlabel = new Label(checkComposite, SWT.None);
-		// tweatlabel.setText("Tweak ranking by API DOIs");
-		// tweatlabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true,
-		// 1, 1));
+		// urlBrowser=new Browser(SearchComposite, SWT.None);
+		// urlBrowser.setLayoutData(new
+		// GridData(SWT.CENTER,SWT.CENTER,false,false,2,1));
+		// urlBrowser.setEnabled(false);
+		// urlBrowser.setVisible(false);
 		//
-		// Button checkbox = new Button(checkComposite, SWT.CHECK);
-		// checkbox.setToolTipText("Tweak ranking by API DOIs");
-		// checkbox.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
-		// 1, 1));
-		// checkbox.addSelectionListener(new SelectionListener() {
+		// urlBrowser.addTitleListener(new TitleListener() {
 		//
 		// @Override
-		// public void widgetSelected(SelectionEvent arg0) {
-		// // TODO Auto-generated method stub
-		// // 还需要写代码 当选上这一项后 修改Google的检索设置
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(SelectionEvent arg0) {
-		// // TODO Auto-generated method stub
-		// // 还需要写代码 当选上这一项后 修改Google的检索设置
-		//
+		// public void changed(TitleEvent event) {
+		// System.out.println("current search result:"+ event.title);
+		// genURLlistforLingfengTopic(event.title);
 		// }
 		// });
 
-		Label websitelabel = new Label(checkComposite, SWT.None);
-		websitelabel.setText("Select preferred web site category");
-		websitelabel.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-				true, 1, 1));
+		// SashForm topicComposite = new SashForm(SearchComposite,
+		// SWT.VERTICAL);
+		// topicComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
+		// true, 2, 1));
 
-		final Combo websiteList = new Combo(checkComposite, SWT.MULTI
-				| SWT.V_SCROLL | SWT.READ_ONLY);
+		Composite topicCom = new Composite(topicSashForm, SWT.NONE);
+		topicCom.setLayout(new GridLayout(2, false));
 
-		websiteList.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true,
-				1, 1));
-		websiteList.add("All");
-		websiteList.add("Technical Blogs (TB)");
-		websiteList.add("Code Examples (CE)");
-		websiteList.add("Discussion Forum (DF)");
-		websiteList.add("Q&A web site (QA)");
-
-		websiteList.addSelectionListener(new SelectionListener() {
-
-			@Override
-			public void widgetSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-				// System.out.println(websiteList.getSelectionIndex());
-				searchEngineSelect = websiteList.getSelectionIndex();
-				if (!txtSearch.getText().trim().equals("")
-						&& txtSearch.getText().trim().length() >= 2) {
-					manualSearch();
-				}
-
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent arg0) {
-				// TODO Auto-generated method stub
-
-			}
-		});
-
-		Composite topicComposite = new Composite(sashComposite, SWT.NONE);
-		// SearchComposite.setLayoutData(BorderLayout.CENTER);
-		topicComposite.setLayout(new GridLayout(2, false));
-
+		topicCom.setVisible(Basic.Visualize_flage);
 		// topic list
-		topictree = new Tree(topicComposite, SWT.BORDER | SWT.CHECK
-				| SWT.FULL_SELECTION | SWT.VIRTUAL | SWT.MULTI);
+
+		topictree = new Tree(topicCom, SWT.BORDER | SWT.CENTER);
 
 		topictree.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2,
 				1));
 		topictree.setForeground(SWTResourceManager.getColor(0, 0, 0));
-		TreeItem it1 = new TreeItem(topictree, SWT.None);
-		it1.setText("welcome ....");
-
+		
+		topictree.setVisible(Basic.Visualize_flage);
+				
 		topictree.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				final TreeItem item = (TreeItem) e.item;
 
-				if (FDUHelpSeekingPlugin
-						.getDefault()
-						.getWorkbench()
-						.getActiveWorkbenchWindow()
-						.getActivePage()
-						.findView(
-								"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView") instanceof HelpSeekingBrowserView) {
-					try {
-						PlatformUI
-								.getWorkbench()
-								.getActiveWorkbenchWindow()
-								.getActivePage()
-								.showView(
-										"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-					} catch (PartInitException e1) {
-						// TODO Auto-generated catch block
-						return;
-					}
+			if	(FDUHelpSeekingPlugin
+				.getDefault()
+				.getWorkbench()
+				.getActiveWorkbenchWindow()
+				.getActivePage().findView(
+						"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView") instanceof HelpSeekingBrowserView)
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView("cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+				} catch (PartInitException e1) {
+					// TODO Auto-generated catch block
+					return;
 				}
-
-				if (item.getData().equals("TOPIC")
-						|| item.getData().equals("TOPICX")) {
-
-					TreeItem[] treeItemSet = item.getItems();
-					List<WEBPageBean> newAllpagelist = new ArrayList<WEBPageBean>();// 每次点击时都将最新选择的对象放到前面
-					List<WEBPageBean> leftpageslist = new ArrayList<WEBPageBean>();// 不是本次选择的对象
-
-					// 是topic 时 修正 所有URL的排序 调整 allpageslist的真假值
-					if (item.getChecked()) {
-						for (int i = 0; i < treeItemSet.length; i++) {
-							// webpage.setUrl(treeItemSet[i].getItem(1).getText());
-							for (int j = 0; j < allpageslist.size(); j++) {
-
-								if (allpageslist
-										.get(j)
-										.getUrl()
-										.equals(treeItemSet[i].getItem(1)
-												.getText())) {
-									allpageslist.get(j).setSelect(true);
-									newAllpagelist.add(allpageslist.get(j));
-									break;
-								}
-							}
-						}
-
-					} else {
-						for (int i = 0; i < treeItemSet.length; i++) {
-							// webpage.setUrl(treeItemSet[i].getItem(1).getText());
-							for (int j = 0; j < allpageslist.size(); j++) {
-
-								if (allpageslist
-										.get(j)
-										.getUrl()
-										.equals(treeItemSet[i].getItem(1)
-												.getText())) {
-									allpageslist.get(j).setSelect(false);
-									break;
-								}
-							}
-						}
-					}
-
-					// for (int i = 0; i < allpageslist.size(); i++) {
-					// for (int j = 0; j < newAllpagelist.size(); j++) {
-					// if (!allpageslist.get(i).getUrl()
-					// .equals(newAllpagelist.get(j).getUrl())) {
-					// leftpageslist.add(allpageslist.get(i));
-					//
-					// }
-					// }
-					//
-					// }
-					//
-					// for (int i = 0; i < leftpageslist.size(); i++) {
-					// newAllpagelist.add(leftpageslist.get(i));
-					// }
-					//
-					// allpageslist = newAllpagelist;
-
-				}
-
+			
+				
 				// 检查是否点击过这个topic
-				if (item.getData().equals("TOPICX")) { // 从 allpages 中读数据
+				if (item.getData() == "TOPICX") { // 从 allpages 中读数据
 
 					int currentTopicindex = 0;
 					// 定位 topic
@@ -398,9 +379,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					}
 
 					currentTopicName = item.getText().trim();
+				
+					//注销
+					//genTopicWordsFoamTree(allWebPages.get(currentTopicindex).getMyfudanTopicWords());
 
-					// 注销
-					// genTopicWordsFoamTree(allWebPages.get(currentTopicindex).getMyfudanTopicWords());
 
 					browserpart = FDUHelpSeekingPlugin
 							.getDefault()
@@ -412,42 +394,46 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 					if ((browserpart instanceof HelpSeekingBrowserView)) {
 						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+						bv.getTopicContentText().setText(currentTopicName);
 						String topicId = "";
-
+						
 						for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
-							if (currentTopicInfoRecs.get(i).equals(
-									currentTopicName)) {
-								topicId = currentTopicInfoRecs.get(i)
-										.getTopicId();
+							if (currentTopicInfoRecs.get(i).equals(currentTopicName)) {
+								topicId=currentTopicInfoRecs.get(i).getTopicId();
 							}
 						}
 
-						bv.genUrlTree(currentTopicName, allpageslist,
-								SearchList, currentSearchID, topicId);
+						
+						bv.genUrlTree(currentTopicName,allWebPages.get(currentTopicindex)
+								.getPages(),SearchList,currentSearchID,topicId);
+						
 
-						NewWebUseInfo nwuiInfo = new NewWebUseInfo();
-
+						NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+						
 						nwuiInfo.setTopicName(currentTopicName);
 						nwuiInfo.setTopicId(topicId);
-
-						nwuiInfo.setOpenTime(new Timestamp(System
-								.currentTimeMillis()));
-
+					
+						
+						nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+						
 						DatabaseUtil.addNewWebUseInfo(nwuiInfo);
-
+						
+						
 					}
 
+					
+					
 					// sendoutURLlist
-				}
-
+				} 
+				
 				else
 
 				// 检查是否是topic
 
 				{
 					if (item.getData() == "TOPIC") {
-
-						// 注销替代语句
+						
+						//注销替代语句
 						item.setData("TOPICX");
 						item.setForeground(Display.getDefault().getSystemColor(
 								SWT.COLOR_GREEN));
@@ -470,7 +456,8 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 						}
 
-						curTopicWEBPages.setTopicName(item.getText().trim());
+						curTopicWEBPages
+								.setTopicName(item.getText().trim());
 						curTopicWEBPages.setPages(currentWebPages);
 
 						currentTopicName = item.getText().trim();
@@ -488,35 +475,157 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 						if ((browserpart instanceof HelpSeekingBrowserView)) {
 							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-							String topicId = "";
-
+							bv.getTopicContentText().setText(currentTopicName);
+							String topicId="";
+							
 							for (int i = 0; i < currentTopicInfoRecs.size(); i++) {
-								if (currentTopicInfoRecs.get(i).equals(
-										currentTopicName)) {
-									topicId = currentTopicInfoRecs.get(i)
-											.getTopicId();
+								if (currentTopicInfoRecs.get(i).equals(currentTopicName)) {
+									topicId=currentTopicInfoRecs.get(i).getTopicId();
 								}
 							}
-
-							bv.genUrlTree(currentTopicName, allpageslist,
-									SearchList, currentSearchID, topicId);
-
-							NewWebUseInfo nwuiInfo = new NewWebUseInfo();
-
+							
+							bv.genUrlTree(currentTopicName, curTopicWEBPages.getPages(),SearchList,currentSearchID,topicId);
+						
+							
+							
+							NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+							
 							nwuiInfo.setTopicName(currentTopicName);
 							nwuiInfo.setTopicId(topicId);
-
-							nwuiInfo.setOpenTime(new Timestamp(System
-									.currentTimeMillis()));
-
+						
+							
+							nwuiInfo.setOpenTime(new Timestamp(System.currentTimeMillis()));
+							
 							DatabaseUtil.addNewWebUseInfo(nwuiInfo);
 
+														
+							
+							
 						}
 
 						allWebPages.add(curTopicWEBPages);
 						setCurrentTopicItem(item);
 						setCurrrentTopicWEBPages(curTopicWEBPages);
+						
+						
+						
+						
+						
+//注销前代码						
+/*						//刷新
+						String foamTreeTopicFilterContent = "dataObject: {"
+								+ "groups: ["
+								+ "{ label: \"Plase Waiting\", weight: 6.0 ,type: \"node\" },"
+								+ "{ label: \"Full Working\", weight: 3.0 ,type: \"node\"},"
+								+ "{ label: \"Friends\", weight: 2.0 ,type: \"node\" },"
+									+ "]" + "}"; // 使用工具生成foamtree的内容
+						genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
+								foamTreeTopicFilterContent, "HelloHongwei");
+						topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
 
+									// 两个模式同时处理，以提高效率，一方面 可以 就topic有关的URL
+						// 先给出；另一方面，用户也可以在二次过滤后的foamtree中选择URL。
+
+						// 新处理模式： 点击topic后，使用雪娇的LDA 提取topic和详细的词， 并生成新的foamtree，
+						// 展示
+
+						// 获得URLlist
+						ArrayList<String> urlList = new ArrayList<String>();
+						List<WEBPageBean> currentWebPages = new ArrayList<WEBPageBean>();
+						TopicWEBPagesBean curTopicWEBPages = new TopicWEBPagesBean();
+
+						TreeItem[] treeItemSet = item.getItems();
+						for (int i = 0; i < treeItemSet.length; i++) {
+							WEBPageBean webpage = new WEBPageBean();
+							urlList.add(treeItemSet[i].getData().toString());
+							webpage.setTitle(treeItemSet[i].getItem(0)
+									.getText());
+							webpage.setUrl(treeItemSet[i].getItem(1).getText());
+							webpage.setSummary(treeItemSet[i].getItem(2)
+									.getText());
+
+							currentWebPages.add(webpage);
+
+						}
+
+						curTopicWEBPages
+								.setTopicName(item.getText().trim());
+						curTopicWEBPages.setPages(currentWebPages);
+
+						currentTopicName = item.getText().trim();
+
+						// //老处理模式，点击topic 后在browser view处 显示该topic下的URL.
+						// // 将topic的所有数据传到browser窗口
+
+						browserpart = FDUHelpSeekingPlugin
+								.getDefault()
+								.getWorkbench()
+								.getActiveWorkbenchWindow()
+								.getActivePage()
+								.findView(
+										"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+
+						if ((browserpart instanceof HelpSeekingBrowserView)) {
+							HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+							bv.getTopicContentText().setText(currentTopicName);
+							bv.genUrlTree(curTopicWEBPages.getPages(),SearchList);
+						}
+
+						allWebPages.add(curTopicWEBPages);
+
+						if (!curTopicWEBPages.getPages().isEmpty()) {
+							// 调用LDA
+							setCurrentTopicItem(item);
+							setCurrrentTopicWEBPages(curTopicWEBPages);
+							
+							final String currentTopicName=getCurrentTopicItem().getText().trim();
+							
+										
+							 Job job = new Job("ClawWEBAndLDA"){   
+								 protected IStatus run(IProgressMonitor monitor){   
+								    // 在此添加获取数据的代码   
+										List<FudanTopicWithWordsListBean> myfudanTopicWords = LdaGibbsSampling
+												.fduTopicURLfilter(currentTopicName, allWebPages);
+									
+										
+										
+										getCurrrentTopicWEBPages()
+										.setMyfudanTopicWords(myfudanTopicWords);
+								
+										
+
+									 final List<FudanTopicWithWordsListBean> usefulFTWLB=new ArrayList<FudanTopicWithWordsListBean>();
+									 for (int j = 0; j < myfudanTopicWords.size(); j++) {
+								
+										 
+										usefulFTWLB.add(myfudanTopicWords.get(j));
+										
+									}
+									 
+								    Display.getDefault().asyncExec(new Runnable(){   
+								        public void run(){   
+								        // 在此添加更新界面的代码   
+								    		// 传给foamtree 并显示
+											genTopicWordsFoamTree(usefulFTWLB);
+											item.setData("TOPICX");
+											item.setForeground(Display.getDefault().getSystemColor(
+													SWT.COLOR_GREEN));
+
+								                 
+								        }      
+								            
+								    });  
+								    
+								   return Status.OK_STATUS;      
+								 } 
+								 
+								 };   
+							             job.setRule(Schedule_RULE);
+								         job.schedule();  
+						}  //注销前代码
+	*/
+
+						
 					}
 				}
 			}
@@ -526,15 +635,146 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				// TODO Auto-generated method stub
 
 			}
+			
+
+			
+		});
+		
+		
+		//注销 filterbrowser
+/*
+		topicFilterBrowser = new Browser(topicSashForm, SWT.BORDER);
+		topicFilterBrowser
+				.setToolTipText("Double Click to ROLL OUT!  Shift + Double Click to PULL BACK!");
+		topicFilterBrowser.setVisible(false);
+
+*/		
+		
+		
+		topicSashForm.setWeights(new int[] { 50, 300 });
+
+		
+/*		String foamTreeTopicFilterContent = ""; // 使用工具生成foamtree的内容
+		genFoamTree(300, 200, foamTreeTopicFilterFileNamePath,
+				foamTreeTopicFilterContent, "HelloHongwei");
+
+		topicFilterBrowser.addTitleListener(new TitleListener() {
+			public void changed(TitleEvent e) {
+				// sShell.setText(APP_TITLE + " - " + e.title);
+				System.out.println("select topic filter label is : " + e.title);
+				if (e.title.trim().equals("topicfilter.html")) {
+					return;
+				}
+				
+				if (!e.title.equals("HelloHongwei")) {
+//					System.out
+//							.println("???? 添加 topicFilterBrowser 处理选择的topic 过滤后的关键词，以获得URL列表");
+
+					int currentTopicindex = 0;
+					// 定位 topic
+					for (int i = 0; i < allWebPages.size(); i++) {
+						if (currentTopicName.trim().equals(
+								allWebPages.get(i).getTopicName().trim())) {
+							currentTopicindex = i;
+						}
+					}
+
+					// 将词汇去选择过滤URL
+					List<WEBPageBean> usefulWebpages = new ArrayList<WEBPageBean>();
+					List<WEBPageBean> usefulTopicWEBPages = new ArrayList<WEBPageBean>();
+					usefulTopicWEBPages = (allWebPages.get(currentTopicindex)).getPages();
+					for (int j = 0; j < usefulTopicWEBPages.size(); j++) {
+						if (usefulTopicWEBPages.get(j).getContent()
+								.contains(e.title.trim())) {
+							usefulWebpages.add(usefulTopicWEBPages.get(j));
+						}
+
+					}
+
+					// 传到amAssistbrowser view 中
+					browserpart = FDUHelpSeekingPlugin
+							.getDefault()
+							.getWorkbench()
+							.getActiveWorkbenchWindow()
+							.getActivePage()
+							.findView(
+									"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
+
+					if ((browserpart instanceof HelpSeekingBrowserView)) {
+						HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
+						// bv.getTopicContentText().setText(currentTopicName);
+						bv.genUrlTree(usefulWebpages,SearchList);
+					}
+
+				}
+			}
+
 		});
 
-		sashComposite.setWeights(new int[] { 100, 100, 400 });
+		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
+		// topicFilterBrowser.refresh();
+*/
+		sashComposite.setWeights(new int[] { 200, 400 });
+		
+		
+		
+		//为中文切词准备数据：  
+		//
 
+//		Resource models_arRes = new Resource();
+//		models_arRes.getResource("/models/ar.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/ar.m");
+//
+//		Resource models_depRes = new Resource();
+//		models_depRes.getResource("/models/dep.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dep.m");
+//
+//		Resource models_dictambiguityRes = new Resource();
+//		models_dictambiguityRes.getResource("/models/dict_ambiguity.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath()
+//						+ "/models/dict_ambiguity.txt");
+//
+//		Resource models_dicdepRes = new Resource();
+//		models_dicdepRes.getResource("/models/dict_dep.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict_dep.txt");
+//
+//		Resource models_dictRes = new Resource();
+//		models_dictRes.getResource("/models/dict.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/dict.txt");
+//
+//		Resource models_ExtractPatternRes = new Resource();
+//		models_ExtractPatternRes.getResource("/models/ExtractPattern.txt",
+//				true, CommUtil.getFDUHelpseekingPluginWorkingPath()
+//						+ "/models/ExtractPattern.txt");
+//
+//		Resource models_posRes = new Resource();
+//		models_posRes.getResource("/models/pos.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/pos.m");
+//
+//		Resource models_segRes = new Resource();
+//		models_segRes.getResource("/models/seg.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/seg.m");
+//
+//		Resource models_stocktreeRes = new Resource();
+//		models_stocktreeRes.getResource("/models/Stock-Tree.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/Stock-Tree.txt");
+//
+//		Resource models_timeRes = new Resource();
+//		models_timeRes.getResource("/models/time.m", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/time.m");
+//
+//		Resource models_wordgraphRes = new Resource();
+//		models_wordgraphRes.getResource("/models/wordgraph.txt", true,
+//				CommUtil.getFDUHelpseekingPluginWorkingPath() + "/models/wordgraph.txt");
+		
 	}
-
+	
+	
 	TopicWEBPagesBean currrentTopicWEBPages = new TopicWEBPagesBean();
 	TreeItem currentTopicItem;
 
+	
+	
 	public TopicWEBPagesBean getCurrrentTopicWEBPages() {
 		return currrentTopicWEBPages;
 	}
@@ -550,6 +790,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	public void setCurrentTopicItem(TreeItem currentTopicItem) {
 		this.currentTopicItem = currentTopicItem;
 	}
+
+		
+	
+	
 
 	protected void genSearchHTML(String querystr) {
 
@@ -665,6 +909,119 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	}
 
+	protected void genTopicWordsFoamTree(
+			List<FudanTopicWithWordsListBean> myfudanTopicWords) {
+
+		int displaymode=Basic.DISPLAYTOPICFOAMTREEPLAN;
+		
+		
+		// dataObject: {
+		// groups: [
+		// { label:"Group 1", groups: [
+		// { label:"Group 1.1" },
+		// { label:"Group 1.2" },
+		// { label:"Group 1.3" }
+		// ]},
+		// { label:"Group 2", groups: [
+		// { label:"Group 2.1" },
+		// { label:"Group 2.2" }
+		// ]},
+		// { label:"Group 3" }
+		// ]
+		// }
+		 String labelWeight="";
+		 
+			if (displaymode==1)
+				{
+		 labelWeight="";
+       //替换代码一
+		 
+		 
+	//两层展示topic以及topic内的词
+		 for (int i = 0; i < myfudanTopicWords.size(); i++) {
+				 if (labelWeight.equals("")) {
+				 labelWeight=myfudanTopicWords.get(i).genFoamTreeGroupString();
+				 }
+				 else {
+				 labelWeight=labelWeight+", "+myfudanTopicWords.get(i).genFoamTreeGroupString();
+				
+				 }
+				
+				 }
+				 //结束一
+				}
+	 
+			
+			
+
+	if (displaymode==2) {
+		
+		labelWeight="";
+			// 替换代码二
+			// 一层展示 将topic 中所有的词 收集在一起，
+			List<FudanTopicWordsBean> wordsList = new ArrayList<FudanTopicWordsBean>();
+	
+			for (int i = 0; i < myfudanTopicWords.size(); i++) {
+				for (int j = 0; j < myfudanTopicWords.get(i).getWordsList().size(); j++) {
+					String candidateTerm = myfudanTopicWords.get(i).getWordsList()
+							.get(j).getWordName().toString().toLowerCase().trim();
+					boolean testexists = true;
+					int indexSameWord = 0;
+					for (int k = 0; k < wordsList.size(); k++) {
+						if (candidateTerm.equals(wordsList.get(k).getWordName()
+								.toLowerCase().trim())) {
+							testexists = false;
+							indexSameWord = k;
+							break;
+						}
+					}
+	
+					if (testexists) {
+						wordsList.add(myfudanTopicWords.get(i).getWordsList()
+								.get(j));
+					} else {
+						double wordWeightpre = wordsList.get(indexSameWord)
+								.getWordWeight();
+						wordsList.get(indexSameWord).setWordWeight(
+								wordWeightpre
+										+ myfudanTopicWords.get(i).getWordsList()
+												.get(j).getWordWeight());
+					}
+	
+				}
+	
+			}
+			// 生成一层展示的代码：
+	
+					for (int i = 0; i < wordsList.size(); i++) {
+				if (labelWeight.equals("")) {
+					labelWeight = wordsList.get(i).genFoamTreeObjectString();
+				} else {
+					labelWeight = labelWeight + ", "
+							+ wordsList.get(i).genFoamTreeObjectString();
+	
+				}
+	
+			}
+	
+			// 结束二
+	}
+		
+
+		String foamTreeContent = "";
+		foamTreeContent = "dataObject: {" + "groups: [" + labelWeight + "]"
+				+ "}";
+		int width = topicFilterBrowser.getBounds().width;
+		int height = topicFilterBrowser.getBounds().height;
+		genFoamTree(width, height, foamTreeTopicFilterFileNamePath,
+				foamTreeContent, "HelloHongwei");
+
+		// 装载网页
+		topicFilterBrowser.setUrl(foamTreeTopicFilterFileNamePath);
+		// topicFilterBrowser.refresh();
+
+	}
+
 	public void genFoamTree(int width, int height, String foamtreeFileNamePath,
 			String foamTreeContent, String title) {
 
@@ -713,8 +1070,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				+ "if (event.group.type==\"leaf\") {"
 				+ "window.document.title=event.group.id;}\n"
 				+ "}\n"
-				+ "});\n"
-				+ "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
+				+ "});\n" + "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
 
 		FileHelper.writeNewFile(foamtreeFileNamePath, foamtreehtmlcontent);
 	}
@@ -759,8 +1115,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						foamtreejscontent);
 	}
 
-	public String currentQueryText = "";
-
+	public String currentQueryText="";
+	
+	
+	
 	public String getCurrentQueryText() {
 		return currentQueryText;
 	}
@@ -769,620 +1127,373 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		this.currentQueryText = currentQueryText;
 	}
 
-	private static NewQueryRec queryRecsfordatabase = new NewQueryRec();
-
+	
+private static	NewQueryRec queryRecsfordatabase=new NewQueryRec();
+	
+	
 	private void manualSearch() {
 		System.out.println("Say start manual search ...");
 
 		topictree.removeAll();
-		TreeItem it1 = new TreeItem(topictree, SWT.None);
+		TreeItem it1=new TreeItem(topictree, SWT.None);
 		it1.setText("start searching ...");
-		TreeItem it2 = new TreeItem(topictree, SWT.None);
+		TreeItem it2=new TreeItem(topictree, SWT.None);
 		it2.setText("Please waiting...");
-		it2.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_RED));
-
+		it2.setForeground(Display.getDefault()
+						.getSystemColor(SWT.COLOR_RED));
+		
+		
+		
+		
 		String queryText = txtSearch.getText().trim();
 
 		if (!queryText.equals("")) {
 
-			setSearchFlag(getSearchFlag() + 1);
-
-			String searchID;
-			if (getSearchFlag() > 0) {
-				searchID = "P" + getCurrentActionID() + ("A" + getSearchFlag());
-			} else {
-				searchID = "P" + getCurrentActionID();
+			setSearchFlag(getSearchFlag()+1);
+			
+			String searchID ;
+			if (getSearchFlag()>0) {
+				searchID= "P"+getCurrentActionID()+("A"+getSearchFlag());
+			}else {
+				searchID= "P"+getCurrentActionID();
 			}
+			
 
 			setCurrentSearchID(searchID);
+			
+			
+           setCurrentQueryText(queryText);
+           
+           
+		
+		   dosearch(getCurrentQueryText());
+						
 
-			setCurrentQueryText(queryText);
-
-			dosearch(getCurrentQueryText());
-
+											
 		}
 	}
 
 	static SearchResults sResults;
 	static List<WEBResult> googlesearchList = new ArrayList<WEBResult>();
 	static List<WEBResult> resultsForTopicList = new ArrayList<WEBResult>();
-	static List<KeyWord> SearchList = new ArrayList<KeyWord>();
+	static List<KeyWord> SearchList=new ArrayList<KeyWord>();
+	
+//防止两个同类job同时执行  myjob1.setRule(Schedule_RULE);  myjob2.setRule(Schedule_RULE); 
+	private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {   
+		public boolean contains(ISchedulingRule rule) {   
+		return this.equals(rule);   
+		}   
+		public boolean isConflicting(ISchedulingRule rule) {   
+		return this.equals(rule);   
+		}   
+		}; 
 
-	// 防止两个同类job同时执行 myjob1.setRule(Schedule_RULE);
-	// myjob2.setRule(Schedule_RULE);
-	private static ISchedulingRule Schedule_RULE = new ISchedulingRule() {
-		public boolean contains(ISchedulingRule rule) {
-			return this.equals(rule);
-		}
+//		 private void perform(){   
+//			 Job job = new Job("jobname获取数据"){   
+//			 protected IStatus run(IProgressMonitor monitor){   
+//			    // 在此添加获取数据的代码   
+//			    Display.getDefault().asyncExec(new Runnable(){   
+//			        public void run(){   
+//			        // 在此添加更新界面的代码   
+//			                 }      
+//			             });
+//		            return Status.OK_STATUS;
+//			         }
+//			 };   
+//		             job.setRule(Schedule_RULE);
+//			         job.schedule();   
+//			    }   
+		
+		
+		private static void dosearch( String searchtxt)  {
+			
+			
+	        String tagNameforsearch="";
+	        
+	        startTimestamp=new Timestamp(System.currentTimeMillis());
+	        preTimePoint=startTimestamp;
+	        queryRecsfordatabase.setStarttime(startTimestamp);
+	        
+	        String tempsearchtxt=searchtxt;
 
-		public boolean isConflicting(ISchedulingRule rule) {
-			return this.equals(rule);
-		}
-	};
-
-	// private void perform(){
-	// Job job = new Job("jobname获取数据"){
-	// protected IStatus run(IProgressMonitor monitor){
-	// // 在此添加获取数据的代码
-	// Display.getDefault().asyncExec(new Runnable(){
-	// public void run(){
-	// // 在此添加更新界面的代码
-	// }
-	// });
-	// return Status.OK_STATUS;
-	// }
-	// };
-	// job.setRule(Schedule_RULE);
-	// job.schedule();
-	// }
-
-	private static void dosearch(String searchtxt) {
-
-		String tagNameforsearch = "";
-
-		startTimestamp = new Timestamp(System.currentTimeMillis());
-		preTimePoint = startTimestamp;
-		queryRecsfordatabase.setStarttime(startTimestamp);
-
-		String tempsearchtxt = searchtxt;
-
-		for (int i = SearchList.size() - 1; i >= 0; i--) {
-			if (tempsearchtxt.toLowerCase().contains(
-					SearchList.get(i).getKeywordName().toLowerCase().trim())) {
-				SearchList.remove(i);
-			}
-
-		}
-
-		List<Integer> collectcount = new ArrayList<Integer>();
-		collectcount.add(0);
-		collectcount.add(0);
-		collectcount.add(0);
-		collectcount.add(0);
-		// 0 exceptioncount=0;
-		// 1 errorcount=0;
-		// 2 apicount=0;
-		// 3 othercount=0;
-
-		for (int i = 0; i < SearchList.size(); i++) {
-			String simpleStr = SearchList.get(i).getKeywordName();
-			tagNameforsearch = SearchList.get(i).getTagName();
-
-			if (tagNameforsearch.contains("exception")) {
-				collectcount.set(0, collectcount.get(0) + 1);
-				break;
-			} else if (tagNameforsearch.contains("api")) {
-				collectcount.set(0, collectcount.get(0) + 1);
-				break;
-			} else if (tagNameforsearch.contains("error")) {
-				collectcount.set(0, collectcount.get(0) + 1);
-				break;
-			} else if (tagNameforsearch.contains("other")) {
-				collectcount.set(0, collectcount.get(0) + 1);
-				break;
-			} else {
-				collectcount.set(3, collectcount.get(3) + 1);
-
-			}
-
-		}
-
-		int countindex = 0;
-		int max = collectcount.get(0);
-		for (int i = 1; i < collectcount.size(); i++) {
-			if (collectcount.get(i) > max) {
-				max = collectcount.get(i);
-				countindex = i;
-			}
-		}
-
-		tagNameforsearch = " ";// other
-		if (countindex == 0)
-			tagNameforsearch = "exception";
-		else if (countindex == 1)
-			tagNameforsearch = "api example";
-		else if (countindex == 2)
-			tagNameforsearch = "error";
-		else if (countindex == 3)
-			tagNameforsearch = " ";// other
-
-		// final String search=(searchtxt +" "+ tagNameforsearch).trim();
-		final String search = (searchtxt).trim();
-
-		// ========================== 记录检索信息数据库
-
-		// ??nqr.setQuerywords(querywords);
-		// ??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
-		// ??nqr.setTime(time);
-
-		String tempsearch = search;
-		queryRecsfordatabase.setSelectFromFoamtreeWords(SearchList);
-		for (int i = 0; i < SearchList.size(); i++) {
-			if (tempsearch.contains(CommUtil.getNewSimpleWords(
-					SearchList.get(i).getKeywordName()).trim())) {
-				tempsearch.replace(
-						CommUtil.getNewSimpleWords(
-								SearchList.get(i).getKeywordName()).trim(), "")
-						.trim();
-			}
-		}
-
-		String[] inputString = tempsearch.split("[ ]");
-		List<KeyWord> inputkeyKeyWords = new ArrayList<KeyWord>();
-
-		for (String keys : inputString) {
-
-			KeyWord kWord = new KeyWord();
-			kWord.setKeywordName(keys);
-			kWord.setTagName("manual");
-			inputkeyKeyWords.add(kWord);
-		}
-		queryRecsfordatabase.setInputWords(inputkeyKeyWords);
-
-		List<KeyWord> inFoamtreeKeyWords = queryRecsfordatabase
-				.getFoamtreeWords();
-		List<KeyWord> apiKeyWordsinQuery = new ArrayList<KeyWord>();
-		List<KeyWord> errorKeyWordsinQuery = new ArrayList<KeyWord>();
-		List<KeyWord> exceptionKeyWordsinQuery = new ArrayList<KeyWord>();
-		List<KeyWord> otherKeyWordsinQuery = new ArrayList<KeyWord>();
-		for (int i = 0; i < inFoamtreeKeyWords.size(); i++) {
-			if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase()
-					.contains("api")) {
-				apiKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
-			}
-			if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase()
-					.contains("error")) {
-				errorKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
-			}
-			if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase()
-					.contains("exception")) {
-				exceptionKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
-			}
-			if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase()
-					.contains("other")) {
-				otherKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
-			}
-		}
-
-		queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
-
-		queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
-
-		queryRecsfordatabase
-				.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
-
-		queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
-
-		for (int i = allpageslist.size(); i > 0; i--) {
-			allpageslist.remove(i - 1);
-		}
-
-		// 多任务实施检索
-
-		Job job = new Job("GetDatafromGoogle") {
-			protected IStatus run(IProgressMonitor monitor) {
-				// 在此添加获取数据的代码
-				Timestamp starttime;
-				String searchResultOutput = "\n============\n";
-				starttime = new Timestamp(System.currentTimeMillis());
-
-				// IPreferenceStore
-				// ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-				// String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
-				// String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
-
-				String cse_key;
-				String cse_cx;
-				// 在此处从14个定制引擎中随机选择一个
-				int temp = CommUtil.randomInt(
-						CommUtil.getKeyCxList().size() - 1, 0);
-				cse_key = CommUtil.getKeyCxList().get(temp).getKey();
-				cse_cx = CommUtil.getKeyCxList().get(temp).getCx();
-
-				if (searchEngineSelect == 1) {
-					// CxKeyPair ckp11 = new CxKeyPair(
-					// "AIzaSyCEw3qtyVRYJ9QlhKgQN2FMwRa4N6zxt78",
-					// );
-					// FDUHelpseeking9
-					// 1标示 websiteList.add("Technical Blogs (TB)");
-					// 2表示 websiteList.add("Code Examples (CE)");
-					// 3标示 websiteList.add("Discussion Forum (DF)");
-					// 4标示 websiteList.add("Q&A web site (QA)");
-					cse_key = "AIzaSyCEw3qtyVRYJ9QlhKgQN2FMwRa4N6zxt78";
-					cse_cx = "005635559766885752621:fqacawephkk";
-
+	        for (int i = SearchList.size()-1; i >=0; i--) {
+				if (tempsearchtxt.contains(SearchList.get(i).getKeywordName().trim())) {
+					SearchList.remove(i);
 				}
+				
+			}
+	       
+	        
+	        
+	        
+	        
+	        List<Integer> collectcount=new ArrayList<Integer>();
+	        collectcount.add(0);
+	        collectcount.add(0);
+	        collectcount.add(0);
+	        collectcount.add(0);
+//	        0 exceptioncount=0;
+//	        1 errorcount=0;
+//	        2 apicount=0;
+//	        3 othercount=0;
+	        
+	        for (int i = 0; i < SearchList.size(); i++) {
+				String simpleStr=SearchList.get(i).getKeywordName();
+                   tagNameforsearch=SearchList.get(i).getTagName();
+				
+                   if (tagNameforsearch.contains("exception")) {
+						collectcount.set(0,collectcount.get(0)+1);
+						break;
+				}else
+                   if (tagNameforsearch.contains("api")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else
+                   if (tagNameforsearch.contains("error")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else
+                   if (tagNameforsearch.contains("other")) {
+ 						collectcount.set(0,collectcount.get(0)+1);
+ 						break;
+ 				}else {
+ 					collectcount.set(3,collectcount.get(3)+1);
 
-				if (searchEngineSelect == 2) {
-					// CxKeyPair ckp12 = new CxKeyPair(
-					// "AIzaSyARXdH3_gBhG3zg3mmCp6NH-RLCqs9w_h8",
-					// "005635559766885752621:rjqlrd92ema");
-					// FDUHelpseeking10
-					// 1标示 websiteList.add("Technical Blogs (TB)");
-					// 2表示 websiteList.add("Code Examples (CE)");
-					// 3标示 websiteList.add("Discussion Forum (DF)");
-					// 4标示 websiteList.add("Q&A web site (QA)");
-					cse_key = "AIzaSyARXdH3_gBhG3zg3mmCp6NH-RLCqs9w_h8";
-					cse_cx = "005635559766885752621:rjqlrd92ema";
-					// FDUHelpseeking10;
-
+					
 				}
+											
+			}
+				
+				
 
-				if (searchEngineSelect == 3) {
-					// CxKeyPair ckp13 = new CxKeyPair(
-					// "AIzaSyA2aCykyQf1nZP2ZlA54Nrswliy0kThJ5w",
-					// "005635559766885752621:mkhzdvvqmdc");
-					// FDUHelpseeking11
+	        
+	        int countindex=0;
+	        int max=collectcount.get(0); 
+	        for(int i=1;i<collectcount.size();i++){ 
+	         if(collectcount.get(i)>max) 
+	         { max=collectcount.get(i);
+	         countindex=i;
+	         }
+	         }
+	         
+		
+	        tagNameforsearch=" ";//other
+		if(countindex==0)
+			tagNameforsearch="exception";
+		else
+			if(countindex==1)
+				tagNameforsearch="api example";
+			else
+				if(countindex==2)
+					tagNameforsearch="error";
+				else
+					if(countindex==3)
+						tagNameforsearch=" ";//other
 
-					// 1标示 websiteList.add("Technical Blogs (TB)");
-					// 2表示 websiteList.add("Code Examples (CE)");
-					// 3标示 websiteList.add("Discussion Forum (DF)");
-					// 4标示 websiteList.add("Q&A web site (QA)");
-					cse_key = "AIzaSyA2aCykyQf1nZP2ZlA54Nrswliy0kThJ5w";
-					cse_cx = "005635559766885752621:mkhzdvvqmdc";
+	        final String search=(searchtxt +" "+ tagNameforsearch).trim();
+	        
+	        
+	        //========================== 记录检索信息数据库
+	        
+			//??nqr.setQuerywords(querywords);
+			//??nqr.setSelectFromFoamtreeWords(selectFromFoamtreeWords);
+			//??nqr.setTime(time);
 
+	       
+		    
+	        
+			
+			
+			String tempsearch=search;
+			queryRecsfordatabase.setSelectFromFoamtreeWords(SearchList);
+			for (int i = 0; i < SearchList.size(); i++) {
+				if (tempsearch.contains(CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName()).trim())) {
+					tempsearch.replace(CommUtil.getNewSimpleWords(SearchList.get(i).getKeywordName()).trim(), "").trim();
 				}
-
-				if (searchEngineSelect == 4) {
-					// CxKeyPair ckp14 = new CxKeyPair(
-					// "AIzaSyAlOeQI4kAlSHvxGpCA7oj9r4ZCzCAsXho",
-					// "005635559766885752621:qurwj2b9mrw");
-					// FDUHelpseeking12
-
-					// 1标示 websiteList.add("Technical Blogs (TB)");
-					// 2表示 websiteList.add("Code Examples (CE)");
-					// 3标示 websiteList.add("Discussion Forum (DF)");
-					// 4标示 websiteList.add("Q&A web site (QA)");
-					cse_key = "AIzaSyAlOeQI4kAlSHvxGpCA7oj9r4ZCzCAsXho";
-					cse_cx = "005635559766885752621:qurwj2b9mrw";
-
+			}
+			
+				String[] inputString=tempsearch.split("[ ]");
+				List<KeyWord> inputkeyKeyWords=new ArrayList<KeyWord>();
+			
+			for (String keys : inputString) {
+				
+				KeyWord kWord=new KeyWord();
+				kWord.setKeywordName(keys);
+				kWord.setTagName("manual");
+				inputkeyKeyWords.add(kWord);	
+			}
+			queryRecsfordatabase.setInputWords(inputkeyKeyWords);
+			
+			List<KeyWord> inFoamtreeKeyWords=queryRecsfordatabase.getFoamtreeWords();
+			List<KeyWord> apiKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> errorKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> exceptionKeyWordsinQuery=new ArrayList<KeyWord>();
+			List<KeyWord> otherKeyWordsinQuery=new ArrayList<KeyWord>();
+			for (int i = 0; i < inFoamtreeKeyWords.size(); i++) {
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("api")) {
+					apiKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
 				}
-
-				LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key,
-						cse_cx, search);
-
-				apiCall.start();
-				try {
-					apiCall.join();
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("error")) {
+					errorKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
 				}
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("exception")) {
+					exceptionKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+				if (inFoamtreeKeyWords.get(i).getTagName().toLowerCase().contains("other")) {
+					otherKeyWordsinQuery.add(inFoamtreeKeyWords.get(i));
+				}
+			}
+			
+			queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
+			
+			queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
+			
+			queryRecsfordatabase.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
+			
+			queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
+			
 
-				googlesearchList = apiCall.getCurrentResults();
+			
+			
+	        
+	        
+	        //多任务实施检索
+	        
+			
+			 Job job = new Job("GetDatafromGoogle"){   
+				 protected IStatus run(IProgressMonitor monitor){   
+				    // 在此添加获取数据的代码   
+						Timestamp starttime;
+						String searchResultOutput = "\n============\n";
+						starttime = new Timestamp(System.currentTimeMillis());
 
-				if (googlesearchList.size() > 0) {
-					// 清除tree tree.removeAll();
-					// 2014.10.15
+						// IPreferenceStore
+						// ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+						// String cse_key=ps.getString(PreferenceConstants.CSE_KEY);
+						// String cse_cx=ps.getString(PreferenceConstants.CSE_CX);
 
-					// TODO BUG
-					for (int i = resultsForTopicList.size() - 1; i >= 0; i--) {
-						resultsForTopicList.remove(i);
-					}
-					// end of 2014.10.15
-					List<String> foamtreestrlist = CommUtil.stringToList(
-							currentFoamtreeString.trim(), "[ ]");
+						// 在此处从14个定制引擎中随机选择一个
+						int temp = CommUtil.randomInt(CommUtil.getKeyCxList().size() - 1, 0);
+						String cse_key = CommUtil.getKeyCxList().get(temp).getKey();
+						String cse_cx = CommUtil.getKeyCxList().get(temp).getCx();
 
-					int indexResultslist = 0;
-					for (WEBResult webResult : googlesearchList) {
-						String titleNoFormating = webResult.getTitle();
-						if (titleNoFormating.isEmpty()
-								|| titleNoFormating == null)
-							continue;
+						LoopGoogleAPICall apiCall = new LoopGoogleAPICall(cse_key, cse_cx,
+								search);
 
-						if (titleNoFormating.contains("&quot;")) {
-							titleNoFormating = titleNoFormating.replace(
-									"&quot;", "\"");
-						}
-						if (titleNoFormating.contains("&#39;")) {
-							titleNoFormating = titleNoFormating.replace(
-									"&quot;", "\'");
-						}
-						if (titleNoFormating.contains("<b>")) {
-							titleNoFormating = titleNoFormating.replace("<b>",
-									" ");
-						}
-						if (titleNoFormating.contains("</")) {
-							titleNoFormating = titleNoFormating.replace("</",
-									" ");
-						}
-						if (titleNoFormating.contains("b>")) {
-							titleNoFormating = titleNoFormating.replace("b>",
-									" ");
+						apiCall.start();
+						try {
+							apiCall.join();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
 						}
 
-						searchResultOutput = searchResultOutput + "\n"
-								+ webResult.toString();
+						googlesearchList = apiCall.getCurrentResults();
 
-						// 2014.10.15
-						webResult.setTitle(titleNoFormating);
+						if (googlesearchList.size() > 0) {
+							// 清除tree tree.removeAll();
+							// 2014.10.15
 
-						WEBResult forTopicPrepareItem = new WEBResult();
-						forTopicPrepareItem.setSummary(webResult.getSummary());
-						forTopicPrepareItem.setUrl(webResult.getUrl());
-						forTopicPrepareItem.setTitle(webResult.getTitle());
-
-						resultsForTopicList.add(forTopicPrepareItem);
-
-						WEBPageBean webpb = new WEBPageBean();
-						webpb.setSummary(webResult.getSummary());
-						webpb.setContent(webResult.getSummary());
-						webpb.setTitle(webResult.getTitle());
-						webpb.setUrl(webResult.getUrl());
-						webpb.setSelect(false);
-
-						for (int i1 = 0; i1 < foamtreestrlist.size(); i1++) {
-
-							// System.out.println("code split:# "+CommUtil.getTokensfromCodeStr(foamtreestrlist.get(i1)));
-							// System.out.println("origin words:#  "+foamtreestrlist.get(i1));
-							// System.out.println("new simple words:#  "+CommUtil.getNewSimpleWords(foamtreestrlist.get(i1)));
-							// System.out.println("simple words:#  "+CommUtil.getSimpleWords(foamtreestrlist.get(i1)));
-
-							String tempstr = CommUtil
-									.getNewSimpleWords(foamtreestrlist.get(i1)
-											.replace(" ", ""));
-							if (tempstr.contains("(")) {
-								tempstr = tempstr.replace("(", " ");
+							// TODO BUG
+							for (int i = resultsForTopicList.size() - 1; i >= 0; i--) {
+								resultsForTopicList.remove(i);
 							}
-							if (tempstr.contains(")")) {
-								tempstr = tempstr.replace(")", " ");
-							}
-							if (tempstr.contains(".")) {
-								tempstr = tempstr.replace(".", " ");
-							}
+							// end of 2014.10.15
 
-							List<String> tempstrList = CommUtil.stringToList(
-									tempstr, " ", 2);
-							boolean flag = false;
+							int indexResultslist = 0;
+							for (WEBResult webResult : googlesearchList) {
+								String titleNoFormating = webResult.getTitle();
+								titleNoFormating = titleNoFormating.replaceAll("&quot;", "\"");
+								titleNoFormating.replaceAll("&#39;", "\'");
+								titleNoFormating.replaceAll("<b>", " ");
+								titleNoFormating.replaceAll("</", " ");
+								titleNoFormating.replaceAll("b>", " ");
 
-							int countforlabel = 0;
-							for (int i = 0; i < tempstrList.size(); i++) {
-								String titleString = webpb.getTitle()
-										.toLowerCase().trim();
+								searchResultOutput = searchResultOutput + "\n"
+										+ webResult.toString();
 
-								if (titleString.contains("(")) {
-									titleString = titleString.replace("(", " ");
-								}
-								if (titleString.contains(")")) {
-									titleString = titleString.replace(")", " ");
-								}
-								if (titleString.contains(".")) {
-									titleString = titleString.replace(".", " ");
-								}
-								if (titleString.contains(";")) {
-									titleString = titleString.replace(";", " ");
-								}
-								if (titleString.contains(",")) {
-									titleString = titleString.replace(",", " ");
-								}
+								// 2014.10.15
+								webResult.setTitle(titleNoFormating);
+								WEBResult forTopicPrepareItem = new WEBResult();
+								forTopicPrepareItem.setSummary(webResult.getSummary());
+								forTopicPrepareItem.setUrl(webResult.getUrl());
+								forTopicPrepareItem.setTitle(webResult.getTitle());
+								
+								resultsForTopicList.add(forTopicPrepareItem);
 
-								String summaryString = webpb.getSummary()
-										.toLowerCase().trim();
+								// end of 2014.10.15
 
-								if (summaryString.contains("(")) {
-									summaryString = summaryString.replace("(",
-											" ");
-								}
-								if (summaryString.contains(")")) {
-									summaryString = summaryString.replace(")",
-											" ");
-								}
-								if (summaryString.contains(".")) {
-									summaryString = summaryString.replace(".",
-											" ");
-								}
-								if (summaryString.contains(";")) {
-									summaryString = summaryString.replace(";",
-											" ");
-								}
-								if (summaryString.contains(",")) {
-									summaryString = summaryString.replace(",",
-											" ");
-								}
+							} // end foreach googlesearchlist
 
-								if (titleString.contains(tempstrList.get(i)
-										.toLowerCase().trim())) {
-									if (webpb.getContainsStr().equals("----")) {
-										webpb.setContainsStr("");
-									}
+							Timestamp endtime = new Timestamp(System.currentTimeMillis());
 
-									String labels = webpb.getContainsStr();
-									if (!labels
-											.toLowerCase()
-											.trim()
-											.contains(
-													foamtreestrlist.get(i1)
-															.toLowerCase()
-															.trim())) {
-										countforlabel = countforlabel + 1;
-										if (countforlabel < 4) {
-											labels = (labels + "  #   " + foamtreestrlist
-													.get(i1)).trim();
-										} else {
-											if (countforlabel == 4) {
-												labels = (labels + "  #   MORE...")
-														.trim();
+							// 生成选择和自己输入的关键词并记录数据库
 
-											}
-										}
+						} // if googlesearchlist.size > 0
+						else {
+							System.out.println("No return results!");
+							browserpart = FDUHelpSeekingPlugin
+									.getDefault()
+									.getWorkbench()
+									.getActiveWorkbenchWindow()
+									.getActivePage()
+									.findView(
+											"cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
 
-									}
-
-									webpb.setContainsStr(labels.trim());
-									flag = true;
-									// break;
-								}
-
-								if (summaryString.contains(tempstrList.get(i)
-										.toLowerCase().trim())) {
-									if (webpb.getContainsStr().equals("----")) {
-										webpb.setContainsStr("");
-									}
-									String labels = webpb.getContainsStr();
-									if (!labels
-											.toLowerCase()
-											.trim()
-											.contains(
-													foamtreestrlist.get(i1)
-															.toLowerCase()
-															.trim())) {
-										countforlabel = countforlabel + 1;
-										if (countforlabel < 4) {
-											labels = (labels + "  #   " + foamtreestrlist
-													.get(i1)).trim();
-										} else {
-											if (countforlabel == 4) {
-												labels = (labels + "  #   MORE...")
-														.trim();
-
-											}
-										}
-
-									}
-
-									webpb.setContainsStr(labels.trim());
-									flag = true;
-									// break;
-								}
-
-							}
-
-							// if (flag) {
-							// break;
-							// }
-
-						}
-
-						allpageslist.add(webpb);
-
-						// end of 2014.10.15
-
-					} // end foreach googlesearchlist
-
-					Timestamp endtime = new Timestamp(
-							System.currentTimeMillis());
-
-					// 生成选择和自己输入的关键词并记录数据库
-
-				} // if googlesearchlist.size > 0
-				else {
-					System.out.println("No return results!");
-					browserpart = FDUHelpSeekingPlugin
-							.getDefault()
-							.getWorkbench()
-							.getActiveWorkbenchWindow().getActivePage().findView(
-									"cn.edu.fudan.se.helpseeking.views.HelpSeekingInteractiveView");
-
-					if ((browserpart instanceof HelpSeekingInteractiveView)) {
-						HelpSeekingInteractiveView bv = (HelpSeekingInteractiveView) browserpart;
-						MessageDialog
-								.openInformation(
-										bv.getSite().getShell(),
+							if ((browserpart instanceof HelpSeekingInteractiveView)) {
+								HelpSeekingInteractiveView bv = (HelpSeekingInteractiveView) browserpart;
+							MessageDialog
+								.openInformation(bv.getSite().getShell(),
 										"Search google faild! ",
 										"Sorry connection wrong or no results! Please waiting for a while search again or new keywords!");
-
-					}
-
-				}
-
-				Display.getDefault().asyncExec(new Runnable() {
-					public void run() {
-
-						browserpart = FDUHelpSeekingPlugin
-								.getDefault()
-								.getWorkbench()
-								.getActiveWorkbenchWindow()
-								.getActivePage()
-								.findView(
-										"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-
-						if (browserpart instanceof HelpSeekingBrowserView)
-							try {
-								PlatformUI
-										.getWorkbench()
-										.getActiveWorkbenchWindow()
-										.getActivePage()
-										.showView(
-												"cn.edu.fudan.se.helpseeking.views.HelpSeekingBrowserView");
-								HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
-
-								List<WEBPageBean> nullList = new ArrayList<WEBPageBean>();
-								bv.doGenUrlTree(bv.getUrlTree(), nullList);
-								bv.doGenUrlTree(bv.getUrlTreeUnselect(),
-										allpageslist);
-
-							} catch (PartInitException e1) {
-								// TODO Auto-generated catch block
-								System.out
-										.println("sorry ! please show view HelpSeekingBrowserView.");
-
+				
+								
 							}
 
-						genTopicTree();
-
-						// end of 2014.10.15
-						// 在此添加更新界面的代码
-
-						// 在此添加更新界面的代码
-						// 2014.10.15
-						// 调用topic API 生成topictree
-						searchEngineSelect = 0;
-
-						for (int i = SearchList.size() - 1; i >= 0; i--) {
-							SearchList.remove(i);
+							
 						}
 
-						DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
+						
+						
+						
+					 
+					 
+				    Display.getDefault().asyncExec(new Runnable(){   
+				        public void run()
+				        {   
+				        	
+							
+				        	
+				    		genTopicTree();
 
-					}
+				    		// end of 2014.10.15
+				        // 在此添加更新界面的代码   
+				    		
+				    		// 在此添加更新界面的代码
+				        	// 2014.10.15
+				    		// 调用topic API 生成topictree
 
-				});
-				return Status.OK_STATUS;
-			}
+				        	for (int i = SearchList.size()-1; i >=0; i--) {
+								SearchList.remove(i);
+							}
+				        	
+				        	DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
+				                 
+				        }      
+				             
+				    });   
+				    return Status.OK_STATUS;
+				 }
 
-		};
-
-		job.setRule(Schedule_RULE);
-		job.schedule();
+				 };   
+				 
+				 job.setRule(Schedule_RULE);
+				         job.schedule();   
+			
+			
+	
 
 	} // end dosearch
-
-	public static int searchEngineSelect = 0;
-
-	// 0标示不选
-	// 1标示 websiteList.add("Technical Blogs (TB)");
-	// 2表示 websiteList.add("Code Examples (CE)");
-	// 3标示 websiteList.add("Discussion Forum (DF)");
-	// 4标示 websiteList.add("Q&A web site (QA)");
-	//
-
-	public static int getSearchEngineSelect() {
-		return searchEngineSelect;
-	}
-
-	public static void setSearchEngineSelect(int searchEngineSelect) {
-		HelpSeekingInteractiveView.searchEngineSelect = searchEngineSelect;
-	}
 
 	public static void genTopicTree() {
 
@@ -1391,11 +1502,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// ???? 测试试用句子 记得删除！！！
 
-		// List<WEBResult> results = SampleWebResults.WEB_RESULTS;
-		// if (clusters.isEmpty()) {
-		// clusters = CarrotTopic.fromWebResults(results);
-		// System.out.println("clusters is null");
-		// }
+//		List<WEBResult> results = SampleWebResults.WEB_RESULTS;
+//		if (clusters.isEmpty()) {
+//			clusters = CarrotTopic.fromWebResults(results);
+//			System.out.println("clusters is null");
+//		}
 
 		//
 		// 生成topic tree
@@ -1408,15 +1519,14 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			allWebPages.remove(i - 1);
 
 		}
-
-		// 移除topicid信息
-		for (int i = currentTopicInfoRecs.size(); i > 0; i--) {
-			currentTopicInfoRecs.remove(i - 1);
+		
+		//移除topicid信息
+		for (int i = currentTopicInfoRecs.size(); i >0; i--) {
+			currentTopicInfoRecs.remove(i-1);
 		}
 
 		TreeItem topicsumm = new TreeItem(topictree, SWT.NONE);
 		topicsumm.setData("TOPIC_SUMMARY");
-		topicsumm.setChecked(false);
 
 		int totalurlnum = 0;
 
@@ -1431,24 +1541,25 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			// 实现代码见 topictree的选择事件
 			topicitem.setForeground(Display.getDefault().getSystemColor(
 					SWT.COLOR_BLUE));
-
-			// 写入数据库
-
-			NewTopicInfoRec ntif = new NewTopicInfoRec();
+			
+//写入数据库
+			
+			NewTopicInfoRec ntif=new NewTopicInfoRec();
 			ntif.setTopicName(topicitem.getText().trim());
 			ntif.setSearchId(getCurrentSearchID());
 			ntif.setURLcount(c.size());
-			// ntif.setClickTopicTime(new
-			// Timestamp(System.currentTimeMillis()));
-			// ntif.setTopicId(topicId);
+			//ntif.setClickTopicTime(new Timestamp(System.currentTimeMillis()));
+			//ntif.setTopicId(topicId);
 			DatabaseUtil.addNewTopicInfoRectoDatabase(ntif);
-
-			List<NewTopicWebPagesInfo> ntwpiList = new ArrayList<NewTopicWebPagesInfo>();
-			String topicId = DatabaseUtil.getNewTopicInfoRecTopicId();
-			NewTopicInfoRec nifforlist = new NewTopicInfoRec();
+			
+			
+			List<NewTopicWebPagesInfo> ntwpiList=new ArrayList<NewTopicWebPagesInfo>();
+			String topicId=DatabaseUtil.getNewTopicInfoRecTopicId();
+			NewTopicInfoRec  nifforlist=new NewTopicInfoRec();
 			nifforlist.setTopicId(topicId);
 			nifforlist.setTopicName(topicitem.getText().trim());
 			currentTopicInfoRecs.add(nifforlist);
+			
 
 			for (int j = 0; j < c.getAllDocuments().size(); j++) {
 				Document doc = c.getAllDocuments().get(j);
@@ -1467,17 +1578,22 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				TreeItem itemsummary = new TreeItem(itemoftopic, SWT.NONE);
 				itemsummary.setText(doc.getSummary());
 				itemsummary.setData(doc.getContentUrl());
-
-				NewTopicWebPagesInfo ntwpi = new NewTopicWebPagesInfo();
-				ntwpi.setTopicId(topicId);
-				ntwpi.setWebTitle(doc.getTitle());
-				ntwpi.setWebSummary(doc.getSummary());
-				ntwpi.setWebURL(doc.getContentUrl());
+							
+				
+				
+				NewTopicWebPagesInfo ntwpi=new NewTopicWebPagesInfo();
+					ntwpi.setTopicId(topicId);
+					ntwpi.setWebTitle(doc.getTitle());
+					ntwpi.setWebSummary(doc.getSummary());
+					ntwpi.setWebURL(doc.getContentUrl());
+					
 
 				ntwpiList.add(ntwpi);
 			}
-
+			
+			
 			DatabaseUtil.addNewTopicWEbPagesInfotoDatabase(ntwpiList);
+
 
 		}
 
@@ -1485,67 +1601,130 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		topicsumm.setText("All topics ( Topics: " + clusters.size() + " URLs: "
 				+ totalurlnum + ")");
 		topicsumm.setExpanded(true);
+		
+		
+		
 
 	}
 
-	static List<NewTopicInfoRec> currentTopicInfoRecs = new ArrayList<NewTopicInfoRec>();// 记录话题的编号
+	
+static	List<NewTopicInfoRec> currentTopicInfoRecs=new ArrayList<NewTopicInfoRec>();//记录话题的编号
+	
 
-	static String currentFoamtreeString = "";
 
-	private static List<KeyWord> currentSearchKeyWords201411 = new ArrayList<KeyWord>();
-	private static int currentQueryID = 0;
+private static List<KeyWord> currentSearchKeyWords201411=new ArrayList<KeyWord>();
+private static int currentQueryID=0;
 
-	public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords,
-			List<KeyWord> keyWordsforQuery, int mode) {
-
-		for (int i = currentSearchKeyWords201411.size() - 1; i >= 0; i--) {
+public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords, List<KeyWord> keyWordsforQuery, int mode) {
+		// 生成foamtree的候选词和权重字符串
+		// + "{ label: \"Welcome\", weight: 2.0 },"
+		// + "{ label: \"HelpSeeking\", weight: 4.0 },"
+		// + "{ label: \"To\", weight: 1.0},"
+		// + "{ label: \"Plugin\", weight: 2.0 },"
+		// + "{ label: \"tool\", weight: 1.0 }"
+		
+		
+		
+		for (int i =currentSearchKeyWords201411.size()-1;i>=0; i--) {
 			currentSearchKeyWords201411.remove(i);
 		}
-
-		// 处理异常字符 如“；”等，并截短
-
-		// 试着处理给出的词汇截短符号：
-		// java.io.xxx java.io.xx.yy(zzz)
+		
+		
+		//处理异常字符 如“；”等，并截短
+		
+			
+		//试着处理给出的词汇截短符号：
+		//java.io.xxx   java.io.xx.yy(zzz)
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
-
+			
 			currentSearchKeyWords201411.add(keyWordsforQuery.get(i));
-
+		
+			
+//			2014.11.07 暂时注销 前面context trace中已经处理过
+//			String tempstr=currentSearchKeyWords201411.get(i).getKeywordName();			
+//			//处理异常字符，得到截短符号，切词
+//			String simplestr=(CommUtil.getSimpleWords(tempstr)).trim();		
+//		//	赋值返回
+//			currentSearchKeyWords201411.get(i).setKeywordName(simplestr);
+//			if (simplestr.trim().equals("")) {
+//				currentSearchKeyWords201411.remove(i);
+//			}
+			
+			
+			
 		}
+				
+		
+		//去除重复词  不必重复
+//		List<KeyWord> noDupkeyworksforquery=new ArrayList<KeyWord>();
+//		
+//		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
+//			
+//			boolean samekeyworks=false;
+//			int nodupkeyworksqueryindex=0;
+//			for (int j = 0; j < noDupkeyworksforquery.size(); j++) {
+//				if (currentSearchKeyWords201411.get(i).getKeywordName().trim().equals(noDupkeyworksforquery.get(j).getKeywordName().trim())) {
+//					samekeyworks=true;
+//					nodupkeyworksqueryindex=j;
+//					break;
+//				}
+//				
+//			}
+//			
+//			if (samekeyworks) {
+//				double score1=noDupkeyworksforquery.get(nodupkeyworksqueryindex).getScore();
+//				double score2=currentSearchKeyWords201411.get(i).getScore();
+//				noDupkeyworksforquery.get(nodupkeyworksqueryindex).setScore(score1+score2);
+//			}else 
+//			{
+//				noDupkeyworksforquery.add(currentSearchKeyWords201411.get(i));
+//			}
+//			
+//			
+//		}
+		
+		
+		//List<KeyWord> noDupkeyworksforquery=currentSearchKeyWords201411;
+	
 
-		currentFoamtreeString = "";
 		String searchwords = "";
 		// String currentWord="";
 		String labelWeight = "";
 		for (int i = 0; i < currentSearchKeyWords201411.size(); i++) {
 
-			// ???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
-
-			String labels = "";
-
-			labels = currentSearchKeyWords201411.get(i).getKeywordName();
-			labels = CommUtil.getNewSimpleWords(labels);
-
-			currentFoamtreeString = currentFoamtreeString + " "
-					+ labels.replace(" ", "");
-
+			
+			//???? 因为为了最大限度显示，已经将串中的包信息去除，只留下了最后的类名和方法名。因此不适用替换包分隔符“.”
+			
+			String labels ="";
+			
+			labels=currentSearchKeyWords201411.get(i).getKeywordName();
+			labels=CommUtil.getNewSimpleWords(labels);
+			
+			
 			if (labels.contains(".")) {
-				labels = labels.replaceAll("[.]", ". ");
+			    labels=labels.replaceAll("[.]", ". ");
 			}
-
+			
 			if (labels.contains("(")) {
-				labels = labels.replaceAll("[(]", " (");
+				labels=labels.replaceAll("[(]", " (");
 			}
+						
+			//停用		
+			//CommUtil.getSimpleWords(noDupkeyworksforquery.get(i).getKeywordName());
+					//noDupkeyworksforquery.get(i).getKeywordName();
+			// labels=CommUtil.getTokensfromCodeStr(labels,true);
+			
+			
+					//.replace(".", " ");
 
 			labelWeight = labelWeight
-					+ "{ id: \""
-					+ i
+					+ "{ id: \"" + i 
 					+ "\" , label: \""
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ Math.log10(currentSearchKeyWords201411.get(i).getScore())
-					+ " ,type: \"leaf\"},";
-
+					+ Math.log10(currentSearchKeyWords201411.get(i).getScore()) + " ,type: \"leaf\"},";
+			
 			searchwords = searchwords + " "
 					+ currentSearchKeyWords201411.get(i).getKeywordName();
 			System.out.println("candidate keyword No." + i + " : "
@@ -1556,169 +1735,79 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		String foamTreeContent = "dataObject: {" + "groups: [" + labelWeight
 				+ "]" + "}";
 
-		int width = 300;
-		int height = 200;
+		int width = foamtreeBrowser.getBounds().width;
+		int height = foamtreeBrowser.getBounds().height;
+		System.out.println("width & height:" + width + ":" + height);
 
-		dOIViewPart = FDUHelpSeekingPlugin
-				.getDefault()
-				.getWorkbench()
-				.getActiveWorkbenchWindow()
-				.getActivePage()
-				.findView(
-						"cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView");
-		if (dOIViewPart == null)
-			try {
-				FDUHelpSeekingPlugin
-						.getDefault()
-						.getWorkbench()
-						.getActiveWorkbenchWindow()
-						.getActivePage()
-						.showView(
-								"cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView");
-			} catch (PartInitException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
+		// 生成网页
+		genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent,
+				"HelloHongwei"); // Cache.getInstance().getCurrentBrowserTitle();
 
-		if ((dOIViewPart instanceof HelpSeekingDOIModelView)) {
-			HelpSeekingDOIModelView bv = (HelpSeekingDOIModelView) dOIViewPart;
+		// 装载网页
+		foamtreeBrowser.setUrl(foamTreeFileNamePath);
+		// browser.refresh();
 
-			width = bv.getFoamtreeBrowser().getBounds().width;
-			height = bv.getFoamtreeBrowser().getBounds().height;
+		// mode=1时，不自动查询， mode=2时自动查询
 
-			System.out.println("width & height:" + width + ":" + height);
-
-			// 生成网页
-			genFoamTree(width, height, foamTreeFileNamePath, foamTreeContent,
-					"HelloHongwei"); // Cache.getInstance().getCurrentBrowserTitle();
-
-			// 装载网页
-			bv.getFoamtreeBrowser().setUrl(foamTreeFileNamePath);
-
-		}
-
-		overviewViewPart = FDUHelpSeekingPlugin
-				.getDefault()
-				.getWorkbench()
-				.getActiveWorkbenchWindow()
-				.getActivePage()
-				.findView(
-						"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
-		if (overviewViewPart == null)
-			try {
-				FDUHelpSeekingPlugin
-						.getDefault()
-						.getWorkbench()
-						.getActiveWorkbenchWindow()
-						.getActivePage()
-						.showView(
-								"cn.edu.fudan.se.helpseeking.views.HelpSeekingMuckUIOverviewView");
-			} catch (PartInitException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-
-		if ((overviewViewPart instanceof HelpSeekingMuckUIOverviewView)) {
-			HelpSeekingMuckUIOverviewView ov = (HelpSeekingMuckUIOverviewView) overviewViewPart;
-			ov.setCurrentFoamtreeWords(currentFoamtreeString);
-
-			
-		}
-
+		// txtSearch.setText(searchwords);
 		
 
-		// 记录数据准备存盘到数据库
-
-		// queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
-		//
-		// queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
-		//
-		// queryRecsfordatabase.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
-		//
-		// queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
-
-		queryRecsfordatabase.setFoamtreeWords(keyWordsforQuery);
-
-		queryRecsfordatabase.setPretimepoint(preTimePoint);
-
-		queryRecsfordatabase.setQueryId(getCurrentSearchID());
-
-		// queryRecsfordatabase.setInputWords(inputWords);
-		// queryRecsfordatabase.setSelectFromFoamtreeWords();
-
-		queryRecsfordatabase.setSnapshotWords(snapShotAllKeyWords);
-		// queryRecsfordatabase.setStarttime(starttime);
-		// queryRecsfordatabase.setUser(user);
+//		if (mode == 2) {
+//			setCurrentQueryText(searchwords);
+//
+//							dosearch(getCurrentQueryText());
+//				
+//		}
+		
+		
+		
+		
+		//记录数据准备存盘到数据库
+		
+//				queryRecsfordatabase.setApiKeyWordsinQuery(apiKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setErrorKeyWordsinQuery(errorKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setExceptionKeyWordsinQuery(exceptionKeyWordsinQuery);
+//				
+//				queryRecsfordatabase.setOtherKeyWordsinQuery(otherKeyWordsinQuery);
+				
+				
+				queryRecsfordatabase.setFoamtreeWords(keyWordsforQuery);
+				
+			
+				
+				queryRecsfordatabase.setPretimepoint(preTimePoint);
+				
+				queryRecsfordatabase.setQueryId(getCurrentSearchID());
+				
+//				queryRecsfordatabase.setInputWords(inputWords);
+//				queryRecsfordatabase.setSelectFromFoamtreeWords();
+				
+				queryRecsfordatabase.setSnapshotWords(snapShotAllKeyWords);
+				//queryRecsfordatabase.setStarttime(starttime);
+				//queryRecsfordatabase.setUser(user);
+				
+				if (!Basic.Visualize_flage) {
+					preTimePoint=startTimestamp;
+					startTimestamp=new Timestamp(System.currentTimeMillis());
+					queryRecsfordatabase.setStarttime(startTimestamp);
+					
+					DatabaseUtil.addNewQueryRec(queryRecsfordatabase);
+				}
+		
 
 	}
 
-	static Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());
-	static Timestamp preTimePoint = new Timestamp(System.currentTimeMillis());
+
+static Timestamp startTimestamp=new Timestamp(System.currentTimeMillis());
+static Timestamp preTimePoint=new Timestamp(System.currentTimeMillis());
+
 
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
-	}
-
-	public void doFoamtreeClick(String title, int width, int height) {
-		// System.out.println("select group label is : " + e.title);
-		if (title.equals("foamtreetest.html")) {
-			return;
-
-		}
-		if (title.equals("")) {
-			return;
-		}
-		// 新增是否为数字字符
-		boolean bl = true; // 存放是否全为数字
-		char[] c = title.toCharArray(); // 把输入的字符串转成字符数组
-		for (int i = 0; i < c.length; i++) {
-			if (!Character.isDigit(c[i])) { // 判断是否为数字
-				bl = false;
-				break;
-			}
-		}
-		if (!bl) {
-			return;
-		}
-
-		if (!title.toLowerCase().equals("HelloHongwei".toLowerCase())) {
-
-			boolean isuseword = true;
-			for (int i = 0; i < SearchList.size(); i++) {
-				if (SearchList
-						.get(i)
-						.getKeywordName()
-						.trim()
-						.toLowerCase()
-						.equals(currentSearchKeyWords201411
-								.get(Integer.valueOf(title)).getKeywordName()
-								.trim().toLowerCase())) {
-					isuseword = false;
-					SearchList.remove(i);
-					break;
-				}
-
-			}
-
-			if (isuseword) {
-
-				SearchList.add(currentSearchKeyWords201411.get(Integer
-						.valueOf(title)));
-			}
-
-		}
-
-		String searchtext = "";
-		for (int i = 0; i < SearchList.size(); i++) {
-			searchtext = searchtext.trim()
-					+ " "
-					+ CommUtil.getNewSimpleWords(SearchList.get(i)
-							.getKeywordName());
-		}
-
-		txtSearch.setText(searchtext);
 	}
 
 }
