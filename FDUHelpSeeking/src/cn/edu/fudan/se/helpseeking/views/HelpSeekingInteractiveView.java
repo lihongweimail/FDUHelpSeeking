@@ -147,6 +147,11 @@ public class HelpSeekingInteractiveView extends ViewPart {
 	// + "/topicfilter.html";
 	String searchHTMLPath = CommUtil.getFDUHelpseekingPluginWorkingPath()
 			+ "/search.html";
+	
+	String javascripthiglightFileNamePath = CommUtil.getFDUHelpseekingPluginWorkingPath()
+			+ "/javascripthiglight.js";// "http://localhost:8090/foamtreetest.html";//CommUtil.getPluginCurrentPath()+"/foamtreetest.html";
+	
+	
 
 	public static List<TopicWEBPagesBean> allWebPages = new ArrayList<TopicWEBPagesBean>();
 	public static List<WEBPageBean> allpageslist = new ArrayList<WEBPageBean>();
@@ -423,7 +428,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 						}
 
 						bv.genUrlTree(currentTopicName, allpageslist,
-								SearchList, currentSearchID, topicId);
+								SearchList, currentSearchID, topicId,currentSearchKeyWords201411);
 
 						NewWebUseInfo nwuiInfo = new NewWebUseInfo();
 
@@ -499,7 +504,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 							}
 
 							bv.genUrlTree(currentTopicName, allpageslist,
-									SearchList, currentSearchID, topicId);
+									SearchList, currentSearchID, topicId,currentSearchKeyWords201411);
 
 							NewWebUseInfo nwuiInfo = new NewWebUseInfo();
 
@@ -664,6 +669,9 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		}
 
 	}
+	
+
+
 
 	public void genFoamTree(int width, int height, String foamtreeFileNamePath,
 			String foamTreeContent, String title) {
@@ -671,14 +679,14 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		if (foamTreeContent.equals("")) {
 			foamTreeContent = "dataObject: {"
 					+ "groups: ["
-					+ "{ label: \"Welcome\", weight: 2.0 ,type: \"node\" },"
-					+ "{ label: \"HelpSeeking\", weight: 4.0 ,type: \"node\" },"
-					+ "{ label: \"To\", weight: 0.5 ,type: \"node\"},"
-					+ "{ label: \"Plugin\", weight: 3.0 ,type: \"node\"},"
-					+ "{ label: \"tool\", weight: 1.0 ,type: \"node\"},"
-					+ "{ label: \"Double Click Rollout\", weight: 4.0 ,type: \"node\"},"
-					+ "{ label: \"Shift + Double Click Pullback\", weight: 4.0 ,type: \"node\"}"
-					+ "]" + "}";
+					+ "{ label: \"Welcome\", weight: 2.0 ,type: \"node\" , color:  \"#FFFFE0\" },"
+					+ "{ label: \"HelpSeeking\", weight: 4.0 ,type: \"node\"  , color: \"#FFC0CB\"},"
+					+ "{ label: \"To\", weight: 0.5 ,type: \"node\" , color:  \"#FF4500\" },"
+					+ "{ label: \"Plugin\", weight: 3.0 ,type: \"node\" , color: \"#FF6347\"},"
+					+ "{ label: \"tool\", weight: 1.0 ,type: \"node\" , color: \"#FF0000\"},"
+					+ "{ label: \"Double Click Rollout\", weight: 4.0 ,type: \"node\" , color: \"#800080\"},"
+					+ "{ label: \"Shift + Double Click Pullback\", weight: 4.0 ,type: \"node\" , color: \"#000080\"}"
+					+ "]" + " }";
 
 			title = "HelloHongwei";
 		}
@@ -702,17 +710,24 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				+ " window.addEventListener(\"load\", function() {\n"
 				+ "var foamtree = new CarrotSearchFoamTree({\n"
 				+ "id: \"visualization\""
-				+ "\n,\n"
+				+ "\n , \n"
 				+ foamTreeContent
 				// + "\n,\n"
 				// + "onGroupDoubleClick: function(event) { \n"
 				// + "window.document.title=event.group.label;\n"
 				// + "}\n"
-				+ "\n,\n"
+				+ "\n , \n"
 				+ "onGroupClick: function (event) {\n"
 				+ "if (event.group.type==\"leaf\") {"
-				+ "window.document.title=event.group.id;}\n"
+				+ "window.document.title=event.group.id;"
+		//		+ "window.document.title=window.document.title+ \";\"+ event.group.groupColor;"  还是采用生成label文字时指定颜色根据ID 来配置  //在这里可以使用 event.group.color + ...id 合起来传到 doc...title去，这样可以将颜色传递出去。 但如何将所有词汇的颜色和词传出呢？
+				+ "}\n" 
 				+ "}\n"
+				+ "\n , \n"
+                + " groupColorDecorator: function (opts, params, vars) { \n"
+				+ " vars.groupColor = params.group.color; \n" 
+                + " vars.labelColor = \"auto\"; " 
+				+ " } \n"
 				+ "});\n"
 				+ "});\n" + "</script>\n" + "</body>\n" + "</html>\n";
 
@@ -757,6 +772,24 @@ public class HelpSeekingInteractiveView extends ViewPart {
 				.writeNewFile(foamtreeFilesPath
 						+ "/carrotsearch.foamtree.util.treemodel.js",
 						foamtreejscontent);
+		
+		
+		//准备高亮内容的js脚本文件
+		
+		Resource highlightJsResource = new Resource();
+		String hightlightjscontent;
+
+		
+		hightlightjscontent = highlightJsResource.getResource(
+				"/foamtree/javascripthiglight.js", true);
+		FileHelper
+				.writeNewFile(foamtreeFilesPath
+						+ "/javascripthiglight.js",
+						hightlightjscontent);
+		
+		
+		
+		
 	}
 
 	public String currentQueryText = "";
@@ -1492,7 +1525,7 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 	static String currentFoamtreeString = "";
 
-	private static List<KeyWord> currentSearchKeyWords201411 = new ArrayList<KeyWord>();
+	private static List<KeyWord> currentSearchKeyWords201411 = new ArrayList<KeyWord>();  //当前foamtree上得词
 	private static int currentQueryID = 0;
 
 	public void setNewWordsAndMode(List<KeyWord> snapShotAllKeyWords,
@@ -1506,10 +1539,25 @@ public class HelpSeekingInteractiveView extends ViewPart {
 
 		// 试着处理给出的词汇截短符号：
 		// java.io.xxx java.io.xx.yy(zzz)
+
+
+        List<Integer> colorlist=new ArrayList<Integer>();
+        
 		for (int i = 0; i < keyWordsforQuery.size(); i++) {
 
+			
+			int randomint=0;
+			
+			boolean flagefindcolor=false;
+			while (!flagefindcolor) {
+		    randomint=CommUtil.randomInt(140, 0);
+			flagefindcolor=checkColorIndex(colorlist, randomint);
+			}
+			keyWordsforQuery.get(i).setKeywordColor(Basic.cssColor[randomint][1]);
+			keyWordsforQuery.get(i).setKeywordColorName(Basic.cssColor[randomint][0]);
+			
+			
 			currentSearchKeyWords201411.add(keyWordsforQuery.get(i));
-
 		}
 
 		currentFoamtreeString = "";
@@ -1543,7 +1591,12 @@ public class HelpSeekingInteractiveView extends ViewPart {
 					// + keyWordsforQuery.get(i).getKeywordName() +
 					// "\", weight: "
 					+ labels + "\", weight: "
-					+ Math.log10(currentSearchKeyWords201411.get(i).getScore())
+					+ Math.log10(currentSearchKeyWords201411.get(i).getScore()) // 用对数函数log10（）来平滑一下
+//					+ currentSearchKeyWords201411.get(i).getScore()      //不处理，不平滑
+					//新加颜色 功能
+					+ " , color: "
+					+ "\""+currentSearchKeyWords201411.get(i).getKeywordColor() + "\""
+
 					+ " ,type: \"leaf\"},";
 
 			searchwords = searchwords + " "
@@ -1650,6 +1703,19 @@ public class HelpSeekingInteractiveView extends ViewPart {
 		// queryRecsfordatabase.setStarttime(starttime);
 		// queryRecsfordatabase.setUser(user);
 
+	}
+
+	public boolean checkColorIndex(List<Integer> colorlist, int randomint) {
+		boolean flage=true;
+		for (int j = 0; j < colorlist.size(); j++) {
+			if (randomint==colorlist.get(j)) {
+				flage=false;
+				break;
+			}
+			
+		}
+		
+		return flage;
 	}
 
 	static Timestamp startTimestamp = new Timestamp(System.currentTimeMillis());

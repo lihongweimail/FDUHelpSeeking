@@ -534,4 +534,15 @@ public class AmAssitBrowser implements ControlListener {
 		setDisableButton(false);
 		refreshButton.setVisible(true);
 	}
+	public String getId() {
+		// TODO Auto-generated method stub
+		return String.valueOf(this.mybrowserid);
+	}
+	
+	long mybrowserid=0l;
+	public void mysetId(long currentBrowserID) {
+		// TODO Auto-generated method stub
+		this.mybrowserid=currentBrowserID;
+		
+	}
 }

@@ -205,6 +205,35 @@ public class FileHelper
 		return content;
 	}
 
+	public static String getHTMLContent(String path)
+	{
+		String content = "";
+		try
+		{
+			File file = new File(path);
+			BufferedReader in = new BufferedReader(new FileReader(file));
+			StringBuilder buffer = new StringBuilder();
+			String line = null;
+
+			while (null != (line = in.readLine()))
+			{
+				buffer.append("\t" + line);
+				buffer.append("\r\n");
+
+			}
+
+			content = buffer.toString();
+			in.close();
+
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+		return content;
+	}
+
+
 	
 	public static String getPatternFileContent(String path)
 	{
