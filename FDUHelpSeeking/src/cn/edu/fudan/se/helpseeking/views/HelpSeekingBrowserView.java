@@ -44,7 +44,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -57,6 +59,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.eclipse.ui.internal.browser.*;
+import org.eclipse.ui.internal.part.NullEditorInput;
 
 import swing2swt.layout.BorderLayout;
 import urlWordExtract.GetT;
@@ -69,6 +72,7 @@ import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
 import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
+import cn.edu.fudan.se.helpseeking.editors.BrowserEditor;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -326,6 +330,8 @@ public class HelpSeekingBrowserView extends ViewPart {
 
 	
       IWebBrowser browser; 
+       BrowserEditor browserPart;
+      
 //	AmAssitBrowser browser; //2015.1.28 测试
 // AmAssitBrowser mytestBrowser;  2015.1.28 测试
       final String highlightJScode=FileHelper
@@ -334,19 +340,31 @@ public class HelpSeekingBrowserView extends ViewPart {
       
       ///Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/foamtree/javascripthiglight.js
 		
-protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID) 
+protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)  
 {
+	
+	
+	// 将后面的 新建浏览器和高亮的代码放到  browsereditor类中去。
+	
+	
 		
 	 try {
-		 
-         IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+		 IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
 //         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));   2015.1.28 测试
 //         browser.mysetId(currentBrowserID);    2015.1.28 测试
-         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
-         BrowserIDBean newbrowserid=new BrowserIDBean();
-         newbrowserid.setId(browser.getId());
+		    try {
+				browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
+			} catch (PartInitException e2) {
+				// TODO Auto-generated catch block
+				e2.printStackTrace();
+			}
+			      BrowserIDBean newbrowserid=new BrowserIDBean();
+	     newbrowserid.setId(browser.getId());
+		// 以下替换语句：
+		                     
+		 
          FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
-		 pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
+		
 		 
 
 			NewWebUseInfo nwuiInfo=new NewWebUseInfo();
@@ -382,7 +400,34 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
          final String openUrlFileWithProtocolString="file://"+openUrlFilepath;
          final URL openUrlFileWithProtocol=new URL(openUrlFileWithProtocolString);
          
+         newbrowserid.setTitle(urls.getTitle()); 
+		 newbrowserid.setUrl(openUrlFilepath);
+		 newbrowserid.setRemoteurl(urls.getUrl());
+		 pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
 		 
+		 final String titles=newbrowserid.getTitle();
+		 final String browserurl=newbrowserid.getRemoteurl();
+		 
+				 
+		 //新的打开编辑器代码
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			try {
+				
+				  browserPart = (BrowserEditor) activePage.openEditor(new NullEditorInput(), "cn.edu.fudan.se.helpseeking.editors.BrowserEditor");
+				  
+				  browserPart.getMybroBrowser().getBrowser().getParent().pack();
+				  browserPart.getMybroBrowser().getMyComposite().pack();
+				  
+
+
+
+				
+				
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}//fix it!
+
 		 
 		 Job job = new Job("jobname获取数据WEB页面"){
 		 protected IStatus run(IProgressMonitor monitor){
@@ -441,13 +486,20 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 				 
 			 
 
-			 
-			 try {
-				doGenHighlightHTML(urlString, true, highlightJScode, keywordsandcolorsJScode, openUrlFilepath);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	注释一下 不去取网页下载并嵌入高亮！！		 
+//			 try {
+//				
+//				 doGenHighlightHTML(urlString, true, highlightJScode, keywordsandcolorsJScode, openUrlFilepath);
+//			
+//				
+//
+//				
+// 
+//			 
+//			 } catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	        	 
 			 
 		 Display.getDefault().asyncExec(new Runnable(){
@@ -455,12 +507,24 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		 // 在此添加更新界面的代码
 	         
 
-			 try {
-				browser.openURL(openUrlFileWithProtocol);
-			} catch (PartInitException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}  
+//			 try {	 
+//             browser.openURL(openUrlFileWithProtocol);			
+//			} catch (PartInitException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}  
+//			 
+			 
+			 //---
+
+
+			 browserPart.getMybroBrowser().setAppTitle(titles);
+			 browserPart.getMybroBrowser().setNewUrl(browserurl);
+			 browserPart.getMybroBrowser().refreshBrowser();
+
+			 //---
+			 
+									 
 			 
 //  2.2测试本地文件
 //			   try {
@@ -486,7 +550,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 
         
                 
-     } catch (PartInitException | MalformedURLException p) {
+     } catch (MalformedURLException p) {
          p.printStackTrace();
      }
 
@@ -525,7 +589,7 @@ public static void doGenHighlightHTML(String url, Boolean isUrl,
 		charset=Jsoup.connect(url).response().charset();
 
 		//这个时延不好调整
-		doc = Jsoup.connect(url).timeout(160000).get();
+		doc = Jsoup.connect(url).timeout(200000).get();
 		
 	}
 

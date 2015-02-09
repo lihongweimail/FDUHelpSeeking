@@ -81,6 +81,7 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 
 	// The shared instance
 	private static FDUHelpSeekingPlugin plugin;
+	
 
 	private ArrayList<CompilationUnitEditor> editors = new ArrayList<CompilationUnitEditor>();
 	private final Set<IWorkbenchWindow> monitoredWindows = new HashSet<IWorkbenchWindow>();
