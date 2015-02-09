@@ -93,14 +93,6 @@
             name="amAssist DOI MODEL"
             restorable="true">
       </view>
-           <view
-                 category="cn.edu.fudan.se.helpseeking.HelpSeekingMonitor"
-                 class="cn.edu.fudan.se.helpseeking.views.BrowserEditorView"
-                 icon="icons/sample.gif"
-                 id="cn.edu.fudan.se.helpseeking.views.BrowserEditorView"
-                 name="WorkList"
-                 restorable="true">
-           </view>
    </extension>
    <extension
          point="org.eclipse.ui.perspectives">
@@ -170,40 +162,6 @@
                visible="true">
          </view>
       </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="cn.edu.fudan.se.helpseeking.views.WorkList"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.ProblemView">
-         </view>
-      </perspectiveExtension>
-   </extension>
-   <extension
-         point="org.eclipse.ui.editors">
-         
-          <editor
-			name="BrowserEditor"
-			icon="icons/sample.gif"
-			class="cn.edu.fudan.se.helpseeking.editors.BrowserEditor"
-			id="cn.edu.fudan.se.helpseeking.editors.BrowserEditor">
-   		</editor>
-   		
-      <editor
-            class="cn.edu.fudan.se.helpseeking.editors.XMLEditor"
-            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
-            extensions="xml"
-            icon="icons/sample.gif"
-            id="cn.edu.fudan.se.helpseeking.editors.XMLEditor"
-            name="Sample XML Editor">
-      </editor>
-   </extension>
-   <extension
-         point="org.eclipse.help.contexts">
-      <contexts
-            file="contexts.xml">
-      </contexts>
    </extension> 
    
 </plugin>
