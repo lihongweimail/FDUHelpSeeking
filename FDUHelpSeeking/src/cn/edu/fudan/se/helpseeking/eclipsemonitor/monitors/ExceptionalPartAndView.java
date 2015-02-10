@@ -1,8 +1,10 @@
 package cn.edu.fudan.se.helpseeking.eclipsemonitor.monitors;
 
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.internal.part.NullEditorInput;
 
 import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 
@@ -47,7 +49,10 @@ public class ExceptionalPartAndView {
 		IViewPart muckuiOverviewViewPart = currentActiveIWorkbenchPage
 				.findView(
 						"cn.edu.fudan.se.helpseeking.eclipsemonitor.views.HelpSeekingMuckUIOverviewView");
-		
+
+		if (part.getClass().toString().trim().equals("cn.edu.fudan.se.helpseeking.editors.BrowserEditor")) {
+			checkResult=true;
+		}
 
 if (part.getClass().toString().trim().equals("class org.eclipse.ui.internal.browser.WebBrowserEditor")) {
 	checkResult=true;

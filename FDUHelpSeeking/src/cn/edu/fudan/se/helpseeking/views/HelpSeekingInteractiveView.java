@@ -1360,9 +1360,13 @@ public class HelpSeekingInteractiveView extends ViewPart {
 								HelpSeekingBrowserView bv = (HelpSeekingBrowserView) browserpart;
 
 								List<WEBPageBean> nullList = new ArrayList<WEBPageBean>();
-								bv.doGenUrlTree(bv.getUrlTree(), nullList);
-								bv.doGenUrlTree(bv.getUrlTreeUnselect(),
-										allpageslist);
+							
+								bv.genUrlTree(" ", allpageslist,
+										SearchList, currentSearchID, "0",currentSearchKeyWords201411);
+
+//								bv.doGenUrlTree(bv.getUrlTree(), nullList);
+//								bv.doGenUrlTree(bv.getUrlTreeUnselect(),
+//										allpageslist);
 
 							} catch (PartInitException e1) {
 								// TODO Auto-generated catch block
@@ -1555,6 +1559,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			}
 			keyWordsforQuery.get(i).setKeywordColor(Basic.cssColor[randomint][1]);
 			keyWordsforQuery.get(i).setKeywordColorName(Basic.cssColor[randomint][0]);
+			
+			//计算一个对比颜色
+			
+			keyWordsforQuery.get(i).setKeywordFontColorName(Basic.cssColor[randomint][2]);
 			
 			
 			currentSearchKeyWords201411.add(keyWordsforQuery.get(i));

@@ -29,6 +29,8 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
@@ -44,7 +46,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
@@ -57,6 +61,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.eclipse.ui.internal.browser.*;
+import org.eclipse.ui.internal.part.NullEditorInput;
 
 import swing2swt.layout.BorderLayout;
 import urlWordExtract.GetT;
@@ -69,6 +74,7 @@ import cn.edu.fudan.se.helpseeking.bean.NewWebUseInfo;
 import cn.edu.fudan.se.helpseeking.bean.TopicWEBPagesBean;
 import cn.edu.fudan.se.helpseeking.bean.UseResultsRecord;
 import cn.edu.fudan.se.helpseeking.bean.WEBPageBean;
+import cn.edu.fudan.se.helpseeking.editors.BrowserEditor;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.LoopGoogleAPICall;
 import cn.edu.fudan.se.helpseeking.googleAPIcall.WEBResult;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
@@ -184,36 +190,37 @@ public class HelpSeekingBrowserView extends ViewPart {
 					long currentBrowserID = c.getTimeInMillis();
 					openNewURlinBrower(urr, currentBrowserID);
 
-						try {
-							PlatformUI
-									.getWorkbench()
-									.getActiveWorkbenchWindow()
-									.getActivePage()
-									.showView(
-											"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-						} catch (PartInitException e1) {
-							// TODO Auto-generated catch block
-							System.out.println("please open OVerview view.");
-						}
-
-						overviewpart = FDUHelpSeekingPlugin
-								.getDefault()
-								.getWorkbench()
-								.getActiveWorkbenchWindow()
-								.getActivePage()
-								.findView(
-										"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-
-						if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
-							HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
-							try {
-								bv.genlistTree(urr.getUrl());
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-
-						}
+					//注释掉获取页面预览 15.2.10
+//						try {
+//							PlatformUI
+//									.getWorkbench()
+//									.getActiveWorkbenchWindow()
+//									.getActivePage()
+//									.showView(
+//											"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+//						} catch (PartInitException e1) {
+//							// TODO Auto-generated catch block
+//							System.out.println("please open OVerview view.");
+//						}
+//
+//						overviewpart = FDUHelpSeekingPlugin
+//								.getDefault()
+//								.getWorkbench()
+//								.getActiveWorkbenchWindow()
+//								.getActivePage()
+//								.findView(
+//										"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+//
+//						if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
+//							HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
+//							try {
+//								bv.genlistTree(urr.getUrl());
+//							} catch (IOException e1) {
+//								// TODO Auto-generated catch block
+//								e1.printStackTrace();
+//							}
+//
+//						}
 
 					}
 				
@@ -268,41 +275,38 @@ public class HelpSeekingBrowserView extends ViewPart {
 									  c.setTimeInMillis(new Date().getTime());
 									long currentBrowserID=c.getTimeInMillis();
 							          openNewURlinBrower(urr,currentBrowserID);
-							          
-										try {
-											PlatformUI
-													.getWorkbench()
-													.getActiveWorkbenchWindow()
-													.getActivePage()
-													.showView(
-															"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-										} catch (PartInitException e1) {
-											// TODO Auto-generated catch block
-											System.out.println("please open OVerview view.");
-										}
 
-										overviewpart = FDUHelpSeekingPlugin
-												.getDefault()
-												.getWorkbench()
-												.getActiveWorkbenchWindow()
-												.getActivePage()
-												.findView(
-														"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-
-										if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
-											HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
-											try {
-												bv.genlistTree(urr.getUrl());
-											} catch (IOException e1) {
-												// TODO Auto-generated catch block
-												e1.printStackTrace();
-											}
-
-										}
-       
-							          
-									
-									
+							          //注释掉页面预览  15.2.10
+//										try {
+//											PlatformUI
+//													.getWorkbench()
+//													.getActiveWorkbenchWindow()
+//													.getActivePage()
+//													.showView(
+//															"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+//										} catch (PartInitException e1) {
+//											// TODO Auto-generated catch block
+//											System.out.println("please open OVerview view.");
+//										}
+//
+//										overviewpart = FDUHelpSeekingPlugin
+//												.getDefault()
+//												.getWorkbench()
+//												.getActiveWorkbenchWindow()
+//												.getActivePage()
+//												.findView(
+//														"cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+//
+//										if ((overviewpart instanceof HelpSeekingWebPageOverviewView)) {
+//											HelpSeekingWebPageOverviewView bv = (HelpSeekingWebPageOverviewView) overviewpart;
+//											try {
+//												bv.genlistTree(urr.getUrl());
+//											} catch (IOException e1) {
+//												// TODO Auto-generated catch block
+//												e1.printStackTrace();
+//											}
+//
+//										}
 									
 								}
 								
@@ -326,6 +330,8 @@ public class HelpSeekingBrowserView extends ViewPart {
 
 	
       IWebBrowser browser; 
+       BrowserEditor browserPart;
+      
 //	AmAssitBrowser browser; //2015.1.28 测试
 // AmAssitBrowser mytestBrowser;  2015.1.28 测试
       final String highlightJScode=FileHelper
@@ -334,22 +340,33 @@ public class HelpSeekingBrowserView extends ViewPart {
       
       ///Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/foamtree/javascripthiglight.js
 		
-protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID) 
+protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)  
 {
+	
+	
+	// 将后面的 新建浏览器和高亮的代码放到  browsereditor类中去。
+	
+	
 		
 	 try {
+//		 IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
+////         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));   2015.1.28 测试
+////         browser.mysetId(currentBrowserID);    2015.1.28 测试
+//		    try {
+//				browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
+//			} catch (PartInitException e2) {
+//				// TODO Auto-generated catch block
+//				e2.printStackTrace();
+//			}
+//			      BrowserIDBean newbrowserid=new BrowserIDBean();
+//	     newbrowserid.setId(browser.getId());
+		// 以下替换语句：
+BrowserIDBean newbrowserid=new BrowserIDBean();
+newbrowserid.setId("OpenWebsite"+String.valueOf(currentBrowserID));
+		                     
 		 
-         IWorkbenchBrowserSupport support = PlatformUI.getWorkbench().getBrowserSupport();
-//         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));   2015.1.28 测试
-//         browser.mysetId(currentBrowserID);    2015.1.28 测试
-         browser = support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
-         BrowserIDBean newbrowserid=new BrowserIDBean();
-         newbrowserid.setId(browser.getId());
          FDUHelpSeekingPlugin pluginInstance=FDUHelpSeekingPlugin.getINSTANCE();
-		 pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
-		 
-
-			NewWebUseInfo nwuiInfo=new NewWebUseInfo();
+         NewWebUseInfo nwuiInfo=new NewWebUseInfo();
 			
 			nwuiInfo.setWebURL(urls.getUrl());
 			String tid="";
@@ -382,7 +399,29 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
          final String openUrlFileWithProtocolString="file://"+openUrlFilepath;
          final URL openUrlFileWithProtocol=new URL(openUrlFileWithProtocolString);
          
+         newbrowserid.setTitle(urls.getTitle()); 
+		 newbrowserid.setUrl(openUrlFilepath);
+		 newbrowserid.setRemoteurl(urls.getUrl());
+		 pluginInstance.getCurrentBrowserIDs().add(newbrowserid);
 		 
+		 final String titles=newbrowserid.getTitle();
+		 final String browserurl=newbrowserid.getRemoteurl();
+		 
+				 
+		 //新的打开编辑器代码
+			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			try {
+				
+				  browserPart = (BrowserEditor) activePage.openEditor(new NullEditorInput(), "cn.edu.fudan.se.helpseeking.editors.BrowserEditor");
+				  
+				  browserPart.getMybroBrowser().getBrowser().getParent().pack();
+				  browserPart.getMybroBrowser().getMyComposite().pack();
+				
+			} catch (PartInitException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}//fix it!
+
 		 
 		 Job job = new Job("jobname获取数据WEB页面"){
 		 protected IStatus run(IProgressMonitor monitor){
@@ -401,24 +440,19 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 
 			 //3、写入本地文件
 			 //4、给浏览器本地文件地址，展示
+		
 			 
-				String  keywordsandcolorsJScode= "function onloadinghighlight()\n"
-						+ "{\n";
-				
+// 注释掉  直接在 生成js的GenerateJS()中实现  			 
+/*			 String kwcjsString="";			 
+				String  keywordsandcolorsJScode= "function onloadinghighlight()\r\n"
+						+ "{\r\n";				
 //						+ " searchPrompt(\"unpredictable\", false, \"pink\", \"yellow\");\n"
 //						+ " searchPrompt(\"highlight\", true,\"red\",\"yellow\");\n"
-
 				for (int i = 0; i < foamtreeKeyWordsSet.size(); i++) {
-
-
-
 					String labels = foamtreeKeyWordsSet.get(i).getKeywordName();
 					labels= CommUtil.getNewSimpleWords(labels);
 					String colors = foamtreeKeyWordsSet.get(i).getKeywordColorName();
-					
-					//如何求colors的对比色，反色呢？
-					
-					
+				//如何求colors的对比色，反色呢？
 					if (labels.contains(".")) {
 						labels = labels.replaceAll("[.]", " ");
 					}
@@ -430,24 +464,24 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 						labels = labels.replaceAll("[)]", " ");
 					}
 					
-					keywordsandcolorsJScode=keywordsandcolorsJScode+" searchPrompt(\""+labels+"\", false, \""+colors+"\", \"LightYellow\");\n";
-
-
-				}
-				
-			keywordsandcolorsJScode= keywordsandcolorsJScode
-						+ " }\n"
-						+ " </script>\n";
-				 
+					kwcjsString=kwcjsString+" searchPrompt(\""+labels+"\", false, \""+colors+"\", \"LightYellow\");\r\n";
+				}				
+			keywordsandcolorsJScode= keywordsandcolorsJScode +kwcjsString
+						+ " }\r\n"
+						+ " </script>\r\n";				 
+			 final String ks=kwcjsString;
+*/
 			 
-
 			 
-			 try {
-				doGenHighlightHTML(urlString, true, highlightJScode, keywordsandcolorsJScode, openUrlFilepath);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	注释一下 不去取网页下载并嵌入高亮！！		 
+//			 try {
+//				
+//				 doGenHighlightHTML(urlString, true, highlightJScode, keywordsandcolorsJScode, openUrlFilepath);
+//			 
+//			 } catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	        	 
 			 
 		 Display.getDefault().asyncExec(new Runnable(){
@@ -455,12 +489,38 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		 // 在此添加更新界面的代码
 	         
 
-			 try {
-				browser.openURL(openUrlFileWithProtocol);
-			} catch (PartInitException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}  
+//			 try {	 
+//             browser.openURL(openUrlFileWithProtocol);			
+//			} catch (PartInitException e1) {
+//				// TODO Auto-generated catch block
+//				e1.printStackTrace();
+//			}  
+//			 
+			 
+			 //---
+
+
+			 
+			 browserPart.getMybroBrowser().getBrowser().addProgressListener(new ProgressListener(){
+					public void completed(ProgressEvent event){
+						
+						System.out.println("Page Loading ... ");
+						 boolean result=browserPart.getMybroBrowser().getBrowser().execute(GenerateJS());
+						 if (!result) {
+							System.out.println("Browser open webpage failed!");
+							
+						}
+					}
+					public void changed(ProgressEvent event){}
+				});
+			
+			 browserPart.getMybroBrowser().setAppTitle(titles);
+			 browserPart.getMybroBrowser().setNewUrl(browserurl);
+			 browserPart.getMybroBrowser().refreshBrowser();
+			 
+			 //---
+			 
+									 
 			 
 //  2.2测试本地文件
 //			   try {
@@ -471,9 +531,7 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 //					e.printStackTrace();
 //				}    
 //				   
-	
-			 
-			 
+				 
 		 }
 		 });
 		 return Status.OK_STATUS;
@@ -481,17 +539,208 @@ protected void openNewURlinBrower(UseResultsRecord urls, long currentBrowserID)
 		 };
 		 job.setRule(Schedule_RULE);
 		 job.schedule();
-		 
-		 
-
-        
-                
-     } catch (PartInitException | MalformedURLException p) {
+		              
+     } catch (MalformedURLException p) {
          p.printStackTrace();
      }
 
 
   }
+
+ String GenerateJS(){
+	StringBuffer buffer = new StringBuffer();
+
+	buffer.append("function doHighlight(bodyText, searchTerm, frontcolor,backcolor){ \r\n");
+	buffer.append("highlightStartTag = \"<font style='color:\"+frontcolor+\"; background-color:\"+backcolor+\";'>\"; \r\n"); // escape quotes with \:String value = " \"ROM\" ";
+	buffer.append("highlightEndTag = \"</font>\"; \r\n");
+	buffer.append("var newText = \"\"; \r\n");
+	buffer.append("var i = -1; \r\n");
+	buffer.append("var lcSearchTerm = searchTerm.toLowerCase(); \r\n");
+	buffer.append("var lcBodyText = bodyText.toLowerCase(); \r\n");
+	buffer.append("\r\n");
+	buffer.append("while (bodyText.length > 0) { \r\n");
+	buffer.append("i = lcBodyText.indexOf(lcSearchTerm, i+1); \r\n");
+	buffer.append("if (i < 0) { \r\n");
+	buffer.append("newText += bodyText; \r\n");
+	buffer.append("bodyText = \"\"; \r\n");
+	buffer.append("} else { \r\n");
+	buffer.append("if (bodyText.lastIndexOf(\">\", i) >= bodyText.lastIndexOf(\"<\", i)) { \r\n");
+	buffer.append("if (lcBodyText.lastIndexOf(\"/script>\", i) >= lcBodyText.lastIndexOf(\"<script\", i)) { \r\n");
+	buffer.append("newText += bodyText.substring(0, i) + highlightStartTag + bodyText.substr(i, searchTerm.length) + highlightEndTag; \r\n");
+	buffer.append("bodyText = bodyText.substr(i + searchTerm.length); \r\n");
+	buffer.append("lcBodyText = bodyText.toLowerCase(); \r\n");
+	buffer.append("i = -1;} } } } \r\n");
+	buffer.append("return newText;} \r\n");
+	buffer.append("\r\n");
+	buffer.append("\r\n");
+	buffer.append("\r\n");
+	
+	
+//	buffer.append("var searchText = 'WEB PAGE' \r\n");
+//	buffer.append("var searchArray = searchText.split(\" \") \r\n");
+	buffer.append("if (!document.body || typeof(document.body.innerHTML) == \"undefined\") { \r\n");
+	buffer.append("if (warnOnFailure) { \r\n");
+	buffer.append("alert(\"Sorry, for some reason the text of this page is unavailable. Searching will not work.\");}} \r\n");
+	buffer.append("var bodyText = document.body.innerHTML; \r\n");
+	for (int i = 0; i < foamtreeKeyWordsSet.size(); i++) {
+	String labels = foamtreeKeyWordsSet.get(i).getKeywordName();
+	labels= CommUtil.getNewSimpleWords(labels);
+	String colors = foamtreeKeyWordsSet.get(i).getKeywordFontColorName();
+	String backgroundColors=foamtreeKeyWordsSet.get(i).getKeywordColorName();
+	
+	//如何求colors的对比色，反色呢？		
+	if (labels.contains(".")) {
+		labels = labels.replaceAll("[.]", " ");
+	}
+	if (labels.contains("(")) {
+		labels = labels.replaceAll("[(]", " ");
+	}
+	if (labels.contains(")")) {
+		labels = labels.replaceAll("[)]", " ");
+	}
+	 
+	labels=CommUtil.removeDuplicateWordsWithBlankSplit( CommUtil.stringToList(labels.trim(), "[ ]"));
+	 
+	// buffer.append(" searchPrompt('"+labels.trim()+"',false,'"+colors+"','Yellow');\r\n");
+
+	buffer.append("bodyText = doHighlight(bodyText, '"+labels.trim()+"','"+colors+"','"+backgroundColors+"'); \r\n");
+	}
+	
+	buffer.append("document.body.innerHTML = bodyText; \r\n");
+	
+	
+	
+// 替换方案	
+	
+//	buffer.append(" function doHighlight(bodyText, searchTerm, highlightStartTag, highlightEndTag) \r\n");
+//	buffer.append(" {\r\n");
+//    buffer.append(" if ((!highlightStartTag) || (!highlightEndTag)) {\r\n");
+//    buffer.append("  highlightStartTag = \"<font style='color:blue; background-color:yellow;'>\";\r\n");
+//    buffer.append("     highlightEndTag = \"</font>\";\r\n");
+//    buffer.append("   }  \r\n");
+//
+//    buffer.append("   var newText = \"\";\r\n");
+// 	buffer.append("   var i = -1;\r\n");
+//	buffer.append(" var lcSearchTerm = searchTerm.toLowerCase();\r\n");
+//	buffer.append("  var lcBodyText = bodyText.toLowerCase();\r\n");
+//    
+//	buffer.append("  while (bodyText.length > 0) {\r\n");
+//	buffer.append("    i = lcBodyText.indexOf(lcSearchTerm, i+1);\r\n");
+//	buffer.append("if (i < 0) {\r\n");
+//	buffer.append(" newText += bodyText;\r\n");
+//	buffer.append(" bodyText = \"\";\r\n");
+//	buffer.append(" } else {\r\n");
+//	buffer.append("if (bodyText.lastIndexOf(\">\", i) >= bodyText.lastIndexOf(\"<\", i)) {\r\n");
+// 
+//	buffer.append("        if (lcBodyText.lastIndexOf(\"/script>\", i) >= lcBodyText.lastIndexOf(\"<script\", i)) {\r\n");
+//	buffer.append("          newText += bodyText.substring(0, i) + highlightStartTag + bodyText.substr(i, searchTerm.length) + highlightEndTag;\r\n");
+//	buffer.append("          bodyText = bodyText.substr(i + searchTerm.length);\r\n");
+//	buffer.append("          lcBodyText = bodyText.toLowerCase();\r\n");
+//	buffer.append("      i = -1;\r\n");
+//	buffer.append("    }\r\n");
+//	buffer.append("  }\r\n");
+//	buffer.append("}\r\n");
+//	buffer.append("}\r\n");
+//  
+//	buffer.append("return newText;\r\n");
+//	buffer.append("}\r\n");
+//
+//
+//
+//	buffer.append("function highlightSearchTerms(searchText, treatAsPhrase, warnOnFailure, highlightStartTag, highlightEndTag)\r\n");
+//	buffer.append("{ \r\n");
+//	buffer.append("if (treatAsPhrase) {\r\n");
+//	buffer.append("searchArray = [searchText];\r\n");
+//	buffer.append("} else {\r\n");
+//	buffer.append("searchArray = searchText.split(\" \");\r\n");
+//	buffer.append("}\r\n");
+//	buffer.append("if (!document.body || typeof(document.body.innerHTML) == \"undefined\") {\r\n");
+//	buffer.append("if (warnOnFailure) {\r\n");
+//	buffer.append("  alert(\"Sorry, for some reason the text of this page is unavailable. Searching will not work.\");\r\n");
+//	buffer.append("}\r\n");
+//	buffer.append("return false;\r\n");
+//	buffer.append("}\r\n");
+//	buffer.append("var bodyText = document.body.innerHTML;\r\n");
+//	buffer.append("for (var i = 0; i < searchArray.length; i++) {\r\n");
+//	buffer.append("bodyText = doHighlight(bodyText, searchArray[i], highlightStartTag, highlightEndTag);\r\n");
+//	buffer.append("}  \r\n");
+//	buffer.append("document.body.innerHTML = bodyText;\r\n");
+//	buffer.append("return true;\r\n");
+//	buffer.append("}\r\n");
+//
+//	buffer.append("function searchPrompt(defaultText, treatAsPhrase, textColor, bgColor)\r\n");
+//	buffer.append("{\r\n");
+//	buffer.append("if (!defaultText) {\r\n");
+//	buffer.append("defaultText = \"\";\r\n");
+//	buffer.append("}\r\n");
+//	buffer.append("if ((!textColor) || (!bgColor)) {\r\n");
+//	buffer.append("highlightStartTag = \"\";\r\n");
+//	buffer.append("highlightEndTag = \"\";\r\n");
+//	buffer.append("} else {\r\n");
+//	buffer.append("highlightStartTag = \"<font style='color:\" + textColor + \"; background-color:\" + bgColor + \";'>\";\r\n");
+//    buffer.append("highlightEndTag = \"</font>\";\r\n");
+//    buffer.append("}\r\n");
+//    buffer.append("if (treatAsPhrase) {\r\n");
+//    buffer.append("promptText = \"Please enter the phrase you'd like to search for:\";\r\n");
+//    buffer.append("} else {\r\n");
+//    buffer.append("promptText = \"Please enter the words you'd like to search for, separated by spaces:\";\r\n");
+//    buffer.append("}\r\n");
+//    buffer.append("searchText =  defaultText ;\r\n");
+//    buffer.append("if (!searchText)  {\r\n");
+//    buffer.append("alert(\"No search terms were entered. Exiting function.\");\r\n");
+//    buffer.append("return false;\r\n");
+//    buffer.append("}  \r\n");
+//    buffer.append("return highlightSearchTerms(searchText, treatAsPhrase, true, highlightStartTag, highlightEndTag);\r\n");
+//    buffer.append("}\r\n");
+//
+// 
+//	
+//    buffer.append("\r\n");
+//    buffer.append("function onloadinghighlight()\r\n");
+//    buffer.append("{\r\n");
+//
+//	for (int i = 0; i < foamtreeKeyWordsSet.size(); i++) {
+//		String labels = foamtreeKeyWordsSet.get(i).getKeywordName();
+//		labels= CommUtil.getNewSimpleWords(labels);
+//		String colors = foamtreeKeyWordsSet.get(i).getKeywordColorName();
+//		
+//		//如何求colors的对比色，反色呢？		
+//		if (labels.contains(".")) {
+//			labels = labels.replaceAll("[.]", " ");
+//		}
+//		if (labels.contains("(")) {
+//			labels = labels.replaceAll("[(]", " ");
+//		}
+//		if (labels.contains(")")) {
+//			labels = labels.replaceAll("[)]", " ");
+//		}
+//		 
+//		 
+//		 buffer.append(" searchPrompt('"+labels.trim()+"',false,'"+colors+"','Yellow');\r\n");
+//     }
+//	
+//	 buffer.append("}\r\n");
+//
+//	buffer.append("\r\n");
+//	buffer.append("\r\n");
+//	buffer.append("\r\n");
+//
+//	
+//	buffer.append("if (!document.body || typeof(document.body.innerHTML) == \"undefined\") { \r\n");
+//	buffer.append("if (warnOnFailure) { \r\n");
+//	buffer.append("alert(\"Sorry, for some reason the text of this page is unavailable. Searching will not work.\"); \r\n");
+//	buffer.append("  }\r\n");
+//	buffer.append("} \r\n");
+//	
+//	buffer.append("var isCwZExtension = true;\r\n");
+//	buffer.append("onloadinghighlight(); \r\n");
+//
+//	System.out.println(buffer.toString());
+	
+	return buffer.toString();
+}
+
+
 private static void print(String msg, Object... args) {
 	System.out.println(String.format(msg, args));
 }
@@ -525,7 +774,7 @@ public static void doGenHighlightHTML(String url, Boolean isUrl,
 		charset=Jsoup.connect(url).response().charset();
 
 		//这个时延不好调整
-		doc = Jsoup.connect(url).timeout(160000).get();
+		doc = Jsoup.connect(url).timeout(200000).get();
 		
 	}
 

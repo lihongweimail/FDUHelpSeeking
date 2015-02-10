@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
 public class AmAssitBrowser implements ControlListener {
 
 	// 定义浏览器的标题
-	public static final String APP_TITLE = "Simple SWT Browser";
+	public static  String APP_TITLE = "Simple SWT Browser";
 	// 定义主页的url
 	public static final String HOME_URL = "about:blank";
 	
@@ -64,6 +64,11 @@ public class AmAssitBrowser implements ControlListener {
 	public static String getAppTitle() {
 		return APP_TITLE;
 	}
+	public void setAppTitle(String titleString) {
+		APP_TITLE=titleString;
+	}
+
+	
 
 	public static String getHomeUrl() {
 		return HOME_URL;
@@ -111,6 +116,11 @@ public class AmAssitBrowser implements ControlListener {
 
 	public void setMyComposite(Composite myComposite) {
 		this.myComposite = myComposite;
+		GridData gPanelData = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL, GridData.FILL_BOTH); 
+		myComposite.setLayoutData(gPanelData); 
+		//为Panel也设置一个布局对象。文本框和按键将按这个布局对象来显示。 
+		GridLayout gPanelLay = new GridLayout(); 
+		myComposite.setLayout(gPanelLay); 
 	}
 
 	// 初始化浏览器
@@ -373,7 +383,7 @@ public class AmAssitBrowser implements ControlListener {
 		int x = myComposite.getParent().getBounds().x;
 		int y = myComposite.getParent().getBounds().y;
 
-		myComposite.setSize(new Point(0, 0));
+		myComposite.setSize(new Point(x, y));
 		// 注册显示地址的文本框事件
 		locationText
 				.addMouseListener(new MouseAdapter() {

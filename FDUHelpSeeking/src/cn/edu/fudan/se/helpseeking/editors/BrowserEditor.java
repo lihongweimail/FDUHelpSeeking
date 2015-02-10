@@ -146,6 +146,21 @@ public class BrowserEditor extends EditorPart {
 		   mybroBrowser.setDisableButton(true);
 		   
 //		   mybroBrowser.setNewUrl("about:blank");
+		   StringBuffer buffer=new StringBuffer();
+		   
+		   buffer.append("<!DOCTYPE html>\r\n");
+		   buffer.append("<html lang=\"en\">\r\n");
+           buffer.append(" <head> \r\n");
+		   buffer.append("<title>Loading webpage ... </title>\r\n"); 
+		   buffer.append("<meta charset=\"utf-8\" /> \r\n");
+		buffer.append("</head> \r\n");
+		buffer.append("<body class=\"\" id=\"body_solstice\" >\r\n"); 
+		buffer.append("      <h2>   Loading WebPage ...  </h2>\r\n");
+		buffer.append("      <h3>   Please waiting ...   </h3>\r\n");
+		buffer.append("    </body>\r\n");
+		buffer.append("   </html>\r\n");
+		   
+//		   mybroBrowser.getBrowser().setText(buffer.toString());
 		   mybroBrowser.refreshBrowser();
            mybroBrowser.getBrowser().getParent().pack();
 		   mybroBrowser.refreshBrowser();

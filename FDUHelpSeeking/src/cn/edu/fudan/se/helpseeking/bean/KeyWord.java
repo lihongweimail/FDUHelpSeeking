@@ -18,8 +18,20 @@ public class KeyWord {
 	boolean isRecommand=true;
 	
 	String keywordColor;   //使用Basic.cssColor中的字符串值  在获得生成的foamtree时，随机生成整数获得这个值，并将一次foamtree中的词的颜色值不重复
-	String keywordColorName;
+	String keywordColorName;  // 反白颜色 计算
+	String keywordFontColorName; //对应反白色
 	
+
+
+
+
+	public String getKeywordFontColorName() {
+		return keywordFontColorName;
+	}
+	public void setKeywordFontColorName(String keywordFontColorName) {
+		this.keywordFontColorName = keywordFontColorName;
+	}
+
 
 	String lastSearchID;//最后 真正 使用search button时的searchID    一般是A开头
 	
