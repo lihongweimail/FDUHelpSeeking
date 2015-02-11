@@ -851,7 +851,8 @@ public class Basic {
 
 	//颜色， 颜色16制，反向颜色
 	public final static String[][] cssColor = {
-			{ "Black", "#000000", "White" }, { "Navy", "#000080", "Ivory" },
+			{ "Black", "#000000", "White" }, 
+			{ "Navy", "#000080", "Ivory" },
 			{ "DarkBlue", "#00008B", "LightYellow" },
 			{ "MediumBlue", "#0000CD", "Yellow" },
 			{ "Blue", "#0000FF", "Snow" },
@@ -911,7 +912,7 @@ public class Basic {
 			{ "PaleGreen", "#98FB98", "Orchid" },
 			{ "DarkOrchid", "#9932CC", "Thistle" },
 			{ "YellowGreen", "#9ACD32", "LightGray" },
-			{ "Sienna", "#A0522D", "Tan" },
+			{ "Sienna", "#A0522D", "White" },
 			{ "Brown", "#A52A2A", "Chocolate" },
 			{ "DarkGray", "#A9A9A9", "Peru" },
 			{ "LightBlue", "#ADD8E6", "IndianRed" },
@@ -929,7 +930,7 @@ public class Basic {
 			{ "IndianRed", "#CD5C5C", "LightBlue" },
 			{ "Peru", "#CD853F", "DarkGray" },
 			{ "Chocolate", "#D2691E", "Brown" },
-			{ "Tan", "#D2B48C", "Sienna" },
+			{ "Tan", "#D2B48C", "White" },
 			{ "LightGray", "#D3D3D3", "YellowGreen" },
 			{ "Thistle", "#D8BFD8", "DarkOrchid" },
 			{ "Orchid", "#DA70D6", "PaleGreen" },
@@ -989,7 +990,8 @@ public class Basic {
 			{ "Snow", "#FFFAFA", "Blue" },
 			{ "Yellow", "#FFFF00", "MediumBlue" },
 			{ "LightYellow", "#FFFFE0", "DarkBlue" },
-			{ "Ivory", "#FFFFF0", "Navy" }, { "White", "#FFFFFF", "Black " } };
+			{ "Ivory", "#FFFFF0", "Navy" }, 
+			{ "White", "#FFFFFF", "Black " } };
 	
 	// CSS color
 	// 颜色名 十六进制颜色值 颜色
