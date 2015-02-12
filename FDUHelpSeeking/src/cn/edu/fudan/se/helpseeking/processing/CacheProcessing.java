@@ -1,5 +1,6 @@
 package cn.edu.fudan.se.helpseeking.processing;
 
+import java.sql.PseudoColumnUsage;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -8,10 +9,12 @@ import java.util.List;
 import java.lang.Math;
 
 import org.eclipse.jdt.ui.actions.FindAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.ActionCache;
 import cn.edu.fudan.se.helpseeking.bean.ActionInformation;
 import cn.edu.fudan.se.helpseeking.bean.AutoSearchWordsStruct;
@@ -41,6 +44,7 @@ import cn.edu.fudan.se.helpseeking.bean.Query;
 import cn.edu.fudan.se.helpseeking.bean.QueryList;
 import cn.edu.fudan.se.helpseeking.bean.RuntimeInformation;
 import cn.edu.fudan.se.helpseeking.bean.WindowTotalKeyWords;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.views.HelpSeekingDOIModelView;
@@ -58,6 +62,9 @@ public class CacheProcessing extends Thread {
 
 	// 获取单例
 	Cache currentCache = Cache.getInstance();
+	IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+
+
 
 	IViewPart part;
 	IViewPart partSolutionView;
@@ -621,7 +628,8 @@ public class CacheProcessing extends Thread {
 					for (int i = 0; i < doKeyWords.get(j1).getKeyWords().size(); i++) {
 						double score = doKeyWords.get(j1).getKeyWords().get(i)
 								.getScore()
-								/ (Math.pow(Basic.gama, distance));
+								/ (Math.pow(ps.getDouble(PreferenceConstants.GAMA_KEY) , distance));
+//						System.out.println("test gama key change! gama="+ps.getDouble(PreferenceConstants.GAMA_KEY));
 						doKeyWords.get(j1).getKeyWords().get(i).setScore(score);
 					}
 				}
@@ -1475,7 +1483,7 @@ public class CacheProcessing extends Thread {
 
 				countj = countj + 1;
 
-				if (countj == Basic.TEMP_K_KEYWORDS) {
+				if (countj == ps.getInt(PreferenceConstants.FOAMTREE_K_KEYWORDS_KEY)) {
 					break;
 				}
 				
@@ -1590,7 +1598,7 @@ public class CacheProcessing extends Thread {
 			
 			//比较如果新词汇是变化了60%以上的词汇时，则推荐新关键词 
 			
-			if (CommUtil.compareStringwitRatio(keyWordsforQuery, currentCache.getLastKeyWordsforQuery(),Basic.RATIOOFNEWSEARCHSTRING)) 
+			if (CommUtil.compareStringwitRatio(keyWordsforQuery, currentCache.getLastKeyWordsforQuery(),ps.getDouble(PreferenceConstants.RATIO_OF_NEW_KEYWORDS_KEY))) 
 			{
 				if (v != null)
 				v.setCurrentActionID(currentCache.getCurrentID());
@@ -1753,7 +1761,7 @@ public class CacheProcessing extends Thread {
 			int maxlenindex = 0;
 			int index = 0;
 			for (FindTimerAutoSearchText fta : ftastAll) {
-				if (m == Basic.TEMP_K_KEYWORDS) {
+				if (m == ps.getInt(PreferenceConstants.FOAMTREE_K_KEYWORDS_KEY)) {
 					break;
 				}
 

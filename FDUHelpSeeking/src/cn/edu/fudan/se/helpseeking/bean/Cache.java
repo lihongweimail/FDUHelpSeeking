@@ -6,11 +6,14 @@ import java.util.List;
 import java.util.Set;
 
 import org.eclipse.jdt.core.Flags;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.texteditor.CaseAction;
 import org.htmlparser.filters.AndFilter;
 
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic.DebugAction;
 import cn.edu.fudan.se.helpseeking.bean.Basic.Kind;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.processing.CacheProcessing;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import edu.mit.jwi.data.compare.CommentComparator;
@@ -31,6 +34,9 @@ public class Cache {
 		return Cache.class.getName();
 	}
 
+	IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+
+	
 	ActionQueue actions = new ActionQueue();// 给动作一个足够大的窗口
 	ConsoleInformationList consoles = ConsoleInformationList.getInstance();
 	List<ConsoleInformationListCopy> oldConsolesCopy = null;
@@ -1066,22 +1072,22 @@ public class Cache {
 				    }
 				    
 				    if (Basic.ALGORITHMSELECTION==2) {
-				    	kw.setWeightOne(Basic.action_select);
-				    	kw.setWeightTwo(Basic.api_normal);
+				    	kw.setWeightOne(ps.getDefaultInt(PreferenceConstants.ACTION_SELECT_KEY));
+				    	kw.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY));
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("select # package explorer outlier");
 						Action ac = actions.getActionCachewithActionID(currentID).getAction();
 						if (ac != null) {
 						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-							kw.setWeightOne(Basic.action_selectfocus);
+							kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 					           if (ac.getActionName().toLowerCase().contains("compile")) {
-								kw.setWeightTwo(Basic.api_hasCompileError);
+								kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("console")) {
-							     kw.setWeightTwo(Basic.api_causeException);
+							     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY) );
 								}
 							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-							     kw.setWeightTwo(Basic.api_hasCompileError);
+							     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 					       }
 
@@ -1137,22 +1143,22 @@ public class Cache {
 				    }
 				    
 				    if (Basic.ALGORITHMSELECTION==2) {
-				    	kw.setWeightOne(Basic.action_reveal);
-				    	kw.setWeightTwo(Basic.api_normal);
+				    	kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_REVEAL_KEY) );
+				    	kw.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY) );
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("other #  select edit code reveal api ");
 						Action ac = actions.getActionCachewithActionID(currentID).getAction();
 						if (ac != null) {
 						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-							kw.setWeightOne(Basic.action_selectfocus);
+							kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 					           if (ac.getActionName().toLowerCase().contains("compile")) {
-								kw.setWeightTwo(Basic.api_hasCompileError);
+								kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("console")) {
-							     kw.setWeightTwo(Basic.api_causeException);
+							     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-							     kw.setWeightTwo(Basic.api_hasCompileError);
+							     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 
 					       }
@@ -1240,24 +1246,24 @@ public class Cache {
 
 				if (Basic.ALGORITHMSELECTION==2) {
 					
-					kw.setWeightOne(Basic.action_select); // interest level action  save or debug 
+					kw.setWeightOne(ps.getDefaultInt(PreferenceConstants.ACTION_SELECT_KEY)); // interest level action  save or debug 
 					Action ac=actions.getActionCachewithActionID(currentID).getAction();
 					if (ac!=null)
 					kw.setTagName(genTagName(ac,ac.actionName.toLowerCase()));
 					
-					kw.setWeightTwo(Basic.api_normal); //interest level api  normal
+					kw.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY) ); //interest level api  normal
 					kw.setTagName("Other");
 					
 					if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-						kw.setWeightOne(Basic.action_selectfocus);
+						kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 				           if (ac.getActionName().toLowerCase().contains("compile")) {
-							kw.setWeightTwo(Basic.api_hasCompileError);
+							kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 							}
 						if (ac.getActionName().toLowerCase().contains("console")) {
-						     kw.setWeightTwo(Basic.api_causeException);
+						     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 							}
 						if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-						     kw.setWeightTwo(Basic.api_hasCompileError);
+						     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 							}
 
 				       }
@@ -1587,25 +1593,25 @@ if (paraType.length>0 )
 
 					if (Basic.ALGORITHMSELECTION==2) {
 						
-						kw.setWeightOne(Basic.action_saveOrDebug); // interest level action  save or debug 
+						kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SAVEORDEBUG_KEY)); // interest level action  save or debug 
 						Action ac=actions.getActionCachewithActionID(currentID).getAction();
 						if (ac!=null)
 						kw.setTagName(genTagName(ac,ac.actionName.toLowerCase()));
 						
-						kw.setWeightTwo(Basic.api_normal); //interest level api  normal
+						kw.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY) ); //interest level api  normal
 						kw.setTagName("Other");
 						
 						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-							kw.setWeightOne(Basic.action_selectfocus);
+							kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 							
 							if (ac.getActionName().toLowerCase().contains("compile")) {
-								kw.setWeightTwo(Basic.api_hasCompileError);
+								kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 							}
 							if (ac.getActionName().toLowerCase().contains("console")) {
-								kw.setWeightTwo(Basic.api_causeException);
+								kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 							}
 							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-							     kw.setWeightTwo(Basic.api_hasCompileError);
+							     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 
 
@@ -1716,7 +1722,7 @@ if (paraType.length>0 )
 	public  double vinit(double weightOne, double weightTwo) {
 
 		double result=1.0;
-		result=Math.pow(Basic.gama, weightOne)*weightTwo;
+		result=Math.pow(ps.getDouble(PreferenceConstants.GAMA_KEY) , weightOne)*weightTwo;
 		
 		return result;
 	}
@@ -1824,22 +1830,22 @@ if (paraType.length>0 )
 						}
 						
 						if (Basic.ALGORITHMSELECTION==2) {				
-							kw.setWeightOne(Basic.action_reveal);
-							kw.setWeightTwo(Basic.api_normal);
+							kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_REVEAL_KEY) );
+							kw.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY) );
 							Action ac = actions.getActionCachewithActionID(
 									currentID).getAction();
 							if (ac != null) {
 								if (ac.getActionKind().equals(
 										Kind.SELECTIONFOCUS)) {
-									kw.setWeightOne(Basic.action_selectfocus); //Basic.action_reveal
+									kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) ); //ps.getInt(PreferenceConstants.ACTION_REVEAL_KEY) 
 
 									if (ac.getActionName().toLowerCase()
 											.contains("compile")) {
-										kw.setWeightTwo(Basic.api_hasCompileError);
+										kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 									}
 									if (ac.getActionName().toLowerCase()
 											.contains("console")) {
-										kw.setWeightTwo(Basic.api_causeException);
+										kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 									}
 
 								}
@@ -1940,23 +1946,23 @@ if (paraType.length>0 )
 						   }
 						   
 						    if (Basic.ALGORITHMSELECTION==2) {
-						    	kw.setWeightOne(Basic.action_saveOrDebug);
-						    	kw.setWeightTwo(Basic.api_hasCompileError);
+						    	kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SAVEORDEBUG_KEY) );
+						    	kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 								kw.setTagName("error #  has compile error  edit save debug");
 								
 								Action ac = actions.getActionCachewithActionID(currentID).getAction();
 								if (ac != null) {
 								if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-									kw.setWeightOne(Basic.action_selectfocus);
+									kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 							           if (ac.getActionName().toLowerCase().contains("compile")) {
-										kw.setWeightTwo(Basic.api_hasCompileError);
+										kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 										}
 									if (ac.getActionName().toLowerCase().contains("console")) {
-									     kw.setWeightTwo(Basic.api_causeException);
+									     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 										}
 									if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-									     kw.setWeightTwo(Basic.api_hasCompileError);
+									     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 										}
 
 							       }
@@ -2002,23 +2008,23 @@ if (paraType.length>0 )
 					    }
 					    
 					    if (Basic.ALGORITHMSELECTION==2) {
-					    	kw.setWeightOne(Basic.action_select);
-					    	kw.setWeightTwo(Basic.api_hasCompileError);
+					    	kw.setWeightOne(ps.getDefaultInt(PreferenceConstants.ACTION_SELECT_KEY));
+					    	kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 							kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 							kw.setTagName("warning #  has compile warning  edit save debug");
 							
 							Action ac = actions.getActionCachewithActionID(currentID).getAction();
 							if (ac != null) {
 							if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-								kw.setWeightOne(Basic.action_selectfocus);
+								kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY));
 						           if (ac.getActionName().toLowerCase().contains("compile")) {
-									kw.setWeightTwo(Basic.api_hasCompileError);
+									kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 									}
 								if (ac.getActionName().toLowerCase().contains("console")) {
-								     kw.setWeightTwo(Basic.api_causeException);
+								     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 									}
 								if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-								     kw.setWeightTwo(Basic.api_hasCompileError);
+								     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 									}
 
 						       }
@@ -2137,22 +2143,22 @@ if (paraType.length>0 )
 				    }
 				    
 				    if (Basic.ALGORITHMSELECTION==2) {
-				    	kw.setWeightOne(Basic.action_execute);
-				    	kw.setWeightTwo(Basic.api_causeException);
+				    	kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_EXECUTE_KEY) );
+				    	kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 						kw.setScore(vinit(kw.getWeightOne(),kw.getWeightTwo()));
 						kw.setTagName("exception # execute cause Exception");
 						Action ac = actions.getActionCachewithActionID(currentID).getAction();
 						if (ac != null) {
 						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-							kw.setWeightOne(Basic.action_selectfocus);
+							kw.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 					           if (ac.getActionName().toLowerCase().contains("compile")) {
-								kw.setWeightTwo(Basic.api_hasCompileError);
+								kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("console")) {
-							     kw.setWeightTwo(Basic.api_causeException);
+							     kw.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-							     kw.setWeightTwo(Basic.api_hasCompileError);
+							     kw.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 
 					       }
@@ -2199,23 +2205,23 @@ if (paraType.length>0 )
 				 }
 				    
 				 if (Basic.ALGORITHMSELECTION==2) {
-				    	kw2.setWeightOne(Basic.action_reveal);
-				    	kw2.setWeightTwo(Basic.api_normal);
+				    	kw2.setWeightOne(ps.getInt(PreferenceConstants.ACTION_REVEAL_KEY) );
+				    	kw2.setWeightTwo(ps.getInt(PreferenceConstants.API_NORMAL_KEY) );
 						kw2.setScore(vinit(kw2.getWeightOne(),kw2.getWeightTwo()));
 						kw2.setTagName("exception # execute cause Exception");
 						
 						Action ac = actions.getActionCachewithActionID(currentID).getAction();
 						if (ac != null) {
 						if (ac.getActionKind().equals(Kind.SELECTIONFOCUS)) {
-							kw2.setWeightOne(Basic.action_selectfocus);
+							kw2.setWeightOne(ps.getInt(PreferenceConstants.ACTION_SELECTFOCUS_KEY) );
 					           if (ac.getActionName().toLowerCase().contains("compile")) {
-								kw2.setWeightTwo(Basic.api_hasCompileError);
+								kw2.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("console")) {
-							     kw2.setWeightTwo(Basic.api_causeException);
+							     kw2.setWeightTwo(ps.getInt(PreferenceConstants.API_CAUSEEXCEPTION_KEY));
 								}
 							if (ac.getActionName().toLowerCase().contains("insertcursor")) {
-							     kw2.setWeightTwo(Basic.api_hasCompileError);
+							     kw2.setWeightTwo(ps.getDefaultInt(PreferenceConstants.API_HASCOMPILEERROR_KEY));
 								}
 
 					       }

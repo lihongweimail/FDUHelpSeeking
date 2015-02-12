@@ -13,7 +13,11 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+
+import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.util.FileHelper;
 
 import com.google.gson.Gson;
@@ -29,6 +33,9 @@ public class LoopGoogleAPICall extends Thread{
 
 
 	static String search="";
+	
+	IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+
 
 	public static void commSearch() throws MalformedURLException,
 	UnsupportedEncodingException, IOException {
@@ -334,9 +341,9 @@ public class LoopGoogleAPICall extends Thread{
 		int j = 0; // count for the results
 		int strStart=1;
 	//查询10个或多个设置：暂时关掉	
-		for (int countSearch=Basic.GOOGLE_SEARCH_ROUND;countSearch>0;countSearch--)
+		for (int countSearch=ps.getInt(PreferenceConstants.GOOGLE_SEARCH_ROUND_KEY);countSearch>0;countSearch--)
 		{
-			strStart=strStart+(Basic.GOOGLE_SEARCH_ROUND-countSearch)*10;
+			strStart=strStart+(ps.getInt(PreferenceConstants.GOOGLE_SEARCH_ROUND_KEY) -countSearch)*ps.getInt(PreferenceConstants.GOOGLE_RESULT_NUMBERS_KEY);
 		
 		String charset = "UTF-8";
 

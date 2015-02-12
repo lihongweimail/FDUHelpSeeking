@@ -204,8 +204,8 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 			List<CxKeyPair> myCxKeyPairs=mycseini.getCxKeyPairs();
 			ps.setValue(PreferenceConstants.CSE_CX, myCxKeyPairs.get(0).getCx());
 			ps.setValue(PreferenceConstants.CSE_KEY, myCxKeyPairs.get(0).getKey());
-			
-			
+
+
 			
 		
 			int connection=	DatabaseUtil.initDB(dbURL,dbname,dbpwd);

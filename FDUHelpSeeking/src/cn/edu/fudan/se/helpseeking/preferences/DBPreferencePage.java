@@ -29,7 +29,7 @@ public class DBPreferencePage extends FieldEditorPreferencePage  implements IWor
 	public DBPreferencePage() {
 		super(GRID);
 		setPreferenceStore(FDUHelpSeekingPlugin.getDefault().getPreferenceStore());
-		setDescription("Configurate the MYSQL connection parameters");
+		setDescription("Configurate the SQLite connection parameters");
 		
 	}
 	@Override

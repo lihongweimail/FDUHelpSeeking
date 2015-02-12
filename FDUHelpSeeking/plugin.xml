@@ -125,6 +125,27 @@
          id="cn.edu.fudan.se.helpseeking.preferences.DBPreferencePage"
          name="DBPreferencePage">
    </page>
+  <page
+         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+         class="cn.edu.fudan.se.helpseeking.preferences.AlgorithmParameterPreferencePage"
+         id="cn.edu.fudan.se.helpseeking.preferences.AlgorithmParameterPreferencePage"
+         name="Algorithm Parameters Preference Page">
+   </page>
+      <page
+         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+         class="cn.edu.fudan.se.helpseeking.preferences.GoogleSearchParametersPreferencePage"
+         id="cn.edu.fudan.se.helpseeking.preferences.GoogleSearchParametersPreferencePage"
+         name="Google Search Parameters Preferences">
+   </page>
+      <page
+         category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
+         class="cn.edu.fudan.se.helpseeking.preferences.FoamtreeSetPreferencePage"
+         id="cn.edu.fudan.se.helpseeking.preferences.FoamtreeSetPreferencePage"
+         name="Foamtree Setting Preference Page">
+   </page>
+   
+   
+
    <page
          category="cn.edu.fudan.se.helpseeking.preferences.RootPreferencePage"
          class="cn.edu.fudan.se.helpseeking.preferences.SearchEngineSetPreferencePage"
@@ -168,15 +189,6 @@
                relationship="stack"
                standalone="true"
                visible="true">
-         </view>
-      </perspectiveExtension>
-      <perspectiveExtension
-            targetID="org.eclipse.jdt.ui.JavaPerspective">
-         <view
-               id="cn.edu.fudan.se.helpseeking.views.WorkList"
-               ratio="0.5"
-               relationship="right"
-               relative="org.eclipse.ui.views.ProblemView">
          </view>
       </perspectiveExtension>
    </extension>

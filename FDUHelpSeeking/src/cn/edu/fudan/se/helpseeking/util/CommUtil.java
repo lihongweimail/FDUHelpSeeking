@@ -2,6 +2,7 @@ package cn.edu.fudan.se.helpseeking.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.PseudoColumnUsage;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -16,6 +17,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.fnlp.nlp.cn.CNFactory;
 import org.fnlp.util.exception.LoadModelException;
@@ -24,10 +26,14 @@ import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
 import cn.edu.fudan.se.helpseeking.bean.Basic;
 import cn.edu.fudan.se.helpseeking.bean.CxKeyPair;
 import cn.edu.fudan.se.helpseeking.bean.KeyWord;
+import cn.edu.fudan.se.helpseeking.preferences.PreferenceConstants;
 import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 
 public class CommUtil {
 	private static final String SPLITE_STRING = "[; ]";
+	public static IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
+
+
 
 	public static boolean stringNullOrZero(String str) {
 		return str == null || str.trim().length() == 0;
@@ -934,7 +940,7 @@ public class CommUtil {
 		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords*1.0)/last.size()));
 		System.out.println("different position: "+ countdifferentpostion);
 		
-		if (countdifferentpostion>=Basic.DifferentPostion) {
+		if (countdifferentpostion>= ps.getInt(PreferenceConstants.DIFFERENTPOSITION_COUNT_KEY)) {
 			result=true;
 		}
 			

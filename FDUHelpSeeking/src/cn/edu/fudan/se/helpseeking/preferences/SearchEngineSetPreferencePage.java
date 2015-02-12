@@ -90,6 +90,7 @@ public class SearchEngineSetPreferencePage extends FieldEditorPreferencePage
 		
 		new Label(getFieldEditorParent(), SWT.LEFT).setText("To change new Search Engine!");
 		new Label(getFieldEditorParent(), SWT.LEFT).setText("copy cx and key to rewrite API access key and custom search engine ID");
+		
 		Group mygroup=new Group(getFieldEditorParent(), SWT.SHADOW_ETCHED_OUT);
 		
 		mygroup.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, 2,	1));
