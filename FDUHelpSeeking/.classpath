@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry exported="true" kind="lib" path="lib/sqlite-jdbc-3.7.2.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/google-http-client-xml-1.19.0.jar"/>
+	<classpathentry kind="lib" path="lib/google-ads-lib/google-api-client-1.19.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-ads-lib/ads-lib-1.37.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="foamtree"/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="lib" path="lib"/>
 	<classpathentry kind="lib" path="lib/args4j-2.0.6.jar"/>
 	<classpathentry kind="lib" path="lib/intt.jar"/>
@@ -23,10 +26,7 @@
 	<classpathentry kind="lib" path="lib/mahout-collections-1.0.jar"/>
 	<classpathentry kind="lib" path="lib/mahout-math-0.6.jar"/>
 	<classpathentry kind="lib" path="lib/attributes-binder-1.2.0.jar"/>
-	<classpathentry kind="lib" path="lib/jackson-core-asl-1.7.4.jar"/>
 	<classpathentry kind="lib" path="lib/jackson-mapper-asl-1.7.4.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.6.0.jar"/>
-	<classpathentry kind="lib" path="lib/lucene-analyzers-smartcn-4.6.0.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/json-lib-2.4-jdk15.jar"/>
 	<classpathentry kind="lib" path="lib/swt4.4M5.jar"/>
@@ -39,5 +39,29 @@
 	<classpathentry kind="lib" path="lib/thumbelina.jar"/>
 	<classpathentry kind="lib" path="lib/fnlp-app-2.0-SNAPSHOT.jar"/>
 	<classpathentry kind="lib" path="lib/fnlp-core-2.0-SNAPSHOT.jar"/>
+	<classpathentry kind="lib" path="lib/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-all-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-ant-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-client-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-jsp-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/jetty-util-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/example-jetty-embedded-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/apache-jsp-9.2.7.v20150116.jar"/>
+	<classpathentry kind="lib" path="lib/tomcat-jasper-8.0.18.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/google-http-client-1.19.0.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/httpclient-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/httpcore-4.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/jackson-core-2.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/jackson-core-asl-1.9.11.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/jsr305-1.3.9.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/protobuf-java-2.4.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/xpp3-1.1.4c.jar"/>
+	<classpathentry kind="lib" path="lib/google-http-java-client/libs/google-http-client-jackson2-1.19.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers-common-4.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/lucene-analyzers-smartcn-4.6.0.jar"/>
+	<classpathentry kind="lib" path="lib/basic-http-client-0.88.jar"/>
+	<classpathentry kind="lib" path="lib/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/google-ads-lib/google-oauth-client-1.19.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

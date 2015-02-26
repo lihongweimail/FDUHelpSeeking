@@ -1555,8 +1555,10 @@ public class HelpSeekingInteractiveView extends ViewPart {
 			boolean flagefindcolor=false;
 			while (!flagefindcolor) {
 		    randomint=CommUtil.randomInt(Basic.cssColorNumber, 0);
+		    
 			flagefindcolor=checkColorIndex(colorlist, randomint);
 			}
+			colorlist.add(randomint);
 			keyWordsforQuery.get(i).setKeywordColor(Basic.cssColor[randomint][1]);
 			keyWordsforQuery.get(i).setKeywordColorName(Basic.cssColor[randomint][0]);
 			

@@ -31,10 +31,7 @@ import cn.edu.fudan.se.helpseeking.preprocessing.TokenExtractor;
 
 public class CommUtil {
 	private static final String SPLITE_STRING = "[; ]";
-	public static IPreferenceStore ps=FDUHelpSeekingPlugin.getDefault().getPreferenceStore();
-
-
-
+	
 	public static boolean stringNullOrZero(String str) {
 		return str == null || str.trim().length() == 0;
 	}
@@ -866,7 +863,7 @@ public class CommUtil {
 
 	
 	public static boolean compareStringwitRatio(List<KeyWord> keyWordsforQuery,
-			List<KeyWord> lastKeyWords,double ratio) 
+			List<KeyWord> lastKeyWords,double ratio,int differentpositionlimited) 
 			
 			//比率变化了，或者词的顺序有变化返回真
 	{
@@ -940,7 +937,7 @@ public class CommUtil {
 		System.out.println("the set ratio: "+ratio+" count different words "+countDifferentWords+" the different ratio: "+((countDifferentWords*1.0)/last.size()));
 		System.out.println("different position: "+ countdifferentpostion);
 		
-		if (countdifferentpostion>= ps.getInt(PreferenceConstants.DIFFERENTPOSITION_COUNT_KEY)) {
+		if (countdifferentpostion>= differentpositionlimited) {
 			result=true;
 		}
 			

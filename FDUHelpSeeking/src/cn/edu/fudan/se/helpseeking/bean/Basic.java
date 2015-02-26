@@ -810,7 +810,7 @@ public static int linelimited = 1; // 3 发现新算法的词太少，所以这�
 	
 
 	//颜色， 颜色16制，反向颜色
-	public final static int cssColorNumber=140;//请设置为：cssColor数组元素个数值-1  
+	public final static int cssColorNumber=115;//请设置为：cssColor数组元素个数值-1  
 	public final static String[][] cssColor = {
 			{ "Black", "#000000", "White" }, 
 			{ "Navy", "#000080", "Ivory" },
@@ -898,30 +898,30 @@ public static int linelimited = 1; // 3 发现新算法的词太少，所以这�
 			{ "GoldenRod", "#DAA520", "DarkViolet" },
 			{ "PaleVioletRed", "#DB7093", "MediumPurple" },
 			{ "Crimson", "#DC143C", "LightGreen" },
-			{ "Gainsboro", "#DCDCDC", "DarkSeaGreen" },
+			
 			{ "Plum", "#DDA0DD", "SaddleBrown" },
 			{ "BurlyWood", "#DEB887", "DarkMagenta" },
-			{ "LightCyan", "#E0FFFF", "DarkRed" },
-			{ "Lavender", "#E6E6FA", "BlueViolet" },
+			
+			
 			{ "DarkSalmon", "#E9967A", "LightSkyBlue" },
 			{ "Violet", "#EE82EE", "SkyBlue" },
-			{ "PaleGoldenRod", "#EEE8AA", "Gray" },
+			
 			{ "LightCoral", "#F08080", "Olive" },
-			{ "Khaki", "#F0E68C", "Purple" },
-			{ "AliceBlue", "#F0F8FF", "Maroon" },
-			{ "HoneyDew", "#F0FFF0", "Aquamarine" },
-			{ "Azure", "#F0FFFF", "Chartreuse" },
+			
+			
+			
+			
 			{ "SandyBrown", "#F4A460", "LawnGreen" },
-			{ "Wheat", "#F5DEB3", "MediumSlateBlue" },
-			{ "Beige", "#F5F5DC", "LightSlateGray" },
-			{ "WhiteSmoke", "#F5F5F5", "SlateGray" },
-			{ "MintCream", "#F5FFFA", "OliveDrab" },
-			{ "GhostWhite", "#F8F8FF", "SlateBlue" },
+			
+			
+			
+			
+			
 			{ "Salmon", "#FA8072", "DimGray" },
-			{ "AntiqueWhite", "#FAEBD7", "DimGrey" },
-			{ "Linen", "#FAF0E6", "MediumAquaMarine" },
-			{ "LightGoldenRodYellow", "#FAFAD2", "CornflowerBlue" },
-			{ "OldLace", "#FDF5E6", "CadetBlue" },
+			
+			
+			
+			
 			{ "Red", "#FF0000", "DarkOliveGreen" },
 			{ "Fuchsia", "#FF00FF", "Indigo" },
 			{ "Magenta", "#FF00FF", "MediumTurquoise" },
@@ -942,16 +942,16 @@ public static int linelimited = 1; // 3 发现新算法的词太少，所以这�
 			{ "Bisque", "#FFE4C4", "SpringGreen" },
 			{ "MistyRose", "#FFE4E1", "Lime" },
 			{ "BlanchedAlmond", "#FFEBCD", "MediumSpringGreen" },
-			{ "PapayaWhip", "#FFEFD5", "DarkTurquoise" },
+			
 			{ "LavenderBlush", "#FFF0F5", "DeepSkyBlue" },
-			{ "SeaShell", "#FFF5EE", "DarkCyan" },
-			{ "Cornsilk", "#FFF8DC", "Teal" },
-			{ "LemonChiffon", "#FFFACD", "Green" },
-			{ "FloralWhite", "#FFFAF0", "DarkGreen" },
-			{ "Snow", "#FFFAFA", "Blue" },
+			
+
+			
+			
+			
 			{ "Yellow", "#FFFF00", "MediumBlue" },
-			{ "LightYellow", "#FFFFE0", "DarkBlue" },
-			{ "Ivory", "#FFFFF0", "Navy" }, 
+			
+			
 			{ "White", "#FFFFFF", "Black " } };
 	
 	// CSS color

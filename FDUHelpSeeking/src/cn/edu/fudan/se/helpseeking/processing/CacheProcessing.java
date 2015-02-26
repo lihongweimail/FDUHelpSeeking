@@ -1598,7 +1598,7 @@ public class CacheProcessing extends Thread {
 			
 			//比较如果新词汇是变化了60%以上的词汇时，则推荐新关键词 
 			
-			if (CommUtil.compareStringwitRatio(keyWordsforQuery, currentCache.getLastKeyWordsforQuery(),ps.getDouble(PreferenceConstants.RATIO_OF_NEW_KEYWORDS_KEY))) 
+			if (CommUtil.compareStringwitRatio(keyWordsforQuery, currentCache.getLastKeyWordsforQuery(),ps.getDouble(PreferenceConstants.RATIO_OF_NEW_KEYWORDS_KEY),ps.getInt(PreferenceConstants.DIFFERENTPOSITION_COUNT_KEY))) 
 			{
 				if (v != null)
 				v.setCurrentActionID(currentCache.getCurrentID());

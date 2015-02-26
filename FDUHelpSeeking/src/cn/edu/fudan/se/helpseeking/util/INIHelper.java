@@ -32,7 +32,7 @@ public class INIHelper
 	{
 		List<CxKeyPair> myCxKeyPairs=new ArrayList<CxKeyPair>();
 		String sectionName="cse";
-		for (int i = 0; i < (FileStringList.size()/5) ; i++) {
+		for (int i = 0; i < (FileStringList.size()/6) ; i++) {
 			CxKeyPair cxkeypair=new CxKeyPair();
 			cxkeypair.setCx(getValue(sectionName+i, "cx", "005635559766885752621:va1etsiak-a"));
 			cxkeypair.setKey(getValue(sectionName+i, "key", "AIzaSyCr7g1tTLyy1MYOT8osYiBhuNQX4Od5JFM"));

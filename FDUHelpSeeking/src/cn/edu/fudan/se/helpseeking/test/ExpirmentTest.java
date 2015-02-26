@@ -28,8 +28,9 @@ public class ExpirmentTest {
 		String result=good.substring(0, indexs);
 		System.out.println("result:".substring(2)+result+" indexs"+indexs+"indexs2"+indexs2+good.substring(0,1)+" "+good.substring(1));
 	
-//		INIHelper ini=new INIHelper("/cse.ini",false);
-//		ini.getCxKeyPairs();
+		INIHelper ini=new INIHelper("cse.ini",false);
+		ini.getCxKeyPairs();
+		System.out.println(ini.getCxKeyPairs().get(0).getKey());
 		
 
 //		System.out.println(re.getResource("/stopresource/userstoplist.txt"));

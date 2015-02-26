@@ -51,8 +51,8 @@ public class GCSServlet extends HttpServlet {
 			throws IOException {
 		int start = Integer.parseInt(request.getParameter("start"));
 		int num = Integer.parseInt(request.getParameter("num"));
-		String queryExpression = request.getParameter("queryexpression");
-		String strRequest = "https://www.googleapis.com/customsearch/v1?key=%API_KEY%&cx=%UNIQUE_ID%&q=%queryExpression%&searchType=image&start=%start%&num=%num%";
+		String queryExpression = request.getParameter("flower");
+		String strRequest = "https://www.googleapis.com/customsearch/v1?key=%API_KEY%&cx=%UNIQUE_ID%&q=%queryExpression%&start=%start%&num=%num%";
 		strRequest = strRequest.replace("%API_KEY%", API_KEY)
 				.replace("%UNIQUE_ID%", UNIQUE_ID)
 				.replace("%queryExpression%", queryExpression)

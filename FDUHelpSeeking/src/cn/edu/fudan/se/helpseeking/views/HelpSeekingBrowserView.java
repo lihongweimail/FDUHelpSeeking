@@ -183,39 +183,39 @@ public class HelpSeekingBrowserView extends ViewPart {
 					long currentBrowserID = c.getTimeInMillis();
 					openNewURlinBrower(urr, currentBrowserID);
 
-					// 注释掉获取页面预览 15.2.10
-					// try {
-					// PlatformUI
-					// .getWorkbench()
-					// .getActiveWorkbenchWindow()
-					// .getActivePage()
-					// .showView(
-					// "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-					// } catch (PartInitException e1) {
-					// // TODO Auto-generated catch block
-					// System.out.println("please open OVerview view.");
-					// }
-					//
-					// overviewpart = FDUHelpSeekingPlugin
-					// .getDefault()
-					// .getWorkbench()
-					// .getActiveWorkbenchWindow()
-					// .getActivePage()
-					// .findView(
-					// "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-					//
-					// if ((overviewpart instanceof
-					// HelpSeekingWebPageOverviewView)) {
-					// HelpSeekingWebPageOverviewView bv =
-					// (HelpSeekingWebPageOverviewView) overviewpart;
-					// try {
-					// bv.genlistTree(urr.getUrl());
-					// } catch (IOException e1) {
-					// // TODO Auto-generated catch block
-					// e1.printStackTrace();
-					// }
-					//
-					// }
+					// 注释掉获取页面预览 15.2.10   恢复 2.26
+					 try {
+					 PlatformUI
+					 .getWorkbench()
+					 .getActiveWorkbenchWindow()
+					 .getActivePage()
+					 .showView(
+					 "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+					 } catch (PartInitException e1) {
+					 // TODO Auto-generated catch block
+					 System.out.println("please open OVerview view.");
+					 }
+					
+					 overviewpart = FDUHelpSeekingPlugin
+					 .getDefault()
+					 .getWorkbench()
+					 .getActiveWorkbenchWindow()
+					 .getActivePage()
+					 .findView(
+					 "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+					
+					 if ((overviewpart instanceof
+					 HelpSeekingWebPageOverviewView)) {
+					 HelpSeekingWebPageOverviewView bv =
+					 (HelpSeekingWebPageOverviewView) overviewpart;
+					 try {
+					 bv.genlistTree(urr.getUrl());
+					 } catch (IOException e1) {
+					 // TODO Auto-generated catch block
+					 e1.printStackTrace();
+					 }
+					
+					 }
 
 				}
 
@@ -272,39 +272,39 @@ public class HelpSeekingBrowserView extends ViewPart {
 					long currentBrowserID = c.getTimeInMillis();
 					openNewURlinBrower(urr, currentBrowserID);
 
-					// 注释掉页面预览 15.2.10
-					// try {
-					// PlatformUI
-					// .getWorkbench()
-					// .getActiveWorkbenchWindow()
-					// .getActivePage()
-					// .showView(
-					// "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-					// } catch (PartInitException e1) {
-					// // TODO Auto-generated catch block
-					// System.out.println("please open OVerview view.");
-					// }
-					//
-					// overviewpart = FDUHelpSeekingPlugin
-					// .getDefault()
-					// .getWorkbench()
-					// .getActiveWorkbenchWindow()
-					// .getActivePage()
-					// .findView(
-					// "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
-					//
-					// if ((overviewpart instanceof
-					// HelpSeekingWebPageOverviewView)) {
-					// HelpSeekingWebPageOverviewView bv =
-					// (HelpSeekingWebPageOverviewView) overviewpart;
-					// try {
-					// bv.genlistTree(urr.getUrl());
-					// } catch (IOException e1) {
-					// // TODO Auto-generated catch block
-					// e1.printStackTrace();
-					// }
-					//
-					// }
+//					 注释掉页面预览 15.2.10  恢复 2.26
+					 try {
+					 PlatformUI
+					 .getWorkbench()
+					 .getActiveWorkbenchWindow()
+					 .getActivePage()
+					 .showView(
+					 "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+					 } catch (PartInitException e1) {
+					 // TODO Auto-generated catch block
+					 System.out.println("please open OVerview view.");
+					 }
+					
+					 overviewpart = FDUHelpSeekingPlugin
+					 .getDefault()
+					 .getWorkbench()
+					 .getActiveWorkbenchWindow()
+					 .getActivePage()
+					 .findView(
+					 "cn.edu.fudan.se.helpseeking.views.HelpSeekingWebPageOverviewView");
+					
+					 if ((overviewpart instanceof
+					 HelpSeekingWebPageOverviewView)) {
+					 HelpSeekingWebPageOverviewView bv =
+					 (HelpSeekingWebPageOverviewView) overviewpart;
+					 try {
+					 bv.genlistTree(urr.getUrl());
+					 } catch (IOException e1) {
+					 // TODO Auto-generated catch block
+					 e1.printStackTrace();
+					 }
+					
+					 }
 
 				}
 
@@ -321,7 +321,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 
 	}
 
-	IWebBrowser browser;
+//	IWebBrowser browser;
 	BrowserEditor browserPart;
 
 	// AmAssitBrowser browser; //2015.1.28 测试
@@ -331,6 +331,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 
 	// /Users/Grand/temp/FDUHelpSeeking/FDUHelpSeeking/foamtree/javascripthiglight.js
 
+	@SuppressWarnings("restriction")
 	protected void openNewURlinBrower(UseResultsRecord urls,
 			long currentBrowserID) {
 
@@ -338,21 +339,24 @@ public class HelpSeekingBrowserView extends ViewPart {
 
 		BrowserIDBean newbrowserid = new BrowserIDBean();
 
-		try {
-			// IWorkbenchBrowserSupport support =
-			// PlatformUI.getWorkbench().getBrowserSupport();
-			// // browser =
-			// support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
-			// 2015.1.28 测试
-			// // browser.mysetId(currentBrowserID); 2015.1.28 测试
-			// try {
-			// browser =
-			// support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
-			// } catch (PartInitException e2) {
-			// // TODO Auto-generated catch block
-			// e2.printStackTrace();
-			// }
-			// BrowserIDBean newbrowserid=new BrowserIDBean();
+	try {
+		
+		
+		
+//			 IWorkbenchBrowserSupport support =
+//			 PlatformUI.getWorkbench().getBrowserSupport();
+////			 2015.1.28 测试
+//			 // browser.mysetId(currentBrowserID); 2015.1.28 测试
+//			 try {
+//			 browser =
+//			 support.createBrowser("OpenWebsite"+String.valueOf(currentBrowserID));
+//			 } catch (PartInitException e2) {
+//			 // TODO Auto-generated catch block
+//			 e2.printStackTrace();
+//			 }
+//	  
+			 
+			 // BrowserIDBean newbrowserid=new BrowserIDBean();
 			// newbrowserid.setId(browser.getId());
 			// 以下替换语句：
 
@@ -755,6 +759,9 @@ public class HelpSeekingBrowserView extends ViewPart {
 		 if (labels.contains(")")) {
 		 labels = labels.replaceAll("[)]", " ");
 		 }
+		 if (labels.contains(",")) {
+			 labels = labels.replaceAll("[,]", " ");
+			 }
 		 labels=CommUtil.removeDuplicateWordsWithBlankSplit(
 		 CommUtil.stringToList(labels.trim(), "[ ]"));
 		 
@@ -762,8 +769,9 @@ public class HelpSeekingBrowserView extends ViewPart {
 		 
 		 for (int j = 0; j < searchArray.length; j++) {
 			 
-		       
-			 buffer.append("searchPrompt('"+searchArray[j].trim()+"',true,'"+colors+"','"+backgroundColors+"');\r\n");
+		       if (searchArray[j].length()>=2) {
+					 buffer.append("searchPrompt('"+searchArray[j].trim()+"',true,'"+colors+"','"+backgroundColors+"');\r\n");
+			}
 		}
 		 
 //			buffer.append("var searchArray = labels.split(\" \"); \r\n");
@@ -904,9 +912,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 	// // job.schedule();
 	// // }
 
-	public void clawhtmlwebpage(UseResultsRecord urls) {
-
-	}
+	
 
 	// type: auto manual
 	public static void openNewTabByURL(UseResultsRecord urr) {

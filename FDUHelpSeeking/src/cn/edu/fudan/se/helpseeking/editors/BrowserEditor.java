@@ -7,16 +7,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -27,10 +20,6 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-import swing2swt.layout.BorderLayout;
-import cn.edu.fudan.se.helpseeking.FDUHelpSeekingPlugin;
-import cn.edu.fudan.se.helpseeking.bean.BrowserIDBean;
-import cn.edu.fudan.se.helpseeking.views.BrowserEditorView;
 import cn.edu.fudan.se.helpseeking.web.AmAssitBrowser;
 
 public class BrowserEditor extends EditorPart {

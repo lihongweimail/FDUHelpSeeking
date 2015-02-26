@@ -37,7 +37,13 @@ import org.eclipse.swt.widgets.Text;
 public class SimpleBrowser implements ControlListener {
 
 	// 定义浏览器的标题
-	public static final String APP_TITLE = "amAssit Browser";
+	public static  String APP_TITLE = "amAssit Browser";
+	
+
+	public static void setAppTitle(String aPP_TITLE) {
+		APP_TITLE = aPP_TITLE;
+	}
+
 	// 定义主页的url
 	public static final String HOME_URL = "http://about:blank";
 
@@ -52,6 +58,7 @@ public class SimpleBrowser implements ControlListener {
 	public static String getAppTitle() {
 		return APP_TITLE;
 	}
+	
 
 	public static String getHomeUrl() {
 		return HOME_URL;
@@ -528,4 +535,7 @@ public class SimpleBrowser implements ControlListener {
 		goButton.setVisible(state);// 转向按钮
 
 	}
+	
+	
+
 }
