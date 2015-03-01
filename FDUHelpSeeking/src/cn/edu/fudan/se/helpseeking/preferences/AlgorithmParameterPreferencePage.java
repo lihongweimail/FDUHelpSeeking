@@ -70,7 +70,7 @@ public class AlgorithmParameterPreferencePage extends FieldEditorPreferencePage
 		al_action_selectFieldEditor= new IntegerFieldEditor(PreferenceConstants.ACTION_SELECT_KEY, "Action select", actionComposite);
 		addField(al_action_selectFieldEditor);
 		
-		al_action_revealFieldEditor=new IntegerFieldEditor(PreferenceConstants.ACTION_REVEAL_KEY, "Action revel", actionComposite);
+		al_action_revealFieldEditor=new IntegerFieldEditor(PreferenceConstants.ACTION_REVEAL_KEY, "Action revel ", actionComposite);
 		addField(al_action_revealFieldEditor);
 		
 		al_action_saveOrDebugFieldEditor=new IntegerFieldEditor(PreferenceConstants.ACTION_SAVEORDEBUG_KEY, "Action Save or Debug", actionComposite);

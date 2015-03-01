@@ -9,7 +9,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jdt.core.dom.ThisExpression;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.browser.TitleEvent;
+import org.eclipse.swt.browser.TitleListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -17,6 +22,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
@@ -27,6 +33,8 @@ public class BrowserEditor extends EditorPart {
 	private Text text;
 	boolean isDirty = false;
 	private String currentPath = null;
+	private String title="BrowserEditor";
+	private BrowserEditor myself;
     
 	AmAssitBrowser mybroBrowser= new AmAssitBrowser();
 	
@@ -97,6 +105,7 @@ public class BrowserEditor extends EditorPart {
 		// TODO Auto-generated method stub
 		setSite(arg0);
         setInput(arg1);
+        
 	}
 
 	@Override
@@ -118,6 +127,8 @@ public class BrowserEditor extends EditorPart {
 		// TODO Auto-generated method stub
 		
 //		
+
+		
 		Composite composite = new Composite(arg0, SWT.NONE); 
         GridLayout layout = new GridLayout(1, true); 
         composite.setLayout(layout); 
@@ -155,38 +166,53 @@ public class BrowserEditor extends EditorPart {
 		   mybroBrowser.refreshBrowser();
 		   mybroBrowser.getMyComposite().pack();
 
+ 
+			mybroBrowser.getBrowser().addTitleListener(new TitleListener() {
+				public void changed(TitleEvent e) {
+			     myself.setPartName(e.title);
 
+				}
+			});
 
+				
 
-		
-		
-//		this.text = new Text(topComp, SWT.BORDER);
-//		text.addModifyListener(new ModifyListener() {
-//			@Override
-//			public void modifyText(ModifyEvent e) {
-//				isDirty = true;
-//				BrowserEditorView.getSingleTon().setText("text length:" + text.getText().length());
-//			}
-//		});
-//		text.addKeyListener(new KeyListener() {
+		   
+//		   this.text = new Text(arg0, SWT.BORDER);
+//		   this.text.setLayoutData(new GridData(SWT., SWT.FILL, false, false,1, 1));				
 //
-//			@Override
-//			public void keyReleased(KeyEvent event) {
-//				if (event.stateMask == (SWT.CTRL) && event.keyCode == 's') {
-//					if (isDirty())
-//						doSave(null);
+//			this.text.setText("BrowserEditor");
+//			this.text.setVisible(false);
+//			text.addModifyListener(new ModifyListener() {
+//				@Override
+//				public void modifyText(ModifyEvent e) {
+//					myself.setPartName(text.getText());
 //				}
-//			}
+//			});
+//			
+			this.myself=this;
+			
+		
+		
+	
 //
-//			@Override
-//			public void keyPressed(KeyEvent e) {
-//			}
-//		});
+	}
+	
+	
+
+    
+	
+	public BrowserEditor getMyself() {
+		return myself;
+	}
+
+	public void setMyself(BrowserEditor myself) {
+		this.myself = myself;
 	}
 
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
+		
 
 	}
 

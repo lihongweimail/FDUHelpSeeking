@@ -15,6 +15,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartListener;
@@ -22,6 +24,7 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWindowListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -260,6 +263,32 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 	}
 
 	public void stop(BundleContext context) throws Exception {
+		
+//IWorkbenchPage myeditors=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		
+//		for (int i = 0; i < myeditors.length; i++) {
+//			IEditorReference[] myer=myeditors.getEditorReferences();
+//			for (int k = 0; k < myer.length; k++) {
+//				IEditorPart myiEditorParts=myer[k].getEditor(true);
+//				if (myiEditorParts.getClass().toString().trim().equals("cn.edu.fudan.se.helpseeking.editors.BrowserEditor")) 
+//				{
+//					myiEditorParts.dispose();			
+//				}
+//
+//			}
+			
+//					}
+
+		IEditorReference[]	ieReferences=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getEditorReferences();
+		for (int i = 0; i < ieReferences.length; i++) {
+			IEditorPart iePart=ieReferences[i].getEditor(true);
+			if (iePart.getClass().toString().trim().equals("cn.edu.fudan.se.helpseeking.editors.BrowserEditor")) 
+			{
+				iePart.dispose();			
+			}
+		}
+		
+			
 		super.stop(context);
 		try {
 			if (activityContextManager != null) {
@@ -273,6 +302,8 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 					}
 				}
 			}
+			
+			
 		} catch (Exception e) {
 			StatusHandler
 					.log(new Status(IStatus.ERROR,
@@ -281,7 +312,11 @@ public class FDUHelpSeekingPlugin extends AbstractUIPlugin  {
 		}
 		
 		DatabaseUtil.closeAll();
+		
+		
+		
 		INSTANCE = null;
+		
 	}
 
 	public static FDUHelpSeekingPlugin getDefault() {

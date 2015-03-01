@@ -548,7 +548,7 @@ public class HelpSeekingBrowserView extends ViewPart {
 							browserPart.getMybroBrowser().setAppTitle(titles);
 							browserPart.getMybroBrowser().setNewUrl(browserurl);
 							browserPart.getMybroBrowser().refreshBrowser();
-
+//							browserPart.getText().setText(titles);
 							// ---
 
 							// 2.2测试本地文件

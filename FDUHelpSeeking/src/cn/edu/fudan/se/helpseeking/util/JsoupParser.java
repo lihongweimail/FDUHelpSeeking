@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -64,7 +65,7 @@ public class JsoupParser {
 	  return isNumeric(str);
 	}
 	
-	public JsoupParser(String url) throws IOException
+	public JsoupParser(String url) throws IOException 
 	{
 		
 		
@@ -75,7 +76,8 @@ public class JsoupParser {
        FileHelper.writeNewFile(CommUtil.getFDUHelpseekingPluginWorkingPath()
 		+ "/stopwords.txt", stopString);
 
-		doc = Jsoup.connect(url).post();
+					doc = Jsoup.connect(url).timeout(20000).post();
+	
 	}
 	
 	public String getWebPageContent()
