@@ -24,6 +24,9 @@ import edu.mit.jwi.morph.WordnetStemmer;
  *  
  */
 
+
+
+
 public class WordNetDict 
 {
 	private IDictionary wordNetDict = null;
@@ -34,7 +37,16 @@ public class WordNetDict
 		initial();
 		wordNetDict.open();
 	}
-
+	
+	
+public static void main(String[] args) {
+		
+		String tempString = WordNetDict.getInstance().getNounsOrVerbs("horse");
+		
+		System.out.println("the horse string synomset is : "+ tempString);
+}
+	
+	
 	public static WordNetDict getInstance()
 	{
 		if (instance == null) instance = new WordNetDict();
@@ -157,5 +169,7 @@ public class WordNetDict
 
 		}
 	}
+	
+	
 
 }

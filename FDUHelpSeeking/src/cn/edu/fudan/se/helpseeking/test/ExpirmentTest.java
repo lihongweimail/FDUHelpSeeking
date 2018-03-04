@@ -13,6 +13,7 @@ import java.util.List;
 import cn.edu.fudan.se.helpseeking.util.CommUtil;
 import cn.edu.fudan.se.helpseeking.util.INIHelper;
 import cn.edu.fudan.se.helpseeking.util.Resource;
+import cn.edu.fudan.se.helpseeking.util.WordNetDict;
 
 public class ExpirmentTest {
 
@@ -21,17 +22,23 @@ public class ExpirmentTest {
 	
 	public static void main(String[] args) {
 		
-		String good="we(.are(.the) live";
-		int indexs=good.indexOf('(');
-		int indexs2=good.lastIndexOf(')');
+		String tempString = WordNetDict.getInstance().getNounsOrVerbs("horse");
 		
-		String result=good.substring(0, indexs);
-		System.out.println("result:".substring(2)+result+" indexs"+indexs+"indexs2"+indexs2+good.substring(0,1)+" "+good.substring(1));
+		System.out.println("the horse string synomset is : "+ tempString);
 	
-		INIHelper ini=new INIHelper("cse.ini",false);
-		ini.getCxKeyPairs();
-		System.out.println(ini.getCxKeyPairs().get(0).getKey());
-		
+//
+//		
+//		String good="we(.are(.the) live";
+//		int indexs=good.indexOf('(');
+//		int indexs2=good.lastIndexOf(')');
+//		
+//		String result=good.substring(0, indexs);
+//		System.out.println("result:".substring(2)+result+" indexs"+indexs+"indexs2"+indexs2+good.substring(0,1)+" "+good.substring(1));
+//	
+//		INIHelper ini=new INIHelper("cse.ini",false);
+//		ini.getCxKeyPairs();
+//		System.out.println(ini.getCxKeyPairs().get(0).getKey());
+//		
 
 //		System.out.println(re.getResource("/stopresource/userstoplist.txt"));
 
